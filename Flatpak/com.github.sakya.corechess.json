@@ -30,7 +30,7 @@
       "sources": [
         {
           "type": "git",
-          "url": "https://paoloiommarini@bitbucket.org/paoloiommarini/corechess.git"
+          "url": "https://github.com/sakya/corechess.git"
         },
         "nuget.json"
       ]
