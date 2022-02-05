@@ -11,7 +11,7 @@
         x:Class="CoreChess.Views.MainWindow"
         Title="CoreChess"
         WindowStartupLocation="CenterScreen"
-        Width="800" Height="500"
+        Width="800" Height="494"
         MinHeight="500" MinWidth="600"
         KeyDown="OnWindowKeyDown"
         Closing="OnWindowClosing">
