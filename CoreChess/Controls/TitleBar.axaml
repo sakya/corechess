@@ -1,0 +1,61 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:i="clr-namespace:Projektanker.Icons.Avalonia;assembly=Projektanker.Icons.Avalonia"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="CoreChess.Controls.TitleBar">
+
+  <UserControl.Styles>
+    <Style Selector="Button /template/ ContentPresenter">
+      <Setter Property="CornerRadius" Value="0" />
+    </Style>
+    <Style Selector="Button:not(:pointerover) /template/ ContentPresenter#PART_ContentPresenter">
+      <Setter Property="Background" Value="Transparent"/>
+    </Style>
+  </UserControl.Styles>
+
+  <StackPanel>
+    <Grid>
+      <DockPanel Background="{DynamicResource TitleBarBackground}"
+                 IsHitTestVisible="False"></DockPanel>
+
+      <DockPanel>
+        <StackPanel Orientation="Horizontal"
+                    DockPanel.Dock="Left"
+                    IsHitTestVisible="False"
+                    Height="30">
+
+          <Image Source="/Assets/icon.ico"
+                 Height="20"
+                 Width="20"
+                 VerticalAlignment="Center"
+                 Margin="5,0,5,0" />
+          <TextBlock Name="m_Title"
+                     FontSize="16"
+                     VerticalAlignment="Center" />
+        </StackPanel>
+
+        <StackPanel HorizontalAlignment="Right"
+                    Orientation="Horizontal">
+          <Button Name="m_MinimizeBtn" Height="30" Width="46" Padding="0">
+            <i:Icon Value="fas fa-window-minimize" />
+          </Button>
+
+          <Button Name="m_MaximizeBtn" Height="30" Width="46" Padding="0">
+            <i:Icon Value="fas fa-window-maximize" />
+          </Button>
+
+          <Button Name="m_CloseBtn" Height="30" Width="46" Padding="0">
+            <Button.Styles>
+              <Style Selector="Button:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+                <Setter Property="Background" Value="DarkRed"/>
+              </Style>
+            </Button.Styles>
+            <i:Icon Value="fas fa-times" />
+          </Button>
+        </StackPanel>
+      </DockPanel>
+    </Grid>
+  </StackPanel>
+</UserControl>

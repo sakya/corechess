@@ -1,0 +1,17 @@
+﻿<Style xmlns="https://github.com/avaloniaui"
+       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+       xmlns:sys="clr-namespace:System;assembly=netstandard">
+  <Style.Resources>
+    <FontFamily x:Key="DefaultFontFamily">avares://CoreChess/Assets/fonts#Roboto</FontFamily>
+    <FontFamily x:Key="FigurineFontFamily">avares://CoreChess/Assets/fonts#Chess Alpha 2</FontFamily>
+
+    <Color x:Key="TextControlBackgroundFocused">#ffffff</Color>
+
+    <Color x:Key="TitleBarBackground">#e7e6e5</Color>
+    <Color x:Key="SystemAccentColor">#CF6641</Color>
+
+    <Color x:Key="NotificationCardInformationBackgroundBrush">#CF6641</Color>
+    <Color x:Key="HighlightColor">#fd7d00</Color>
+
+  </Style.Resources>
+</Style>

@@ -1,0 +1,27 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:i="clr-namespace:Projektanker.Icons.Avalonia;assembly=Projektanker.Icons.Avalonia"
+             xmlns:i18n="clr-namespace:CoreChess.Localizer" 
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="CoreChess.Controls.GameAnalyzeGraph">
+  <Grid>
+    <Button Name="m_Analyze" VerticalAlignment="Center" HorizontalAlignment="Center" Click="OnAnalyzeClick">
+      <StackPanel Orientation="Horizontal">
+        <i:Icon Value="fas fa-chart-bar" />
+        <TextBlock Text="{i18n:Localize Analyze}" Margin="5,0,0,0"/>
+      </StackPanel>
+    </Button>
+    <Grid Name="m_ProgressGrid">
+        <ProgressBar Name="m_Progress" Minimum="0" Maximum="100" Height="25" Value="0" />
+        <TextBlock Name="m_ProgressMessage" FontSize="12" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,5,0,5" />
+    </Grid>
+    <Canvas Name="m_Canvas" 
+      PointerPressed="OnMouseDown"
+      PointerReleased="OnMouseUp"
+      PointerMoved="OnMouseMoved" 
+      PointerEnter="OnMouseEnter"
+      PointerLeave="OnMouseLeave" />
+  </Grid>
+</UserControl>

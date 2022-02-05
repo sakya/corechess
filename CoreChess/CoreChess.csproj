@@ -1,0 +1,212 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <Import Project="..\SolutionInfo.proj" />
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net6.0</TargetFramework>
+    <ApplicationIcon>icon.ico</ApplicationIcon>
+  </PropertyGroup>
+  <ItemGroup>
+    <AvaloniaResource Include="Assets\**" />
+  </ItemGroup>
+  <ItemGroup>
+    <AvaloniaXaml Remove="Assets\Styles\PaletteDark.axaml" />
+    <AvaloniaXaml Remove="Assets\Styles\PaletteLight.axaml" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Remove="Assets\i18n\en-US.json" />
+    <None Remove="Assets\i18n\it-IT.json" />
+    <None Remove="Assets\eco.pgn" />
+    <None Remove="icon.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <AvaloniaResource Include="icon.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Avalonia" Version="0.10.10" />
+    <PackageReference Include="Avalonia.Angle.Windows.Natives" Version="2.1.0.2020091801" />
+    <PackageReference Include="Avalonia.Desktop" Version="0.10.10" />
+    <PackageReference Include="Avalonia.Diagnostics" Version="0.10.10" />
+    <PackageReference Include="Projektanker.Icons.Avalonia" Version="3.7.0" />
+    <PackageReference Include="Projektanker.Icons.Avalonia.FontAwesome" Version="3.7.0" />
+    <PackageReference Include="AvaloniaColorPicker" Version="1.1.0" />
+
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\ChessLib\ChessLib.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Update="OpeningBooks\Perfect2021.bin">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="FlatpakFiles\com.github.sakya.CoreChess.desktop">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Audio\move_black.mp3">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Audio\move_white.mp3">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Images\Pieces\Default\bBishop.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Images\Pieces\Default\bKing.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Images\Pieces\Default\bKnight.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Images\Pieces\Default\bPawn.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Images\Pieces\Default\bQueen.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Images\Pieces\Default\bRook.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Images\Pieces\Default\wBishop.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Images\Pieces\Default\wKing.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Images\Pieces\Default\wKnight.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Images\Pieces\Default\wPawn.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Images\Pieces\Default\wQueen.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Images\Pieces\Default\wRook.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Images\Pieces\Portablejim\bBishop.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Images\Pieces\Portablejim\bKing.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Images\Pieces\Portablejim\bKnight.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Images\Pieces\Portablejim\bPawn.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Images\Pieces\Portablejim\bQueen.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Images\Pieces\Portablejim\bRook.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Images\Pieces\Portablejim\wBishop.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Images\Pieces\Portablejim\wKing.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Images\Pieces\Portablejim\wKnight.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Images\Pieces\Portablejim\wPawn.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Images\Pieces\Portablejim\wQueen.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Images\Pieces\Portablejim\wRook.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Images\Pieces\Wikipedia\bBishop.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Images\Pieces\Wikipedia\bKing.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Images\Pieces\Wikipedia\bKnight.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Images\Pieces\Wikipedia\bPawn.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Images\Pieces\Wikipedia\bQueen.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Images\Pieces\Wikipedia\bRook.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Images\Pieces\Wikipedia\wBishop.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Images\Pieces\Wikipedia\wKing.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Images\Pieces\Wikipedia\wKnight.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Images\Pieces\Wikipedia\wPawn.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Images\Pieces\Wikipedia\wQueen.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Images\Pieces\Wikipedia\wRook.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="OpeningBooks\"/>
+    <Folder Include="Audio\" />
+    <Folder Include="Localizer\" />
+  </ItemGroup>
+  <ItemGroup>
+    <AvaloniaResource Update="Assets\Styles\PaletteDark.axaml">
+      <SubType>Designer</SubType>
+    </AvaloniaResource>
+    <AvaloniaResource Update="Assets\Styles\PaletteLight.axaml">
+      <SubType>Designer</SubType>
+    </AvaloniaResource>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Condition="$([MSBuild]::IsOSPlatform('osx'))" Include="Bass.Net.Linux">
+      <HintPath>Lib/Bass/Bass.Net.OSX.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Condition="$([MSBuild]::IsOSPlatform('linux'))" Include="Bass.Net.Linux">
+      <HintPath>Lib/Bass/Bass.Net.Linux.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Condition="$([MSBuild]::IsOSPlatform('windows'))" Include="Bass.Net">
+      <HintPath>Lib/Bass/Bass.Net.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Update="Controls\ItemsList.axaml.cs">
+      <DependentUpon>ItemsList.axaml</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
+  <Target Name="CopyBassOsx" Condition="$([MSBuild]::IsOSPlatform('osx'))" AfterTargets="AfterBuild">
+    <Copy SourceFiles="Lib/Bass/libbass.dylib" DestinationFolder="$(OutDir)" />
+  </Target>
+  <Target Name="PublishBassOsx" Condition="$([MSBuild]::IsOSPlatform('osx'))" AfterTargets="AfterPublish">
+    <Copy SourceFiles="Lib/Bass/libbass.dylib" DestinationFolder="$(PublishDir)" />
+  </Target>
+  <Target Name="CopyBassUnix" Condition="$([MSBuild]::IsOSPlatform('linux'))" AfterTargets="AfterBuild">
+    <Copy SourceFiles="Lib/Bass/libbass.so" DestinationFolder="$(OutDir)" />
+  </Target>
+  <Target Name="PublishBassUnix" Condition="$([MSBuild]::IsOSPlatform('linux'))" AfterTargets="AfterPublish">
+    <Copy SourceFiles="Lib/Bass/libbass.so" DestinationFolder="$(PublishDir)" />
+  </Target>
+  <Target Name="CopyBassWindows" Condition="$([MSBuild]::IsOSPlatform('windows'))" AfterTargets="AfterBuild">
+    <Copy SourceFiles="Lib/Bass/bass.dll" DestinationFolder="$(OutDir)" />
+  </Target>
+  <Target Name="PublishBassWindows" Condition="$([MSBuild]::IsOSPlatform('windows'))" AfterTargets="AfterBuild">
+    <Copy SourceFiles="Lib/Bass/bass.dll" DestinationFolder="$(PublishDir)" />
+  </Target>
+</Project>

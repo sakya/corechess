@@ -1,0 +1,153 @@
+﻿<Application xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:local="clr-namespace:CoreChess"
+             x:Class="CoreChess.App">
+
+  <Application.Styles>
+    <StyleInclude Source="avares://Avalonia.Themes.Default/Accents/BaseDark.xaml"/>
+    <StyleInclude Source="avares://Avalonia.Themes.Fluent/FluentDark.xaml"/>
+    <StyleInclude Source="avares://CoreChess/Assets/Styles/PaletteDark.axaml" />
+
+    <!-- Common styles -->
+    <Style Selector="Window">
+      <Setter Property="Icon" Value="/Assets/icon.ico" />
+      <Setter Property="FontSize" Value="18" />
+      <Setter Property="FontFamily" Value="{DynamicResource DefaultFontFamily}" />
+      <Setter Property="FontWeight" Value="Light" />
+    </Style>
+
+    <Style Selector="AutoCompleteBox">
+      <Setter Property="FontSize" Value="18"/>
+    </Style>
+
+    <Style Selector="Border.MoveMarker">
+      <Setter Property="BorderBrush" Value="{DynamicResource HighlightColor}" />
+    </Style>
+
+    <Style Selector="Border.MoveOver">
+      <Setter Property="BorderBrush" Value="{DynamicResource SystemAccentColor}" />
+    </Style>
+
+    <Style Selector="Border.Selected">
+      <Setter Property="BorderBrush" Value="{DynamicResource SystemAccentColor}" />
+      <Setter Property="BorderThickness" Value="1.5" />
+    </Style>
+
+    <Style Selector="Button">
+      <Setter Property="HorizontalAlignment" Value="Stretch" />
+      <Setter Property="HorizontalContentAlignment" Value="Center" />
+      <Setter Property="Padding" Value="15" />
+    </Style>
+
+    <Style Selector="Button /template/ ContentPresenter">
+      <Setter Property="CornerRadius" Value="5" />
+    </Style>
+
+    <Style Selector="Button.Accent">
+        <Setter Property="Background" Value="{DynamicResource SystemAccentColor}"/>
+    </Style>
+    <Style Selector="Button.Accent:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+        <Setter Property="Background" Value="{DynamicResource HighlightColor}"/>
+    </Style>
+
+    <Style Selector="Button.Small">
+      <Setter Property="Padding" Value="14,5,14,5" />
+      <Setter Property="MinWidth" Value="70" />
+    </Style>
+
+    <Style Selector="CheckBox">
+      <Setter Property="Margin" Value="5" />
+    </Style>
+
+    <Style Selector="ComboBox">
+      <Setter Property="Margin" Value="5"/>
+      <Setter Property="HorizontalAlignment" Value="Stretch" />
+    </Style>
+
+    <Style Selector="ContentControl.listItem">
+      <Setter Property="Background" Value="Transparent" />
+    </Style>
+
+    <Style Selector="MenuItem">
+      <Setter Property="FontWeight" Value="Regular" />
+    </Style>
+
+    <Style Selector="TextBlock">
+      <Setter Property="FontSize" Value="18"/>
+    </Style>
+
+    <Style Selector="TextBlock.Figurine">
+      <Setter Property="FontFamily" Value="{StaticResource FigurineFontFamily}"/>
+      <Setter Property="FontSize" Value="20"/>
+    </Style>
+
+    <Style Selector="TextBlock.HiglightBackground">
+      <Setter Property="Background" Value="{DynamicResource SystemAccentColor}"/>
+    </Style>
+
+    <Style Selector="TextBlock.HiglightOnOver">
+      <Setter Property="Background" Value="Transparent"/>
+    </Style>
+
+    <Style Selector="TextBlock.HiglightOnOver:pointerover">
+      <Setter Property="Background" Value="{DynamicResource SystemAccentColor}"/>
+    </Style>
+
+    <Style Selector="TextBlock.AccentColor">
+      <Setter Property="Foreground" Value="{DynamicResource SystemAccentColor}"/>
+    </Style>
+
+    <Style Selector="TextBlock.CurrentMove">
+      <Setter Property="Background" Value="{DynamicResource HighlightColor}"/>
+    </Style>
+
+    <Style Selector="TextBlock.HighlightColor">
+      <Setter Property="Foreground" Value="{DynamicResource HighlightColor}"/>
+      <Setter Property="FontWeight" Value="Regular" />
+    </Style>
+
+    <Style Selector="TextBlock.Label">
+      <Setter Property="FontSize" Value="14"/>
+      <Setter Property="FontWeight" Value="Light"/>
+      <Setter Property="Foreground" Value="{DynamicResource HighlightColor}"/>
+    </Style>
+
+    <Style Selector="TextBox">
+      <Setter Property="Margin" Value="5"/>
+      <Setter Property="FontSize" Value="18"/>
+    </Style>
+
+    <Style Selector="ToggleButton:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+      <Setter Property="Background" Value="{DynamicResource HighlightColor}" />
+    </Style>
+
+    <Style Selector="ToggleSwitch:pointerover /template/ Border#SwitchKnobBounds">
+      <Setter Property="Background" Value="{DynamicResource HighlightColor}" />
+    </Style>
+
+    <Style Selector="ToggleSwitch">
+      <Setter Property="Margin" Value="5"/>
+    </Style>
+
+    <Style Selector="ToggleSwitch:pointerover /template/ Border#OuterBorder">
+      <Setter Property="Background" Value="{DynamicResource HighlightColor}" />
+    </Style>
+
+    <Style Selector="NumericUpDown">
+      <Setter Property="Margin" Value="5" />
+    </Style>
+
+    <Style Selector="StackPanel.spinner">
+      <Style.Animations>
+        <Animation Duration="0:0:1" IterationCount="INFINITE">
+          <KeyFrame Cue="0%">
+            <Setter Property="RotateTransform.Angle" Value="0"/>
+          </KeyFrame>
+          <KeyFrame Cue="100%">
+            <Setter Property="RotateTransform.Angle" Value="360"/>
+          </KeyFrame>
+        </Animation>
+      </Style.Animations>
+    </Style>
+  </Application.Styles>
+</Application>

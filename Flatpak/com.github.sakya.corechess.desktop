@@ -1,0 +1,6 @@
+[Desktop Entry]
+Name=CoreChess
+Exec=CoreChess
+Type=Application
+Icon=com.github.sakya.corechess
+Categories=Game;

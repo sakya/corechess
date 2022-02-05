@@ -1,0 +1,28 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:i="clr-namespace:Projektanker.Icons.Avalonia;assembly=Projektanker.Icons.Avalonia"
+        xmlns:controls="clr-namespace:CoreChess.Controls"
+        xmlns:colorpicker="clr-namespace:AvaloniaColorPicker;assembly=AvaloniaColorPicker"
+        xmlns:i18n="clr-namespace:CoreChess.Localizer"
+        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        x:Class="CoreChess.Views.ColorPickerWindow"
+        ShowInTaskbar="False"
+        SizeToContent="WidthAndHeight"
+        WindowStartupLocation="CenterOwner"
+        Title="CoreChess">
+
+  <DockPanel>
+    <controls:TitleBar DockPanel.Dock="Top"/>
+    <Grid Margin="15,15,15,5" DockPanel.Dock="Top">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <colorpicker:ColorPicker Name="ColorPicker" />
+        <controls:OkCancelButtons Grid.Row="1" OkClick="OnOkClick" CancelClick="OnCancelClick" />
+    </Grid>
+  </DockPanel>
+</Window>
