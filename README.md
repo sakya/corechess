@@ -1,6 +1,7 @@
 # **CoreChess**
 
 CoreChess is an open source chess GUI for chess engines
+![image](https://user-images.githubusercontent.com/289552/152684938-7231401d-e5ab-48bb-a445-06c139f64885.png)
 
 ## Supported engines
 
