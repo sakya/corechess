@@ -2,12 +2,9 @@
 using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
-using ChessLib;
 using ChessLib.Engines;
-using CoreChess.Localizer;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 
 namespace CoreChess.Views
@@ -29,6 +26,12 @@ namespace CoreChess.Views
         {
             AvaloniaXamlLoader.Load(this);
             base.InitializeComponent();
+
+            if (Environment.OSVersion.Platform != PlatformID.Win32NT) {
+                var cb = this.FindControl<ComboBox>("m_EngineType");
+                var items = cb.Items as Avalonia.Collections.AvaloniaList<object>;
+                items.RemoveAt(3);
+            }
 
             m_Engines = new List<EngineBase>(App.Settings.Engines);
             m_List = this.FindControl<Controls.ItemsList>("m_List");
