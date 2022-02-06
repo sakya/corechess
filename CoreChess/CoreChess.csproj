@@ -198,10 +198,10 @@
     <Copy SourceFiles="Lib/Bass/libbass.dylib" DestinationFolder="$(PublishDir)" />
   </Target>
   <Target Name="CopyBassUnix" Condition="$([MSBuild]::IsOSPlatform('linux'))" AfterTargets="AfterBuild">
-    <Copy SourceFiles="Lib/Bass/libbass.so" DestinationFolder="$(OutDir)" />
+    <Copy SourceFiles="Lib/Bass/linux-x64/libbass.so" DestinationFolder="$(OutDir)" />
   </Target>
   <Target Name="PublishBassUnix" Condition="$([MSBuild]::IsOSPlatform('linux'))" AfterTargets="AfterPublish">
-    <Copy SourceFiles="Lib/Bass/libbass.so" DestinationFolder="$(PublishDir)" />
+    <Copy SourceFiles="Lib/Bass/linux-x64/libbass.so" DestinationFolder="$(PublishDir)" />
   </Target>
   <Target Name="CopyBassWindows" Condition="$([MSBuild]::IsOSPlatform('windows'))" AfterTargets="AfterBuild">
     <Copy SourceFiles="Lib/Bass/bass.dll" DestinationFolder="$(OutDir)" />
