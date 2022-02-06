@@ -479,6 +479,11 @@ namespace CoreChess.Views
         #region Menu events
         private async void OnNewGameClick(object sender, RoutedEventArgs e)
         {
+            if (App.Settings.ActiveEngine == null && App.Settings.Engines?.Count == 1) {
+                App.Settings.ActiveEngineId = App.Settings.Engines[0].Id;
+                App.Settings.Save(App.SettingsPath);
+            }
+
             if (App.Settings.ActiveEngine == null) {
                 await MessageWindow.ShowMessage(this, Localizer.Localizer.Instance["Error"], Localizer.Localizer.Instance["NoActiveEngineError"], MessageWindow.Icons.Error);
                 return;

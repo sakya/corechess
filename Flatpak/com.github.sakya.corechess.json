@@ -30,6 +30,7 @@
       "sources": [
         {
           "type": "git",
+          "branch": "main",
           "url": "https://github.com/sakya/corechess.git"
         },
         "nuget.json"
