@@ -300,7 +300,7 @@ namespace CoreChess.Views
             var cb = sender as ComboBox;
             var language = (Language)cb.SelectedItem;
             Localizer.Localizer.Instance.LoadLanguage(language.Code);
-            App.SetWindowTitle(this);
+            SetWindowTitle();
         } // OnLanguageChanged
 
         private void OnColorThemeChanged(object sender, SelectionChangedEventArgs args)

@@ -23,20 +23,6 @@ namespace CoreChess
             get; set;
         }
 
-        public static void SetWindowTitle(Avalonia.Controls.Window window)
-        {
-            if (Environment.OSVersion.Platform == PlatformID.Win32NT) {
-                window.ExtendClientAreaToDecorationsHint = true;
-                window.ExtendClientAreaTitleBarHeightHint = -1;
-                window.ExtendClientAreaChromeHints = ExtendClientAreaChromeHints.NoChrome;
-            }
-
-            window.Topmost = App.Settings.Topmost;
-            string title = Localizer.Localizer.Instance[$"WT_{window.GetType().Name}"];
-            if (!string.IsNullOrEmpty(title))
-                window.Title = $"CoreChess - {title}";
-        } // SetWindowTitle
-
         public static void SetStyle(Settings.Styles style, string accentColor, string highlightColor, string fontFamily)
         {
             Avalonia.Styling.Styles styles = null;

@@ -244,7 +244,8 @@
 
       </TabControl>
 
-      <controls:OkCancelButtons Grid.Row="1" OkClick="OnOkClick" CancelClick="OnCancelClick" />
+      <controls:OkCancelButtons Grid.Row="1" OkClick="OnOkClick" CancelClick="OnCancelClick"
+                                OkText="{i18n:Localize Ok}" CancelText="{i18n:Localize Cancel}" />
     </Grid>
   </DockPanel>
 </Window>

@@ -82,7 +82,7 @@
 
       <StackPanel Grid.Row="3" Grid.ColumnSpan="3" Orientation="Vertical">
         <TextBlock Text="{i18n:Localize MaximumTime}"/>
-        <NumericUpDown Name="m_MaxTime" Minimum="0" Margin="0,5,0,5" />
+        <NumericUpDown Name="m_MaxTime" Minimum="1" Margin="0,5,0,5" />
       </StackPanel>
 
       <StackPanel Grid.Row="4" Grid.ColumnSpan="3" Orientation="Vertical">

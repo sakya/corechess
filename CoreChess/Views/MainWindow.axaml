@@ -237,60 +237,73 @@
         </StackPanel>
       </Grid>
 
-      <Grid Margin="5" Grid.Row="0" Grid.RowSpan="2" Grid.Column="1">
+      <Grid Margin="5,5,0,0" Grid.Row="0" Grid.RowSpan="2" Grid.Column="1">
         <Grid.RowDefinitions>
-          <RowDefinition Height="Auto" />
-          <RowDefinition Height="Auto" />
-          <RowDefinition Height="Auto" />
           <RowDefinition Height="Auto" />
           <RowDefinition Height="*" />
           <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
         <!-- Captured pieces -->
-        <StackPanel Grid.Row="0" Orientation="Vertical">
-          <Border Height="{Binding #m_WhiteBorder.Bounds.Height}">
+        <Border Grid.Row="0" Classes="Section">
+          <StackPanel Orientation="Vertical">
             <TextBlock Classes="HighlightColor" Text="{i18n:Localize CapturedPieces}" VerticalAlignment="Center" />
-          </Border>
-          <WrapPanel Name="m_WhiteCapturedPieces" MinHeight="50" Orientation="Horizontal"></WrapPanel>
-          <WrapPanel Name="m_BlackCapturedPieces" MinHeight="50" Orientation="Horizontal"></WrapPanel>
-        </StackPanel>
+            <WrapPanel Name="m_WhiteCapturedPieces" MinHeight="50" Orientation="Horizontal"></WrapPanel>
+            <WrapPanel Name="m_BlackCapturedPieces" MinHeight="50" Orientation="Horizontal"></WrapPanel>
+          </StackPanel>
+        </Border>
 
         <!-- Moves -->
-        <TextBlock Grid.Row="1" Text="{i18n:Localize Moves}" Classes="HighlightColor" />
-        <TextBlock Grid.Row="2" FontSize="12" Text="{Binding EcoName}" TextTrimming="CharacterEllipsis" />
-        <StackPanel Grid.Row="3" Name="m_MoveNavigator" Orientation="Horizontal" IsVisible="False">
-          <Button Name="m_MoveFirst" Classes="Small" Margin="0,0,5,0" Click="OnMoveNavigationClick">
-            <i:Icon Value="fas fa-step-backward" />
-          </Button>
-          <Button Name="m_MovePrevious" Classes="Small" Margin="0,0,5,0" Click="OnMoveNavigationClick">
-            <i:Icon Value="fas fa-caret-left" />
-          </Button>
-          <Button Name="m_MoveNext" Classes="Small" Margin="0,0,5,0" Click="OnMoveNavigationClick">
-            <i:Icon Value="fas fa-caret-right" />
-          </Button>
-          <Button Name="m_MoveLast" Classes="Small" Margin="0,0,5,0" Click="OnMoveNavigationClick">
-            <i:Icon Value="fas fa-step-forward" />
-          </Button>
-        </StackPanel>
-        <ScrollViewer Grid.Row="4" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Disabled">
-          <WrapPanel Name="m_Moves" MinHeight="100" Orientation="Vertical"></WrapPanel>
-        </ScrollViewer>
+        <Border Grid.Row="1" Classes="Section" Margin="0,10,0,0">
+          <Grid>
+            <Grid.RowDefinitions>
+              <RowDefinition Height="Auto" />
+              <RowDefinition Height="Auto" />
+              <RowDefinition Height="Auto" />
+              <RowDefinition Height="*" />
+              <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+
+            <TextBlock Grid.Row="0" Text="{i18n:Localize Moves}" Classes="HighlightColor" />
+            <TextBlock Grid.Row="1" FontSize="12" Text="{Binding EcoName}" TextTrimming="CharacterEllipsis" />
+            <StackPanel Grid.Row="2" Name="m_MoveNavigator" Orientation="Horizontal" IsVisible="False">
+              <Button Name="m_MoveFirst" Classes="Small" Margin="0,0,5,0" Click="OnMoveNavigationClick">
+                <i:Icon Value="fas fa-step-backward" />
+              </Button>
+              <Button Name="m_MovePrevious" Classes="Small" Margin="0,0,5,0" Click="OnMoveNavigationClick">
+                <i:Icon Value="fas fa-caret-left" />
+              </Button>
+              <Button Name="m_MoveNext" Classes="Small" Margin="0,0,5,0" Click="OnMoveNavigationClick">
+                <i:Icon Value="fas fa-caret-right" />
+              </Button>
+              <Button Name="m_MoveLast" Classes="Small" Margin="0,0,5,0" Click="OnMoveNavigationClick">
+                <i:Icon Value="fas fa-step-forward" />
+              </Button>
+            </StackPanel>
+            <ScrollViewer Grid.Row="3" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Disabled">
+              <WrapPanel Name="m_Moves" MinHeight="100" Orientation="Vertical"></WrapPanel>
+            </ScrollViewer>
+          </Grid>
+        </Border>
 
         <!-- Engine messages-->
-        <StackPanel Name="m_EngineMessageStack" Grid.Row="5" Orientation="Vertical" MinHeight="100">
-          <TextBlock Text="{i18n:Localize EngineMessages}" Classes="HighlightColor" />
-          <TextBlock Name="m_EngineMessage" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" FontSize="14" />
-        </StackPanel>
+        <Border Name="m_EngineMessageSection" Grid.Row="2" Classes="Section" Margin="0,10,0,0">
+          <StackPanel Orientation="Vertical" MinHeight="100">
+            <TextBlock Text="{i18n:Localize EngineMessages}" Classes="HighlightColor" />
+            <TextBlock Name="m_EngineMessage" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" FontSize="14" />
+          </StackPanel>
+        </Border>
 
         <!-- Game analysis -->
-        <StackPanel Name="m_GameAnalyzeStack" Grid.Row="5" Orientation="Vertical" MinHeight="100" IsVisible="False">
-          <TextBlock Text="{i18n:Localize GameAnalysis}" Classes="HighlightColor" />
-          <controls:GameAnalyzeGraph Name="m_GameGraph" MinHeight="50"
-            IsInteractive="True"
-            MouseClickOnResult="OnMouseClickOnAnalysisResult"
-            MouseOnResult="OnMouseOnAnalysisResult" />
-        </StackPanel>
+        <Border Name="m_GameAnalyzeSection" Grid.Row="2" Classes="Section" IsVisible="False" Margin="0,10,0,0">
+          <StackPanel Grid.Row="5" Orientation="Vertical" MinHeight="100">
+            <TextBlock Text="{i18n:Localize GameAnalysis}" Classes="HighlightColor" />
+            <controls:GameAnalyzeGraph Name="m_GameGraph" MinHeight="50"
+              IsInteractive="True"
+              MouseClickOnResult="OnMouseClickOnAnalysisResult"
+              MouseOnResult="OnMouseOnAnalysisResult" />
+          </StackPanel>
+        </Border>
       </Grid>
 
       <Grid Grid.Row="0" Grid.RowSpan="2" Grid.ColumnSpan="2"

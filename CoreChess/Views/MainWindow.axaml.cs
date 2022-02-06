@@ -110,7 +110,7 @@ namespace CoreChess.Views
                     App.Settings.ShowEngineOutput = !App.Settings.ShowEngineOutput;
                     App.Settings.Save(App.SettingsPath);
                     m_Owner.ShowEngineOutput = App.Settings.ShowEngineOutput;
-                    m_Owner.Window.FindControl<StackPanel>("m_EngineMessageStack").IsVisible = App.Settings.ShowEngineOutput;
+                    m_Owner.Window.FindControl<Border>("m_EngineMessageSection").IsVisible = App.Settings.ShowEngineOutput;
                 }
             }
             #endregion
@@ -911,7 +911,8 @@ namespace CoreChess.Views
                 var settings = new Game.GameSettings()
                 {
                     MaxEngineThinkingTime = TimeSpan.FromSeconds(App.Settings.MaxEngineThinkingTimeSecs),
-                    EngineDepth = App.Settings.MaxEngineDepth
+                    EngineDepth = App.Settings.MaxEngineDepth,
+                    MaximumTime = TimeSpan.FromMinutes(15)
                 };
                 settings.Players.Add(new HumanPlayer(Game.Colors.White, App.Settings.PlayerName, null));
 
@@ -1252,8 +1253,8 @@ namespace CoreChess.Views
                 m_Context.IsResignEnabled = true;
                 m_CurrentMoveIndex = null;
                 this.FindControl<StackPanel>("m_MoveNavigator").IsVisible = false;
-                this.FindControl<StackPanel>("m_GameAnalyzeStack").IsVisible = false;
-                this.FindControl<StackPanel>("m_EngineMessageStack").IsVisible = App.Settings.ShowEngineOutput;
+                this.FindControl<Border>("m_GameAnalyzeSection").IsVisible = false;
+                this.FindControl<Border>("m_EngineMessageSection").IsVisible = App.Settings.ShowEngineOutput;
                 this.FindControl<TextBlock>("m_WhiteTimeLeft").IsVisible = true;
                 this.FindControl<TextBlock>("m_BlackTimeLeft").IsVisible = true;
                 this.FindControl<Button>("m_PauseBtn").IsVisible = true;
@@ -1313,8 +1314,8 @@ namespace CoreChess.Views
             this.FindControl<Button>("m_MoveLast").IsEnabled = false;
 
             m_CurrentMoveIndex = m_Game.Moves.Count - 1;
-            this.FindControl<StackPanel>("m_GameAnalyzeStack").IsVisible = true;
-            this.FindControl<StackPanel>("m_EngineMessageStack").IsVisible = false;
+            this.FindControl<Border>("m_GameAnalyzeSection").IsVisible = true;
+            this.FindControl<Border>("m_EngineMessageSection").IsVisible = false;
 
             var gameAnalysis = this.FindControl<GameAnalyzeGraph>("m_GameGraph");
             gameAnalysis.Clear();

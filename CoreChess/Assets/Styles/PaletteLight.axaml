@@ -12,6 +12,6 @@
 
     <Color x:Key="NotificationCardInformationBackgroundBrush">#CF6641</Color>
     <Color x:Key="HighlightColor">#fd7d00</Color>
-
+    <Color x:Key="SectionBackgroundColor">#19000000</Color>
   </Style.Resources>
 </Style>

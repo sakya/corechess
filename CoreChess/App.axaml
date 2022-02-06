@@ -20,6 +20,13 @@
       <Setter Property="FontSize" Value="18"/>
     </Style>
 
+    <Style Selector="Border.Section">
+      <Setter Property="Background" Value="{DynamicResource SectionBackgroundColor}" />
+      <Setter Property="CornerRadius" Value="5" />
+      <Setter Property="ClipToBounds" Value="True" />
+      <Setter Property="Padding" Value="5" />
+    </Style>
+
     <Style Selector="Border.MoveMarker">
       <Setter Property="BorderBrush" Value="{DynamicResource HighlightColor}" />
     </Style>

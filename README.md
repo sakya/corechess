@@ -8,7 +8,7 @@ CoreChess is an open source chess GUI for chess engines
 
 - CECP (Chess Engine Communication Protocol) like [Crafty](https://craftychess.com/)
 
-- The King (Chessmaster)
+- The King (Chessmaster). Supported only on Windows.
 
 ### The King (Chessmaster)
 
@@ -16,7 +16,7 @@ CoreChess is an open source chess GUI for chess engines
 
   You can then set the personalities path and opening books path in the engine settings.
 
-## Supported opening books format
+## Supported opening book formats
 
 - Polyglot (BIN)
 - Arena opening book (ABK)

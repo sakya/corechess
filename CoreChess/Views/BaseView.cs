@@ -22,9 +22,7 @@ namespace CoreChess.Views
                 this.ExtendClientAreaChromeHints = ExtendClientAreaChromeHints.NoChrome;
             }
 
-            string title = Localizer.Localizer.Instance[$"WT_{this.GetType().Name}"];
-            if (!string.IsNullOrEmpty(title))
-                this.Title = $"CoreChess - {title}";
+            SetWindowTitle();
 
             // Fix for https://github.com/AvaloniaUI/Avalonia/issues/6433
             if (Environment.OSVersion.Platform == PlatformID.Unix)
@@ -40,6 +38,13 @@ namespace CoreChess.Views
                 });
             }
         } // InitializeComponent
+
+        protected void SetWindowTitle()
+        {
+            string title = Localizer.Localizer.Instance[$"WT_{this.GetType().Name}"];
+            if (!string.IsNullOrEmpty(title))
+                this.Title = $"CoreChess - {title}";
+        }
 
         private async void CenterWindow()
         {
