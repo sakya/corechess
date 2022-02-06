@@ -2,7 +2,7 @@
 using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
-using System.Diagnostics.Contracts;
+using Avalonia.Media;
 using System.Threading.Tasks;
 
 namespace CoreChess.Views
@@ -73,12 +73,15 @@ namespace CoreChess.Views
                     break;
                 case Icons.Error:
                     i.Value = "fas fa-exclamation-triangle";
+                    i.Foreground = new SolidColorBrush((Color)this.FindResource("DangerColor"));
                     break;
                 case Icons.Info:
                     i.Value = "fas fa-info-circle";
+                    i.Foreground = new SolidColorBrush((Color)this.FindResource("InfoColor"));
                     break;
                 case Icons.Question:
                     i.Value = "fas fa-question-circle";
+                    i.Foreground = new SolidColorBrush((Color)this.FindResource("InfoColor"));
                     break;
             }
         }

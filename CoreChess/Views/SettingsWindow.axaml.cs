@@ -223,6 +223,14 @@ namespace CoreChess.Views
             nud = this.FindControl<NumericUpDown>("m_MaxEngineDepth");
             nud.Value = App.Settings.MaxEngineDepth ?? 0;
 
+            cb = this.FindControl<ComboBox>("m_OpeningBookType");
+            if (string.IsNullOrEmpty(App.Settings.OpeningBook))
+                cb.SelectedIndex = 0;
+            else if (App.Settings.OpeningBook == Settings.InternalOpeningBook)
+                cb.SelectedIndex = 1;
+            else
+                cb.SelectedIndex = 2;
+
             txt = this.FindControl<TextBox>("m_OpeningBook");
             txt.Text = App.Settings.OpeningBook;
 
@@ -318,6 +326,20 @@ namespace CoreChess.Views
             m_BlackSelectedButton.Color = Utils.ColorConverter.ParseHexColor(ct.BlackSelectedColor);
             m_BlackSelectedButton.IsEnabled = isCustom;
         } // OnColorThemeChanged
+
+        private void OnOpeningBookTypeChanged(object sender, SelectionChangedEventArgs args)
+        {
+            var cb = sender as ComboBox;
+            var grid = this.FindControl<Grid>("m_OpeningBookCustom");
+            var txt = this.FindControl<TextBox>("m_OpeningBook");
+            if (cb.SelectedIndex == 0)
+                txt.Text = string.Empty;
+            else if (cb.SelectedIndex == 1)
+                txt.Text = Settings.InternalOpeningBook;
+            else if (cb.SelectedIndex == 2 && txt.Text == Settings.InternalOpeningBook)
+                txt.Text = string.Empty;
+            grid.IsVisible = cb.SelectedIndex == 2;
+        } // OnOpeningBookTypeChanged
 
         private async void OnOpeningBookClick(object sender, RoutedEventArgs e)
         {

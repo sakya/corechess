@@ -12,6 +12,7 @@ namespace CoreChess
     public class Settings
     {
         public const string DefaultFontFamily = "avares://CoreChess/Assets/fonts#Roboto";
+        public const string InternalOpeningBook = "./OpeningBooks/Perfect2021.bin";
 
         #region classes
         public class NewGameSettings
@@ -68,7 +69,7 @@ namespace CoreChess
             BlackColor = "#ff769656";
             BlackSelectedColor = "#ffbbcb44";
 
-            OpeningBook = "./OpeningBooks/Perfect2021.bin";
+            OpeningBook = InternalOpeningBook;
         }
 
         public Version Version { get; set; }

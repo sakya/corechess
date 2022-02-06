@@ -5,6 +5,10 @@
     <FontFamily x:Key="DefaultFontFamily">avares://CoreChess/Assets/fonts#Roboto</FontFamily>
     <FontFamily x:Key="FigurineFontFamily">avares://CoreChess/Assets/fonts#Chess Alpha 2</FontFamily>
 
+    <Color x:Key="InfoColor">#5bc0de</Color>
+    <Color x:Key="WarningColor">#f0ad4e</Color>
+    <Color x:Key="DangerColor">#d9534f</Color>
+
     <Color x:Key="SystemControlBackgroundAltHighBrush">#1e1e1e</Color>
     <Color x:Key="TextControlBackground">#1e1e1e</Color>
     <Color x:Key="TextControlBackgroundPointerOver">#1e1e1e</Color>
