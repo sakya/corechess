@@ -1,0 +1,22 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:i="clr-namespace:Projektanker.Icons.Avalonia;assembly=Projektanker.Icons.Avalonia"
+        xmlns:controls="clr-namespace:CoreChess.Controls"
+        xmlns:i18n="clr-namespace:CoreChess.Localizer"
+        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        x:Class="CoreChess.Views.DownloadEnginesWindow"
+        ShowInTaskbar="False"
+        Width="600" Height="400"
+        MinWidth="400" MinHeight="300"
+        WindowStartupLocation="CenterOwner"
+        Title="CoreChess - Download engines">
+
+  <DockPanel>
+    <controls:TitleBar DockPanel.Dock="Top"/>
+    <Grid Margin="15" DockPanel.Dock="Top">
+
+    </Grid>
+  </DockPanel>
+</Window>
