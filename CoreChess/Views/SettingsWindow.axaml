@@ -83,12 +83,12 @@
                 </ComboBox.ItemTemplate>
               </ComboBox>
 
-              <TextBlock Grid.Row="7" Text="{i18n:Localize MaxEngineThinkingTime}" VerticalAlignment="Center" />
-              <NumericUpDown Grid.Row="7" Grid.Column="1" Name="m_MaxEngineThinkingTimeSecs"
+              <TextBlock Grid.Row="7" Text="{i18n:Localize MaxEngineThinkingTime}" VerticalAlignment="Center" IsVisible="False" />
+              <NumericUpDown Grid.Row="7" Grid.Column="1" Name="m_MaxEngineThinkingTimeSecs" IsVisible="False"
                             Minimum="0"/>
 
-              <TextBlock Grid.Row="8" Text="{i18n:Localize MaxEngineDepth}" VerticalAlignment="Center" />
-              <NumericUpDown Grid.Row="8" Grid.Column="1" Name="m_MaxEngineDepth"
+              <TextBlock Grid.Row="8" Text="{i18n:Localize MaxEngineDepth}" VerticalAlignment="Center" IsVisible="False" />
+              <NumericUpDown Grid.Row="8" Grid.Column="1" Name="m_MaxEngineDepth" IsVisible="False"
                             Minimum="0"/>
 
               <TextBlock Grid.Row="9" Text="{i18n:Localize OpeningBook}" VerticalAlignment="Center" Margin="0,5,0,5" />
