@@ -69,7 +69,6 @@ namespace CoreChess
 
         static async Task<Views.MainWindow> InitializeApp(string[] args)
         {
-
             App.LocalPath = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "CoreChess");
             if (!Directory.Exists(App.LocalPath))
                 Directory.CreateDirectory(App.LocalPath);
@@ -82,11 +81,12 @@ namespace CoreChess
                 try {
                     App.Settings = Settings.Load(App.SettingsPath);
                 } catch {
-                    await SetDefaultSettings();
+                    SetDefaultSettings();
                 }
             } else {
-                await SetDefaultSettings();
+                SetDefaultSettings();
             }
+            await CheckEngines();
 
             App.SetStyle(App.Settings.Style, App.Settings.AccentColor, App.Settings.HighlightColor, App.Settings.FontFamily);
 
@@ -110,7 +110,7 @@ namespace CoreChess
             return res;
         } // InitializeApp
 
-        static async Task<bool> SetDefaultSettings()
+        static bool SetDefaultSettings()
         {
             // Default settings
             App.Settings = new Settings();
@@ -121,22 +121,55 @@ namespace CoreChess
             App.Settings.Language = ci.Name;
 
             App.Settings.Engines = new List<EngineBase>();
-            List<EngineBase> engines = new List<EngineBase>();
-
-            // initialize engines (get options list)
-            foreach (var engine in engines) {
-                try {
-                    await engine.Start();
-                    await engine.Stop();
-                    App.Settings.Engines.Add(engine);
-                } catch {
-
-                }
-            }
             App.Settings.ActiveEngineId = App.Settings.Engines.Count > 0 ? App.Settings.Engines[0].Id : null;
             App.Settings.Save(App.SettingsPath);
 
             return true;
         } // SetDefaultSettings
+
+        static async Task<bool> CheckEngines()
+        {
+            List<EngineBase> engines = App.Settings.Engines ?? new List<EngineBase>();
+
+            // Remove invalid engines
+            for (int i = 0; i < engines.Count; i++) {
+                if (!File.Exists(engines[0].Command)) {
+                    engines.Remove(engines[i]);
+                    i--;
+                }
+            }
+
+            if (engines.Count == 0) {
+                if (Environment.OSVersion.Platform == PlatformID.Unix) {
+                    // Add default engines (flatpak)
+                    engines.Add(
+                        new Uci("Stockfish", "/app/bin/Engines/stockfish/stockfish_14.1_linux_x64")
+                    );
+                    engines.Add(
+                        new Uci("Komodo", "/app/bin/Engines/komodo/komodo-12.1.1-linux")
+                    );
+                }
+
+                // initialize engines (get options list)
+                foreach (var engine in engines) {
+                    if (File.Exists(engine.Command)) {
+                        try {
+                            await engine.Start();
+                            await engine.Stop();
+                        } catch {
+
+                        }
+                    }
+                }
+            }
+            App.Settings.Engines = engines;
+
+            if (App.Settings.ActiveEngine == null && App.Settings.Engines.Count > 0) {
+                App.Settings.ActiveEngineId = App.Settings.Engines[0].Id;
+            }
+            App.Settings.Save(App.SettingsPath);
+
+            return true;
+        } // CheckEngines
     }
 }
