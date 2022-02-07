@@ -177,12 +177,15 @@ namespace CoreChess
                     );
                 }
 
-                // initialize engines (get options list)
+                // Initialize engines (get options list)
                 foreach (var engine in engines) {
                     if (File.Exists(engine.Command)) {
                         try {
                             await engine.Start();
                             await engine.Stop();
+
+                            engine.SetPondering(true);
+                            engine.SetOwnBook(false);
                         } catch {
 
                         }

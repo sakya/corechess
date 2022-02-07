@@ -103,7 +103,9 @@ namespace ChessLib.Engines
         public abstract bool SupportAnalyze();
         public abstract Option GetChess960Option();
         public abstract bool IsPonderingEnabled();
+        public abstract void SetPondering(bool enabled);
         public abstract bool IsOwnBookEnabled();
+        public abstract void SetOwnBook(bool enabled);
         public abstract int? GetElo();
 
         public abstract Task<bool> Start();

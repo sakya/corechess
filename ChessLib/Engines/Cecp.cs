@@ -320,10 +320,22 @@ namespace ChessLib.Engines
             return GetOption(PonderOptionName)?.Value == "true";
         } // IsPonderingEnabled
 
+        public override void SetPondering(bool enabled)
+        {
+            var opt = GetOption(PonderOptionName);
+            if (opt != null) {
+                opt.Value = enabled ? "true" : "false";
+            }
+        } // SetPondering
+
         public override bool IsOwnBookEnabled()
         {
             return false;
         }
+
+        public override void SetOwnBook(bool enabled)
+        {
+        } // SetOwnBook
 
         public override int? GetElo() {
             return null;
