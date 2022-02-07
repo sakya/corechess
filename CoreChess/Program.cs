@@ -144,9 +144,15 @@ namespace CoreChess
                     // Add default engines (flatpak)
                     engines.Add(
                         new Uci("Stockfish", "/app/bin/Engines/stockfish/stockfish_14.1_linux_x64")
+                        {
+                            WorkingDir = "/app/bin/Engines/stockfish"
+                        }
                     );
                     engines.Add(
                         new Uci("Komodo", "/app/bin/Engines/komodo/komodo-12.1.1-linux")
+                        {
+                            WorkingDir = "/app/bin/Engines/komodo"
+                        }
                     );
                 }
 

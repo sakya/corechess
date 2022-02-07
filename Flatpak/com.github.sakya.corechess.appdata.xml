@@ -8,8 +8,6 @@
     <content_rating type="oars-1.1"/>
     <url type="homepage">https://github.com/sakya/corechess</url>
     <description>
-        <p>CoreChess is an open source chess GUI for chess engines</p>
-
         <p>Supported engines:</p>
         <ul>
             <li>UCI (Universal Chess Interface) like Stockfish, Komodo and Leela Chess Zero</li>
