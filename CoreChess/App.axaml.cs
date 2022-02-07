@@ -11,6 +11,7 @@ namespace CoreChess
 {
     public class App : Application
     {
+        public static string BinaryPath { get; set; }
         public static string LocalPath { get; set; }
         public static string SettingsPath { get; set; }
         public static string GamesDatabasePath { get; set; }

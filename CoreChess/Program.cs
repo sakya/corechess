@@ -1,13 +1,13 @@
-﻿using System;
+﻿using Avalonia;
+using ChessLib.Engines;
+using Projektanker.Icons.Avalonia;
+using Projektanker.Icons.Avalonia.FontAwesome;
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
-using Avalonia;
-using ChessLib.Engines;
-using Projektanker.Icons.Avalonia;
-using Projektanker.Icons.Avalonia.FontAwesome;
 using Un4seen.Bass;
 
 namespace CoreChess
@@ -69,6 +69,7 @@ namespace CoreChess
 
         static async Task<Views.MainWindow> InitializeApp(string[] args)
         {
+            App.BinaryPath = Path.GetDirectoryName(System.Reflection.Assembly.GetEntryAssembly().Location);
             App.LocalPath = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "CoreChess");
             if (!Directory.Exists(App.LocalPath))
                 Directory.CreateDirectory(App.LocalPath);
@@ -133,8 +134,8 @@ namespace CoreChess
 
             // Remove invalid engines
             for (int i = 0; i < engines.Count; i++) {
-                if (!File.Exists(engines[0].Command)) {
-                    engines.Remove(engines[i]);
+                if (!File.Exists(engines[i].Command)) {
+                    engines.RemoveAt(i);
                     i--;
                 }
             }
@@ -152,6 +153,26 @@ namespace CoreChess
                         new Uci("Komodo", "/app/bin/Engines/komodo/komodo-12.1.1-linux")
                         {
                             WorkingDir = "/app/bin/Engines/komodo"
+                        }
+                    );
+                } else if (Environment.OSVersion.Platform == PlatformID.Win32NT) {
+                    // Add default engines (Inno Setup)
+                    engines.Add(
+                        new Uci("Stockfish", Path.Combine(App.BinaryPath, @"Engines\stockfish\stockfish_14.1_win_x64.exe"))
+                        {
+                            WorkingDir = Path.Combine(App.BinaryPath, @"Engines\stockfish")
+                        }
+                    );
+                    engines.Add(
+                        new Uci("Komodo", Path.Combine(App.BinaryPath, @"Engines\komodo\komodo-12.1.1-64bit.exe"))
+                        {
+                            WorkingDir = Path.Combine(App.BinaryPath, @"Engines\komodo")
+                        }
+                    );
+                    engines.Add(
+                        new Uci("Leela Chess Zero", Path.Combine(App.BinaryPath, @"Engines\lc0\lc0.exe"))
+                        {
+                            WorkingDir = Path.Combine(App.BinaryPath, @"Engines\lc0")
                         }
                     );
                 }
