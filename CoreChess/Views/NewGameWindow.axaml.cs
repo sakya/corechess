@@ -111,6 +111,8 @@ namespace CoreChess.Views
         private void OnEngineChanged(object sender, SelectionChangedEventArgs args)
         {
             var engine = ((ComboBox)sender).SelectedItem as EngineBase;
+            if (engine == null)
+                return;
 
             var gType = this.FindControl<ComboBox>("m_GameType");
             if (!engine.SupportChess960()) {
@@ -122,7 +124,7 @@ namespace CoreChess.Views
 
             var eloStack = this.FindControl<StackPanel>("m_EngineEloStack");
             eloStack.IsVisible = engine.CanSetElo();
-            
+
             var elo = this.FindControl<NumericUpDown>("m_EngineElo");
             elo.Maximum = engine.GetMaxElo();
             elo.Minimum = engine.GetMinElo();
