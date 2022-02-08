@@ -479,13 +479,8 @@ namespace CoreChess.Views
         #region Menu events
         private async void OnNewGameClick(object sender, RoutedEventArgs e)
         {
-            if (App.Settings.ActiveEngine == null && App.Settings.Engines?.Count == 1) {
-                App.Settings.ActiveEngineId = App.Settings.Engines[0].Id;
-                App.Settings.Save(App.SettingsPath);
-            }
-
-            if (App.Settings.ActiveEngine == null) {
-                await MessageWindow.ShowMessage(this, Localizer.Localizer.Instance["Error"], Localizer.Localizer.Instance["NoActiveEngineError"], MessageWindow.Icons.Error);
+            if (App.Settings.Engines == null || App.Settings.Engines.Count == 0) {
+                await MessageWindow.ShowMessage(this, Localizer.Localizer.Instance["Error"], Localizer.Localizer.Instance["NoEnginesError"], MessageWindow.Icons.Error);
                 return;
             }
 
@@ -512,10 +507,11 @@ namespace CoreChess.Views
 
                 settings.Players.Add(new HumanPlayer(newGame.Color.Value, App.Settings.PlayerName, null));
 
+                var engine = App.Settings.GetEngine(newGame.EngineId);
                 var enginePlayer = new EnginePlayer(newGame.Color == Game.Colors.White ? Game.Colors.Black : Game.Colors.White,
-                    newGame.Personality?.DisplayName ?? App.Settings.ActiveEngine?.Name,
-                    App.Settings.ActiveEngine?.GetElo());
-                enginePlayer.Engine = App.Settings.ActiveEngine.Copy();
+                    newGame.Personality?.DisplayName ?? engine?.Name,
+                    engine?.GetElo());
+                enginePlayer.Engine = engine.Copy();
                 enginePlayer.Personality = newGame.Personality;
                 enginePlayer.OpeningBookFileName = App.Settings.OpeningBook;
                 settings.Players.Add(enginePlayer);
@@ -921,9 +917,15 @@ namespace CoreChess.Views
                 };
                 settings.Players.Add(new HumanPlayer(Game.Colors.White, App.Settings.PlayerName, null));
 
-                var enginePlayer = new EnginePlayer(Game.Colors.Black, App.Settings.ActiveEngine?.Name, App.Settings.ActiveEngine?.GetElo());
+                EngineBase lastUsedEngine = null;
+                if (App.Settings.NewGame != null)
+                    lastUsedEngine = App.Settings.GetEngine(App.Settings.NewGame.EngineId);
+                if (lastUsedEngine == null)
+                    lastUsedEngine = App.Settings.Engines?.FirstOrDefault();
+
+                var enginePlayer = new EnginePlayer(Game.Colors.Black, lastUsedEngine?.Name, lastUsedEngine?.GetElo());
                 var sSettings = new JsonSerializerSettings() { TypeNameHandling = TypeNameHandling.Objects };
-                enginePlayer.Engine = JsonConvert.DeserializeObject<EngineBase>(JsonConvert.SerializeObject(App.Settings.ActiveEngine, sSettings), sSettings);
+                enginePlayer.Engine = lastUsedEngine?.Copy();
                 enginePlayer.OpeningBookFileName = App.Settings.OpeningBook;
                 settings.Players.Add(enginePlayer);
 
@@ -1214,7 +1216,7 @@ namespace CoreChess.Views
             await gameAnalysis.Abort();
             gameAnalysis.Clear();
 
-            if (App.Settings.ActiveEngine == null) {
+            if (App.Settings.Engines == null || App.Settings.Engines.Count == 0) {
                 m_Chessboard.SetEmpty();
                 SetChessboardOptions();
                 SetWaitAnimation(false);

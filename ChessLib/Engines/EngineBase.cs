@@ -109,6 +109,8 @@ namespace ChessLib.Engines
         public abstract bool CanSetElo();
         public abstract bool SetElo(int elo);
         public abstract int? GetElo();
+        public abstract int GetMinElo();
+        public abstract int GetMaxElo();
 
         public abstract Task<bool> Start();
         public abstract Task<bool> Stop();

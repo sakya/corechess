@@ -122,7 +122,6 @@ namespace CoreChess
             App.Settings.Language = ci.Name;
 
             App.Settings.Engines = new List<EngineBase>();
-            App.Settings.ActiveEngineId = App.Settings.Engines.Count > 0 ? App.Settings.Engines[0].Id : null;
             App.Settings.Save(App.SettingsPath);
 
             return true;
@@ -181,10 +180,6 @@ namespace CoreChess
                 }
             }
             App.Settings.Engines = engines;
-
-            if (App.Settings.ActiveEngine == null && App.Settings.Engines.Count > 0) {
-                App.Settings.ActiveEngineId = App.Settings.Engines[0].Id;
-            }
             App.Settings.Save(App.SettingsPath);
 
             return true;

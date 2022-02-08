@@ -172,7 +172,8 @@ namespace CoreChess.Controls
             {
                 Tag = opt.Name,
                 IsChecked = opt.Value == "true",
-                IsEnabled = isEnabled
+                IsEnabled = isEnabled,
+                HorizontalAlignment = Avalonia.Layout.HorizontalAlignment.Right
             };
             grid.Children.Add(ctrl);
 

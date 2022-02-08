@@ -350,6 +350,16 @@ namespace ChessLib.Engines
         {
             return false;
         }
+
+        public override int GetMinElo()
+        {
+            return 0;
+        }
+
+        public override int GetMaxElo()
+        {
+            return 0;
+        }
         #region process events
         private void ProcessExited(object sender, EventArgs e)
         {

@@ -18,6 +18,8 @@ namespace CoreChess.Views
     {
         public class Result
         {
+            public string EngineId { get; set; }
+            public int? EngineElo { get; set; }
             public ChessLib.Game.Colors? Color { get; set; }
             public TimeSpan? MaximumTime { get; set; }
             public TimeSpan TimeIncrement { get; set; }
@@ -45,19 +47,12 @@ namespace CoreChess.Views
             var maxTime = this.FindControl<NumericUpDown>("m_MaxTime");
             maxTime.Value = 15;
 
+            var engine = this.FindControl<ComboBox>("m_Engines");
+            engine.Items = App.Settings.Engines.OrderBy(e => e.Name);
+            engine.SelectedIndex = 0;
+
             var gType = this.FindControl<ComboBox>("m_GameType");
             gType.SelectedIndex = 0;
-
-            // TheKing personalities
-            if (App.Settings.ActiveEngine is TheKing) {
-                this.FindControl<StackPanel>("m_PersonalityStack").IsVisible = true;
-                var cmb = this.FindControl<ComboBox>("m_Personality");
-                var opt = App.Settings.ActiveEngine.GetOption(TheKing.PersonalitiesFolderOptionName);
-                if (opt != null && !string.IsNullOrEmpty(opt.Value))
-                    cmb.Items = TheKing.Personality.GetFromFolder(opt.Value).OrderByDescending(p => p.Elo);
-            } else {
-                this.FindControl<StackPanel>("m_PersonalityStack").IsVisible = false;
-            }
 
             // Check settings
             if (App.Settings.NewGame != null) {
@@ -69,6 +64,12 @@ namespace CoreChess.Views
                 blackBtn.IsChecked = App.Settings.NewGame.PlayerColor == Game.Colors.Black;
                 randomBtn.IsChecked = App.Settings.NewGame.PlayerColor == null;
                 trainingMode.IsChecked = App.Settings.NewGame.TrainingMode == true;
+
+                var selectedEngine = App.Settings.GetEngine(App.Settings.NewGame.EngineId);
+                engine.SelectedItem = selectedEngine;
+                if (engine.SelectedItem == null)
+                    engine.SelectedIndex = 0;
+
                 if (App.Settings.NewGame.Chess960)
                     gType.SelectedIndex = 1;
 
@@ -76,19 +77,13 @@ namespace CoreChess.Views
                     maxTime.Value = App.Settings.NewGame.MaxTime.Value.TotalMinutes;
                 }
 
-                if (App.Settings.NewGame.Personality != null && App.Settings.ActiveEngine is TheKing) {
+                if (App.Settings.NewGame.Personality != null && selectedEngine is TheKing) {
                     var cmb = this.FindControl<ComboBox>("m_Personality");
                     cmb.SelectedItem = (cmb.Items as IEnumerable<TheKing.Personality>).Where(p => p.Name == App.Settings.NewGame.Personality.Name).FirstOrDefault();
                 }
 
                 var num = this.FindControl<NumericUpDown>("m_TimeIncrement");
                 num.Value = App.Settings.NewGame.TimeIncrement.TotalSeconds;
-            }
-
-            // Disable Chess960 if the engine doesn't support it
-            if (!App.Settings.ActiveEngine.SupportChess960()) {
-                gType.SelectedIndex = 0;
-                this.FindControl<StackPanel>("m_GameTypeStack").IsVisible = false;
             }
         }
 
@@ -113,8 +108,43 @@ namespace CoreChess.Views
             this.FindControl<ToggleButton>("m_BlackBtn").IsChecked = false;
         }
 
+        private void OnEngineChanged(object sender, SelectionChangedEventArgs args)
+        {
+            var engine = ((ComboBox)sender).SelectedItem as EngineBase;
+
+            var gType = this.FindControl<ComboBox>("m_GameType");
+            if (!engine.SupportChess960()) {
+                gType.SelectedIndex = 0;
+                this.FindControl<StackPanel>("m_GameTypeStack").IsVisible = false;
+            } else {
+                this.FindControl<StackPanel>("m_GameTypeStack").IsVisible = true;
+            }
+
+            var eloStack = this.FindControl<StackPanel>("m_EngineEloStack");
+            eloStack.IsVisible = engine.CanSetElo();
+            
+            var elo = this.FindControl<NumericUpDown>("m_EngineElo");
+            elo.Maximum = engine.GetMaxElo();
+            elo.Minimum = engine.GetMinElo();
+            elo.Value = elo.Maximum;
+
+            // TheKing personalities
+            if (engine is TheKing) {
+                this.FindControl<StackPanel>("m_PersonalityStack").IsVisible = true;
+                var cmb = this.FindControl<ComboBox>("m_Personality");
+                var opt = engine.GetOption(TheKing.PersonalitiesFolderOptionName);
+                if (opt != null && !string.IsNullOrEmpty(opt.Value))
+                    cmb.Items = TheKing.Personality.GetFromFolder(opt.Value).OrderByDescending(p => p.Elo);
+            } else {
+                this.FindControl<StackPanel>("m_PersonalityStack").IsVisible = false;
+            }
+
+        } // OnEngineChanged
+
         private void OnOkClick(object sender, RoutedEventArgs e)
         {
+            var engine = this.FindControl<ComboBox>("m_Engines");
+            var engineElo = this.FindControl<NumericUpDown>("m_EngineElo");
             var initialPos = this.FindControl<TextBox>("m_FenString");
             var random = this.FindControl<ToggleButton>("m_RandomBtn");
             var white = this.FindControl<ToggleButton>("m_WhiteBtn");
@@ -130,6 +160,8 @@ namespace CoreChess.Views
             // Save new game settings
             App.Settings.NewGame = new Settings.NewGameSettings()
             {
+                EngineId = (engine.SelectedItem as EngineBase)?.Id,
+                EngineElo = engineElo.IsVisible ? (int)engineElo.Value : null,
                 PlayerColor = random.IsChecked.Value ? null : white.IsChecked.Value ? Game.Colors.White : Game.Colors.Black,
                 MaxTime = maxTime,
                 TrainingMode = training.IsChecked == true,
@@ -142,6 +174,8 @@ namespace CoreChess.Views
             this.Close(
                 new Result()
                 {
+                    EngineId = (engine.SelectedItem as EngineBase)?.Id,
+                    EngineElo = engineElo.IsVisible ? (int)engineElo.Value : null,
                     Color = random.IsChecked.Value ? null : white.IsChecked.Value ? Game.Colors.White : Game.Colors.Black,
                     MaximumTime = maxTime,
                     TimeIncrement = TimeSpan.FromSeconds(num.Value),

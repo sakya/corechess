@@ -17,6 +17,8 @@ namespace CoreChess
         #region classes
         public class NewGameSettings
         {
+            public string EngineId { get; set; }
+            public int? EngineElo { get; set; }
             public Game.Colors? PlayerColor { get; set; }
             public bool Chess960 { get; set; }
             public TimeSpan? MaxTime { get; set; }
@@ -120,24 +122,6 @@ namespace CoreChess
         /// Available engines
         /// </summary>
         public List<ChessLib.Engines.EngineBase> Engines { get; set; }
-
-        /// <summary>
-        /// Id of the active engine
-        /// </summary>
-        public string ActiveEngineId { get; set; }
-        /// <summary>
-        /// Active engine with options
-        /// </summary>
-        [JsonIgnore]
-        public ChessLib.Engines.EngineBase ActiveEngine
-        {
-            get
-            {
-                if (!string.IsNullOrEmpty(ActiveEngineId))
-                    return GetEngine(ActiveEngineId);
-                return null;
-            }
-        }
 
         /// <summary>
         /// Id of the engine used for game analysis

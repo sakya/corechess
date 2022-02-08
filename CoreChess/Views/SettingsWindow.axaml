@@ -42,8 +42,6 @@
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
               </Grid.RowDefinitions>
               <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto"/>
@@ -74,24 +72,15 @@
               <TextBlock Grid.Row="5" Text="{i18n:Localize AutoPauseWhenMinimized}" VerticalAlignment="Center" />
               <ToggleSwitch Grid.Row="5" Grid.Column="1" Name="m_AutoPauseWhenMinimized" HorizontalAlignment="Right" />
 
-              <TextBlock Grid.Row="6" Text="{i18n:Localize Engine}" VerticalAlignment="Center" />
-              <ComboBox Name="m_Engines" Grid.Row="6" Grid.Column="1">
-                <ComboBox.ItemTemplate>
-                  <DataTemplate>
-                    <TextBlock Text="{Binding Name}" />
-                  </DataTemplate>
-                </ComboBox.ItemTemplate>
-              </ComboBox>
-
-              <TextBlock Grid.Row="7" Text="{i18n:Localize MaxEngineThinkingTime}" VerticalAlignment="Center" IsVisible="False" />
+              <TextBlock Grid.Row="6" Text="{i18n:Localize MaxEngineThinkingTime}" VerticalAlignment="Center" IsVisible="False" />
               <NumericUpDown Grid.Row="7" Grid.Column="1" Name="m_MaxEngineThinkingTimeSecs" IsVisible="False"
                             Minimum="0"/>
 
-              <TextBlock Grid.Row="8" Text="{i18n:Localize MaxEngineDepth}" VerticalAlignment="Center" IsVisible="False" />
+              <TextBlock Grid.Row="7" Text="{i18n:Localize MaxEngineDepth}" VerticalAlignment="Center" IsVisible="False" />
               <NumericUpDown Grid.Row="8" Grid.Column="1" Name="m_MaxEngineDepth" IsVisible="False"
                             Minimum="0"/>
 
-              <TextBlock Grid.Row="9" Text="{i18n:Localize OpeningBook}" VerticalAlignment="Center" Margin="0,5,0,5" />
+              <TextBlock Grid.Row="8" Text="{i18n:Localize OpeningBook}" VerticalAlignment="Center" Margin="0,5,0,5" />
               <ComboBox Name="m_OpeningBookType" Grid.Row="9" Grid.Column="1"
                         SelectionChanged="OnOpeningBookTypeChanged">
                 <ComboBoxItem Content="{i18n:Localize None}" />
@@ -99,7 +88,7 @@
                 <ComboBoxItem Content="{i18n:Localize Custom}" />
               </ComboBox>
 
-              <Grid Name="m_OpeningBookCustom" Grid.Row="10" Grid.Column="1" Margin="0,0,5,0">
+              <Grid Name="m_OpeningBookCustom" Grid.Row="8" Grid.Column="1" Margin="0,0,5,0">
                 <Grid.ColumnDefinitions>
                   <ColumnDefinition Width="*" />
                   <ColumnDefinition Width="Auto" />

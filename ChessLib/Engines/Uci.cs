@@ -193,6 +193,26 @@ namespace ChessLib.Engines
             return false;
         } // SetElo
 
+        public override int GetMinElo()
+        {
+            var eloOpt = GetOption("UCI_Elo");
+            if (eloOpt != null) {
+                int? min = !string.IsNullOrEmpty(eloOpt.Min) ? (int?)int.Parse(eloOpt.Min) : null;
+                return min ?? 0;
+            }
+            return 0;
+        } // GetMinElo
+
+        public override int GetMaxElo()
+        {
+            var eloOpt = GetOption("UCI_Elo");
+            if (eloOpt != null) {
+                int? max = !string.IsNullOrEmpty(eloOpt.Max) ? (int?)int.Parse(eloOpt.Max) : null;
+                return max ?? 0;
+            }
+            return 0;
+        } // GetMaxElo
+
         public override async Task<bool> ApplyOptions(bool onlyModified)
         {
             // Set Threads option first

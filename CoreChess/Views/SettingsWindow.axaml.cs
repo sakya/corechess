@@ -206,11 +206,6 @@ namespace CoreChess.Views
             chk = this.FindControl<ToggleSwitch>("m_AutoPauseWhenMinimized");
             chk.IsChecked = App.Settings.AutoPauseWhenMinimized;
 
-            cb = this.FindControl<ComboBox>("m_Engines");
-            cb.Items = App.Settings.Engines.OrderBy(e => e.Name);
-            if (!string.IsNullOrEmpty(App.Settings.ActiveEngineId))
-                cb.SelectedItem = App.Settings.GetEngine(App.Settings.ActiveEngineId);
-
             cb = this.FindControl<ComboBox>("m_AnalysisEngines");
             cb.Items = App.Settings.Engines.OrderBy(e => e.Name);
             if (!string.IsNullOrEmpty(App.Settings.GameAnalysisEngineId))
@@ -420,9 +415,6 @@ namespace CoreChess.Views
             App.Settings.WhiteSelectedColor = Utils.ColorConverter.ToHex(m_WhiteSelectedButton.Color);
             App.Settings.BlackColor = Utils.ColorConverter.ToHex(m_BlackButton.Color);
             App.Settings.BlackSelectedColor = Utils.ColorConverter.ToHex(m_BlackSelectedButton.Color);
-
-            cmb = this.FindControl<ComboBox>("m_Engines");
-            App.Settings.ActiveEngineId = (cmb.SelectedItem as EngineBase)?.Id;
 
             cmb = this.FindControl<ComboBox>("m_AnalysisEngines");
             App.Settings.GameAnalysisEngineId = (cmb.SelectedItem as EngineBase)?.Id;

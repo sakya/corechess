@@ -34,6 +34,8 @@
         <RowDefinition Height="Auto"/>
         <RowDefinition Height="Auto"/>
         <RowDefinition Height="Auto"/>
+        <RowDefinition Height="Auto"/>
+        <RowDefinition Height="Auto"/>
       </Grid.RowDefinitions>
       <Grid.ColumnDefinitions>
         <ColumnDefinition Width="*"/>
@@ -52,7 +54,24 @@
         <Image Name="m_Black" Height="100"></Image>
       </ToggleButton>
 
-      <StackPanel Name="m_GameTypeStack" Grid.Row="1" Grid.ColumnSpan="3" Orientation="Vertical">
+      <StackPanel Grid.Row="1" Grid.ColumnSpan="3" Orientation="Vertical">
+        <TextBlock Text="{i18n:Localize Engine}"/>
+        <ComboBox Name="m_Engines" Margin="0,5,0,5"
+                  SelectionChanged="OnEngineChanged">
+          <ComboBox.ItemTemplate>
+            <DataTemplate>
+              <TextBlock Text="{Binding Name}" />
+            </DataTemplate>
+          </ComboBox.ItemTemplate>
+        </ComboBox>
+      </StackPanel>
+
+      <StackPanel Name="m_EngineEloStack" Grid.Row="2" Grid.ColumnSpan="3" Orientation="Vertical">
+        <TextBlock Text="{i18n:Localize Elo}"/>
+        <NumericUpDown Name="m_EngineElo" Margin="0,5,0,5" />
+      </StackPanel>
+      
+      <StackPanel Name="m_GameTypeStack" Grid.Row="3" Grid.ColumnSpan="3" Orientation="Vertical">
         <TextBlock Text="{i18n:Localize GameType}"/>
         <ComboBox Name="m_GameType" Margin="0,5,0,5">
           <ComboBoxItem Content="{i18n:Localize Classic}" />
@@ -60,7 +79,7 @@
         </ComboBox>
       </StackPanel>
 
-      <StackPanel Name="m_PersonalityStack" Grid.Row="2" Grid.ColumnSpan="3" Orientation="Vertical">
+      <StackPanel Name="m_PersonalityStack" Grid.Row="4" Grid.ColumnSpan="3" Orientation="Vertical">
         <TextBlock Text="{i18n:Localize Personality}"/>
         <ComboBox Name="m_Personality" Margin="0,5,0,5" VirtualizationMode="Simple">
           <ComboBox.ItemTemplate>
@@ -80,27 +99,27 @@
         </ComboBox>
       </StackPanel>
 
-      <StackPanel Grid.Row="3" Grid.ColumnSpan="3" Orientation="Vertical">
+      <StackPanel Grid.Row="4" Grid.ColumnSpan="3" Orientation="Vertical">
         <TextBlock Text="{i18n:Localize MaximumTime}"/>
         <NumericUpDown Name="m_MaxTime" Minimum="1" Margin="0,5,0,5" />
       </StackPanel>
 
-      <StackPanel Grid.Row="4" Grid.ColumnSpan="3" Orientation="Vertical">
+      <StackPanel Grid.Row="6" Grid.ColumnSpan="3" Orientation="Vertical">
         <TextBlock Text="{i18n:Localize TimeIncrement}"/>
         <NumericUpDown Name="m_TimeIncrement" Minimum="0" Margin="0,5,0,5" />
       </StackPanel>
 
-      <StackPanel Grid.Row="5" Grid.ColumnSpan="3" Orientation="Vertical">
+      <StackPanel Grid.Row="7" Grid.ColumnSpan="3" Orientation="Vertical">
         <TextBlock Text="{i18n:Localize TrainingMode}"/>
         <ToggleSwitch Name="m_TrainingMode" ToolTip.Tip="{i18n:Localize TrainingModeHelp}" Margin="0,0,0,5" />
       </StackPanel>
 
-      <StackPanel Grid.Row="6" Grid.ColumnSpan="3" Orientation="Vertical">
+      <StackPanel Grid.Row="8" Grid.ColumnSpan="3" Orientation="Vertical">
         <TextBlock Text="{i18n:Localize InitialPositionFen}"/>
         <TextBox Name="m_FenString" Margin="0,5,0,5" />
       </StackPanel>
 
-      <controls:OkCancelButtons Grid.Row="7" Grid.ColumnSpan="3" OkClick="OnOkClick" CancelClick="OnCancelClick" />
+      <controls:OkCancelButtons Grid.Row="9" Grid.ColumnSpan="3" OkClick="OnOkClick" CancelClick="OnCancelClick" />
     </Grid>
   </DockPanel>
 
