@@ -542,9 +542,9 @@ namespace ChessLib.Engines
                             if (m.Success) {
                                 option.Default = m.Groups[1].Value;
 
-                                string[] parts = m.Groups[2].Value.Split(new char[] { ' ' });
+                                string[] parts = Regex.Split(m.Groups[2].Value, "(^| )var ");
                                 foreach (var p in parts) {
-                                    if (p != "var")
+                                    if (!string.IsNullOrEmpty(p?.Trim()))
                                         option.ValidValues.Add(p);
                                 }
                             }
