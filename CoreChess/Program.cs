@@ -144,15 +144,9 @@ namespace CoreChess
                 if (Environment.OSVersion.Platform == PlatformID.Unix) {
                     // Add default engines (flatpak)
                     engines.Add(
-                        new Uci("Stockfish", "/app/bin/Engines/stockfish/stockfish_14.1_linux_x64")
+                        new Uci("Stockfish", "/app/bin/Engines/stockfish/stockfish")
                         {
                             WorkingDir = "/app/bin/Engines/stockfish"
-                        }
-                    );
-                    engines.Add(
-                        new Uci("Komodo", "/app/bin/Engines/komodo/komodo-12.1.1-linux")
-                        {
-                            WorkingDir = "/app/bin/Engines/komodo"
                         }
                     );
                 } else if (Environment.OSVersion.Platform == PlatformID.Win32NT) {
@@ -161,12 +155,6 @@ namespace CoreChess
                         new Uci("Stockfish", Path.Combine(App.BinaryPath, @"Engines\stockfish\stockfish_14.1_win_x64.exe"))
                         {
                             WorkingDir = Path.Combine(App.BinaryPath, @"Engines\stockfish")
-                        }
-                    );
-                    engines.Add(
-                        new Uci("Komodo", Path.Combine(App.BinaryPath, @"Engines\komodo\komodo-12.1.1-64bit.exe"))
-                        {
-                            WorkingDir = Path.Combine(App.BinaryPath, @"Engines\komodo")
                         }
                     );
                     engines.Add(
