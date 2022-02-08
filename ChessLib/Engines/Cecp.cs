@@ -341,6 +341,15 @@ namespace ChessLib.Engines
             return null;
         } // GetElo
 
+        public override bool CanSetElo()
+        {
+            return false;
+        } // CanSetElo
+
+        public override bool SetElo(int elo)
+        {
+            return false;
+        }
         #region process events
         private void ProcessExited(object sender, EventArgs e)
         {

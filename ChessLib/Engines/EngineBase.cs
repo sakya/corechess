@@ -106,6 +106,8 @@ namespace ChessLib.Engines
         public abstract void SetPondering(bool enabled);
         public abstract bool IsOwnBookEnabled();
         public abstract void SetOwnBook(bool enabled);
+        public abstract bool CanSetElo();
+        public abstract bool SetElo(int elo);
         public abstract int? GetElo();
 
         public abstract Task<bool> Start();

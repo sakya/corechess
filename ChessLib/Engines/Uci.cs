@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.SymbolStore;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -169,6 +170,28 @@ namespace ChessLib.Engines
 
             return null;
         } // GetElo
+
+        public override bool CanSetElo()
+        {
+            return GetOption("UCI_LimitStrength") != null && GetOption("UCI_Elo") != null;
+        } // CanSetElo
+
+        public override bool SetElo(int elo)
+        {
+            var lsOpt = GetOption("UCI_LimitStrength");
+            var eloOpt = GetOption("UCI_Elo");
+            if (lsOpt != null && eloOpt != null) {
+                int? min = !string.IsNullOrEmpty(eloOpt.Min) ? (int?)int.Parse(eloOpt.Min) : null;
+                int? max = !string.IsNullOrEmpty(eloOpt.Max) ? (int?)int.Parse(eloOpt.Max) : null;
+
+                if ((!min.HasValue || elo >= min.Value) && (!max.HasValue || elo >= max.Value)) {
+                    eloOpt.Value = elo.ToString(CultureInfo.InvariantCulture);
+                    lsOpt.Value = "true";
+                }
+                return true;
+            }
+            return false;
+        } // SetElo
 
         public override async Task<bool> ApplyOptions(bool onlyModified)
         {
