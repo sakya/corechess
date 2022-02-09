@@ -8,7 +8,7 @@
     <content_rating type="oars-1.1"/>
     <url type="homepage">https://github.com/sakya/corechess</url>
     <description>
-        <p>Engines in the package:</p>
+        <p>Engines included in the package:</p>
         <ul>
           <li>Stockfish</li>
           <li>Leela Chess Zero</li>
@@ -36,7 +36,7 @@
     <releases>
       <release version="0.10.0" date="2022-02-09">
         <description>
-          <p>Changelog</p>
+          <p>Release Notes:</p>
           <ul>
             <li>Added Leela Chess Zero engine</li>
             <li>Select engine when creating a new game</li>
