@@ -83,6 +83,9 @@ namespace ChessLib.Engines
                 await Register();
             await WriteCommand("uci");
             ParseInfo(await ReadOutput("uciok"));
+
+            if (m_Process.HasExited)
+                throw new Exception("Failed to start engine");
             return true;
         } // Start
 
@@ -532,7 +535,7 @@ namespace ChessLib.Engines
         {
             string res = string.Empty;
             DateTime started = DateTime.UtcNow;
-            while (m_Process != null) {
+            while (m_Process != null && !m_Process.HasExited) {
                 m_ProcessOutputSema.WaitOne();
                 res = m_ProcessOutput.ToString();
                 if (commandEnd == null && res.Length > 0 || commandEnd != null && res.TrimEnd().EndsWith(commandEnd)) {
