@@ -507,11 +507,13 @@ namespace CoreChess.Views
 
                 settings.Players.Add(new HumanPlayer(newGame.Color.Value, App.Settings.PlayerName, null));
 
-                var engine = App.Settings.GetEngine(newGame.EngineId);
+                var engine = App.Settings.GetEngine(newGame.EngineId)?.Copy();
+                if (newGame.EngineElo.HasValue)
+                    engine.SetElo(newGame.EngineElo.Value);
                 var enginePlayer = new EnginePlayer(newGame.Color == Game.Colors.White ? Game.Colors.Black : Game.Colors.White,
-                    newGame.Personality?.DisplayName ?? engine?.Name,
-                    engine?.GetElo());
-                enginePlayer.Engine = engine.Copy();
+                    newGame.Personality?.DisplayName ?? engine.Name,
+                    engine.GetElo());
+                enginePlayer.Engine = engine;
                 enginePlayer.Personality = newGame.Personality;
                 enginePlayer.OpeningBookFileName = App.Settings.OpeningBook;
                 settings.Players.Add(enginePlayer);

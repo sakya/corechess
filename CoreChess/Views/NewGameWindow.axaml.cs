@@ -70,6 +70,11 @@ namespace CoreChess.Views
                 if (engine.SelectedItem == null)
                     engine.SelectedIndex = 0;
 
+                if (App.Settings.NewGame.EngineElo.HasValue) {
+                    var elo = this.FindControl<NumericUpDown>("m_EngineElo");
+                    elo.Value = App.Settings.NewGame.EngineElo.Value;
+                }
+
                 if (App.Settings.NewGame.Chess960)
                     gType.SelectedIndex = 1;
 

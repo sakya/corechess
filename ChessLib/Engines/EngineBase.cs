@@ -132,7 +132,13 @@ namespace ChessLib.Engines
 
         public Option GetOption(string name)
         {
-            return Options?.Where(o => string.Compare(o.Name, name, StringComparison.InvariantCultureIgnoreCase) == 0).FirstOrDefault();
+            var res = Options?.Where(o => string.Compare(o.Name, name, StringComparison.InvariantCultureIgnoreCase) == 0).FirstOrDefault();
+            if (res == null && name.Contains("_")) {
+                // Try to remove the underscores (Dragon 2.6 ha options "UCI Elo" intead of "UCI_Elo")
+                name = name.Replace("_", " ");
+                res = Options?.Where(o => string.Compare(o.Name, name, StringComparison.InvariantCultureIgnoreCase) == 0).FirstOrDefault();
+            }
+            return res;
         } // GetOption
 
         public string GetExePath(string fileName)

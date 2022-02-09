@@ -22,6 +22,8 @@ namespace ChessLib.Engines
         public const string AnalyzeModeOptionName = "UCI_AnalyseMode";
         public const string PonderOptionName = "Ponder";
         public const string OwnBookOptionName = "OwnBook";
+        public const string EloOptionName = "UCI_Elo";
+        public const string LimitStrengthOptionName = "UCI_LimitStrength";
 
         private StringBuilder m_EngineError = new StringBuilder();
         private StringBuilder m_ProcessOutput = new StringBuilder();
@@ -162,9 +164,9 @@ namespace ChessLib.Engines
         } // SetOwnBook
 
         public override int? GetElo() {
-            if (GetOption("UCI_LimitStrength")?.Value == "true") {
+            if (GetOption(LimitStrengthOptionName)?.Value == "true") {
                 int res;
-                if (int.TryParse(GetOption("UCI_Elo").Value, out res))
+                if (int.TryParse(GetOption(EloOptionName).Value, out res))
                     return res;
             }
 
@@ -173,18 +175,18 @@ namespace ChessLib.Engines
 
         public override bool CanSetElo()
         {
-            return GetOption("UCI_LimitStrength") != null && GetOption("UCI_Elo") != null;
+            return GetOption(LimitStrengthOptionName) != null && GetOption(EloOptionName) != null;
         } // CanSetElo
 
         public override bool SetElo(int elo)
         {
-            var lsOpt = GetOption("UCI_LimitStrength");
-            var eloOpt = GetOption("UCI_Elo");
+            var lsOpt = GetOption(LimitStrengthOptionName);
+            var eloOpt = GetOption(EloOptionName);
             if (lsOpt != null && eloOpt != null) {
                 int? min = !string.IsNullOrEmpty(eloOpt.Min) ? (int?)int.Parse(eloOpt.Min) : null;
                 int? max = !string.IsNullOrEmpty(eloOpt.Max) ? (int?)int.Parse(eloOpt.Max) : null;
 
-                if ((!min.HasValue || elo >= min.Value) && (!max.HasValue || elo >= max.Value)) {
+                if ((!min.HasValue || elo >= min.Value) && (!max.HasValue || elo <= max.Value)) {
                     eloOpt.Value = elo.ToString(CultureInfo.InvariantCulture);
                     lsOpt.Value = "true";
                 }
@@ -195,7 +197,7 @@ namespace ChessLib.Engines
 
         public override int GetMinElo()
         {
-            var eloOpt = GetOption("UCI_Elo");
+            var eloOpt = GetOption(EloOptionName);
             if (eloOpt != null) {
                 int? min = !string.IsNullOrEmpty(eloOpt.Min) ? (int?)int.Parse(eloOpt.Min) : null;
                 return min ?? 0;
@@ -205,7 +207,7 @@ namespace ChessLib.Engines
 
         public override int GetMaxElo()
         {
-            var eloOpt = GetOption("UCI_Elo");
+            var eloOpt = GetOption(EloOptionName);
             if (eloOpt != null) {
                 int? max = !string.IsNullOrEmpty(eloOpt.Max) ? (int?)int.Parse(eloOpt.Max) : null;
                 return max ?? 0;

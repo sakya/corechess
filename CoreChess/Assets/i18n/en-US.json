@@ -106,6 +106,7 @@
   "MaximumTime": "Maximum time (mins)",
   "minutes": "minutes",
   "MissingEngineCommand": "Missing engine command",
+  "MissingEngineName": "Missing engine name",
   "Moves": "Moves",
   "No": "No",
   "NoEnginesError": "No engine configured, cannot start new game",
