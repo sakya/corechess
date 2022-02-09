@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Un4seen.Bass;
@@ -139,46 +140,56 @@ namespace CoreChess
                 }
             }
 
-            if (engines.Count == 0) {
-                if (Environment.OSVersion.Platform == PlatformID.Unix) {
-                    // Add default engines (flatpak)
-                    engines.Add(
-                        new Uci("Stockfish", "/app/bin/Engines/stockfish/stockfish")
-                        {
-                            WorkingDir = "/app/bin/Engines/stockfish"
-                        }
-                    );
-                } else if (Environment.OSVersion.Platform == PlatformID.Win32NT) {
-                    // Add default engines (Inno Setup)
-                    engines.Add(
-                        new Uci("Stockfish", Path.Combine(App.BinaryPath, @"Engines\stockfish\stockfish_14.1_win_x64.exe"))
-                        {
-                            WorkingDir = Path.Combine(App.BinaryPath, @"Engines\stockfish")
-                        }
-                    );
-                    engines.Add(
-                        new Uci("Leela Chess Zero", Path.Combine(App.BinaryPath, @"Engines\lc0\lc0.exe"))
-                        {
-                            WorkingDir = Path.Combine(App.BinaryPath, @"Engines\lc0")
-                        }
-                    );
-                }
+            List<EngineBase> defaultEngines = new List<EngineBase>();
+            if (Environment.OSVersion.Platform == PlatformID.Unix) {
+                // Add default engines (flatpak)
+                defaultEngines.Add(
+                    new Uci("Stockfish", "/app/bin/Engines/stockfish/stockfish")
+                    {
+                        WorkingDir = "/app/bin/Engines/stockfish"
+                    }
+                );
+                defaultEngines.Add(
+                    new Uci("Leela Chess Zero", "/app/bin/Engines/lc0/lc0")
+                    {
+                        WorkingDir = "/app/bin/Engines/lc0"
+                    }
+                );
+            } else if (Environment.OSVersion.Platform == PlatformID.Win32NT) {
+                // Add default engines (Inno Setup)
+                defaultEngines.Add(
+                    new Uci("Stockfish", Path.Combine(App.BinaryPath, @"Engines\stockfish\stockfish_14.1_win_x64.exe"))
+                    {
+                        WorkingDir = Path.Combine(App.BinaryPath, @"Engines\stockfish")
+                    }
+                );
+                defaultEngines.Add(
+                    new Uci("Leela Chess Zero", Path.Combine(App.BinaryPath, @"Engines\lc0\lc0.exe"))
+                    {
+                        WorkingDir = Path.Combine(App.BinaryPath, @"Engines\lc0")
+                    }
+                );
+            }
 
-                // Initialize engines (get options list)
-                foreach (var engine in engines) {
-                    if (File.Exists(engine.Command)) {
-                        try {
-                            await engine.Start();
-                            await engine.Stop();
+            // Check missing engines
+            foreach (var dEngine in defaultEngines) {
+                var existingEngine = engines.Where(e => e.Command == dEngine.Command).FirstOrDefault();
+                if (existingEngine == null) {
+                    // Initialize engine (get options list)
+                    try {
+                        await dEngine.Start();
+                        await dEngine.Stop();
 
-                            engine.SetPondering(true);
-                            engine.SetOwnBook(false);
-                        } catch {
+                        dEngine.SetPondering(true);
+                        dEngine.SetOwnBook(false);
 
-                        }
+                        engines.Add(dEngine);
+                    } catch {
+
                     }
                 }
             }
+
             App.Settings.Engines = engines;
             App.Settings.Save(App.SettingsPath);
 
