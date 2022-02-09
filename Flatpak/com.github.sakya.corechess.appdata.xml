@@ -14,7 +14,7 @@
           <li>Leela Chess Zero</li>
         </ul>
       
-        <p>Supported engines:</p>
+        <p>Supported chess engines:</p>
         <ul>
             <li>UCI (Universal Chess Interface) like Stockfish, Komodo and Leela Chess Zero</li>
             <li>CECP (Chess Engine Communication Protocol) like Crafty</li>
@@ -34,15 +34,7 @@
         </screenshot>
     </screenshots>
     <releases>
-      <release version="0.10.0" date="2022-02-09">
-        <description>
-          <p>Release Notes:</p>
-          <ul>
-            <li>Added Leela Chess Zero engine</li>
-            <li>Select engine when creating a new game</li>
-          </ul>
-        </description>
-      </release>
+      <release version="0.10.0" date="2022-02-09" />
       <release version="0.9.0" date="2022-02-05">
             <description>
                 <p>First public release</p>
