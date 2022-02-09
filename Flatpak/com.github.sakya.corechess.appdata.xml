@@ -8,7 +8,7 @@
     <content_rating type="oars-1.1"/>
     <url type="homepage">https://github.com/sakya/corechess</url>
     <description>
-        <p>Included engines:</p>
+        <p>Engines in the package:</p>
         <ul>
           <li>Stockfish</li>
           <li>Leela Chess Zero</li>
