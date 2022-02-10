@@ -33,7 +33,6 @@ namespace ChessLib.Engines
         public Uci (string name, string command)
             : base(name, command)
         {
-
         }
 
         public string RegisterName { get; set; }
@@ -597,7 +596,6 @@ namespace ChessLib.Engines
                                 }
                             }
                         } else if (option.Type == "button") {
-
                         } else if (option.Type == "string") {
                             var m = Regex.Match(match.Groups[3].Value, "default (.*)");
                             if (m.Success)
