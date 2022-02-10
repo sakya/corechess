@@ -14,7 +14,7 @@ namespace ChessLib.Books
     {
         public class Entry : IBookEntry
         {
-            public UInt64 Key { get; set;}
+            public UInt64 Key { get; set; }
             public UInt16 Move { get; set; }
             public UInt16 Weight { get; set; }
             public UInt32 Learn { get; set; }
@@ -62,7 +62,7 @@ namespace ChessLib.Books
                 return Weight;
             }
 
-            private int GetIntValue(System.Collections.BitArray bits, int start, int length) 
+            private int GetIntValue(System.Collections.BitArray bits, int start, int length)
             {
                 int value = 0;
                 for (int i = start; i < start + length; i++) {
@@ -450,13 +450,13 @@ namespace ChessLib.Books
             Entry middleEntry = null;
             Entry lastEntry = null;
             long first = 0;
-            long middle = 0;            
+            long middle = 0;
             long last = (fs.Length - 16) / 16;
             if (last <= 0)
                 return null;
-                
+
             while(true) {
-                if (last - first == 1) 
+                if (last - first == 1)
                     return lastEntry;
 
                 middle = (first + last) / 2;
@@ -468,7 +468,7 @@ namespace ChessLib.Books
                 } else {
                     first = middle;
                     firstEntry = middleEntry;
-                }                
+                }
             }
         } // FindKey
 

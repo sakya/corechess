@@ -20,12 +20,12 @@ namespace ChessLib.EBoards
                 WriteTimeout = 500;
             }
 
-            public string PortName { get; set;}
+            public string PortName { get; set; }
             public int ReadTimeout { get;set; }
             public int WriteTimeout { get; set; }
         } // DGTSettings
 
-        public class DgtClock 
+        public class DgtClock
         {
             public string Name { get; set; }
             public Version Version { get; set; }
@@ -40,9 +40,9 @@ namespace ChessLib.EBoards
             public byte[] Data { get; private set; }
 
             public string StringData {
-                get { 
+                get {
                     if (Data != null)
-                        return Encoding.ASCII.GetString(Data); 
+                        return Encoding.ASCII.GetString(Data);
                     return null;
                 }
             }
@@ -73,7 +73,7 @@ namespace ChessLib.EBoards
         #endregion
 
         #region defines
-        enum Modes 
+        enum Modes
         {
             Idle,
             UpdateBoard,
@@ -84,7 +84,7 @@ namespace ChessLib.EBoards
             Bus
         }
 
-        enum PcToBoardCommands 
+        enum PcToBoardCommands
         {
             DGT_REQ_RESET = 0x40,
             DGT_REQ_SBI_CLOCK = 0x41,
@@ -184,7 +184,7 @@ namespace ChessLib.EBoards
 
         } // BoardToPcMessages
 
-        enum LogFileMessages 
+        enum LogFileMessages
         {
             LOG_NOP2 = 0x00,
             LOG_SUBSEC_DELAY = 0x10,
@@ -209,7 +209,7 @@ namespace ChessLib.EBoards
             LOG_EMPTY = 0xff
         }
 
-        enum Pieces 
+        enum Pieces
         {
             Empty = 0x00,
             WhitePawn = 0x01,
@@ -241,7 +241,7 @@ namespace ChessLib.EBoards
             }
 
             public string Position { get; set; }
-        }        
+        }
         public delegate void BoardUpdateHandler(object sender, BoardUpdateArgs e);
         public event BoardUpdateHandler BoardUpdate;
 
@@ -284,7 +284,7 @@ namespace ChessLib.EBoards
         public DGT(DGTSettings settings) :
             base(settings)
         {
-            
+
         }
 
         private DGTSettings LocalSettings { get { return (DGTSettings)Settings; } }
@@ -295,7 +295,7 @@ namespace ChessLib.EBoards
 
         public DgtClock Clock { get; private set; }
 
-        public override async Task<bool> Init() 
+        public override async Task<bool> Init()
         {
             m_Port = new SerialPort();
             m_Port.PortName = LocalSettings.PortName;
@@ -322,14 +322,14 @@ namespace ChessLib.EBoards
                     Clock = new DgtClock();
                     Clock.Version = cv;
                 }
-                
+
             } catch {
                 return false;
             }
             return true;
         }
 
-        public override void Dispose() 
+        public override void Dispose()
         {
             if (m_Port != null) {
                 if (m_Port.IsOpen)
@@ -355,7 +355,7 @@ namespace ChessLib.EBoards
 
         public async Task<Version> GetHardwareVersion()
         {
-            if (await WriteCommand(PcToBoardCommands.DGT_REQ_HARDWARE_VERSION)) { 
+            if (await WriteCommand(PcToBoardCommands.DGT_REQ_HARDWARE_VERSION)) {
                 var res = await WaitMessage(BoardToPcMessages.DGT_MSG_HARDWARE_VERSION);
                 if (res != null)
                     return new Version(res.Data[0], res.Data[1]);
@@ -497,8 +497,8 @@ namespace ChessLib.EBoards
                 buffer[buffer.Length - 1] = 0;
 
                 Buffer.BlockCopy(data, 0, buffer, 2, data.Length);
-                
-                m_Port.Write(buffer, 0, buffer.Length);                
+
+                m_Port.Write(buffer, 0, buffer.Length);
             }
             await Task.Delay(100);
 
@@ -512,11 +512,11 @@ namespace ChessLib.EBoards
 
             Dictionary<char, byte> chars = new Dictionary<char, byte>()
             {
-                {'0', 0x3f}, {'1', 0x06}, {'2', 0x5b}, {'3', 0x4f}, {'4', 0x66}, {'5', 0x6d}, {'6', 0x7d}, {'7', 0x07}, 
-                {'8', 0x7f}, {'9', 0x6f}, {'a', 0x5f}, {'b', 0x7c}, {'c', 0x58}, {'d', 0x5e}, {'e', 0x7b}, {'f', 0x71}, 
-                {'g', 0x3d}, {'h', 0x74}, {'i', 0x10}, {'j', 0x1e}, {'k', 0x75}, {'l', 0x38}, {'m', 0x55}, {'n', 0x54}, 
-                {'o', 0x5c}, {'p', 0x73}, {'q', 0x67}, {'r', 0x50}, {'s', 0x6d}, {'t', 0x78}, {'u', 0x3e}, {'v', 0x2a}, 
-                {'w', 0x7e}, {'x', 0x64}, {'y', 0x6e}, {'z', 0x5b}, {' ', 0x00}, {'-', 0x40}, {'/', 0x52}, {'|', 0x36}, 
+                {'0', 0x3f}, {'1', 0x06}, {'2', 0x5b}, {'3', 0x4f}, {'4', 0x66}, {'5', 0x6d}, {'6', 0x7d}, {'7', 0x07},
+                {'8', 0x7f}, {'9', 0x6f}, {'a', 0x5f}, {'b', 0x7c}, {'c', 0x58}, {'d', 0x5e}, {'e', 0x7b}, {'f', 0x71},
+                {'g', 0x3d}, {'h', 0x74}, {'i', 0x10}, {'j', 0x1e}, {'k', 0x75}, {'l', 0x38}, {'m', 0x55}, {'n', 0x54},
+                {'o', 0x5c}, {'p', 0x73}, {'q', 0x67}, {'r', 0x50}, {'s', 0x6d}, {'t', 0x78}, {'u', 0x3e}, {'v', 0x2a},
+                {'w', 0x7e}, {'x', 0x64}, {'y', 0x6e}, {'z', 0x5b}, {' ', 0x00}, {'-', 0x40}, {'/', 0x52}, {'|', 0x36},
                 {'\\', 0x64}, {'?', 0x53}, {'@', 0x65}, {'=', 0x48}, {'_', 0x08}
             };
 

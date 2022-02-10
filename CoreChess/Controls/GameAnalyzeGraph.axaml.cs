@@ -54,7 +54,7 @@ namespace CoreChess.Controls
             this.InitializeComponent();
         }
 
-        public Game Game { get; set;}
+        public Game Game { get; set; }
         public bool IsInteractive { get; set; }
 
         public void Clear()
@@ -69,7 +69,7 @@ namespace CoreChess.Controls
             m_Line = null;
         } // Clear
 
-        public void SetResults(List<ChessLib.Engines.EngineBase.AnalyzeResult> results) 
+        public void SetResults(List<ChessLib.Engines.EngineBase.AnalyzeResult> results)
         {
             m_Analyze.IsVisible = false;
             Draw(results);
@@ -84,10 +84,10 @@ namespace CoreChess.Controls
             m_SelectedResultIndex = null;
             bool completed = false;
             if (Game != null) {
-                m_CancellationTokenSource = new CancellationTokenSource();                
+                m_CancellationTokenSource = new CancellationTokenSource();
                 var results = await Game.Analyze(
                     App.Settings.GameAnalysisEngine.Copy(),
-                    depth, 
+                    depth,
                     (idx, count) => {
                         m_Progress.Maximum = count;
                         m_Progress.Value = idx;
@@ -113,10 +113,10 @@ namespace CoreChess.Controls
         public async Task<bool> Abort()
         {
             if (m_CancellationTokenSource != null) {
-                m_CancellationTokenSource.Cancel(); 
+                m_CancellationTokenSource.Cancel();
                 while (m_CancellationTokenSource != null)
                     await Task.Delay(10);
-            }               
+            }
 
             return true;
         }
@@ -203,7 +203,7 @@ namespace CoreChess.Controls
 
         private void OnMouseDown(object sender, Avalonia.Input.PointerPressedEventArgs args)
         {
-            if (IsInteractive && args.GetCurrentPoint(this).Properties.IsLeftButtonPressed) 
+            if (IsInteractive && args.GetCurrentPoint(this).Properties.IsLeftButtonPressed)
                 m_MouseDownIndex = GetMouseOverIndex(args);
         } // OnMouseDown
 
@@ -228,15 +228,15 @@ namespace CoreChess.Controls
                 if (a.Score.CentiPawns > 9000)
                     a.Score.CentiPawns = 3000;
                 else if (a.Score.CentiPawns < -9000)
-                    a.Score.CentiPawns = -3000;                
+                    a.Score.CentiPawns = -3000;
             }
 
             int max = results.Max(r => Math.Abs(r.Score.CentiPawns));
             int step = (int)Math.Round(1000.0 / ((double)results.Count - 1));
             var bitmap = new WriteableBitmap(new PixelSize(step * (results.Count - 1), 250), new Vector(96, 96),
-                Avalonia.Platform.PixelFormat.Rgba8888, Avalonia.Platform.AlphaFormat.Opaque);            
+                Avalonia.Platform.PixelFormat.Rgba8888, Avalonia.Platform.AlphaFormat.Opaque);
 
-            using (var fb = bitmap.Lock()) {    
+            using (var fb = bitmap.Lock()) {
                 int centerY = bitmap.PixelSize.Height / 2;
                 // Draw the middle line
                 DrawLine(fb, centerY, 0, centerY, bitmap.PixelSize.Width, centerY);
@@ -264,13 +264,13 @@ namespace CoreChess.Controls
                     }
                     if (r.Color != Game.Settings.HumanPlayerColor)
                         value *= -1;
-                        
+
                     int y = centerY - (value * centerY / max);
                     if (y < 0)
                         y = 0;
                     else if (y >= 250)
                         y = 249;
-                    
+
                     DrawLine(fb, centerY, (int)lastPoint.X, (int)lastPoint.Y, x, y);
                     lastPoint = new Avalonia.Point(x, y);
                     x += step;
@@ -289,7 +289,7 @@ namespace CoreChess.Controls
             Canvas.SetLeft(m_GraphCanvas, 0);
             Canvas.SetTop(m_GraphCanvas, 0);
             m_Canvas.Height = m_GraphCanvas.Height;
-            m_Canvas.Children.Add(m_GraphCanvas);  
+            m_Canvas.Children.Add(m_GraphCanvas);
 
             if (IsInteractive) {
                 m_Line = new Border()
@@ -300,7 +300,7 @@ namespace CoreChess.Controls
                     Width = 2,
                     ZIndex = 2,
                     IsVisible = false,
-                };   
+                };
                 m_Canvas.Children.Add(m_Line);
 
                 m_Marker = new Border()
@@ -321,12 +321,12 @@ namespace CoreChess.Controls
         private void DrawLine(Avalonia.Platform.ILockedFramebuffer fb, int centerY, int fromX, int fromY, int toX, int toY)
         {
             Avalonia.Media.Color color = Avalonia.Media.Colors.GhostWhite;
-            if (fromX == toX) {                
+            if (fromX == toX) {
                 int from = Math.Min(fromY, toY);
                 int to = Math.Max(fromY, toY);
                 for (int y = from; y <= to; y++) {
                     if (y == centerY)
-                        color = ((Avalonia.Media.SolidColorBrush)m_Progress.Foreground).Color;                    
+                        color = ((Avalonia.Media.SolidColorBrush)m_Progress.Foreground).Color;
                     else if (y < centerY)
                         color = Avalonia.Media.Colors.GhostWhite;
                     else
@@ -340,7 +340,7 @@ namespace CoreChess.Controls
                 double m = (double)(fromY - toY) / (double)(fromX - toX);
 
                 int from = Math.Min(fromX, toX);
-                int to = Math.Max(fromX, toX);        
+                int to = Math.Max(fromX, toX);
                 for (int x = from; x < to; x++) {
                     int y = (int)(m * (x - fromX) + fromY);
                     DrawLine(fb, centerY, x, centerY, x, y);

@@ -223,11 +223,10 @@ namespace CoreChess.Views
             }
         } // Context
 
-
         class Eco {
-            public string Code { get; set;}
+            public string Code { get; set; }
             public string Moves { get; set; }
-            public string Name { get; set;}
+            public string Name { get; set; }
             public string Variation { get; set; }
         } // Eco
         #endregion
@@ -245,7 +244,6 @@ namespace CoreChess.Views
 
         public MainWindow()
         {
-
         }
 
         public MainWindow(string[] args)
@@ -398,7 +396,6 @@ namespace CoreChess.Views
                         m_EngineMessagesRows.RemoveAt(m_EngineMessagesRows.Count - 1);
                     m_EngineMessagesRows.Insert(0, sb.ToString());
                     m_EngineMessage.Text = string.Join(Environment.NewLine, m_EngineMessagesRows);
-
                 }
             }
         } // OnEngineThinking
@@ -831,7 +828,6 @@ namespace CoreChess.Views
                     try {
                         await m_Game.Save(m_Game.FileName);
                     } catch {
-
                     }
                 }
             }
@@ -893,7 +889,6 @@ namespace CoreChess.Views
                     try {
                         game = await Game.Load(m_args[0]);
                     } catch {
-
                     }
                 }
             } else {
@@ -903,7 +898,6 @@ namespace CoreChess.Views
                     try {
                         game = await Game.Load(autoSave);
                     } catch {
-
                     }
                     File.Delete(autoSave);
                 }
@@ -1336,7 +1330,6 @@ namespace CoreChess.Views
                         await gameAnalysis.Game.Save(gameAnalysis.Game.FileName);
                         DisplayMove(m_Game.Moves.Count - 1);
                     } catch {
-
                     }
                 }
             };

@@ -44,7 +44,7 @@ namespace ChessLib.Engines
             public string Ponder { get; set; }
         } // BestMove
 
-        public class AnalyzeResult 
+        public class AnalyzeResult
         {
             public AnalyzeResult(Game.Colors colors, Info.ScoreValue score)
             {
@@ -52,7 +52,7 @@ namespace ChessLib.Engines
                 Score = score;
             }
 
-            public Game.Colors Color { get; set;}
+            public Game.Colors Color { get; set; }
             public Info.ScoreValue Score { get; set; }
         } // AnalyzeResult
 

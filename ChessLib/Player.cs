@@ -18,7 +18,7 @@ namespace ChessLib
 
         public string Name { get; set; }
         public int? Elo { get; set; }
-        public Game.Colors Color { get; set;}
+        public Game.Colors Color { get; set; }
         public string DisplayName {
             get {
                 if (Elo.HasValue)
@@ -33,8 +33,8 @@ namespace ChessLib
     /// </summary>
     public class EnginePlayer : Player
     {
-        public EnginePlayer(Game.Colors color, string name, int? elo) 
-            : base(color, name, elo)        
+        public EnginePlayer(Game.Colors color, string name, int? elo)
+            : base(color, name, elo)
         {
 
         }
@@ -50,12 +50,12 @@ namespace ChessLib
     /// <summary>
     /// A human player
     /// </summary>
-    public class HumanPlayer : Player    
+    public class HumanPlayer : Player
     {
         public HumanPlayer(Game.Colors color, string name, int? elo)
             : base(color, name, elo)
         {
-            
+
         }
     } // HumanPlayer
 }

@@ -94,7 +94,7 @@ namespace CoreChess
         public bool EnableAudio { get; set; }
         public bool EnableDragAndDrop { get; set; }
         public bool ShowValidMoves { get; set; }
-        public bool ShowFileRankNotation { get; set;}
+        public bool ShowFileRankNotation { get; set; }
         public bool AutoSaveGameOnExit { get; set; }
         public bool AutoPauseWhenMinimized { get; set; }
         public int MaxEngineThinkingTimeSecs { get; set; }

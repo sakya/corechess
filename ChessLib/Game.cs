@@ -28,7 +28,7 @@ namespace ChessLib
             }
 
             public string Event { get; set; }
-            public List<Player> Players { get; set;}
+            public List<Player> Players { get; set; }
             public string WhitePlayerName {
                 get {
                     return Players.Where(p => p.Color == Colors.White).FirstOrDefault()?.Name;
@@ -228,7 +228,7 @@ namespace ChessLib
         } // Dispose
 
         #region public properties
-        public Version Version { get; set;}
+        public Version Version { get; set; }
 
         /// <summary>
         /// The game initial position (FEN)
@@ -275,7 +275,7 @@ namespace ChessLib
         /// </summary>
         /// <value></value>
         [JsonIgnore]
-        public string FileName { get; set;}
+        public string FileName { get; set; }
         public GameSettings Settings { get; set; }
         public DateTime StartedTime { get; set; }
         public Statuses Status { get; set; }
@@ -1564,7 +1564,6 @@ namespace ChessLib
                             await tempGame.DoMove($"{square.Notation}{toSquare.Notation}", false);
                             return true;
                         } catch {
-
                         }
                     }
                 }
@@ -1631,106 +1630,14 @@ namespace ChessLib
         {
             var res = new List<Board.Square>();
             if (startSquare.Piece != null) {
-                var piece = startSquare.Piece;
-                Board.Square nextSquare = null;
-                char? nextFile = null;
-                char? prevFile = null;
-                switch (piece.Type) {
+                switch (startSquare.Piece.Type) {
                     // PAWNS
                     case Piece.Pieces.Pawn:
-                        // Normal moves
-                        if (piece.Color == Colors.White && startSquare.Rank < 8)
-                            nextSquare = Board.GetSquare($"{startSquare.File}{startSquare.Rank + 1}");
-                        else if (piece.Color == Colors.Black && startSquare.Rank > 1)
-                            nextSquare = Board.GetSquare($"{startSquare.File}{startSquare.Rank - 1}");
-                        if (nextSquare != null && nextSquare.Piece == null)
-                            res.Add(nextSquare);
-
-                        if (!piece.Moved) {
-                            if (piece.Color == Colors.White && Board.GetSquare($"{startSquare.File}{startSquare.Rank + 1}").Piece == null && startSquare.Rank + 2 <= 8)
-                                nextSquare = Board.GetSquare($"{startSquare.File}{startSquare.Rank + 2}");
-                            else if (piece.Color == Colors.Black && Board.GetSquare($"{startSquare.File}{startSquare.Rank - 1}").Piece == null && startSquare.Rank - 2 >= 1)
-                                nextSquare = Board.GetSquare($"{startSquare.File}{startSquare.Rank - 2}");
-
-                            if (nextSquare?.Piece == null)
-                                res.Add(nextSquare);
-                        }
-
-                        // Capture
-                        nextFile = Board.GetNextFile(startSquare.File);
-                        if (nextFile != null) {
-                            if (piece.Color == Colors.White && startSquare.Rank < 8)
-                                nextSquare = Board.GetSquare($"{nextFile}{startSquare.Rank + 1}");
-                            else if (piece.Color == Colors.Black && startSquare.Rank > 1)
-                                nextSquare = Board.GetSquare($"{nextFile}{startSquare.Rank - 1}");
-
-                            if (nextSquare != null && nextSquare.Piece != null && nextSquare.Piece.Color != piece.Color)
-                                res.Add(nextSquare);
-                        }
-
-                        prevFile = Board.GetPreviousFile(startSquare.File);
-                        if (prevFile != null) {
-                            if (piece.Color == Colors.White && startSquare.Rank < 8)
-                                nextSquare = Board.GetSquare($"{prevFile}{startSquare.Rank + 1}");
-                            else if(piece.Color == Colors.Black && startSquare.Rank > 1)
-                                nextSquare = Board.GetSquare($"{prevFile}{startSquare.Rank - 1}");
-
-                            if (nextSquare != null && nextSquare.Piece != null && nextSquare.Piece.Color != piece.Color)
-                                res.Add(nextSquare);
-                        }
-
-                        // En passant
-                        if (!string.IsNullOrEmpty(EnPassant)) {
-                            var enPassantSquare = Board.GetSquare(EnPassant);
-                            if (enPassantSquare.Piece == null && (enPassantSquare.File == prevFile || enPassantSquare.File == nextFile)) {
-                                if (piece.Color == Colors.White && enPassantSquare.Rank == startSquare.Rank + 1)
-                                    res.Add(enPassantSquare);
-                                else if (piece.Color == Colors.Black && enPassantSquare.Rank == startSquare.Rank - 1)
-                                    res.Add(enPassantSquare);
-                            }
-                        }
+                        res.AddRange(GetAvailableSquaresPawn(startSquare));
                         break;
                     // KNIGHT
                     case Piece.Pieces.Knight:
-                        nextFile = Board.GetNextFile(startSquare.File);
-                        if (nextFile != null) {
-                            nextSquare = startSquare.Rank > 2 ? Board.GetSquare($"{nextFile}{startSquare.Rank - 2}") : null;
-                            if (nextSquare != null && (nextSquare.Piece == null || nextSquare.Piece.Color != piece.Color))
-                                res.Add(nextSquare);
-                            nextSquare = startSquare.Rank < 7 ? Board.GetSquare($"{nextFile}{startSquare.Rank + 2}") : null;
-                            if (nextSquare != null && (nextSquare.Piece == null || nextSquare.Piece.Color != piece.Color))
-                                res.Add(nextSquare);
-
-                            nextFile = Board.GetNextFile(nextFile.Value);
-                            if (nextFile != null) {
-                                nextSquare = startSquare.Rank > 1 ? Board.GetSquare($"{nextFile}{startSquare.Rank - 1}") : null;
-                                if (nextSquare != null && (nextSquare.Piece == null || nextSquare.Piece.Color != piece.Color))
-                                    res.Add(nextSquare);
-                                nextSquare = startSquare.Rank < 8 ? Board.GetSquare($"{nextFile}{startSquare.Rank + 1}") : null;
-                                if (nextSquare != null && (nextSquare.Piece == null || nextSquare.Piece.Color != piece.Color))
-                                    res.Add(nextSquare);
-                            }
-                        }
-
-                        prevFile = Board.GetPreviousFile(startSquare.File);
-                        if (prevFile != null) {
-                            nextSquare = startSquare.Rank > 2 ? Board.GetSquare($"{prevFile}{startSquare.Rank - 2}") : null;
-                            if (nextSquare != null && (nextSquare.Piece == null || nextSquare.Piece.Color != piece.Color))
-                                res.Add(nextSquare);
-                            nextSquare = startSquare.Rank < 7 ? Board.GetSquare($"{prevFile}{startSquare.Rank + 2}") : null;
-                            if (nextSquare != null && (nextSquare.Piece == null || nextSquare.Piece.Color != piece.Color))
-                                res.Add(nextSquare);
-
-                            prevFile = Board.GetPreviousFile(prevFile.Value);
-                            if (prevFile != null) {
-                                nextSquare = startSquare.Rank > 1 ? Board.GetSquare($"{prevFile}{startSquare.Rank - 1}") : null;
-                                if (nextSquare != null && (nextSquare.Piece == null || nextSquare.Piece.Color != piece.Color))
-                                    res.Add(nextSquare);
-                                nextSquare = startSquare.Rank < 8 ? Board.GetSquare($"{prevFile}{startSquare.Rank + 1}") : null;
-                                if (nextSquare != null && (nextSquare.Piece == null || nextSquare.Piece.Color != piece.Color))
-                                    res.Add(nextSquare);
-                            }
-                        }
+                        res.AddRange(GetAvailableSquaresKnight(startSquare));
                         break;
                     // BISHOP
                     case Piece.Pieces.Bishop:
@@ -1747,64 +1654,7 @@ namespace ChessLib
                         break;
                     // KING
                     case Piece.Pieces.King:
-                        // Normal moves
-                        nextFile = Board.GetNextFile(startSquare.File);
-                        if (nextFile != null) {
-                            if (startSquare.Rank <= 7) {
-                                nextSquare = Board.GetSquare($"{nextFile}{startSquare.Rank + 1}");
-                                if (nextSquare.Piece == null || nextSquare.Piece.Color != piece.Color)
-                                    res.Add(nextSquare);
-                            }
-                            nextSquare = Board.GetSquare($"{nextFile}{startSquare.Rank}");
-                            if (nextSquare.Piece == null || nextSquare.Piece.Color != piece.Color)
-                                res.Add(nextSquare);
-                            if (startSquare.Rank > 1) {
-                                nextSquare = Board.GetSquare($"{nextFile}{startSquare.Rank - 1}");
-                                if (nextSquare.Piece == null || nextSquare.Piece.Color != piece.Color)
-                                    res.Add(nextSquare);
-                            }
-                        }
-
-                        prevFile = Board.GetPreviousFile(startSquare.File);
-                        if (prevFile != null) {
-                            if (startSquare.Rank <= 7) {
-                                nextSquare = Board.GetSquare($"{prevFile}{startSquare.Rank + 1}");
-                                if (nextSquare.Piece == null || nextSquare.Piece.Color != piece.Color)
-                                    res.Add(nextSquare);
-                            }
-                            nextSquare = Board.GetSquare($"{prevFile}{startSquare.Rank}");
-                            if (nextSquare.Piece == null || nextSquare.Piece.Color != piece.Color)
-                                res.Add(nextSquare);
-                            if (startSquare.Rank > 1) {
-                                nextSquare = Board.GetSquare($"{prevFile}{startSquare.Rank - 1}");
-                                if (nextSquare.Piece == null || nextSquare.Piece.Color != piece.Color)
-                                    res.Add(nextSquare);
-                            }
-                        }
-
-                        if (startSquare.Rank <= 7) {
-                            nextSquare = Board.GetSquare($"{startSquare.File}{startSquare.Rank + 1}");
-                            if (nextSquare.Piece == null || nextSquare.Piece.Color != piece.Color)
-                                res.Add(nextSquare);
-                        }
-                        if (startSquare.Rank > 1) {
-                            nextSquare = Board.GetSquare($"{startSquare.File}{startSquare.Rank - 1}");
-                            if (nextSquare.Piece == null || nextSquare.Piece.Color != piece.Color)
-                                res.Add(nextSquare);
-                        }
-
-                        // Castling
-                        if (!avoidCastling) {
-                            if (KingCastling.Contains(piece.Color)) {
-                                if (CanCastle(piece.Color, startSquare.File, 'g'))
-                                    res.Add(Board.GetSquare($"g{startSquare.Rank}"));
-                            }
-
-                            if (QueenCastling.Contains(piece.Color)) {
-                                if (CanCastle(piece.Color, startSquare.File, 'c'))
-                                    res.Add(Board.GetSquare($"c{startSquare.Rank}"));
-                            }
-                        }
+                        res.AddRange(GetAvailableSquaresKing(startSquare, avoidCastling));
                         break;
                 }
             }
@@ -1907,6 +1757,193 @@ namespace ChessLib
             return Board.Squares.Where(s => s.Piece != null && !s.Piece.Moved && s.Piece.Type == Piece.Pieces.Rook
                 && s.Piece.Color == color && s.File < 'E').FirstOrDefault();
         } // GetQueenRook
+
+        private List<Board.Square> GetAvailableSquaresPawn(Board.Square startSquare)
+        {
+            var res = new List<Board.Square>();
+            if (startSquare.Piece != null) {
+                var piece = startSquare.Piece;
+                Board.Square nextSquare = null;
+                char? nextFile = null;
+                char? prevFile = null;
+
+                // Normal moves
+                if (piece.Color == Colors.White && startSquare.Rank < 8)
+                    nextSquare = Board.GetSquare($"{startSquare.File}{startSquare.Rank + 1}");
+                else if (piece.Color == Colors.Black && startSquare.Rank > 1)
+                    nextSquare = Board.GetSquare($"{startSquare.File}{startSquare.Rank - 1}");
+                if (nextSquare != null && nextSquare.Piece == null)
+                    res.Add(nextSquare);
+
+                if (!piece.Moved) {
+                    if (piece.Color == Colors.White && Board.GetSquare($"{startSquare.File}{startSquare.Rank + 1}").Piece == null && startSquare.Rank + 2 <= 8)
+                        nextSquare = Board.GetSquare($"{startSquare.File}{startSquare.Rank + 2}");
+                    else if (piece.Color == Colors.Black && Board.GetSquare($"{startSquare.File}{startSquare.Rank - 1}").Piece == null && startSquare.Rank - 2 >= 1)
+                        nextSquare = Board.GetSquare($"{startSquare.File}{startSquare.Rank - 2}");
+
+                    if (nextSquare?.Piece == null)
+                        res.Add(nextSquare);
+                }
+
+                // Capture
+                nextFile = Board.GetNextFile(startSquare.File);
+                if (nextFile != null) {
+                    if (piece.Color == Colors.White && startSquare.Rank < 8)
+                        nextSquare = Board.GetSquare($"{nextFile}{startSquare.Rank + 1}");
+                    else if (piece.Color == Colors.Black && startSquare.Rank > 1)
+                        nextSquare = Board.GetSquare($"{nextFile}{startSquare.Rank - 1}");
+
+                    if (nextSquare != null && nextSquare.Piece != null && nextSquare.Piece.Color != piece.Color)
+                        res.Add(nextSquare);
+                }
+
+                prevFile = Board.GetPreviousFile(startSquare.File);
+                if (prevFile != null) {
+                    if (piece.Color == Colors.White && startSquare.Rank < 8)
+                        nextSquare = Board.GetSquare($"{prevFile}{startSquare.Rank + 1}");
+                    else if(piece.Color == Colors.Black && startSquare.Rank > 1)
+                        nextSquare = Board.GetSquare($"{prevFile}{startSquare.Rank - 1}");
+
+                    if (nextSquare != null && nextSquare.Piece != null && nextSquare.Piece.Color != piece.Color)
+                        res.Add(nextSquare);
+                }
+
+                // En passant
+                if (!string.IsNullOrEmpty(EnPassant)) {
+                    var enPassantSquare = Board.GetSquare(EnPassant);
+                    if (enPassantSquare.Piece == null && (enPassantSquare.File == prevFile || enPassantSquare.File == nextFile)) {
+                        if (piece.Color == Colors.White && enPassantSquare.Rank == startSquare.Rank + 1)
+                            res.Add(enPassantSquare);
+                        else if (piece.Color == Colors.Black && enPassantSquare.Rank == startSquare.Rank - 1)
+                            res.Add(enPassantSquare);
+                    }
+                }
+            }
+            return res;
+        } // GetAvailableSquaresPawn
+
+        private List<Board.Square> GetAvailableSquaresKnight(Board.Square startSquare)
+        {
+            var res = new List<Board.Square>();
+            if (startSquare.Piece != null) {
+                var piece = startSquare.Piece;
+                Board.Square nextSquare = null;
+                char? nextFile = null;
+                char? prevFile = null;
+
+                nextFile = Board.GetNextFile(startSquare.File);
+                if (nextFile != null) {
+                    nextSquare = startSquare.Rank > 2 ? Board.GetSquare($"{nextFile}{startSquare.Rank - 2}") : null;
+                    if (nextSquare != null && (nextSquare.Piece == null || nextSquare.Piece.Color != piece.Color))
+                        res.Add(nextSquare);
+                    nextSquare = startSquare.Rank < 7 ? Board.GetSquare($"{nextFile}{startSquare.Rank + 2}") : null;
+                    if (nextSquare != null && (nextSquare.Piece == null || nextSquare.Piece.Color != piece.Color))
+                        res.Add(nextSquare);
+
+                    nextFile = Board.GetNextFile(nextFile.Value);
+                    if (nextFile != null) {
+                        nextSquare = startSquare.Rank > 1 ? Board.GetSquare($"{nextFile}{startSquare.Rank - 1}") : null;
+                        if (nextSquare != null && (nextSquare.Piece == null || nextSquare.Piece.Color != piece.Color))
+                            res.Add(nextSquare);
+                        nextSquare = startSquare.Rank < 8 ? Board.GetSquare($"{nextFile}{startSquare.Rank + 1}") : null;
+                        if (nextSquare != null && (nextSquare.Piece == null || nextSquare.Piece.Color != piece.Color))
+                            res.Add(nextSquare);
+                    }
+                }
+
+                prevFile = Board.GetPreviousFile(startSquare.File);
+                if (prevFile != null) {
+                    nextSquare = startSquare.Rank > 2 ? Board.GetSquare($"{prevFile}{startSquare.Rank - 2}") : null;
+                    if (nextSquare != null && (nextSquare.Piece == null || nextSquare.Piece.Color != piece.Color))
+                        res.Add(nextSquare);
+                    nextSquare = startSquare.Rank < 7 ? Board.GetSquare($"{prevFile}{startSquare.Rank + 2}") : null;
+                    if (nextSquare != null && (nextSquare.Piece == null || nextSquare.Piece.Color != piece.Color))
+                        res.Add(nextSquare);
+
+                    prevFile = Board.GetPreviousFile(prevFile.Value);
+                    if (prevFile != null) {
+                        nextSquare = startSquare.Rank > 1 ? Board.GetSquare($"{prevFile}{startSquare.Rank - 1}") : null;
+                        if (nextSquare != null && (nextSquare.Piece == null || nextSquare.Piece.Color != piece.Color))
+                            res.Add(nextSquare);
+                        nextSquare = startSquare.Rank < 8 ? Board.GetSquare($"{prevFile}{startSquare.Rank + 1}") : null;
+                        if (nextSquare != null && (nextSquare.Piece == null || nextSquare.Piece.Color != piece.Color))
+                            res.Add(nextSquare);
+                    }
+                }
+            }
+            return res;
+        } // GetAvailableSquaresKnight
+
+        private List<Board.Square> GetAvailableSquaresKing(Board.Square startSquare, bool avoidCastling)
+        {
+            var res = new List<Board.Square>();
+            if (startSquare.Piece != null) {
+                var piece = startSquare.Piece;
+                Board.Square nextSquare = null;
+                char? nextFile = null;
+                char? prevFile = null;
+
+                // Normal moves
+                nextFile = Board.GetNextFile(startSquare.File);
+                if (nextFile != null) {
+                    if (startSquare.Rank <= 7) {
+                        nextSquare = Board.GetSquare($"{nextFile}{startSquare.Rank + 1}");
+                        if (nextSquare.Piece == null || nextSquare.Piece.Color != piece.Color)
+                            res.Add(nextSquare);
+                    }
+                    nextSquare = Board.GetSquare($"{nextFile}{startSquare.Rank}");
+                    if (nextSquare.Piece == null || nextSquare.Piece.Color != piece.Color)
+                        res.Add(nextSquare);
+                    if (startSquare.Rank > 1) {
+                        nextSquare = Board.GetSquare($"{nextFile}{startSquare.Rank - 1}");
+                        if (nextSquare.Piece == null || nextSquare.Piece.Color != piece.Color)
+                            res.Add(nextSquare);
+                    }
+                }
+
+                prevFile = Board.GetPreviousFile(startSquare.File);
+                if (prevFile != null) {
+                    if (startSquare.Rank <= 7) {
+                        nextSquare = Board.GetSquare($"{prevFile}{startSquare.Rank + 1}");
+                        if (nextSquare.Piece == null || nextSquare.Piece.Color != piece.Color)
+                            res.Add(nextSquare);
+                    }
+                    nextSquare = Board.GetSquare($"{prevFile}{startSquare.Rank}");
+                    if (nextSquare.Piece == null || nextSquare.Piece.Color != piece.Color)
+                        res.Add(nextSquare);
+                    if (startSquare.Rank > 1) {
+                        nextSquare = Board.GetSquare($"{prevFile}{startSquare.Rank - 1}");
+                        if (nextSquare.Piece == null || nextSquare.Piece.Color != piece.Color)
+                            res.Add(nextSquare);
+                    }
+                }
+
+                if (startSquare.Rank <= 7) {
+                    nextSquare = Board.GetSquare($"{startSquare.File}{startSquare.Rank + 1}");
+                    if (nextSquare.Piece == null || nextSquare.Piece.Color != piece.Color)
+                        res.Add(nextSquare);
+                }
+                if (startSquare.Rank > 1) {
+                    nextSquare = Board.GetSquare($"{startSquare.File}{startSquare.Rank - 1}");
+                    if (nextSquare.Piece == null || nextSquare.Piece.Color != piece.Color)
+                        res.Add(nextSquare);
+                }
+
+                // Castling
+                if (!avoidCastling) {
+                    if (KingCastling.Contains(piece.Color)) {
+                        if (CanCastle(piece.Color, startSquare.File, 'g'))
+                            res.Add(Board.GetSquare($"g{startSquare.Rank}"));
+                    }
+
+                    if (QueenCastling.Contains(piece.Color)) {
+                        if (CanCastle(piece.Color, startSquare.File, 'c'))
+                            res.Add(Board.GetSquare($"c{startSquare.Rank}"));
+                    }
+                }
+            }
+            return res;
+        } // GetAvailableSquaresKing
 
         private List<Board.Square> GetAvailableSquaresBishop(Board.Square startSquare)
         {
