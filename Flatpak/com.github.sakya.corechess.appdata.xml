@@ -7,6 +7,7 @@
     <project_license>GPL-3.0-or-later</project_license>
     <content_rating type="oars-1.1"/>
     <url type="homepage">https://github.com/sakya/corechess</url>
+    <developer_name>Paolo Iommarini</developer_name>
     <description>
         <p>Engines included in the package:</p>
         <ul>
