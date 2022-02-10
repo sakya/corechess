@@ -4,6 +4,7 @@
 #define MyAppName "CoreChess"
 #define MyAppVersion "0.10.0"
 #define MyAppPublisher "Paolo Iommarini"
+#define MyAppPublisherURL "https://github.com/sakya/corechess"
 #define MyAppExeName "CoreChess.exe"
 #define MyAppAssocName MyAppName + " File"
 #define MyAppAssocExt ".ccsf"
@@ -15,8 +16,8 @@
 AppId={{756E878C-FBE1-42F5-AA56-4942252EF428}
 AppName={#MyAppName}
 AppVersion={#MyAppVersion}
-;AppVerName={#MyAppName} {#MyAppVersion}
 AppPublisher={#MyAppPublisher}
+AppPublisherURL={#MyAppPublisherURL}
 DefaultDirName={autopf}\{#MyAppName}
 ChangesAssociations=yes
 DisableProgramGroupPage=yes
