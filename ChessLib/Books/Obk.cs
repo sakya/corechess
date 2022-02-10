@@ -47,7 +47,7 @@ namespace ChessLib.Books
             public int GetPriotity()
             {
                 return Weight;
-            }            
+            }
         } // Entry
         #endregion
 
@@ -81,7 +81,7 @@ namespace ChessLib.Books
                     type = 1;
                 }
 
-                if (type == -1) 
+                if (type == -1)
                     return false;
 
                 m_MoveCount = GetIntFromByteArray(buffer, 4);
@@ -194,7 +194,7 @@ namespace ChessLib.Books
             if (!m_Index.TryGetValue(key, out entries)) {
                 entries = new List<Entry>();
                 m_Index[key] = entries;
-            }                
+            }
 
             foreach (var child in entry.Children) {
                 entries.Add(child);
@@ -280,4 +280,3 @@ namespace ChessLib.Books
         #endregion
     } // Obk
 }
-

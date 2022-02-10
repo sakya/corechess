@@ -211,7 +211,6 @@ namespace CoreChess.Views
             if (!string.IsNullOrEmpty(App.Settings.GameAnalysisEngineId))
                 cb.SelectedItem = App.Settings.GetEngine(App.Settings.GameAnalysisEngineId);
 
-
             var nud = this.FindControl<NumericUpDown>("m_MaxEngineThinkingTimeSecs");
             nud.Value = App.Settings.MaxEngineThinkingTimeSecs;
 

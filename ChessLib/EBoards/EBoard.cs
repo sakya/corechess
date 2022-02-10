@@ -6,17 +6,16 @@ namespace ChessLib.EBoards
 {
     public abstract class EBoard : IdObject, IDisposable
     {
-        public abstract class EBoardSettings 
+        public abstract class EBoardSettings
         {
             public string Name { get; set; }
-        }        
+        }
 
         public EBoard(EBoardSettings settings)
             : base()
         {
             Settings = settings;
         }
-
 
         public EBoardSettings Settings { get; set; }
 

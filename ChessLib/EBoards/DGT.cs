@@ -21,7 +21,7 @@ namespace ChessLib.EBoards
             }
 
             public string PortName { get; set; }
-            public int ReadTimeout { get;set; }
+            public int ReadTimeout { get; set; }
             public int WriteTimeout { get; set; }
         } // DGTSettings
 
@@ -531,7 +531,6 @@ namespace ChessLib.EBoards
             }
             return await WriteCommand(message, dataBytes);
         } // WriteCommandString
-
 
         private async Task<bool> WriteClockCommand(PcToBoardCommands message, byte[] data = null)
         {

@@ -604,7 +604,6 @@ namespace ChessLib
             if (engineMove != null && !string.IsNullOrEmpty(engineMove.Ponder) && enginePlayer.Engine is Engines.Uci && enginePlayer.Engine.IsPonderingEnabled())
                 m_PonderTask = PonderMove(enginePlayer, engineMove.Ponder, outputCallback);
 
-
             return res;
         } // DoEnginePlayerMove
 

@@ -90,7 +90,6 @@ namespace ChessLib.Engines
 			private const int CM_OWNPAWN_OFFSET = 0xA8; //Own queen 0x0 to 0x96 (0 to 15.0)
 			private const int CM_OPPPAWN_OFFSET = 0xAC; //Opponet queen 0x0 to 0x96 (0 to 15.0)
 
-
 			private const int CM_UNKNOWN_B0_OFFSET = 0xB0; //always 0
 			private const int CM_UNKNOWN_B4_OFFSET = 0xB4; //always 0
 
@@ -408,7 +407,7 @@ namespace ChessLib.Engines
 			await WriteCommand($"cm_parm tts={Math.Pow(2, 18 + pers.TtSize)}");
 			await WaitPong();
 
-			m_Elo = pers.Elo;			
+			m_Elo = pers.Elo;
 			return true;
 		} // ApplyPersonality
 
@@ -435,10 +434,9 @@ namespace ChessLib.Engines
 			return true;
 		} // WaitPong
 
-
         public override int? GetElo()
         {
             return m_Elo;
-        } // GetElo		
+        } // GetElo
     }
 }

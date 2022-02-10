@@ -14,7 +14,7 @@ namespace ChessLib
             King
         }
 
-        public Piece(Game.Colors color, Pieces type) 
+        public Piece(Game.Colors color, Pieces type)
             : base()
         {
             Color = color;
@@ -91,10 +91,9 @@ namespace ChessLib
                 case 'K':
                 case 'k':
                     return Pieces.King;
-                default: 
+                default:
                     throw new ArgumentException("Invalid acronym", nameof(acronym));
             }
         }
     }
 }
-

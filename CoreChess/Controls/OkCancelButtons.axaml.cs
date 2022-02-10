@@ -18,7 +18,6 @@ namespace CoreChess.Controls
                     o => o.OkText,
                     (o, v) => o.OkText = v);
 
-
         public static readonly DirectProperty<OkCancelButtons, bool> OkEnabledProperty =
                 AvaloniaProperty.RegisterDirect<OkCancelButtons, bool>(
                     nameof(OkEnabled),
