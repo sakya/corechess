@@ -522,13 +522,13 @@ namespace CoreChess.Controls
 
             if (Flipped)
                 return new Point(SquareWidth * (7 - file), SquareHeight * (rank - 1));
-            return new Point(SquareWidth * file, m_Canvas.Bounds.Height - SquareHeight * rank);
+            return new Point(SquareWidth * file, m_Canvas.Bounds.Height - (SquareHeight * rank));
         } // GetSquarePosition
 
         private Board.Square GetSquareFromPoint(Point pos)
         {
-            int file = Flipped ? 7 - (int)pos.X / (int)(SquareWidth) : (int)pos.X / (int)(m_Canvas.Bounds.Width / 8);
-            int rank = Flipped ? 7 - (int)pos.Y / (int)(SquareHeight) : (int)pos.Y / (int)(SquareHeight);
+            int file = Flipped ? 7 - ((int)pos.X / (int)(SquareWidth)) : (int)pos.X / (int)(m_Canvas.Bounds.Width / 8);
+            int rank = Flipped ? 7 - ((int)pos.Y / (int)(SquareHeight)) : (int)pos.Y / (int)(SquareHeight);
             if (file > 7 || rank > 7 || file < 0 || rank < 0)
                 return null;
 
@@ -569,7 +569,7 @@ namespace CoreChess.Controls
                 canvas.Children.Add(rect);
 
                 if (ShowFileRankNotation) {
-                    if (!Flipped && rank == 7 || Flipped && rank == 0) {
+                    if ((!Flipped && rank == 7) || (Flipped && rank == 0)) {
                         TextBlock text = new TextBlock()
                         {
                             TextAlignment = TextAlignment.Right,
@@ -583,7 +583,7 @@ namespace CoreChess.Controls
                         canvas.Children.Add(text);
                     }
 
-                    if (!Flipped && file == 0 || Flipped && file == 7) {
+                    if ((!Flipped && file == 0) || (Flipped && file == 7)) {
                         TextBlock text = new TextBlock()
                         {
                             TextAlignment = TextAlignment.Left,
