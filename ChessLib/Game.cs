@@ -434,18 +434,24 @@ namespace ChessLib
                         if (chess960Option != null)
                             chess960Option.Value = Settings.IsChess960 ? "true" : "false";
 
+                        if (ep.Engine is Engines.Uci && !string.IsNullOrEmpty(ep.Personality)) {
+                            var pOpt = ep.Engine.GetOption(Engines.Uci.PersonalityOptionNames);
+                            if (pOpt != null) {
+                                pOpt.Value = ep.Personality;
+                            }
+                        }
                         await ep.Engine.ApplyOptions(true);
                         await ep.Engine.NewGame(
                             Settings.MaximumTime.HasValue ? (int)Settings.MaximumTime.Value.TotalMinutes : 0,
                             Settings.TimeIncrement.HasValue ? (int)Settings.TimeIncrement.Value.TotalSeconds : 0);
 
                         // Set The King personality
-                        if (ep.Engine is Engines.TheKing && ep.Personality != null) {
+                        if (ep.Engine is Engines.TheKing && ep.TheKingPersonality != null) {
                             var tk = ep.Engine as Engines.TheKing;
-                            await tk.ApplyPersonality(ep.Personality);
+                            await tk.ApplyPersonality(ep.TheKingPersonality);
                             var tkOpt = tk.GetOption(Engines.TheKing.OpeningBooksFolderOptionName)?.Value;
-                            if (!string.IsNullOrEmpty(tkOpt) && !string.IsNullOrEmpty(ep.Personality.OpeningBook))
-                                ep.OpeningBookFileName = Path.Combine(tkOpt, ep.Personality.OpeningBook);
+                            if (!string.IsNullOrEmpty(tkOpt) && !string.IsNullOrEmpty(ep.TheKingPersonality.OpeningBook))
+                                ep.OpeningBookFileName = Path.Combine(tkOpt, ep.TheKingPersonality.OpeningBook);
                         }
 
                         if (ep.Engine is Engines.Cecp)

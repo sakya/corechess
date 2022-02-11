@@ -40,7 +40,8 @@ namespace ChessLib
         }
 
         public Engines.EngineBase Engine { get; set; }
-        public Engines.TheKing.Personality Personality { get; set; }
+        public string Personality { get; set; }
+        public Engines.TheKing.Personality TheKingPersonality { get; set; }
         public string OpeningBookFileName {get; set; }
 
         [JsonIgnore]

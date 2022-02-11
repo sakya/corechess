@@ -134,11 +134,29 @@ namespace ChessLib.Engines
         {
             var res = Options?.Where(o => string.Compare(o.Name, name, StringComparison.InvariantCultureIgnoreCase) == 0).FirstOrDefault();
             if (res == null && name.Contains("_")) {
-                // Try to remove the underscores (Dragon 2.6 ha options "UCI Elo" and "UCI LimitStrength" intead of "UCI_Elo" and "UCI_LimitStrength")
+                // Try to remove the underscores (Dragon 2.6 ha options "UCI Elo" and "UCI LimitStrength" instead of "UCI_Elo" and "UCI_LimitStrength")
                 name = name.Replace("_", " ");
                 res = Options?.Where(o => string.Compare(o.Name, name, StringComparison.InvariantCultureIgnoreCase) == 0).FirstOrDefault();
             }
             return res;
+        } // GetOption
+
+        /// <summary>
+        /// Get the first option with a matching name
+        /// </summary>
+        /// <param name="names">The names</param>
+        /// <returns>The <see cref="Option"/> or null</returns>
+        public Option GetOption(string[] names)
+        {
+            if (names == null || names.Length == 0)
+                return null;
+
+            foreach (var n in names) {
+                var res = GetOption(n);
+                if (res != null)
+                    return res;
+            }
+            return null;
         } // GetOption
 
         public string GetExePath(string fileName)

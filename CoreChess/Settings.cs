@@ -24,7 +24,8 @@ namespace CoreChess
             public TimeSpan? MaxTime { get; set; }
             public TimeSpan TimeIncrement { get; set; }
             public bool TrainingMode { get; set; }
-            public ChessLib.Engines.TheKing.Personality Personality { get; set; }
+            public string Personality { get; set; }
+            public ChessLib.Engines.TheKing.Personality TheKingPersonality { get; set; }
         } // NewGameSettings
 
         #endregion

@@ -26,7 +26,8 @@ namespace CoreChess.Views
             public bool TrainingMode { get; set; }
             public bool Chess960 { get; set; }
             public string InitialPosition { get; set; }
-            public TheKing.Personality Personality { get; set; }
+            public string Personality { get; set; }
+            public TheKing.Personality TheKingPersonality { get; set; }
         }
 
         public NewGameWindow()
@@ -54,7 +55,7 @@ namespace CoreChess.Views
             var gType = this.FindControl<ComboBox>("m_GameType");
             gType.SelectedIndex = 0;
 
-            // Check settings
+            // Restore last new game settings
             if (App.Settings.NewGame != null) {
                 var whiteBtn = this.FindControl<ToggleButton>("m_WhiteBtn");
                 var blackBtn = this.FindControl<ToggleButton>("m_BlackBtn");
@@ -82,9 +83,12 @@ namespace CoreChess.Views
                     maxTime.Value = App.Settings.NewGame.MaxTime.Value.TotalMinutes;
                 }
 
-                if (App.Settings.NewGame.Personality != null && selectedEngine is TheKing) {
+                if (App.Settings.NewGame.TheKingPersonality != null && selectedEngine is TheKing) {
+                    var cmb = this.FindControl<ComboBox>("m_TheKingPersonality");
+                    cmb.SelectedItem = (cmb.Items as IEnumerable<TheKing.Personality>).Where(p => p.Name == App.Settings.NewGame.TheKingPersonality.Name).FirstOrDefault();
+                } else if (!string.IsNullOrEmpty(App.Settings.NewGame.Personality)) {
                     var cmb = this.FindControl<ComboBox>("m_Personality");
-                    cmb.SelectedItem = (cmb.Items as IEnumerable<TheKing.Personality>).Where(p => p.Name == App.Settings.NewGame.Personality.Name).FirstOrDefault();
+                    cmb.SelectedItem = App.Settings.NewGame.Personality;
                 }
 
                 var num = this.FindControl<NumericUpDown>("m_TimeIncrement");
@@ -137,13 +141,26 @@ namespace CoreChess.Views
 
             // TheKing personalities
             if (engine is TheKing) {
-                this.FindControl<StackPanel>("m_PersonalityStack").IsVisible = true;
-                var cmb = this.FindControl<ComboBox>("m_Personality");
+                this.FindControl<StackPanel>("m_TheKingPersonalityStack").IsVisible = true;
+                var cmb = this.FindControl<ComboBox>("m_TheKingPersonality");
                 var opt = engine.GetOption(TheKing.PersonalitiesFolderOptionName);
                 if (opt != null && !string.IsNullOrEmpty(opt.Value))
                     cmb.Items = TheKing.Personality.GetFromFolder(opt.Value).OrderByDescending(p => p.Elo);
             } else {
-                this.FindControl<StackPanel>("m_PersonalityStack").IsVisible = false;
+                this.FindControl<StackPanel>("m_TheKingPersonalityStack").IsVisible = false;
+
+                if (engine is Uci) {
+                    // Dragon 2.6 personality
+                    var pOpt = engine.GetOption(Uci.PersonalityOptionNames);
+                    if (pOpt != null && pOpt.Type == "combo") {
+                        this.FindControl<StackPanel>("m_PersonalityStack").IsVisible = true;
+                        var cmb = this.FindControl<ComboBox>("m_Personality");
+                        cmb.Items = pOpt.ValidValues;
+                        cmb.SelectedItem = pOpt.Default;
+                    } else {
+                        this.FindControl<StackPanel>("m_PersonalityStack").IsVisible = false;
+                    }
+                }
             }
 
         } // OnEngineChanged
@@ -156,6 +173,7 @@ namespace CoreChess.Views
             var random = this.FindControl<ToggleButton>("m_RandomBtn");
             var white = this.FindControl<ToggleButton>("m_WhiteBtn");
             var maxTimeControl = this.FindControl<NumericUpDown>("m_MaxTime");
+            var theKingPers = this.FindControl<ComboBox>("m_TheKingPersonality");
             var pers = this.FindControl<ComboBox>("m_Personality");
             var training = this.FindControl<ToggleSwitch>("m_TrainingMode");
             TimeSpan? maxTime = (TimeSpan?)TimeSpan.FromMinutes(maxTimeControl.Value);
@@ -174,7 +192,8 @@ namespace CoreChess.Views
                 TrainingMode = training.IsChecked == true,
                 TimeIncrement = TimeSpan.FromSeconds(num.Value),
                 Chess960 = gameTypeCombo.SelectedIndex == 1,
-                Personality = pers.SelectedItem as TheKing.Personality
+                Personality = pers.SelectedItem as string,
+                TheKingPersonality = theKingPers.SelectedItem as TheKing.Personality
             };
             App.Settings.Save(App.SettingsPath);
 
@@ -189,7 +208,8 @@ namespace CoreChess.Views
                     TrainingMode = training.IsChecked == true,
                     Chess960 = gameTypeCombo.SelectedIndex == 1,
                     InitialPosition = initialPos.Text?.Trim(),
-                    Personality = pers.SelectedItem as TheKing.Personality
+                    Personality = pers.SelectedItem as string,
+                    TheKingPersonality = theKingPers.SelectedItem as TheKing.Personality
                 }
             );
         } // OnOkClick

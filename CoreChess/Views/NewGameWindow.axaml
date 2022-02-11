@@ -81,7 +81,12 @@
 
       <StackPanel Name="m_PersonalityStack" Grid.Row="4" Grid.ColumnSpan="3" Orientation="Vertical">
         <TextBlock Text="{i18n:Localize Personality}"/>
-        <ComboBox Name="m_Personality" Margin="0,5,0,5" VirtualizationMode="Simple">
+        <ComboBox Name="m_Personality" Margin="0,5,0,5" />
+      </StackPanel>
+      
+      <StackPanel Name="m_TheKingPersonalityStack" Grid.Row="4" Grid.ColumnSpan="3" Orientation="Vertical">
+        <TextBlock Text="{i18n:Localize Personality}"/>
+        <ComboBox Name="m_TheKingPersonality" Margin="0,5,0,5" VirtualizationMode="Simple">
           <ComboBox.ItemTemplate>
             <DataTemplate>
               <Grid>

@@ -24,6 +24,7 @@ namespace ChessLib.Engines
         public const string OwnBookOptionName = "OwnBook";
         public const string EloOptionName = "UCI_Elo";
         public const string LimitStrengthOptionName = "UCI_LimitStrength";
+        public static readonly string[] PersonalityOptionNames = new string[] { "Personality" };
 
         private StringBuilder m_EngineError = new StringBuilder();
         private StringBuilder m_ProcessOutput = new StringBuilder();
