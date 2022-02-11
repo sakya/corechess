@@ -2,7 +2,7 @@
 <component type="desktop-application">
     <id>com.github.sakya.corechess</id>
     <name>CoreChess</name>
-    <summary>CoreChess is an open source chess GUI for chess engines</summary>
+    <summary>Open source chess GUI for chess engines</summary>
     <metadata_license>CC0-1.0</metadata_license>
     <project_license>GPL-3.0-or-later</project_license>
     <content_rating type="oars-1.1"/>
@@ -10,6 +10,7 @@
     <url type="bugtracker">https://github.com/sakya/corechess/issues</url>
     <developer_name>Paolo Iommarini</developer_name>
     <description>
+        <p>Play chess (standard or Chess960) againts your computer</p>
         <p>Engines included in the package:</p>
         <ul>
           <li>Stockfish</li>
@@ -36,6 +37,11 @@
         </screenshot>
     </screenshots>
     <releases>
+      <release version="0.10.4" date="2022-02-11">
+        <description>
+          <p>Fixed Chess960</p>
+        </description>
+      </release>
       <release version="0.10.0" date="2022-02-09" />
       <release version="0.9.0" date="2022-02-05">
             <description>
