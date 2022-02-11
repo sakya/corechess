@@ -660,9 +660,9 @@ namespace ChessLib
                             confirmed = await CastlingConfirm.Invoke(this, new EventArgs());
                     }
 
-                    if (confirmed && move == WhiteKingCastlingMove || move == BlackKingCastlingMove)
+                    if ((confirmed && move == WhiteKingCastlingMove) || move == BlackKingCastlingMove)
                         move = "0-0";
-                    else if (confirmed && move == WhiteQueenCastlingMove || move == BlackQueenCastlingMove)
+                    else if ((confirmed && move == WhiteQueenCastlingMove) || move == BlackQueenCastlingMove)
                         move = "0-0-0";
                 }
             }
@@ -950,13 +950,13 @@ namespace ChessLib
                 return true;
 
             // King and Bishop vs King
-            if (white.Count == 1 && black.Count == 2 && black.Where(p => p.Type == Piece.Pieces.Bishop).Count() == 1 ||
-                black.Count == 1 && white.Count == 2 && white.Where(p => p.Type == Piece.Pieces.Bishop).Count() == 1)
+            if ((white.Count == 1 && black.Count == 2 && black.Where(p => p.Type == Piece.Pieces.Bishop).Count() == 1) ||
+                (black.Count == 1 && white.Count == 2 && white.Where(p => p.Type == Piece.Pieces.Bishop).Count() == 1))
                 return true;
 
             // King and Knight vs King
-            if (white.Count == 1 && black.Count == 2 && black.Where(p => p.Type == Piece.Pieces.Knight).Count() == 1 ||
-                black.Count == 1 && white.Count == 2 && white.Where(p => p.Type == Piece.Pieces.Knight).Count() == 1)
+            if ((white.Count == 1 && black.Count == 2 && black.Where(p => p.Type == Piece.Pieces.Knight).Count() == 1) ||
+                (black.Count == 1 && white.Count == 2 && white.Where(p => p.Type == Piece.Pieces.Knight).Count() == 1))
                 return true;
 
             // King and Bishop vs King and Bishop with bishops on the same color
@@ -2031,8 +2031,8 @@ namespace ChessLib
             // Check promotion
             if (!res.Promoted) {
                 if (tempMove.Piece.Type == Piece.Pieces.Pawn) {
-                    if (tempMove.Piece.Color == Colors.White && tempMove.To.Rank == 8 ||
-                        tempMove.Piece.Color == Colors.Black && tempMove.To.Rank == 1) {
+                    if ((tempMove.Piece.Color == Colors.White && tempMove.To.Rank == 8) ||
+                        (tempMove.Piece.Color == Colors.Black && tempMove.To.Rank == 1)) {
                         if (PlayerPromotion == null || GetPlayer(tempMove.Piece.Color) is EnginePlayer)
                             tempMove.Piece.Type = Piece.Pieces.Queen;
                         else
