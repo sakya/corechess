@@ -176,13 +176,13 @@ namespace CoreChess.Controls
                 if (m_DragInfo != null) {
                     var piece = GetPieceGraphicElement(m_DragInfo.Piece);
 
-                    double targetX = relPos.X - piece.Width / 2.0;
+                    double targetX = relPos.X - (piece.Width / 2.0);
                     if (targetX < 0)
                         targetX = 0;
                     else if (targetX + piece.Width > m_Canvas.Bounds.Width)
                         targetX = m_Canvas.Bounds.Width - piece.Width;
 
-                    double targetY = relPos.Y - piece.Height / 2.0;
+                    double targetY = relPos.Y - (piece.Height / 2.0);
                     if (targetY < 0)
                         targetY = 0;
                     else if (targetY + piece.Height > m_Canvas.Bounds.Height)
@@ -192,7 +192,7 @@ namespace CoreChess.Controls
                     Canvas.SetTop(piece, targetY);
 
                     // Highlight square
-                    HighlightDragAndDropSquare(GetSquareFromPoint(new Point(targetX + piece.Width / 2.0, targetY + piece.Height / 2.0)));
+                    HighlightDragAndDropSquare(GetSquareFromPoint(new Point(targetX + (piece.Width / 2.0), targetY + (piece.Height / 2.0))));
                 } else {
                     if (!m_Game.Ended && m_Game.ToMove == PlayerColor) {
                         var overSquare = GetSquareFromPoint(relPos);
@@ -745,8 +745,8 @@ namespace CoreChess.Controls
                         Fill = new SolidColorBrush(Color.FromArgb(70, 0, 0, 0)),
                         ZIndex = 0
                     };
-                    Canvas.SetLeft(circle, Canvas.GetLeft(fRect) + fRect.Width / 2 - size / 2);
-                    Canvas.SetTop(circle, Canvas.GetTop(fRect) + fRect.Height / 2 - size / 2);
+                    Canvas.SetLeft(circle, Canvas.GetLeft(fRect) + (fRect.Width / 2) - (size / 2));
+                    Canvas.SetTop(circle, Canvas.GetTop(fRect) + (fRect.Height / 2) - (size / 2));
                     m_Canvas.Children.Add(circle);
 
                     created.Add(s.Notation);
