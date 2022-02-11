@@ -130,6 +130,22 @@ namespace ChessLib
             /// <value></value>
             public string Fen { get; set; }
         } // MoveNotation
+
+        class MoveResult
+        {
+            public MoveResult()
+            {
+                Moves = new List<Move>();
+                Promoted = false;
+                Ambiguous = new List<Board.Square>();
+            }
+
+            public string Move { get; set; }
+            public List<Move> Moves { get; set; }
+            public bool Promoted { get; set; }
+            public List<Board.Square> Ambiguous { get; set; }
+        } // MoveResult
+
         #endregion
         public enum Statuses
         {
@@ -653,208 +669,20 @@ namespace ChessLib
 
             if (move == "0-0") {
                 // King castling
-                if (!KingCastling.Contains(ToMove))
-                    throw new InvalidMoveException(move, "castling unavailable", GetFenString());
-
-                var kingSquare = Board.GetSquare(ToMove == Colors.White ? WhiteKingCastlingMove.Substring(0, 2) : BlackKingCastlingMove.Substring(0, 2));
-                var rookSquare = GetKingRook(ToMove);
-                if (kingSquare.Piece == null || rookSquare.Piece == null ||
-                    kingSquare.Piece.Type != Piece.Pieces.King || rookSquare.Piece.Type != Piece.Pieces.Rook)
-                    throw new InvalidMoveException(move, "cannot castle", GetFenString());
-
-                var kingToSquare = Board.GetSquare(ToMove == Colors.White ? WhiteKingCastlingMove.Substring(2, 2) : BlackKingCastlingMove.Substring(2, 2));
-                var rookToSquare = Board.GetSquare(ToMove == Colors.White ? "f1" : "f8");
-                if (!CanCastle(ToMove, kingSquare.File, kingToSquare.File))
-                    throw new InvalidMoveException(move, "cannot castle", GetFenString());
-
-                kingToSquare.Piece = kingSquare.Piece;
-                kingToSquare.Piece.Moved = true;
-                if (kingSquare != kingToSquare)
-                    kingSquare.Piece = null;
-                rookToSquare.Piece = rookSquare.Piece;
-                rookToSquare.Piece.Moved = true;
-                rookSquare.Piece = null;
-
-                EnPassant = string.Empty;
-                KingCastling.Remove(ToMove);
-                QueenCastling.Remove(ToMove);
-                move = ToMove == Colors.White ? WhiteKingCastlingMove : BlackKingCastlingMove;
-
-                res.Add(new Move(kingToSquare.Piece, kingSquare, kingToSquare) { CoordinateNotation = $"{kingSquare.Notation.ToLower()}{kingToSquare.Notation.ToLower()}" });
-                res.Add(new Move(rookToSquare.Piece, rookSquare, rookToSquare) { CoordinateNotation = $"{rookSquare.Notation.ToLower()}{rookToSquare.Notation.ToLower()}" });
+                var moveRes = DoMoveKingCatling(move);
+                move = moveRes.Move;
+                res.AddRange(moveRes.Moves);
             } else if (move == "0-0-0") {
                 // Queen castling
-                if (!QueenCastling.Contains(ToMove))
-                    throw new InvalidMoveException(move, "castling unavailable", GetFenString());
-
-                var kingSquare = Board.GetSquare(ToMove == Colors.White ? WhiteQueenCastlingMove.Substring(0, 2) : BlackQueenCastlingMove.Substring(0, 2));
-                var rookSquare = GetQueenRook(ToMove);
-                if (kingSquare.Piece == null || rookSquare.Piece == null ||
-                    kingSquare.Piece.Type != Piece.Pieces.King || rookSquare.Piece.Type != Piece.Pieces.Rook)
-                    throw new InvalidMoveException(move, "cannot castle", GetFenString());
-
-                var kingToSquare = Board.GetSquare(ToMove == Colors.White ? "c1" : "c8");
-                var rookToSquare = Board.GetSquare(ToMove == Colors.White ? "d1" : "d8");
-                if (!CanCastle(ToMove, kingSquare.File, kingToSquare.File))
-                    throw new InvalidMoveException(move, "cannot castle", GetFenString());
-
-                kingToSquare.Piece = kingSquare.Piece;
-                kingToSquare.Piece.Moved = true;
-                if (kingSquare != kingToSquare)
-                    kingSquare.Piece = null;
-                rookToSquare.Piece = rookSquare.Piece;
-                rookToSquare.Piece.Moved = true;
-                rookSquare.Piece = null;
-
-                EnPassant = string.Empty;
-                KingCastling.Remove(ToMove);
-                QueenCastling.Remove(ToMove);
-                move = ToMove == Colors.White ? WhiteQueenCastlingMove : BlackQueenCastlingMove;
-
-                res.Add(new Move(kingToSquare.Piece, kingSquare, kingToSquare) { CoordinateNotation = $"{kingSquare.Notation.ToLower()}{kingToSquare.Notation.ToLower()}" });
-                res.Add(new Move(rookToSquare.Piece, rookSquare, rookToSquare) { CoordinateNotation = $"{rookSquare.Notation.ToLower()}{rookToSquare.Notation.ToLower()}" });
+                var moveRes = DoMoveQueenCatling(move);
+                move = moveRes.Move;
+                res.AddRange(moveRes.Moves);
             } else {
-                // A move is always 4 bytes or 5 bytes (promotion)
-                if (move.Length != 4 && move.Length != 5)
-                    throw new InvalidMoveException(move, "invalid notation", GetFenString());
-
-                Piece captured = null;
-                string from = move.Substring(0, 2);
-                string to = move.Substring(2, 2);
-
-                var fromSquare = Board.GetSquare(from);
-                if (fromSquare.Piece == null || fromSquare.Piece.Color != ToMove)
-                    throw new InvalidMoveException(move, "invalid source square", GetFenString());
-                var toSquare = Board.GetSquare(to);
-                if (toSquare.Piece != null && toSquare.Piece.Color == fromSquare.Piece.Color)
-                    throw new InvalidMoveException(move, "invalid destination square", GetFenString());
-
-                // Check if the move is valid
-                var validSquares = skipAvailableSquaresCheck ? null : GetAvailableSquares(fromSquare);
-                if (validSquares != null && !validSquares.Contains(toSquare))
-                    throw new InvalidMoveException(move, "invalid move for piece", GetFenString());
-
-                // Check promotion in move
-                if (move.Length == 5) {
-                    string piece = move.Substring(4, 1);
-                    if (piece != "n" && piece != "b" && piece != "r" && piece != "q")
-                        throw new InvalidMoveException(move, "invalid promotion", GetFenString());
-
-                    if (fromSquare.Piece.Type != Piece.Pieces.Pawn)
-                        throw new InvalidMoveException(move, "only pawns can be promoted", GetFenString());
-
-                    if (fromSquare.Piece.Color == Colors.White && toSquare.Rank != 8)
-                        throw new InvalidMoveException(move, "invalid promotion", GetFenString());
-                    if (fromSquare.Piece.Color == Colors.Black && toSquare.Rank != 1)
-                        throw new InvalidMoveException(move, "invalid promotion", GetFenString());
-
-                    switch (piece) {
-                        case "n":
-                            fromSquare.Piece.Type = Piece.Pieces.Knight;
-                            break;
-                        case "b":
-                            fromSquare.Piece.Type = Piece.Pieces.Bishop;
-                            break;
-                        case "r":
-                            fromSquare.Piece.Type = Piece.Pieces.Rook;
-                            break;
-                        case "q":
-                            fromSquare.Piece.Type = Piece.Pieces.Queen;
-                            break;
-                    }
-
-                    move = move.Remove(move.Length - 1, 1);
-                    move = $"{move}{fromSquare.Piece.Acronym}";
-                    promoted = true;
-                }
-
-                // En passant capture
-                Board.Square enPassantPawnSquare = null;
-                Piece enPassantPawn = null;
-                if (toSquare.Notation == EnPassant && fromSquare.Piece.Type == Piece.Pieces.Pawn) {
-                    if (ToMove == Colors.White)
-                        enPassantPawnSquare = Board.GetSquare($"{toSquare.File}{toSquare.Rank - 1}");
-                    else
-                        enPassantPawnSquare = Board.GetSquare($"{toSquare.File}{toSquare.Rank + 1}");
-                    enPassantPawn = enPassantPawnSquare.Piece;
-                    captured = enPassantPawnSquare.Piece;
-                    enPassantPawnSquare.Piece = null;
-                } else if (toSquare.Piece != null) {
-                    // Capture the piece
-                    captured = toSquare.Piece;
-                }
-
-                // Before moving the piece check for disambiguations for algebric notation
-                List<Board.Square> samePieces = this.Board.Squares
-                .Where(f => f.Piece != null && f.Piece.Color == fromSquare.Piece.Color && f.Piece.Type == fromSquare.Piece.Type && f.Piece.Id != fromSquare.Piece.Id)
-                .ToList();
-
-                ambiguous = new List<Board.Square>();
-                foreach (var f in samePieces) {
-                    if (GetAvailableSquaresPrimitive(f, false).Contains(toSquare))
-                        ambiguous.Add(f);
-                }
-
-                // From now on we must do the check with the move done
-                toSquare.Piece = fromSquare.Piece;
-                fromSquare.Piece = null;
-                var tempMove = new Move(toSquare.Piece, fromSquare, toSquare) { CapturedPiece = captured };
-
-                // If we moved the king or the rook we cannot castle anymore
-                if (toSquare.Piece.Type == Piece.Pieces.King) {
-                    KingCastling.Remove(ToMove);
-                    QueenCastling.Remove(ToMove);
-                } else if (!toSquare.Piece.Moved && toSquare.Piece.Type == Piece.Pieces.Rook) {
-                    if (fromSquare.File < Board.InitialKingSquare[(int)ToMove])
-                        QueenCastling.Remove(ToMove);
-                    else if (fromSquare.File > Board.InitialKingSquare[(int)ToMove])
-                        KingCastling.Remove(ToMove);
-                }
-
-                toSquare.Piece.Moved = true;
-                // Capture the piece
-                if (captured != null) {
-                    CapturedPieces.Add(captured);
-
-                    // If the captured pieces is a rook remove castling
-                    if (captured.Type == Piece.Pieces.Rook && !captured.Moved) {
-                        var tempKingSquare = Board.GetKingSquare(captured.Color);
-                        if (tempKingSquare.File < toSquare.File)
-                            KingCastling.Remove(captured.Color);
-                        else
-                            QueenCastling.Remove(captured.Color);
-                    }
-                }
-
-                // Record en passant position
-                if (toSquare.Piece.Type == Piece.Pieces.Pawn && Math.Abs(fromSquare.Rank - toSquare.Rank) == 2) {
-                    if (fromSquare.Rank > toSquare.Rank)
-                        EnPassant = $"{fromSquare.File}{toSquare.Rank + 1}";
-                    else
-                        EnPassant = $"{fromSquare.File}{toSquare.Rank - 1}";
-                } else {
-                    EnPassant = string.Empty;
-                }
-
-                // Check promotion
-                if (!promoted) {
-                    if (tempMove.Piece.Type == Piece.Pieces.Pawn) {
-                        if (tempMove.Piece.Color == Colors.White && tempMove.To.Rank == 8 ||
-                            tempMove.Piece.Color == Colors.Black && tempMove.To.Rank == 1) {
-                            if (PlayerPromotion == null || GetPlayer(tempMove.Piece.Color) is EnginePlayer)
-                                tempMove.Piece.Type = Piece.Pieces.Queen;
-                            else
-                                tempMove.Piece.Type = await PlayerPromotion.Invoke(this, new PromotionArgs(tempMove));
-
-                            Promoted?.Invoke(this, new PromotionArgs(tempMove));
-                            promoted = true;
-                            move = $"{move}{tempMove.Piece.Acronym}";
-                        }
-                    }
-                }
-
-                tempMove.CoordinateNotation = move;
-                res.Add(tempMove);
+                var moveRes = await DoMoveNormal(move, skipAvailableSquaresCheck);
+                move = moveRes.Move;
+                promoted = moveRes.Promoted;
+                ambiguous = moveRes.Ambiguous;
+                res.AddRange(moveRes.Moves);
             }
 
             // Count the position for the draw
@@ -943,7 +771,7 @@ namespace ChessLib
                     }
 
                     // Disambiguate moves
-                    if (ambiguous != null && ambiguous.Count > 0) {
+                    if (ambiguous?.Count > 0) {
                         bool aFile = true;
                         bool aRank = true;
                         foreach (var f in ambiguous) {
@@ -2070,6 +1898,229 @@ namespace ChessLib
             return res;
         } // GetAvailableSquaresRook
 
+        private MoveResult DoMoveKingCatling(string move)
+        {
+            var res = new MoveResult();
+
+            if (!KingCastling.Contains(ToMove))
+                throw new InvalidMoveException(move, "castling unavailable", GetFenString());
+
+            var kingSquare = Board.GetSquare(ToMove == Colors.White ? WhiteKingCastlingMove.Substring(0, 2) : BlackKingCastlingMove.Substring(0, 2));
+            var rookSquare = GetKingRook(ToMove);
+            if (kingSquare.Piece == null || rookSquare.Piece == null ||
+                kingSquare.Piece.Type != Piece.Pieces.King || rookSquare.Piece.Type != Piece.Pieces.Rook)
+                throw new InvalidMoveException(move, "cannot castle", GetFenString());
+
+            var kingToSquare = Board.GetSquare(ToMove == Colors.White ? WhiteKingCastlingMove.Substring(2, 2) : BlackKingCastlingMove.Substring(2, 2));
+            var rookToSquare = Board.GetSquare(ToMove == Colors.White ? "f1" : "f8");
+            if (!CanCastle(ToMove, kingSquare.File, kingToSquare.File))
+                throw new InvalidMoveException(move, "cannot castle", GetFenString());
+
+            kingToSquare.Piece = kingSquare.Piece;
+            kingToSquare.Piece.Moved = true;
+            if (kingSquare != kingToSquare)
+                kingSquare.Piece = null;
+            rookToSquare.Piece = rookSquare.Piece;
+            rookToSquare.Piece.Moved = true;
+            rookSquare.Piece = null;
+
+            EnPassant = string.Empty;
+            KingCastling.Remove(ToMove);
+            QueenCastling.Remove(ToMove);
+            
+            res.Move = ToMove == Colors.White ? WhiteKingCastlingMove : BlackKingCastlingMove;
+            res.Moves.Add(new Move(kingToSquare.Piece, kingSquare, kingToSquare) { CoordinateNotation = $"{kingSquare.Notation.ToLower()}{kingToSquare.Notation.ToLower()}" });
+            res.Moves.Add(new Move(rookToSquare.Piece, rookSquare, rookToSquare) { CoordinateNotation = $"{rookSquare.Notation.ToLower()}{rookToSquare.Notation.ToLower()}" });
+
+            return res;
+        } // DoMoveKingCatling
+
+        private MoveResult DoMoveQueenCatling(string move)
+        {
+            var res = new MoveResult();
+
+            if (!QueenCastling.Contains(ToMove))
+                throw new InvalidMoveException(move, "castling unavailable", GetFenString());
+
+            var kingSquare = Board.GetSquare(ToMove == Colors.White ? WhiteQueenCastlingMove.Substring(0, 2) : BlackQueenCastlingMove.Substring(0, 2));
+            var rookSquare = GetQueenRook(ToMove);
+            if (kingSquare.Piece == null || rookSquare.Piece == null ||
+                kingSquare.Piece.Type != Piece.Pieces.King || rookSquare.Piece.Type != Piece.Pieces.Rook)
+                throw new InvalidMoveException(move, "cannot castle", GetFenString());
+
+            var kingToSquare = Board.GetSquare(ToMove == Colors.White ? "c1" : "c8");
+            var rookToSquare = Board.GetSquare(ToMove == Colors.White ? "d1" : "d8");
+            if (!CanCastle(ToMove, kingSquare.File, kingToSquare.File))
+                throw new InvalidMoveException(move, "cannot castle", GetFenString());
+
+            kingToSquare.Piece = kingSquare.Piece;
+            kingToSquare.Piece.Moved = true;
+            if (kingSquare != kingToSquare)
+                kingSquare.Piece = null;
+            rookToSquare.Piece = rookSquare.Piece;
+            rookToSquare.Piece.Moved = true;
+            rookSquare.Piece = null;
+
+            EnPassant = string.Empty;
+            KingCastling.Remove(ToMove);
+            QueenCastling.Remove(ToMove);
+
+            res.Move = ToMove == Colors.White ? WhiteQueenCastlingMove : BlackQueenCastlingMove;
+            res.Moves.Add(new Move(kingToSquare.Piece, kingSquare, kingToSquare) { CoordinateNotation = $"{kingSquare.Notation.ToLower()}{kingToSquare.Notation.ToLower()}" });
+            res.Moves.Add(new Move(rookToSquare.Piece, rookSquare, rookToSquare) { CoordinateNotation = $"{rookSquare.Notation.ToLower()}{rookToSquare.Notation.ToLower()}" });
+
+            return res;
+        } // DoMoveQueenCatling
+
+        private async Task<MoveResult> DoMoveNormal(string move, bool skipAvailableSquaresCheck)
+        {
+            var res = new MoveResult();
+            // A move is always 4 bytes or 5 bytes (promotion)
+            if (move.Length != 4 && move.Length != 5)
+                throw new InvalidMoveException(move, "invalid notation", GetFenString());
+
+            Piece captured = null;
+            string from = move.Substring(0, 2);
+            string to = move.Substring(2, 2);
+
+            var fromSquare = Board.GetSquare(from);
+            if (fromSquare.Piece == null || fromSquare.Piece.Color != ToMove)
+                throw new InvalidMoveException(move, "invalid source square", GetFenString());
+            var toSquare = Board.GetSquare(to);
+            if (toSquare.Piece != null && toSquare.Piece.Color == fromSquare.Piece.Color)
+                throw new InvalidMoveException(move, "invalid destination square", GetFenString());
+
+            // Check if the move is valid
+            var validSquares = skipAvailableSquaresCheck ? null : GetAvailableSquares(fromSquare);
+            if (validSquares != null && !validSquares.Contains(toSquare))
+                throw new InvalidMoveException(move, "invalid move for piece", GetFenString());
+
+            // Check promotion in move
+            if (move.Length == 5) {
+                string piece = move.Substring(4, 1);
+                if (piece != "n" && piece != "b" && piece != "r" && piece != "q")
+                    throw new InvalidMoveException(move, "invalid promotion", GetFenString());
+
+                if (fromSquare.Piece.Type != Piece.Pieces.Pawn)
+                    throw new InvalidMoveException(move, "only pawns can be promoted", GetFenString());
+
+                if (fromSquare.Piece.Color == Colors.White && toSquare.Rank != 8)
+                    throw new InvalidMoveException(move, "invalid promotion", GetFenString());
+                if (fromSquare.Piece.Color == Colors.Black && toSquare.Rank != 1)
+                    throw new InvalidMoveException(move, "invalid promotion", GetFenString());
+
+                switch (piece) {
+                    case "n":
+                        fromSquare.Piece.Type = Piece.Pieces.Knight;
+                        break;
+                    case "b":
+                        fromSquare.Piece.Type = Piece.Pieces.Bishop;
+                        break;
+                    case "r":
+                        fromSquare.Piece.Type = Piece.Pieces.Rook;
+                        break;
+                    case "q":
+                        fromSquare.Piece.Type = Piece.Pieces.Queen;
+                        break;
+                }
+
+                move = move.Remove(move.Length - 1, 1);
+                move = $"{move}{fromSquare.Piece.Acronym}";
+                res.Promoted = true;
+            }
+
+            // En passant capture
+            Board.Square enPassantPawnSquare = null;
+            Piece enPassantPawn = null;
+            if (toSquare.Notation == EnPassant && fromSquare.Piece.Type == Piece.Pieces.Pawn) {
+                if (ToMove == Colors.White)
+                    enPassantPawnSquare = Board.GetSquare($"{toSquare.File}{toSquare.Rank - 1}");
+                else
+                    enPassantPawnSquare = Board.GetSquare($"{toSquare.File}{toSquare.Rank + 1}");
+                enPassantPawn = enPassantPawnSquare.Piece;
+                captured = enPassantPawnSquare.Piece;
+                enPassantPawnSquare.Piece = null;
+            } else if (toSquare.Piece != null) {
+                // Capture the piece
+                captured = toSquare.Piece;
+            }
+
+            // Before moving the piece check for disambiguations for algebric notation
+            List<Board.Square> samePieces = this.Board.Squares
+            .Where(f => f.Piece != null && f.Piece.Color == fromSquare.Piece.Color && f.Piece.Type == fromSquare.Piece.Type && f.Piece.Id != fromSquare.Piece.Id)
+            .ToList();
+
+            foreach (var f in samePieces) {
+                if (GetAvailableSquaresPrimitive(f, false).Contains(toSquare))
+                    res.Ambiguous.Add(f);
+            }
+
+            // From now on we must do the check with the move done
+            toSquare.Piece = fromSquare.Piece;
+            fromSquare.Piece = null;
+            var tempMove = new Move(toSquare.Piece, fromSquare, toSquare) { CapturedPiece = captured };
+
+            // If we moved the king or the rook we cannot castle anymore
+            if (toSquare.Piece.Type == Piece.Pieces.King) {
+                KingCastling.Remove(ToMove);
+                QueenCastling.Remove(ToMove);
+            } else if (!toSquare.Piece.Moved && toSquare.Piece.Type == Piece.Pieces.Rook) {
+                if (fromSquare.File < Board.InitialKingSquare[(int)ToMove])
+                    QueenCastling.Remove(ToMove);
+                else if (fromSquare.File > Board.InitialKingSquare[(int)ToMove])
+                    KingCastling.Remove(ToMove);
+            }
+
+            toSquare.Piece.Moved = true;
+            // Capture the piece
+            if (captured != null) {
+                CapturedPieces.Add(captured);
+
+                // If the captured pieces is a rook remove castling
+                if (captured.Type == Piece.Pieces.Rook && !captured.Moved) {
+                    var tempKingSquare = Board.GetKingSquare(captured.Color);
+                    if (tempKingSquare.File < toSquare.File)
+                        KingCastling.Remove(captured.Color);
+                    else
+                        QueenCastling.Remove(captured.Color);
+                }
+            }
+
+            // Record en passant position
+            if (toSquare.Piece.Type == Piece.Pieces.Pawn && Math.Abs(fromSquare.Rank - toSquare.Rank) == 2) {
+                if (fromSquare.Rank > toSquare.Rank)
+                    EnPassant = $"{fromSquare.File}{toSquare.Rank + 1}";
+                else
+                    EnPassant = $"{fromSquare.File}{toSquare.Rank - 1}";
+            } else {
+                EnPassant = string.Empty;
+            }
+
+            // Check promotion
+            if (!res.Promoted) {
+                if (tempMove.Piece.Type == Piece.Pieces.Pawn) {
+                    if (tempMove.Piece.Color == Colors.White && tempMove.To.Rank == 8 ||
+                        tempMove.Piece.Color == Colors.Black && tempMove.To.Rank == 1) {
+                        if (PlayerPromotion == null || GetPlayer(tempMove.Piece.Color) is EnginePlayer)
+                            tempMove.Piece.Type = Piece.Pieces.Queen;
+                        else
+                            tempMove.Piece.Type = await PlayerPromotion.Invoke(this, new PromotionArgs(tempMove));
+
+                        Promoted?.Invoke(this, new PromotionArgs(tempMove));
+                        res.Promoted = true;
+                        move = $"{move}{tempMove.Piece.Acronym}";
+                    }
+                }
+            }
+
+            tempMove.CoordinateNotation = move;
+
+            res.Move = move;
+            res.Moves.Add(tempMove);
+
+            return res;
+        } // DoMoveNormal
+
         private static byte[] Zip(string str)
         {
             var bytes = Encoding.UTF8.GetBytes(str);
@@ -2081,6 +2132,7 @@ namespace ChessLib
                 return mso.ToArray();
             }
         } // Zip
+
         private static string UnZip(byte[] bytes)
         {
             using (var msi = new MemoryStream(bytes))

@@ -147,8 +147,7 @@ namespace ChessLib.EBoards
             DGT_CMD_CLOCK_ASCII = 0x0c,
             DGT_CMD_REV2_ASCII = 0x0d,
             DGT_CMD_CLOCK_START_MESSAGE = 0x03,
-            DGT_CMD_CLOCK_END_MESSAGE = 0x00,
-
+            DGT_CMD_CLOCK_END_MESSAGE = 0x00
         } // PcToBoardCommands
 
         enum BoardToPcMessages
@@ -181,7 +180,6 @@ namespace ChessLib.EBoards
             DGT_MSG_BUS_CONFIG = 0xb3,
             DGT_MSG_BUS_TRADEMARK = 0xb4,
             DGT_MSG_BUS_BATTERY_STATUS = 0xb5
-
         } // BoardToPcMessages
 
         enum LogFileMessages
@@ -284,7 +282,6 @@ namespace ChessLib.EBoards
         public DGT(DGTSettings settings) :
             base(settings)
         {
-
         }
 
         private DGTSettings LocalSettings { get { return (DGTSettings)Settings; } }
@@ -749,7 +746,6 @@ namespace ChessLib.EBoards
 
         private void OnErrorReceived(object sender, SerialErrorReceivedEventArgs e)
         {
-
         } // OnErrorReceived
         #endregion
     }

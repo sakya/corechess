@@ -192,11 +192,11 @@ namespace CoreChess.Views
                     Personality = pers.SelectedItem as TheKing.Personality
                 }
             );
-        }
+        } // OnOkClick
 
         private void OnCancelClick(object sender, RoutedEventArgs e)
         {
             this.Close();
-        }
+        } // OnCancelClick
     }
 }
