@@ -336,7 +336,7 @@ namespace ChessLib
 
             if (string.IsNullOrEmpty(settings.InitialFenPosition)) {
                 Board.Init(settings.IsChess960);
-                InitialFenPosition = StandardInitialFenPosition;
+                InitialFenPosition = $"{Board.GetFenString()}  w KQkq - 0 1";
                 KingCastling = new List<Colors>() { Colors.White, Colors.Black };
                 QueenCastling = new List<Colors>() { Colors.White, Colors.Black };
             } else {
