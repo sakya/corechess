@@ -10,7 +10,7 @@
     <url type="bugtracker">https://github.com/sakya/corechess/issues</url>
     <developer_name>Paolo Iommarini</developer_name>
     <description>
-        <p>Play chess (standard or Chess960) againts your computer</p>
+        <p>Play chess (standard or Chess960) against your computer</p>
         <p>Engines included in the package:</p>
         <ul>
           <li>Stockfish</li>
