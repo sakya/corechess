@@ -745,75 +745,7 @@ namespace ChessLib
             };
 
             // Algebraic notation
-            if (res.Count == 1) {
-                var m = res[0];
-                string aMove = string.Empty;
-                string laMove = string.Empty;
-
-                if (m.Piece.Type == Piece.Pieces.Pawn || promoted) {
-                    if (m.CapturedPiece != null) {
-                        aMove = $"{char.ToLower(m.From.File)}x{m.To.Notation.ToLower()}";
-                        laMove = $"{m.From.Notation.ToLower()}x{m.To.Notation.ToLower()}";
-                    } else {
-                        aMove = m.To.Notation.ToLower();
-                        laMove = $"{m.From.Notation.ToLower()}{m.To.Notation.ToLower()}";
-                    }
-
-                    if (promoted)
-                        aMove = $"{aMove}{m.Piece.Acronym}";
-                } else {
-                    if (m.CapturedPiece != null) {
-                        aMove = $"{m.Piece.Acronym}x{m.To.Notation.ToLower()}";
-                        laMove = $"{m.Piece.Acronym}{m.From.Notation.ToLower()}x{m.To.Notation.ToLower()}";
-                    } else {
-                        aMove = $"{m.Piece.Acronym}{m.To.Notation.ToLower()}";
-                        laMove = $"{m.Piece.Acronym}{m.From.Notation.ToLower()}{m.To.Notation.ToLower()}";
-                    }
-
-                    // Disambiguate moves
-                    if (ambiguous?.Count > 0) {
-                        bool aFile = true;
-                        bool aRank = true;
-                        foreach (var f in ambiguous) {
-                            if (f.File == m.From.File)
-                                aFile = false;
-                            if (f.Rank == m.From.Rank)
-                                aRank = false;
-                        }
-
-                        if (aFile && aRank)
-                            aMove = aMove.Insert(1, m.From.Notation.ToLower());
-                        else if (aFile)
-                            aMove = aMove.Insert(1, char.ToLower(m.From.File).ToString());
-                        else
-                            aMove = aMove.Insert(1, m.From.Rank.ToString());
-                    }
-                }
-
-                if (Result != null) {
-                    if (Result == Results.Checkmate) {
-                        aMove = $"{aMove}# {(Winner == Colors.White ? "1-0" : "0-1")}";
-                        laMove = $"{laMove}# {(Winner == Colors.White ? "1-0" : "0-1")}";
-                    } else if (Result == Results.Draw) {
-                        aMove = $"{aMove} 1/2-1/2";
-                        laMove = $"{laMove} 1/2-1/2";
-                    }
-                } else {
-                    var kingSquare = Board.GetKingSquare(ToMove);
-                    if (IsAttacked(kingSquare, kingSquare.Piece.Color)) {
-                        aMove = $"{aMove}+";
-                        laMove = $"{laMove}+";
-                    }
-                }
-                moveNotation.ShortAlgebraic = aMove;
-                moveNotation.LongAlgebraic = laMove;
-            } else {
-                // Castling
-                if (move == WhiteKingCastlingMove || move == BlackKingCastlingMove)
-                    moveNotation.ShortAlgebraic = "0-0";
-                else
-                    moveNotation.ShortAlgebraic = "0-0-0";
-            }
+            SetAlgebraicNotation(moveNotation, move, res, promoted, ambiguous);
 
             moveNotation.Fen = GetFenString();
 
@@ -2120,6 +2052,79 @@ namespace ChessLib
 
             return res;
         } // DoMoveNormal
+
+        private void SetAlgebraicNotation(MoveNotation moveNotation, string moveStr, List<Move> moves, bool promoted, List<Board.Square> ambiguous)
+        {
+            if (moves.Count > 1) {
+                // Castling
+                if (moveStr == WhiteKingCastlingMove || moveStr == BlackKingCastlingMove)
+                    moveNotation.ShortAlgebraic = "0-0";
+                else
+                    moveNotation.ShortAlgebraic = "0-0-0";
+            } else {
+                var move = moves[0];
+                string aMove = string.Empty;
+                string laMove = string.Empty;
+
+                if (move.Piece.Type == Piece.Pieces.Pawn || promoted) {
+                    if (move.CapturedPiece != null) {
+                        aMove = $"{char.ToLower(move.From.File)}x{move.To.Notation.ToLower()}";
+                        laMove = $"{move.From.Notation.ToLower()}x{move.To.Notation.ToLower()}";
+                    } else {
+                        aMove = move.To.Notation.ToLower();
+                        laMove = $"{move.From.Notation.ToLower()}{move.To.Notation.ToLower()}";
+                    }
+
+                    if (promoted)
+                        aMove = $"{aMove}{move.Piece.Acronym}";
+                } else {
+                    if (move.CapturedPiece != null) {
+                        aMove = $"{move.Piece.Acronym}x{move.To.Notation.ToLower()}";
+                        laMove = $"{move.Piece.Acronym}{move.From.Notation.ToLower()}x{move.To.Notation.ToLower()}";
+                    } else {
+                        aMove = $"{move.Piece.Acronym}{move.To.Notation.ToLower()}";
+                        laMove = $"{move.Piece.Acronym}{move.From.Notation.ToLower()}{move.To.Notation.ToLower()}";
+                    }
+
+                    // Disambiguate moves
+                    if (ambiguous?.Count > 0) {
+                        bool aFile = true;
+                        bool aRank = true;
+                        foreach (var f in ambiguous) {
+                            if (f.File == move.From.File)
+                                aFile = false;
+                            if (f.Rank == move.From.Rank)
+                                aRank = false;
+                        }
+
+                        if (aFile && aRank)
+                            aMove = aMove.Insert(1, move.From.Notation.ToLower());
+                        else if (aFile)
+                            aMove = aMove.Insert(1, char.ToLower(move.From.File).ToString());
+                        else
+                            aMove = aMove.Insert(1, move.From.Rank.ToString());
+                    }
+                }
+
+                if (Result != null) {
+                    if (Result == Results.Checkmate) {
+                        aMove = $"{aMove}# {(Winner == Colors.White ? "1-0" : "0-1")}";
+                        laMove = $"{laMove}# {(Winner == Colors.White ? "1-0" : "0-1")}";
+                    } else if (Result == Results.Draw) {
+                        aMove = $"{aMove} 1/2-1/2";
+                        laMove = $"{laMove} 1/2-1/2";
+                    }
+                } else {
+                    var kingSquare = Board.GetKingSquare(ToMove);
+                    if (IsAttacked(kingSquare, kingSquare.Piece.Color)) {
+                        aMove = $"{aMove}+";
+                        laMove = $"{laMove}+";
+                    }
+                }
+                moveNotation.ShortAlgebraic = aMove;
+                moveNotation.LongAlgebraic = laMove;
+            }
+        } // SetAlgebraicNotation
 
         private static byte[] Zip(string str)
         {
