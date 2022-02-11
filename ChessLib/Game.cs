@@ -1983,7 +1983,7 @@ namespace ChessLib
                 captured = toSquare.Piece;
             }
 
-            // Before moving the piece check for disambiguations for algebric notation
+            // Before moving the piece check for disambiguations for algebraic notation
             List<Board.Square> samePieces = this.Board.Squares
             .Where(f => f.Piece != null && f.Piece.Color == fromSquare.Piece.Color && f.Piece.Type == fromSquare.Piece.Type && f.Piece.Id != fromSquare.Piece.Id)
             .ToList();
