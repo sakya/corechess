@@ -2124,9 +2124,6 @@ namespace ChessLib
                     }
                 } else {
                     var kingSquare = Board.GetKingSquare(ToMove);
-                    if (kingSquare == null) {
-                        Console.WriteLine($"{Board.GetFenString()}");
-                    }
                     if (IsAttacked(kingSquare, kingSquare.Piece.Color)) {
                         aMove = $"{aMove}+";
                         laMove = $"{laMove}+";
