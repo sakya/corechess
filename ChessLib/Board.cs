@@ -264,7 +264,7 @@ namespace ChessLib
                 }
                 sb.Append('\n');
             }
-            sb.AppendLine("   A B C D E F G H ");
+            sb.AppendLine("   A B C D E F G H");
             return sb.ToString();
         } // GetAscii
 
