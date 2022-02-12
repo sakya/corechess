@@ -29,6 +29,12 @@ namespace ChessLib
 
             public string Event { get; set; }
             public List<Player> Players { get; set; }
+            public Player WhitePlayer
+            {
+                get {
+                    return Players.Where(p => p.Color == Colors.White).FirstOrDefault();
+                }
+            }
             public string WhitePlayerName {
                 get {
                     return Players.Where(p => p.Color == Colors.White).FirstOrDefault()?.Name;
@@ -39,6 +45,12 @@ namespace ChessLib
                 get
                 {
                     return Players.Where(p => p.Color == Colors.White).FirstOrDefault()?.DisplayName;
+                }
+            }
+            public Player BlackPlayer
+            {
+                get {
+                    return Players.Where(p => p.Color == Colors.Black).FirstOrDefault();
                 }
             }
             public string BlackPlayerName {
@@ -416,54 +428,7 @@ namespace ChessLib
         public async Task<bool> Start()
         {
             if (!Ended) {
-                // Init engine players
-                foreach (var p in Settings.Players) {
-                    if (p is EnginePlayer) {
-                        var ep = p as EnginePlayer;
-                        if (ep.Engine == null)
-                            throw new Exception("Engine player has no engine");
-
-                        // Start engine
-                        ep.Engine.PlayAs = ep.Color;
-                        await ep.Engine.Start();
-                        ep.Engine.Error += (s, args) =>
-                        {
-                            EngineError?.Invoke(this, args);
-                        };
-
-                        // Chess960 option
-                        var chess960Option = ep.Engine.GetChess960Option();
-                        if (chess960Option != null)
-                            chess960Option.Value = Settings.IsChess960 ? "true" : "false";
-
-                        if (ep.Engine is Engines.Uci && !string.IsNullOrEmpty(ep.Personality)) {
-                            var pOpt = ep.Engine.GetOption(Engines.Uci.PersonalityOptionNames);
-                            if (pOpt != null) {
-                                pOpt.Value = ep.Personality;
-                            }
-                        }
-                        await ep.Engine.ApplyOptions(true);
-                        await ep.Engine.NewGame(
-                            Settings.MaximumTime.HasValue ? (int)Settings.MaximumTime.Value.TotalMinutes : 0,
-                            Settings.TimeIncrement.HasValue ? (int)Settings.TimeIncrement.Value.TotalSeconds : 0);
-
-                        // Set The King personality
-                        if (ep.Engine is Engines.TheKing && ep.TheKingPersonality != null) {
-                            var tk = ep.Engine as Engines.TheKing;
-                            await tk.ApplyPersonality(ep.TheKingPersonality);
-                            var tkOpt = tk.GetOption(Engines.TheKing.OpeningBooksFolderOptionName)?.Value;
-                            if (!string.IsNullOrEmpty(tkOpt) && !string.IsNullOrEmpty(ep.TheKingPersonality.OpeningBook))
-                                ep.OpeningBookFileName = Path.Combine(tkOpt, ep.TheKingPersonality.OpeningBook);
-                        }
-
-                        if (ep.Engine is Engines.Cecp)
-                            await ((Engines.Cecp)ep.Engine).SetBoard(GetFenString());
-
-                        // Load opening book
-                        if (!string.IsNullOrEmpty(ep.OpeningBookFileName))
-                            ep.OpeningBook = Books.BookFactory.OpenBook(ep.OpeningBookFileName);
-                    }
-                }
+                await InitEnginePlayers();
 
                 StartedTime = DateTime.UtcNow;
                 BlackTimer?.Invoke(this, new EventArgs());
@@ -1298,6 +1263,58 @@ namespace ChessLib
         } // Copy
 
         #region private operations
+        private async Task<bool> InitEnginePlayers()
+        {
+            foreach (var p in Settings.Players) {
+                if (p is EnginePlayer) {
+                    var ep = p as EnginePlayer;
+                    if (ep.Engine == null)
+                        throw new Exception("Engine player has no engine");
+
+                    // Start engine
+                    ep.Engine.PlayAs = ep.Color;
+                    await ep.Engine.Start();
+                    ep.Engine.Error += (s, args) =>
+                    {
+                        EngineError?.Invoke(this, args);
+                    };
+
+                    // Chess960 option
+                    var chess960Option = ep.Engine.GetChess960Option();
+                    if (chess960Option != null)
+                        chess960Option.Value = Settings.IsChess960 ? "true" : "false";
+
+                    if (ep.Engine is Engines.Uci && !string.IsNullOrEmpty(ep.Personality)) {
+                        var pOpt = ep.Engine.GetOption(Engines.Uci.PersonalityOptionNames);
+                        if (pOpt != null) {
+                            pOpt.Value = ep.Personality;
+                        }
+                    }
+                    await ep.Engine.ApplyOptions(true);
+                    await ep.Engine.NewGame(
+                        Settings.MaximumTime.HasValue ? (int)Settings.MaximumTime.Value.TotalMinutes : 0,
+                        Settings.TimeIncrement.HasValue ? (int)Settings.TimeIncrement.Value.TotalSeconds : 0);
+
+                    // Set The King personality
+                    if (ep.Engine is Engines.TheKing && ep.TheKingPersonality != null) {
+                        var tk = ep.Engine as Engines.TheKing;
+                        await tk.ApplyPersonality(ep.TheKingPersonality);
+                        var tkOpt = tk.GetOption(Engines.TheKing.OpeningBooksFolderOptionName)?.Value;
+                        if (!string.IsNullOrEmpty(tkOpt) && !string.IsNullOrEmpty(ep.TheKingPersonality.OpeningBook))
+                            ep.OpeningBookFileName = Path.Combine(tkOpt, ep.TheKingPersonality.OpeningBook);
+                    }
+
+                    if (ep.Engine is Engines.Cecp)
+                        await ((Engines.Cecp)ep.Engine).SetBoard(GetFenString());
+
+                    // Load opening book
+                    if (!string.IsNullOrEmpty(ep.OpeningBookFileName))
+                        ep.OpeningBook = Books.BookFactory.OpenBook(ep.OpeningBookFileName);
+                }
+            }
+            return true;
+        } // InitEnginePlayers
+
         private async Task<Engines.EngineBase.BestMove> PonderMove(EnginePlayer enginePlayer, string move, Action<Engines.EngineBase, string> outputCallback = null)
         {
             m_PonderingMove = move;

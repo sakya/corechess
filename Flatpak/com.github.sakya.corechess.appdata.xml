@@ -15,8 +15,9 @@
         <ul>
           <li>Stockfish</li>
           <li>Leela Chess Zero</li>
+          <li>Gnuchess</li>
         </ul>
-      
+
         <p>Supported chess engines:</p>
         <ul>
             <li>UCI (Universal Chess Interface) like Stockfish, Komodo and Leela Chess Zero</li>
@@ -37,6 +38,11 @@
         </screenshot>
     </screenshots>
     <releases>
+      <release version="0.10.5" date="2022-02-11">
+        <description>
+          <p>Added gnuchess</p>
+        </description>
+      </release>
       <release version="0.10.4" date="2022-02-11">
         <description>
           <p>Fixed Chess960</p>

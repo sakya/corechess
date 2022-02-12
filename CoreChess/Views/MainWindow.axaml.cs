@@ -110,7 +110,9 @@ namespace CoreChess.Views
                     App.Settings.ShowEngineOutput = !App.Settings.ShowEngineOutput;
                     App.Settings.Save(App.SettingsPath);
                     m_Owner.ShowEngineOutput = App.Settings.ShowEngineOutput;
-                    m_Owner.Window.FindControl<Border>("m_EngineMessageSection").IsVisible = App.Settings.ShowEngineOutput;
+
+                    if (!m_Owner.Window.FindControl<Border>("m_GameAnalyzeSection").IsVisible)
+                        m_Owner.Window.FindControl<Border>("m_EngineMessageSection").IsVisible = App.Settings.ShowEngineOutput;
                 }
             }
             #endregion
@@ -122,7 +124,9 @@ namespace CoreChess.Views
             Settings.CapturedPiecesDisplay? m_CapturedPieces = null;
             bool m_ShowEngineOutput = false;
             string m_WhiteName = string.Empty;
+            int? m_WhiteElo;
             string m_BlackName = string.Empty;
+            int? m_BlackElo;
             string m_WhiteTime = string.Empty;
             string m_BlackTime = string.Empty;
             string m_EcoName = string.Empty;
@@ -183,6 +187,12 @@ namespace CoreChess.Views
                 set { SetIfChanged(ref m_WhiteName, value); }
             }
 
+            public int? WhiteElo
+            {
+                get { return m_WhiteElo; }
+                set { SetIfChanged(ref m_WhiteElo, value); }
+            }
+
             public string WhiteTime
             {
                 get { return m_WhiteTime; }
@@ -193,6 +203,12 @@ namespace CoreChess.Views
             {
                 get { return m_BlackName; }
                 set { SetIfChanged(ref m_BlackName, value); }
+            }
+
+            public int? BlackElo
+            {
+                get { return m_BlackElo; }
+                set { SetIfChanged(ref m_BlackElo, value); }
             }
 
             public string BlackTime
@@ -1255,7 +1271,9 @@ namespace CoreChess.Views
 
             // Set players name
             m_Context.WhiteName = m_Game.Settings.WhitePlayerName;
+            m_Context.WhiteElo = m_Game.Settings.WhitePlayer?.Elo;
             m_Context.BlackName = m_Game.Settings.BlackPlayerName;
+            m_Context.BlackElo = m_Game.Settings.BlackPlayer?.Elo;
 
             if (m_Game.Ended) {
                 SetAnalyzeMode();

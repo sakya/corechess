@@ -185,7 +185,7 @@
             <ColumnDefinition Width="*" />
           </Grid.ColumnDefinitions>
 
-          <Border Name="m_WhiteBorder" CornerRadius="3" BorderThickness="1.5" Margin="0,0,5,0">
+          <Border Name="m_WhiteBorder" ToolTip.Tip="{Binding WhiteElo}" CornerRadius="3" BorderThickness="1.5" Margin="0,0,5,0">
             <Image Name="m_White" Height="40" Width="40"></Image>
           </Border>
           <StackPanel Grid.Column="1" Orientation="Vertical">
@@ -211,7 +211,7 @@
             <TextBlock Name="m_BlackName" Text="{Binding BlackName}" VerticalAlignment="Center" FontSize="14" TextTrimming="CharacterEllipsis" HorizontalAlignment="Right" />
             <TextBlock Name="m_BlackTimeLeft" Text="{Binding BlackTime}" FontSize="20" VerticalAlignment="Center" HorizontalAlignment="Right"/>
           </StackPanel>
-          <Border Grid.Column="1" Name="m_BlackBorder" CornerRadius="3" BorderThickness="1.5" Margin="5,0,0,0">
+          <Border Grid.Column="1" Name="m_BlackBorder" ToolTip.Tip="{Binding BlackElo}" CornerRadius="3" BorderThickness="1.5" Margin="5,0,0,0">
             <Image Name="m_Black" Height="40" Width="40"></Image>
           </Border>
         </Grid>

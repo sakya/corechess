@@ -70,7 +70,7 @@
         <TextBlock Text="{i18n:Localize Elo}"/>
         <NumericUpDown Name="m_EngineElo" Margin="0,5,0,5" />
       </StackPanel>
-      
+
       <StackPanel Name="m_GameTypeStack" Grid.Row="3" Grid.ColumnSpan="3" Orientation="Vertical">
         <TextBlock Text="{i18n:Localize GameType}"/>
         <ComboBox Name="m_GameType" Margin="0,5,0,5">
@@ -83,7 +83,7 @@
         <TextBlock Text="{i18n:Localize Personality}"/>
         <ComboBox Name="m_Personality" Margin="0,5,0,5" />
       </StackPanel>
-      
+
       <StackPanel Name="m_TheKingPersonalityStack" Grid.Row="4" Grid.ColumnSpan="3" Orientation="Vertical">
         <TextBlock Text="{i18n:Localize Personality}"/>
         <ComboBox Name="m_TheKingPersonality" Margin="0,5,0,5" VirtualizationMode="Simple">
@@ -114,10 +114,14 @@
         <NumericUpDown Name="m_TimeIncrement" Minimum="0" Margin="0,5,0,5" />
       </StackPanel>
 
-      <StackPanel Grid.Row="7" Grid.ColumnSpan="3" Orientation="Vertical">
-        <TextBlock Text="{i18n:Localize TrainingMode}"/>
-        <ToggleSwitch Name="m_TrainingMode" ToolTip.Tip="{i18n:Localize TrainingModeHelp}" Margin="0,0,0,5" />
-      </StackPanel>
+      <Grid Grid.Row="7" Grid.ColumnSpan="3" Margin="0,0,0,5">
+        <Grid.ColumnDefinitions>
+          <ColumnDefinition Width="*" />
+          <ColumnDefinition Width="Auto" />
+        </Grid.ColumnDefinitions>
+        <TextBlock Text="{i18n:Localize TrainingMode}" VerticalAlignment="Center" />
+        <ToggleSwitch Grid.Column="1" Name="m_TrainingMode" ToolTip.Tip="{i18n:Localize TrainingModeHelp}" />
+      </Grid>
 
       <StackPanel Grid.Row="8" Grid.ColumnSpan="3" Orientation="Vertical">
         <TextBlock Text="{i18n:Localize InitialPositionFen}"/>

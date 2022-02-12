@@ -155,6 +155,13 @@ namespace CoreChess
                         WorkingDir = "/app/bin/Engines/lc0"
                     }
                 );
+                defaultEngines.Add(
+                    new Uci("Gnuchess", "/app/bin/Engines/gnuchess/gnuchess")
+                    {
+                        WorkingDir = "/app/bin/Engines/gnuchess",
+                        Arguments = "--uci"
+                    }
+                );
             } else if (Environment.OSVersion.Platform == PlatformID.Win32NT) {
                 // Add default engines (Inno Setup)
                 defaultEngines.Add(
@@ -171,7 +178,7 @@ namespace CoreChess
                 );
             }
 
-            // Check missing engines
+            // Check missing default engines
             foreach (var dEngine in defaultEngines) {
                 var existingEngine = engines.Where(e => e.Command == dEngine.Command).FirstOrDefault();
                 if (existingEngine == null) {
