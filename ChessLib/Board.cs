@@ -259,7 +259,7 @@ namespace ChessLib
                     var square = GetSquare($"{file}{row}");
                     char c = square.Piece?.Acronym ?? ' ';
                     if (square.Piece?.Color == Game.Colors.Black)
-                        c = char.ToLower(square.Piece.Acronym);
+                        c = char.ToLower(c);
                     sb.Append($" {c}");
                 }
                 sb.Append('\n');
