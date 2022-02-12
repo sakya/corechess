@@ -357,6 +357,8 @@ namespace ChessLib
                 QueenCastling = new List<Colors>() { Colors.White, Colors.Black };
             } else {
                 string fenString = settings.InitialFenPosition;
+                while (fenString.IndexOf("  ") >= 0)
+                    fenString = fenString.Replace("  ", " ");
 
                 Board.InitFromFenString(fenString);
                 InitialFenPosition = fenString;
@@ -661,7 +663,7 @@ namespace ChessLib
                 if (tempSquare.Piece?.Type == Piece.Pieces.King) {
                     bool confirmed = true;
 
-                    if (Settings.IsChess960){
+                    if (Settings.IsChess960 && ToMovePlayer is HumanPlayer){
                         if (CastlingConfirm != null)
                             confirmed = await CastlingConfirm.Invoke(this, new EventArgs());
                     }
@@ -1865,7 +1867,7 @@ namespace ChessLib
             EnPassant = string.Empty;
             KingCastling.Remove(ToMove);
             QueenCastling.Remove(ToMove);
-            
+
             res.Move = ToMove == Colors.White ? WhiteKingCastlingMove : BlackKingCastlingMove;
             res.Moves.Add(new Move(kingToSquare.Piece, kingSquare, kingToSquare) { CoordinateNotation = $"{kingSquare.Notation.ToLower()}{kingToSquare.Notation.ToLower()}" });
             res.Moves.Add(new Move(rookToSquare.Piece, rookSquare, rookToSquare) { CoordinateNotation = $"{rookSquare.Notation.ToLower()}{rookToSquare.Notation.ToLower()}" });
@@ -2122,6 +2124,9 @@ namespace ChessLib
                     }
                 } else {
                     var kingSquare = Board.GetKingSquare(ToMove);
+                    if (kingSquare == null) {
+                        Console.WriteLine($"{Board.GetFenString()}");
+                    }
                     if (IsAttacked(kingSquare, kingSquare.Piece.Color)) {
                         aMove = $"{aMove}+";
                         laMove = $"{laMove}+";

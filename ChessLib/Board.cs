@@ -9,7 +9,7 @@ using System.Text;
 
 namespace ChessLib
 {
-    public class Board
+    public class Board : IdObject
     {
         #region classes
         public class Square
@@ -46,7 +46,7 @@ namespace ChessLib
 
         public Board()
         {
-            Squares = new List<Square>();                        
+            Squares = new List<Square>();
         }
 
         [JsonIgnore]
@@ -56,7 +56,7 @@ namespace ChessLib
         }
 
         public List<Square> Squares { get; set; }
-        
+
         /// <summary>
         /// The initial king square (white, black)
         /// </summary>
@@ -245,6 +245,29 @@ namespace ChessLib
             return sb.ToString();
         } // GetFenString
 
+        /// <summary>
+        /// Get an ASCII representation of the board
+        /// </summary>
+        /// <returns></returns>
+        public string GetAscii()
+        {
+            StringBuilder sb = new StringBuilder();
+            sb.AppendLine($"Id: {Id}");
+            for (int row = 8; row > 0; row--) {
+                sb.Append($"{row} ");
+                foreach (var file in Files) {
+                    var square = GetSquare($"{file}{row}");
+                    char c = square.Piece?.Acronym ?? ' ';
+                    if (square.Piece?.Color == Game.Colors.Black)
+                        c = char.ToLower(square.Piece.Acronym);
+                    sb.Append($" {c}");
+                }
+                sb.Append('\n');
+            }
+            sb.AppendLine("   A B C D E F G H ");
+            return sb.ToString();
+        } // GetAscii
+
         public char? GetPreviousFile(char file)
         {
             int idx = Files.IndexOf(file);
@@ -267,13 +290,13 @@ namespace ChessLib
         /// <param name="color">The king's color</param>
         /// <returns>The <see cref="Board.Square"/> with the King</returns>
         public Square GetKingSquare(Game.Colors color)
-        { 
+        {
             foreach (var f in Squares) {
                 if (f.Piece != null && f.Piece.Type == Piece.Pieces.King && f.Piece.Color == color)
-                    return f;                     
+                    return f;
             }
             return null;
-        } // GetKingFile
+        } // GetKingSquare
 
         /// <summary>
         /// Get all the pieces of the given color

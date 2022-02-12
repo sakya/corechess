@@ -407,6 +407,8 @@ namespace CoreChess.Views
 
             using (var game = new Game()) {
                 var settings = new Game.GameSettings();
+                settings.InitialFenPosition = m_Game.Settings.InitialFenPosition;
+                settings.IsChess960 = m_Game.Settings.IsChess960;
                 settings.Players.Add(new HumanPlayer(Game.Colors.White, string.Empty, null));
                 settings.Players.Add(new HumanPlayer(Game.Colors.Black, string.Empty, null));
                 game.Init(settings);
@@ -425,7 +427,8 @@ namespace CoreChess.Views
 
                 if (game.Moves.Count > 0) {
                     AddMove(chessboard, m_Game.Moves.Last());
-                    UpdateEco();
+                    if (!m_Game.Settings.IsChess960)
+                        UpdateEco();
                 }
             }
             SetPlayerToMove();
@@ -1051,6 +1054,8 @@ namespace CoreChess.Views
 
             using (var game = new Game()) {
                 var settings = new Game.GameSettings();
+                settings.InitialFenPosition = m_Game.Settings.InitialFenPosition;
+                settings.IsChess960 = m_Game.Settings.IsChess960;
                 settings.Players.Add(new HumanPlayer(Game.Colors.White, string.Empty, null));
                 settings.Players.Add(new HumanPlayer(Game.Colors.Black, string.Empty, null));
                 game.Init(settings);
@@ -1088,7 +1093,8 @@ namespace CoreChess.Views
                     idx++;
                 }
             }
-            UpdateEco();
+            if (!m_Game.Settings.IsChess960)
+                UpdateEco();
             if (m_CurrentMoveIndex.HasValue)
                 DisplayMove(m_CurrentMoveIndex.Value);
             return true;
