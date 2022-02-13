@@ -21,7 +21,8 @@
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
-        <colorpicker:ColorPicker Name="ColorPicker" />
+        <colorpicker:ColorPicker Name="ColorPicker"
+                                 IsPaletteVisible="False" />
         <controls:OkCancelButtons Grid.Row="1" OkClick="OnOkClick" CancelClick="OnCancelClick" />
     </Grid>
   </DockPanel>
