@@ -111,7 +111,7 @@ namespace CoreChess.Controls
                     if (selectedIndex + 1 < count) {
                         SelectedItem = m_Items.ElementAt(selectedIndex.Value + 1);
                         BringItemIntoView(selectedIndex.Value + 1);
-                        SetSelectedItem();
+                        SetSelectedItemStyle();
                     }
                     break;
                 case Key.Up:
@@ -119,20 +119,20 @@ namespace CoreChess.Controls
                     if (selectedIndex > 0) {
                         SelectedItem = m_Items.ElementAt(selectedIndex.Value - 1);
                         BringItemIntoView(selectedIndex.Value - 1);
-                        SetSelectedItem();
+                        SetSelectedItemStyle();
                     }
                     break;
                 case Key.End:
                     selectedIndex = count - 1;
                     SelectedItem = m_Items.ElementAt(selectedIndex.Value);
                     BringItemIntoView(selectedIndex.Value);
-                    SetSelectedItem();
+                    SetSelectedItemStyle();
                     break;
                 case Key.Home:
                     selectedIndex = 0;
                     SelectedItem = m_Items.ElementAt(selectedIndex.Value);
                     BringItemIntoView(selectedIndex.Value);
-                    SetSelectedItem();
+                    SetSelectedItemStyle();
                     break;
             }
         }
@@ -180,10 +180,10 @@ namespace CoreChess.Controls
 
             var ctrl = sender as ContentControl;
             SelectedItem = ctrl.DataContext;
-            SetSelectedItem();
+            SetSelectedItemStyle();
         }
 
-        private void SetSelectedItem()
+        private void SetSelectedItemStyle()
         {
             var selectedIndex = m_SelectedItem != null ? m_Items?.ToList().IndexOf(m_SelectedItem) : null;
             if (selectedIndex == null)
