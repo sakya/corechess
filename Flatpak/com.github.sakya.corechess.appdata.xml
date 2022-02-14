@@ -42,7 +42,6 @@
         <description>
           <ul>
             <li>Added gnuchess</li>
-            <li>Upgraded nuget packages</li>
           </ul>
         </description>
       </release>
