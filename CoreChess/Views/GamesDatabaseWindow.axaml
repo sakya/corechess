@@ -45,7 +45,7 @@
       <controls:ItemsList Grid.Row="2" Name="m_List" Selectable="True" DoubleTapped="OnListDoubleTapped">
         <controls:ItemsList.ItemTemplate>
           <DataTemplate>
-            <Border Padding="15">
+            <Border Padding="10,5,10,5">
               <Grid>
                 <Grid.RowDefinitions>
                   <RowDefinition Height="Auto"/>

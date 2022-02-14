@@ -26,6 +26,7 @@ namespace CoreChess.Views
             m_Games = games;
             var list = this.FindControl<Controls.ItemsList>("m_List");
             list.Items = new List<PGN>(m_Games);
+            list.AttachedToVisualTree += (s, e) => list.Focus();
             UpdateInfoMessage();
         }
 
