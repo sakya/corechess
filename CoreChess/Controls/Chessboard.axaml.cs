@@ -834,7 +834,7 @@ namespace CoreChess.Controls
                     Bass.BASS_StreamCreateFile("Audio/move_black.mp3", 0, 0, BASSFlag.BASS_DEFAULT);
                 Bass.BASS_ChannelPlay(audioStream, false);
             }
-            await anim.RunAsync(pGraphics);
+            await anim.RunAsync(pGraphics, null);
 
             Canvas.SetTop(pGraphics, targetPosition.Y);
             Canvas.SetLeft(pGraphics, targetPosition.X);
