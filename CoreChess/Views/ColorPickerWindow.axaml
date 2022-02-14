@@ -10,6 +10,7 @@
         x:Class="CoreChess.Views.ColorPickerWindow"
         ShowInTaskbar="False"
         SizeToContent="WidthAndHeight"
+        CanResize="False"
         WindowStartupLocation="CenterOwner"
         Title="CoreChess">
 
