@@ -102,10 +102,13 @@ namespace CoreChess.Controls
 
             var count = m_Items.Count();
             var selectedIndex = m_SelectedItem != null ? m_Items?.ToList().IndexOf(m_SelectedItem) : null;
+            if (selectedIndex == null)
+                return;
+
             switch (e.Key) {
                 case Key.Down:
                 case Key.FnDownArrow:
-                    if (selectedIndex.HasValue && selectedIndex + 1 < count) {
+                    if (selectedIndex + 1 < count) {
                         SelectedItem = m_Items.ElementAt(selectedIndex.Value + 1);
                         BringItemIntoView(selectedIndex.Value + 1);
                         SetSelectedItem();
@@ -113,11 +116,23 @@ namespace CoreChess.Controls
                     break;
                 case Key.Up:
                 case Key.FnUpArrow:
-                    if (selectedIndex.HasValue && selectedIndex > 0) {
+                    if (selectedIndex > 0) {
                         SelectedItem = m_Items.ElementAt(selectedIndex.Value - 1);
                         BringItemIntoView(selectedIndex.Value - 1);
                         SetSelectedItem();
                     }
+                    break;
+                case Key.End:
+                    selectedIndex = count - 1;
+                    SelectedItem = m_Items.ElementAt(selectedIndex.Value);
+                    BringItemIntoView(selectedIndex.Value);
+                    SetSelectedItem();
+                    break;
+                case Key.Home:
+                    selectedIndex = 0;
+                    SelectedItem = m_Items.ElementAt(selectedIndex.Value);
+                    BringItemIntoView(selectedIndex.Value);
+                    SetSelectedItem();
                     break;
             }
         }
