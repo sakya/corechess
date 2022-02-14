@@ -1,6 +1,7 @@
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.Templates;
+using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
 using Avalonia.Media;
@@ -48,6 +49,8 @@ namespace CoreChess.Controls
             InitializeComponent();
 
             this.FindControl<ScrollViewer>("m_ScrollViewer").DataContext = this;
+            this.Focusable = true;
+            this.KeyDown += OnKeyDown;
         }
 
         public IEnumerable<object> Items
@@ -93,6 +96,48 @@ namespace CoreChess.Controls
             }
         }
 
+        private void OnKeyDown(object sender, KeyEventArgs e)
+        {
+            base.OnKeyDown(e);
+
+            var count = m_Items.Count();
+            var selectedIndex = m_SelectedItem != null ? m_Items?.ToList().IndexOf(m_SelectedItem) : null;
+            switch (e.Key) {
+                case Key.Down:
+                case Key.FnDownArrow:
+                    if (selectedIndex.HasValue && selectedIndex + 1 < count) {
+                        SelectedItem = m_Items.ElementAt(selectedIndex.Value + 1);
+                        BringItemIntoView(selectedIndex.Value + 1);
+                        SetSelectedItem();
+                    }
+                    break;
+                case Key.Up:
+                case Key.FnUpArrow:
+                    if (selectedIndex.HasValue && selectedIndex > 0) {
+                        SelectedItem = m_Items.ElementAt(selectedIndex.Value - 1);
+                        BringItemIntoView(selectedIndex.Value - 1);
+                        SetSelectedItem();
+                    }
+                    break;
+            }
+        }
+
+        private IControl GetItemControl(int index)
+        {
+            var ctrl = m_ItemsRepeater.TryGetElement(index);
+            if (ctrl == null)
+                ctrl = m_ItemsRepeater.GetOrCreateElement(index);
+            if (VisualRoot is TopLevel top)
+                top.LayoutManager.ExecuteLayoutPass();
+            return ctrl;
+        } // GetItemControl
+
+        private void BringItemIntoView(int index)
+        {
+            var ctrl = GetItemControl(index);
+            ctrl.BringIntoView();
+        } // BringIntoView
+
         private void OnElementPrepared(object sender, ItemsRepeaterElementPreparedEventArgs args)
         {
             var ctrl = args.Element as ContentControl;
@@ -120,6 +165,16 @@ namespace CoreChess.Controls
 
             var ctrl = sender as ContentControl;
             SelectedItem = ctrl.DataContext;
+            SetSelectedItem();
+        }
+
+        private void SetSelectedItem()
+        {
+            var selectedIndex = m_SelectedItem != null ? m_Items?.ToList().IndexOf(m_SelectedItem) : null;
+            if (selectedIndex == null)
+                return;
+
+            var ctrl = GetItemControl(selectedIndex.Value) as ContentControl;
             if (m_SelectedControl != null)
                 SetItemBackground(m_SelectedControl);
             m_SelectedControl = ctrl;
