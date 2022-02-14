@@ -1239,7 +1239,7 @@ namespace CoreChess.Views
                 m_Chessboard.SetEmpty();
                 SetChessboardOptions();
                 SetWaitAnimation(false);
-                await MessageWindow.ShowMessage(this, Localizer.Localizer.Instance["Error"], Localizer.Localizer.Instance["NoActiveEngineError"], MessageWindow.Icons.Error);
+                await MessageWindow.ShowMessage(this, Localizer.Localizer.Instance["Error"], Localizer.Localizer.Instance["NoEnginesError"], MessageWindow.Icons.Error);
                 return false;
             }
 
