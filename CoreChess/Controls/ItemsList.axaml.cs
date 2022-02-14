@@ -60,6 +60,9 @@ namespace CoreChess.Controls
             {
                 if (SetAndRaise(ItemsProperty, ref m_Items, value)) {
                     m_ItemsRepeater.Items = m_Items;
+                    if (Selectable && m_Items.Count() > 0) {
+                        SelectedItem = m_Items.ElementAt(0);
+                    }
                 }
             }
         }
@@ -85,13 +88,14 @@ namespace CoreChess.Controls
                 }
             }
         }
+
         public object SelectedItem
         {
             get { return m_SelectedItem; }
             set
             {
                 if (SetAndRaise(SelectedItemProperty, ref m_SelectedItem, value)) {
-
+                    SetSelectedItemStyle();
                 }
             }
         }
@@ -111,7 +115,6 @@ namespace CoreChess.Controls
                     if (selectedIndex + 1 < count) {
                         SelectedItem = m_Items.ElementAt(selectedIndex.Value + 1);
                         BringItemIntoView(selectedIndex.Value + 1);
-                        SetSelectedItemStyle();
                     }
                     break;
                 case Key.Up:
@@ -119,20 +122,17 @@ namespace CoreChess.Controls
                     if (selectedIndex > 0) {
                         SelectedItem = m_Items.ElementAt(selectedIndex.Value - 1);
                         BringItemIntoView(selectedIndex.Value - 1);
-                        SetSelectedItemStyle();
                     }
                     break;
                 case Key.End:
                     selectedIndex = count - 1;
                     SelectedItem = m_Items.ElementAt(selectedIndex.Value);
                     BringItemIntoView(selectedIndex.Value);
-                    SetSelectedItemStyle();
                     break;
                 case Key.Home:
                     selectedIndex = 0;
                     SelectedItem = m_Items.ElementAt(selectedIndex.Value);
                     BringItemIntoView(selectedIndex.Value);
-                    SetSelectedItemStyle();
                     break;
             }
         }
@@ -180,7 +180,6 @@ namespace CoreChess.Controls
 
             var ctrl = sender as ContentControl;
             SelectedItem = ctrl.DataContext;
-            SetSelectedItemStyle();
         }
 
         private void SetSelectedItemStyle()
