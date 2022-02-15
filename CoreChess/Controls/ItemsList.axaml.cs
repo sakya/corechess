@@ -102,13 +102,11 @@ namespace CoreChess.Controls
 
         private void OnKeyDown(object sender, KeyEventArgs e)
         {
-            base.OnKeyDown(e);
-
-            var count = m_Items.Count();
             var selectedIndex = m_SelectedItem != null ? m_Items?.ToList().IndexOf(m_SelectedItem) : null;
             if (selectedIndex == null)
                 return;
 
+            var count = m_Items.Count();
             switch (e.Key) {
                 case Key.Down:
                 case Key.FnDownArrow:
@@ -117,12 +115,26 @@ namespace CoreChess.Controls
                         BringItemIntoView(selectedIndex.Value + 1);
                     }
                     break;
+                case Key.PageDown:
+                    selectedIndex += 10;
+                    if (selectedIndex >= count)
+                        selectedIndex = count - 1;
+                    SelectedItem = m_Items.ElementAt(selectedIndex.Value + 1);
+                    BringItemIntoView(selectedIndex.Value + 1);
+                    break;
                 case Key.Up:
                 case Key.FnUpArrow:
                     if (selectedIndex > 0) {
                         SelectedItem = m_Items.ElementAt(selectedIndex.Value - 1);
                         BringItemIntoView(selectedIndex.Value - 1);
                     }
+                    break;
+                case Key.PageUp:
+                    selectedIndex -= 10;
+                    if (selectedIndex < 0)
+                        selectedIndex = 0;
+                    SelectedItem = m_Items.ElementAt(selectedIndex.Value + 1);
+                    BringItemIntoView(selectedIndex.Value + 1);
                     break;
                 case Key.End:
                     selectedIndex = count - 1;
@@ -135,7 +147,7 @@ namespace CoreChess.Controls
                     BringItemIntoView(selectedIndex.Value);
                     break;
             }
-        }
+        } // OnKeyDown
 
         private IControl GetItemControl(int index)
         {
