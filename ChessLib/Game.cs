@@ -1937,13 +1937,10 @@ namespace ChessLib
                 throw new InvalidMoveException(move, "invalid notation", GetFenString());
 
             Piece captured = null;
-            string from = move.Substring(0, 2);
-            string to = move.Substring(2, 2);
-
-            var fromSquare = Board.GetSquare(from);
+            var fromSquare = Board.GetSquare(move.Substring(0, 2));
             if (fromSquare.Piece == null || fromSquare.Piece.Color != ToMove)
                 throw new InvalidMoveException(move, "invalid source square", GetFenString());
-            var toSquare = Board.GetSquare(to);
+            var toSquare = Board.GetSquare(move.Substring(2, 2));
             if (toSquare.Piece != null && toSquare.Piece.Color == fromSquare.Piece.Color)
                 throw new InvalidMoveException(move, "invalid destination square", GetFenString());
 
@@ -1966,21 +1963,7 @@ namespace ChessLib
                 if (fromSquare.Piece.Color == Colors.Black && toSquare.Rank != 1)
                     throw new InvalidMoveException(move, "invalid promotion", GetFenString());
 
-                switch (piece) {
-                    case "n":
-                        fromSquare.Piece.Type = Piece.Pieces.Knight;
-                        break;
-                    case "b":
-                        fromSquare.Piece.Type = Piece.Pieces.Bishop;
-                        break;
-                    case "r":
-                        fromSquare.Piece.Type = Piece.Pieces.Rook;
-                        break;
-                    case "q":
-                        fromSquare.Piece.Type = Piece.Pieces.Queen;
-                        break;
-                }
-
+                fromSquare.Piece.Type = Piece.GetTypeFromAcronym(piece[0]);
                 move = move.Remove(move.Length - 1, 1);
                 move = $"{move}{fromSquare.Piece.Acronym}";
                 res.Promoted = true;
