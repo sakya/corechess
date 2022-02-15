@@ -51,6 +51,13 @@ namespace CoreChess.Controls
             this.FindControl<ScrollViewer>("m_ScrollViewer").DataContext = this;
             this.Focusable = true;
             this.KeyDown += OnKeyDown;
+
+            this.AttachedToVisualTree += (s, e) =>
+            {
+                if (Selectable && m_Items.Count() > 0) {
+                    m_SelectedItem = m_Items.ElementAt(0);
+                }
+            };
         }
 
         public IEnumerable<object> Items
@@ -60,9 +67,6 @@ namespace CoreChess.Controls
             {
                 if (SetAndRaise(ItemsProperty, ref m_Items, value)) {
                     m_ItemsRepeater.Items = m_Items;
-                    if (Selectable && m_Items.Count() > 0) {
-                        SelectedItem = m_Items.ElementAt(0);
-                    }
                 }
             }
         }
