@@ -170,14 +170,14 @@ namespace CoreChess.Controls
             SetItemBackground(ctrl);
         }
 
-        private void OnMouseEnter(object sender, Avalonia.Input.PointerEventArgs args)
+        private void OnMouseEnter(object sender, PointerEventArgs args)
         {
             var ctrl = sender as ContentControl;
             if (ctrl.DataContext != SelectedItem)
                 ctrl.Background = (SolidColorBrush)this.FindResource("SystemControlHighlightListLowBrush");
         }
 
-        private void OnMouseLeave(object sender, Avalonia.Input.PointerEventArgs args)
+        private void OnMouseLeave(object sender, PointerEventArgs args)
         {
             var ctrl = sender as ContentControl;
             if (ctrl.DataContext != SelectedItem)
