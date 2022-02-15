@@ -10,7 +10,7 @@
         x:Class="CoreChess.Views.GamesDatabaseWindow"
         ShowInTaskbar="False"
         WindowStartupLocation="CenterOwner"
-        Width="600" Height="400"
+        Width="700" Height="432"
         MinWidth="500" MinHeight="400"
         Title="CoreChess - Games database">
 

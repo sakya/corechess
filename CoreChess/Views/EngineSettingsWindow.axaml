@@ -8,7 +8,7 @@
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="CoreChess.Views.EngineSettingsWindow"
         ShowInTaskbar="False"
-        Width="600" Height="400"
+        Width="700" Height="432"
         MinWidth="400" MinHeight="300"
         WindowStartupLocation="CenterOwner"
         Title="CoreChess - Engine settings">
