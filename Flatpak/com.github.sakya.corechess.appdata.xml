@@ -38,10 +38,11 @@
       </screenshot>
     </screenshots>
     <releases>
-      <release version="0.10.5" date="2022-02-14">
+      <release version="0.10.5" date="2022-02-15">
         <description>
           <ul>
             <li>Added gnuchess</li>
+            <li>Delete games from database</li>
           </ul>
         </description>
       </release>
