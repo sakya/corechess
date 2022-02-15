@@ -67,6 +67,8 @@ namespace CoreChess.Controls
             {
                 if (SetAndRaise(ItemsProperty, ref m_Items, value)) {
                     m_ItemsRepeater.Items = m_Items;
+                    if (Selectable && m_Items.Count() > 0)
+                        m_SelectedItem = m_Items.ElementAt(0);
                 }
             }
         }
@@ -100,6 +102,7 @@ namespace CoreChess.Controls
             {
                 if (SetAndRaise(SelectedItemProperty, ref m_SelectedItem, value)) {
                     SetSelectedItemStyle();
+                    BringItemIntoView(m_Items.ToList().IndexOf(m_SelectedItem));
                 }
             }
         }
@@ -114,41 +117,33 @@ namespace CoreChess.Controls
             switch (e.Key) {
                 case Key.Down:
                 case Key.FnDownArrow:
-                    if (selectedIndex + 1 < count) {
-                        SelectedItem = m_Items.ElementAt(selectedIndex.Value + 1);
-                        BringItemIntoView(selectedIndex.Value + 1);
-                    }
+                    if (selectedIndex + 1 < count)
+                        SelectedItem = m_Items.ElementAt(selectedIndex.Value + 1);                        
                     break;
                 case Key.PageDown:
                     selectedIndex += 10;
                     if (selectedIndex >= count)
                         selectedIndex = count - 1;
                     SelectedItem = m_Items.ElementAt(selectedIndex.Value + 1);
-                    BringItemIntoView(selectedIndex.Value + 1);
                     break;
                 case Key.Up:
                 case Key.FnUpArrow:
-                    if (selectedIndex > 0) {
+                    if (selectedIndex > 0)
                         SelectedItem = m_Items.ElementAt(selectedIndex.Value - 1);
-                        BringItemIntoView(selectedIndex.Value - 1);
-                    }
                     break;
                 case Key.PageUp:
                     selectedIndex -= 10;
                     if (selectedIndex < 0)
                         selectedIndex = 0;
                     SelectedItem = m_Items.ElementAt(selectedIndex.Value + 1);
-                    BringItemIntoView(selectedIndex.Value + 1);
                     break;
                 case Key.End:
                     selectedIndex = count - 1;
                     SelectedItem = m_Items.ElementAt(selectedIndex.Value);
-                    BringItemIntoView(selectedIndex.Value);
                     break;
                 case Key.Home:
                     selectedIndex = 0;
                     SelectedItem = m_Items.ElementAt(selectedIndex.Value);
-                    BringItemIntoView(selectedIndex.Value);
                     break;
             }
         } // OnKeyDown

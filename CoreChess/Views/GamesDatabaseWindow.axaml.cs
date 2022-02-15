@@ -6,6 +6,7 @@ using Avalonia.Markup.Xaml;
 using ChessLib;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 
 namespace CoreChess.Views
@@ -23,11 +24,8 @@ namespace CoreChess.Views
         {
             this.InitializeComponent();
 
-            m_Games = games;
-            var list = this.FindControl<Controls.ItemsList>("m_List");
-            list.Items = new List<Game>(m_Games.OrderByDescending(g => g.StartedTime));
-            list.AttachedToVisualTree += (s, e) => list.Focus();
-            UpdateInfoMessage();
+            m_Games = games?.OrderByDescending(g => g.StartedTime).ToList();
+            SetGamesList();
         }
 
         protected override void InitializeComponent()
@@ -63,6 +61,18 @@ namespace CoreChess.Views
                 this.Close(selected);
         } // OnListDoubleTapped
 
+        private async void OnRemoveClick(object sender, RoutedEventArgs e)
+        {
+            if (await MessageWindow.ShowConfirmMessage(this, Localizer.Localizer.Instance["Confirm"], Localizer.Localizer.Instance["RemoveGame"])) {
+                var game = (sender as Button).DataContext as Game;
+                File.Delete(game.FileName);
+
+                int selectedIndex = m_Games.IndexOf(game);
+                m_Games.Remove(game);
+                SetGamesList(selectedIndex - 1);
+            }
+        } // OnRemoveClick
+
         private void OnOkClick(object sender, RoutedEventArgs e)
         {
             var list = this.FindControl<Controls.ItemsList>("m_List");
@@ -75,6 +85,16 @@ namespace CoreChess.Views
         private void OnCancelClick(object sender, RoutedEventArgs e)
         {
             this.Close(null);
+        }
+
+        private void SetGamesList(int? selectedIndex = null)
+        {
+            var list = this.FindControl<Controls.ItemsList>("m_List");
+            list.Items = new List<Game>(m_Games);
+            list.AttachedToVisualTree += (s, e) => list.Focus();
+            UpdateInfoMessage();
+            if (selectedIndex.HasValue && selectedIndex.Value > 0 && m_Games.Count > selectedIndex.Value)
+                list.SelectedItem = m_Games[selectedIndex.Value];
         }
 
         private void FilterGames()

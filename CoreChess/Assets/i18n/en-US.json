@@ -123,6 +123,7 @@
   "PlayerName": "Player name",
   "Rematch": "Rematch",
   "RemoveEngine": "Remove the engine '{0}'?",
+  "RemoveGame": "Remove the selected game?",
   "ResetToDefault": "Reset to default",
   "ResignGameConfirm": "Resign the current game?",
   "ResignationMessage": "Resignation, {0} wins!",

@@ -123,6 +123,7 @@
   "PlayerName": "Nome giocatore",
   "Rematch": "Rivincita",
   "RemoveEngine": "Rimuovere l'engine '{0}'?",
+  "RemoveGame": "Rimuovere la partita selezionata?",
   "ResetToDefault": "Reimposta a default",
   "ResignGameConfirm": "Abbandonare la partita in corso?",
   "ResignationMessage": "Partita abbandonata, il {0} vince!",

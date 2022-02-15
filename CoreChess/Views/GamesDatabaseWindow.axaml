@@ -56,11 +56,16 @@
                 <Grid.ColumnDefinitions>
                   <ColumnDefinition Width="*"/>
                   <ColumnDefinition Width="Auto"/>
+                  <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
 
-                <TextBlock Grid.Row="0" Text="{Binding GameType}" FontSize="12" Foreground="{DynamicResource HighlightColor}" TextTrimming="CharacterEllipsis" />
+                <TextBlock Grid.Row="0" Text="{Binding GameType}" FontSize="12" Foreground="{DynamicResource HighlightColor}" TextTrimming="CharacterEllipsis"
+                           VerticalAlignment="Center"/>
                 <TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding StartedTime, Converter={StaticResource DateTimeToStringConverter}}" FontSize="12" TextTrimming="CharacterEllipsis"
-                           HorizontalAlignment="Right"/>
+                           VerticalAlignment="Center" HorizontalAlignment="Right"/>
+                <Button Grid.Row="0" Grid.Column="2" Classes="Small" Click="OnRemoveClick" Margin="5,0,0,0">
+                  <i:Icon Value="fas fa-trash-alt" />
+                </Button>
 
                 <TextBlock Grid.Row="1" Text="{Binding Settings.WhitePlayerDisplayName}" TextTrimming="CharacterEllipsis" />
                 <TextBlock Grid.Row="2" Text="{Binding Settings.BlackPlayerDisplayName}" TextTrimming="CharacterEllipsis" />
@@ -68,7 +73,8 @@
                 <TextBlock Grid.Row="3" FontSize="24" Text="{Binding, Converter={StaticResource GameResultConverter}}"
                            VerticalAlignment="Center" />
 
-                <controls:GamePreview Grid.Row="1" Grid.Column="1" Grid.RowSpan="3" Game="{Binding}" />
+                <controls:GamePreview Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2" Grid.RowSpan="3"
+                                      HorizontalAlignment="Right" Game="{Binding}" />
               </Grid>
             </Border>
           </DataTemplate>
