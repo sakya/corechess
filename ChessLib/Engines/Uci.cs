@@ -586,12 +586,13 @@ namespace ChessLib.Engines
                                 option.Max = m.Groups[3].Value;
                             }
                         } else if (option.Type == "combo") {
-                            var m = Regex.Match(match.Groups[3].Value, "default (.*?) (.*)");
+                            var m = Regex.Match(match.Groups[3].Value, "default (.*)");
                             if (m.Success) {
-                                option.Default = m.Groups[1].Value;
+                                string[] parts = Regex.Split(m.Groups[1].Value, "(^| )var ");
+                                option.Default = parts[0];
 
-                                string[] parts = Regex.Split(m.Groups[2].Value, "(^| )var ");
-                                foreach (var p in parts) {
+                                for (int i = 1; i < parts.Length; i++) {
+                                    var p = parts[i];
                                     if (!string.IsNullOrEmpty(p?.Trim()))
                                         option.ValidValues.Add(p);
                                 }
