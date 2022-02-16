@@ -140,6 +140,13 @@ namespace CoreChess
                 }
             }
 
+            // Fix for gnuchess in flatpak
+            if (App.Settings.Version.ToString() == "0.10.5.0" && System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString() == "0.10.5.1") {
+                var gnuchess = engines.Where(e => e.Command == "/app/bin/Engines/gnuchess/gnuchess").FirstOrDefault();
+                if (gnuchess != null)
+                    engines.Remove(gnuchess);
+            }
+
             List<EngineBase> defaultEngines = new List<EngineBase>();
             if (Environment.OSVersion.Platform == PlatformID.Unix) {
                 // Add default engines (flatpak)
