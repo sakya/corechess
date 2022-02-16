@@ -16,6 +16,10 @@
       <Setter Property="FontWeight" Value="Light" />
     </Style>
 
+    <Style Selector="NumericUpDown">
+      <Setter Property="FontSize" Value="18" />
+    </Style>
+
     <Style Selector="AutoCompleteBox">
       <Setter Property="FontSize" Value="18"/>
     </Style>
