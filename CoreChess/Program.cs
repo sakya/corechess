@@ -68,7 +68,7 @@ namespace CoreChess
             Bass.BASS_Free();
         }
 
-        static async Task<Views.MainWindow> InitializeApp(string[] args)
+        private static async Task<Views.MainWindow> InitializeApp(string[] args)
         {
             App.BinaryPath = Path.GetDirectoryName(System.Reflection.Assembly.GetEntryAssembly().Location);
             App.LocalPath = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "CoreChess");
@@ -112,7 +112,7 @@ namespace CoreChess
             return res;
         } // InitializeApp
 
-        static bool SetDefaultSettings()
+        private static bool SetDefaultSettings()
         {
             // Default settings
             App.Settings = new Settings();
@@ -128,13 +128,13 @@ namespace CoreChess
             return true;
         } // SetDefaultSettings
 
-        static async Task<bool> CheckEngines()
+        private static async Task<bool> CheckEngines()
         {
             List<EngineBase> engines = App.Settings.Engines ?? new List<EngineBase>();
 
             // Remove invalid engines
             for (int i = 0; i < engines.Count; i++) {
-                if (!File.Exists(engines[i].Command)) {
+                if (!ExistsInPath(engines[i].Command)) {
                     engines.RemoveAt(i);
                     i--;
                 }
@@ -202,5 +202,18 @@ namespace CoreChess
 
             return true;
         } // CheckEngines
+
+        private static bool ExistsInPath(string fileName)
+        {
+            if (File.Exists(fileName))
+                return true;
+
+            var pathEnv = Environment.GetEnvironmentVariable("PATH");
+            foreach (var path in pathEnv.Split(Path.PathSeparator)) {
+                if (File.Exists(Path.Combine(path, fileName)))
+                    return true;
+            }
+            return false;
+        } // ExistsInPath
     }
 }
