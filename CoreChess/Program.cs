@@ -57,6 +57,7 @@ namespace CoreChess
             {
                 var splash = new Views.SplashWindow();
                 splash.Show();
+                await Task.Delay(100);
                 mApp.MainWindow = await InitializeApp(args);
                 mApp.MainWindow.Closed += (_, __) => stop.Cancel();
                 mApp.MainWindow.Show();
