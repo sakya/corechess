@@ -310,7 +310,7 @@ namespace CoreChess.Controls
 
             if (!m_Game.Ended && m_Game.ToMovePlayer is EnginePlayer && (m_Game.ToMovePlayer as EnginePlayer).Engine != null) {
                 // Don't wait this move
-                var moveTask = DoEngineMove();
+                _ = DoEngineMove();
             }
 
             m_GameEndedInvoked = false;

@@ -3,7 +3,13 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d" d:DesignWidth="150" d:DesignHeight="150"
+             xmlns:i="clr-namespace:Projektanker.Icons.Avalonia;assembly=Projektanker.Icons.Avalonia"
              x:Class="CoreChess.Controls.GamePreview">
 
-  <Image Name="m_Image" Width="150" Height="150" />
+  <Grid>
+    <i:Icon FontSize="21" Value="fa fa-image" VerticalAlignment="Center" HorizontalAlignment="Center" />
+    <Border Background="{DynamicResource SystemBaseLowColor}" Width="150" Height="150">
+      <Image Name="m_Image" Width="150" Height="150" />
+    </Border>
+  </Grid>
 </UserControl>

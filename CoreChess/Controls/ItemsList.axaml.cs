@@ -124,7 +124,7 @@ namespace CoreChess.Controls
                     selectedIndex += 10;
                     if (selectedIndex >= count)
                         selectedIndex = count - 1;
-                    SelectedItem = m_Items.ElementAt(selectedIndex.Value + 1);
+                    SelectedItem = m_Items.ElementAt(selectedIndex.Value);
                     break;
                 case Key.Up:
                 case Key.FnUpArrow:
@@ -135,7 +135,7 @@ namespace CoreChess.Controls
                     selectedIndex -= 10;
                     if (selectedIndex < 0)
                         selectedIndex = 0;
-                    SelectedItem = m_Items.ElementAt(selectedIndex.Value + 1);
+                    SelectedItem = m_Items.ElementAt(selectedIndex.Value);
                     break;
                 case Key.End:
                     selectedIndex = count - 1;
