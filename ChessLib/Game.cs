@@ -182,6 +182,7 @@ namespace ChessLib
 
             Stalemate,
             Draw,
+            Aborted
         }
 
         public const string StandardInitialFenPosition = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
@@ -1085,6 +1086,9 @@ namespace ChessLib
             } else if (pgn.Result == "1/2-1/2") {
                 res.Status = Statuses.Ended;
                 res.Result = Results.Draw;
+            } else if (pgn.Result == "*") {
+                res.Status = Statuses.Ended;
+                res.Result = Results.Aborted;
             }
 
             if (!string.IsNullOrEmpty(pgn.Result)) {

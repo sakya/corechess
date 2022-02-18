@@ -285,6 +285,8 @@ namespace ChessLib
                 moves = moves.Remove(moves.Length - 4, 4);
             else if (moves.EndsWith(" 1/2-1/2"))
                 moves = moves.Remove(moves.Length - 8, 8);
+            else if (moves.EndsWith(" *"))
+                moves = moves.Remove(moves.Length - 8, 8);
             moves = moves.Trim();
 
             int moveIdx = 0;

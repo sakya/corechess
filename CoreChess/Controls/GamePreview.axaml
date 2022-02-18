@@ -7,9 +7,9 @@
              x:Class="CoreChess.Controls.GamePreview">
 
   <Grid>
-    <i:Icon FontSize="21" Value="fa fa-image" VerticalAlignment="Center" HorizontalAlignment="Center" />
     <Border Background="{DynamicResource SystemBaseLowColor}" Width="150" Height="150">
-      <Image Name="m_Image" Width="150" Height="150" />
+      <i:Icon FontSize="21" Value="fa fa-image" VerticalAlignment="Center" HorizontalAlignment="Center" />
     </Border>
+    <Image Name="m_Image" Width="150" Height="150" />
   </Grid>
 </UserControl>
