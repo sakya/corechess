@@ -1008,6 +1008,8 @@ namespace ChessLib
                 termination = "normal";
                 if (Result == Results.Draw) {
                     result = "1/2-1/2";
+                } else if (Result == Results.Aborted) {
+                    result = "*";
                 } else {
                     if (Winner == Colors.White)
                         result = "1-0";
