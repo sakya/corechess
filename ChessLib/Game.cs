@@ -999,6 +999,12 @@ namespace ChessLib
                 ECO = ECO
             };
 
+            if (Settings.MaximumTime.HasValue) {
+                pgn.TimeControl = $"{Settings.MaximumTime.Value.TotalSeconds}";
+                if (Settings.TimeIncrement.HasValue)
+                    pgn.TimeControl = $"{pgn.TimeControl}:+{Settings.TimeIncrement.Value.TotalSeconds}";
+            }
+
             pgn.WhiteElo = GetPlayer(Colors.White)?.Elo;
             pgn.BlackElo = GetPlayer(Colors.Black)?.Elo;
 
@@ -1030,13 +1036,13 @@ namespace ChessLib
                 pgn.WhitePlayerType = player.GetType().ToString();
                 if (pgn.WhitePlayerType == typeof(EnginePlayer).ToString())
                     pgn.WhiteEngine = JsonConvert.SerializeObject((player as EnginePlayer).Engine, m_SerializerSettings);
-                pgn.WhiteTimeLeftMilliSecs = WhiteTimeLeftMilliSecs;
+                pgn.WhiteTimeLeftMilliSecs = LastWhiteTimeLeftMilliSecs;
 
                 player = GetPlayer(Colors.Black);
                 pgn.BlackPlayerType = player.GetType().ToString();
                 if (pgn.BlackPlayerType == typeof(EnginePlayer).ToString())
                     pgn.BlackEngine = JsonConvert.SerializeObject((player as EnginePlayer).Engine, m_SerializerSettings);
-                pgn.BlackTimeLeftMilliSecs = BlackTimeLeftMilliSecs;
+                pgn.BlackTimeLeftMilliSecs = LastBlackTimeLeftMilliSecs;
             }
 
             pgn.Result = result;
@@ -1071,6 +1077,16 @@ namespace ChessLib
                 InitialFenPosition = pgn.FEN
             };
 
+            if (!string.IsNullOrEmpty(pgn.TimeControl) && pgn.TimeControl != "?") {
+                var parts = pgn.TimeControl.Split(new char[] { ':' }, StringSplitOptions.RemoveEmptyEntries);
+                int time;
+                if (parts.Length >= 1 && int.TryParse(parts[0], out time))
+                    settings.MaximumTime = TimeSpan.FromSeconds(time);
+
+                if (parts.Length >= 2 && int.TryParse(parts[1], out time))
+                    settings.TimeIncrement = TimeSpan.FromSeconds(time);
+            }
+
             if (string.IsNullOrEmpty(pgn.WhitePlayerType) || pgn.WhitePlayerType == typeof(HumanPlayer).ToString())
                 settings.Players.Add(new HumanPlayer(Colors.White, pgn.White, pgn.WhiteElo));
             else if (pgn.WhitePlayerType == typeof(EnginePlayer).ToString()) {
@@ -1090,7 +1106,9 @@ namespace ChessLib
             res.Init(settings);
 
             res.WhiteTimeLeftMilliSecs = pgn.WhiteTimeLeftMilliSecs;
+            res.LastWhiteTimeLeftMilliSecs = res.WhiteTimeLeftMilliSecs;
             res.BlackTimeLeftMilliSecs = pgn.BlackTimeLeftMilliSecs;
+            res.LastBlackTimeLeftMilliSecs = res.BlackTimeLeftMilliSecs;
 
             foreach (var m in pgn.Moves) {
                 char promotion;

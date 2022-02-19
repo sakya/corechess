@@ -100,6 +100,23 @@ namespace ChessLib
                 if (BlackElo.HasValue)
                     await sw.WriteLineAsync($"[BlackElo \"{ BlackElo }\"]");
                 await sw.WriteLineAsync($"[Result \"{ Result }\"]");
+                if (!string.IsNullOrEmpty(Termination))
+                    await sw.WriteLineAsync($"[Termination \"{ Termination }\"]");
+
+                if (!string.IsNullOrEmpty(ECO))
+                    await sw.WriteLineAsync($"[ECO \"{ ECO }\"]");
+                await sw.WriteLineAsync($"[TimeControl \"{(string.IsNullOrEmpty(TimeControl) ? "?" : TimeControl)}\"]");
+                await sw.WriteLineAsync($"[SetUp \"{ SetUp }\"]");
+                if (!string.IsNullOrEmpty(FEN))
+                    await sw.WriteLineAsync($"[FEN \"{ FEN }\"]");
+                if (!string.IsNullOrEmpty(Annotator))
+                    await sw.WriteLineAsync($"[Annotator \"{ Annotator }\"]");
+                if (!string.IsNullOrEmpty(Annotator))
+                    await sw.WriteLineAsync($"[PlyCount \"{ PlyCount }\"]");
+                if (!string.IsNullOrEmpty(Annotator))
+                    await sw.WriteLineAsync($"[Mode \"{ Mode }\"]");
+                if (Time != null)
+                    await sw.WriteLineAsync($"[Time \"{ Time.Value.ToString(@"HH\:mm\:ss") }\"]");
 
                 if (!string.IsNullOrEmpty(WhitePlayerType))
                     await sw.WriteLineAsync($"[WhitePlayerType \"{ WhitePlayerType }\"]");
@@ -113,23 +130,6 @@ namespace ChessLib
                     await sw.WriteLineAsync($"[BlackEngine \"{ BlackEngine }\"]");
                 if (BlackTimeLeftMilliSecs.HasValue)
                     await sw.WriteLineAsync($"[BlackTimeLeftMilliSecs \"{ BlackTimeLeftMilliSecs }\"]");
-
-                if (!string.IsNullOrEmpty(Termination))
-                    await sw.WriteLineAsync($"[Termination \"{ Termination }\"]");
-
-                if (!string.IsNullOrEmpty(ECO))
-                    await sw.WriteLineAsync($"[ECO \"{ ECO }\"]");
-                await sw.WriteLineAsync($"[SetUp \"{ SetUp }\"]");
-                if (!string.IsNullOrEmpty(FEN))
-                    await sw.WriteLineAsync($"[FEN \"{ FEN }\"]");
-                if (!string.IsNullOrEmpty(Annotator))
-                    await sw.WriteLineAsync($"[Annotator \"{ Annotator }\"]");
-                if (!string.IsNullOrEmpty(Annotator))
-                    await sw.WriteLineAsync($"[PlyCount \"{ PlyCount }\"]");
-                if (!string.IsNullOrEmpty(Annotator))
-                    await sw.WriteLineAsync($"[Mode \"{ Mode }\"]");
-                if (Time != null)
-                    await sw.WriteLineAsync($"[Time \"{ Time.Value.ToString(@"HH\:mm\:ss") }\"]");
 
                 // Moves
                 await sw.WriteLineAsync();

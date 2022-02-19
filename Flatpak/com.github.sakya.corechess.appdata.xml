@@ -38,6 +38,14 @@
       </screenshot>
     </screenshots>
     <releases>
+      <release version="0.10.5.3" date="2022-02-20">
+        <description>
+          <ul>
+            <li>Fixed save to PGN</li>
+            <li>Fixed move tooltip when playing with black</li>
+          </ul>
+        </description>
+      </release>
       <release version="0.10.5" date="2022-02-15">
         <description>
           <ul>
