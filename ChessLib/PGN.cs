@@ -38,7 +38,7 @@ namespace ChessLib
         public string ECO { get; set; }
         public string Termination{ get; set; }
         public TimeSpan? Time { get; set; }
-        public string SetUp 
+        public string SetUp
         {
             get { return string.IsNullOrEmpty(FEN) ? "0" : "1"; }
         }
@@ -47,6 +47,16 @@ namespace ChessLib
         public string PlyCount { get; set; }
         public string TimeControl { get; set; }
         public string Mode { get; set; }
+
+#region Custom attributes
+        public string WhitePlayerType { get; set; }
+        public int? WhiteTimeLeftMilliSecs { get; set; }
+        public string WhiteEngine { get; set; }
+
+        public string BlackPlayerType { get; set; }
+        public int? BlackTimeLeftMilliSecs { get; set; }
+        public string BlackEngine { get; set; }
+#endregion
 
         public DateTime? GetDate()
         {
@@ -88,8 +98,21 @@ namespace ChessLib
                     await sw.WriteLineAsync($"[WhiteElo \"{ WhiteElo }\"]");
                 await sw.WriteLineAsync($"[Black \"{ Black }\"]");
                 if (BlackElo.HasValue)
-                    await sw.WriteLineAsync($"[BlackElo \"{ BlackElo }\"]");                
+                    await sw.WriteLineAsync($"[BlackElo \"{ BlackElo }\"]");
                 await sw.WriteLineAsync($"[Result \"{ Result }\"]");
+
+                if (!string.IsNullOrEmpty(WhitePlayerType))
+                    await sw.WriteLineAsync($"[WhitePlayerType \"{ WhitePlayerType }\"]");
+                if (!string.IsNullOrEmpty(WhiteEngine))
+                    await sw.WriteLineAsync($"[WhiteEngine \"{ WhiteEngine }\"]");
+                if (WhiteTimeLeftMilliSecs.HasValue)
+                    await sw.WriteLineAsync($"[WhiteTimeLeftMilliSecs \"{ WhiteTimeLeftMilliSecs }\"]");
+                if (!string.IsNullOrEmpty(BlackPlayerType))
+                    await sw.WriteLineAsync($"[BlackPlayerType \"{ BlackPlayerType }\"]");
+                if (!string.IsNullOrEmpty(BlackEngine))
+                    await sw.WriteLineAsync($"[BlackEngine \"{ BlackEngine }\"]");
+                if (BlackTimeLeftMilliSecs.HasValue)
+                    await sw.WriteLineAsync($"[BlackTimeLeftMilliSecs \"{ BlackTimeLeftMilliSecs }\"]");
 
                 if (!string.IsNullOrEmpty(Termination))
                     await sw.WriteLineAsync($"[Termination \"{ Termination }\"]");
@@ -166,7 +189,7 @@ namespace ChessLib
         /// <returns></returns>
         public static async Task<List<PGN>> LoadFile(string file)
         {
-            using (Stream s = new FileStream(file, FileMode.Open, FileAccess.Read, FileShare.Read)) {                
+            using (Stream s = new FileStream(file, FileMode.Open, FileAccess.Read, FileShare.Read)) {
                 return await LoadFromStream(s);
             }
         } // LoadFile
@@ -184,7 +207,7 @@ namespace ChessLib
             }
         } //LoadGame
 
-        #region private operations        
+        #region private operations
         /// <summary>
         /// Load a game informations from a PGN file
         /// </summary>
@@ -212,7 +235,7 @@ namespace ChessLib
                         stream.Position = lastPos;
                         break;
                     }
-                    
+
                     var m = propsRegEx.Match(line);
                     if (m.Success) {
                         string name = m.Groups[1].Value.Trim();
@@ -236,13 +259,29 @@ namespace ChessLib
                         } else if (name == "WhiteElo") {
                             int elo;
                             if (int.TryParse(value, out elo))
-                                res.WhiteElo = elo;                            
+                                res.WhiteElo = elo;
+                        } else if (name == "WhitePlayerType") {
+                            res.WhitePlayerType = value;
+                        } else if (name == "WhiteEngine") {
+                            res.WhiteEngine = value;
+                        } else if (name == "WhiteTimeLeftMilliSecs") {
+                            int timeLeft;
+                            if (int.TryParse(value, out timeLeft))
+                                res.WhiteTimeLeftMilliSecs = timeLeft;
                         } else if (name == "Black") {
                             res.Black = value;
                         } else if (name == "BlackElo") {
                             int elo;
                             if (int.TryParse(value, out elo))
-                                res.BlackElo = elo;                               
+                                res.BlackElo = elo;
+                        } else if (name == "BlackPlayerType") {
+                            res.BlackPlayerType = value;
+                        } else if (name == "BlackEngine") {
+                            res.BlackEngine = value;
+                        } else if (name == "BlackTimeLeftMilliSecs") {
+                            int timeLeft;
+                            if (int.TryParse(value, out timeLeft))
+                                res.BlackTimeLeftMilliSecs = timeLeft;
                         } else if (name == "Result") {
                             res.Result = value;
                         } else if (name == "Termination") {
@@ -258,7 +297,7 @@ namespace ChessLib
                         } else if (name == "Mode") {
                             res.Mode = value;
                         } else if (name == "ECO") {
-                            res.ECO = value;                            
+                            res.ECO = value;
                         }
                     }
                 } else {
@@ -267,7 +306,7 @@ namespace ChessLib
 
                     // Rest of line comment
                     int idx = line.IndexOf(";");
-                    if (idx >= 0) { 
+                    if (idx >= 0) {
                         line = line.Remove(idx, 1);
                         line.Insert(idx, "{");
                         line.Insert(line.Length - 1, "}");
@@ -350,7 +389,7 @@ namespace ChessLib
                     if (buffer[i] == '\n') {
                         s.Seek(filePos, SeekOrigin.Begin);
                         return Encoding.UTF8.GetString(bytes.ToArray());
-                    } else if (buffer[i] != '\r') { 
+                    } else if (buffer[i] != '\r') {
                         bytes.Add(buffer[i]);
                     }
                 }

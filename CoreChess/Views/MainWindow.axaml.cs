@@ -585,12 +585,12 @@ namespace CoreChess.Views
                     if (games.Count == 0)
                         await MessageWindow.ShowMessage(this, Localizer.Localizer.Instance["Error"], Localizer.Localizer.Instance["NoGameFoundInPgn"], MessageWindow.Icons.Error);
                     else if (games.Count == 1)
-                        game = await Game.LoadFromPgn(games[0]);
+                        game = await Game.LoadFromPgn(games[0], true);
                     else {
                         var gDlg = new PgnGamesWindow(games);
                         var selGame = await gDlg.ShowDialog<PGN>(this);
                         if (selGame != null)
-                            game = await Game.LoadFromPgn(selGame);
+                            game = await Game.LoadFromPgn(selGame, false);
                     }
 
                     if (game != null) {

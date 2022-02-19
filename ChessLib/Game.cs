@@ -1025,6 +1025,18 @@ namespace ChessLib
                             break;
                     }
                 }
+            } else {
+                var player = GetPlayer(Colors.White);
+                pgn.WhitePlayerType = player.GetType().ToString();
+                if (pgn.WhitePlayerType == typeof(EnginePlayer).ToString())
+                    pgn.WhiteEngine = JsonConvert.SerializeObject((player as EnginePlayer).Engine, m_SerializerSettings);
+                pgn.WhiteTimeLeftMilliSecs = WhiteTimeLeftMilliSecs;
+
+                player = GetPlayer(Colors.Black);
+                pgn.BlackPlayerType = player.GetType().ToString();
+                if (pgn.BlackPlayerType == typeof(EnginePlayer).ToString())
+                    pgn.BlackEngine = JsonConvert.SerializeObject((player as EnginePlayer).Engine, m_SerializerSettings);
+                pgn.BlackTimeLeftMilliSecs = BlackTimeLeftMilliSecs;
             }
 
             pgn.Result = result;
@@ -1044,8 +1056,9 @@ namespace ChessLib
         /// Load a game from a file in PGN format
         /// </summary>
         /// <param name="file">The file path</param>
+        /// <param name="single">True if the game is loaded from a single file. Used because "*" in a multi games file is interpreted as "aborted"</param>
         /// <returns></returns>
-        public static async Task<Game> LoadFromPgn(PGN pgn)
+        public static async Task<Game> LoadFromPgn(PGN pgn, bool single = true)
         {
             Game res = new Game() {
               ECO = pgn.ECO
@@ -1057,9 +1070,27 @@ namespace ChessLib
                 Date = pgn.GetDate(),
                 InitialFenPosition = pgn.FEN
             };
-            settings.Players.Add(new HumanPlayer(Colors.White, pgn.White, pgn.WhiteElo));
-            settings.Players.Add(new HumanPlayer(Colors.Black, pgn.Black, pgn.BlackElo));
+
+            if (string.IsNullOrEmpty(pgn.WhitePlayerType) || pgn.WhitePlayerType == typeof(HumanPlayer).ToString())
+                settings.Players.Add(new HumanPlayer(Colors.White, pgn.White, pgn.WhiteElo));
+            else if (pgn.WhitePlayerType == typeof(EnginePlayer).ToString()) {
+                var ep = new EnginePlayer(Colors.White, pgn.White, pgn.WhiteElo);
+                if (!string.IsNullOrEmpty(pgn.WhiteEngine))
+                    ep.Engine = JsonConvert.DeserializeObject(pgn.WhiteEngine, m_SerializerSettings) as Engines.EngineBase;
+                settings.Players.Add(ep);
+            }
+            if (string.IsNullOrEmpty(pgn.BlackPlayerType) || pgn.BlackPlayerType == typeof(HumanPlayer).ToString())
+                settings.Players.Add(new HumanPlayer(Colors.Black, pgn.Black, pgn.BlackElo));
+            else if (pgn.BlackPlayerType == typeof(EnginePlayer).ToString()) {
+                var ep = new EnginePlayer(Colors.Black, pgn.Black, pgn.BlackElo);
+                if (!string.IsNullOrEmpty(pgn.BlackEngine))
+                    ep.Engine = JsonConvert.DeserializeObject(pgn.BlackEngine, m_SerializerSettings) as Engines.EngineBase;
+                settings.Players.Add(ep);
+            }
             res.Init(settings);
+
+            res.WhiteTimeLeftMilliSecs = pgn.WhiteTimeLeftMilliSecs;
+            res.BlackTimeLeftMilliSecs = pgn.BlackTimeLeftMilliSecs;
 
             foreach (var m in pgn.Moves) {
                 char promotion;
@@ -1088,7 +1119,7 @@ namespace ChessLib
             } else if (pgn.Result == "1/2-1/2") {
                 res.Status = Statuses.Ended;
                 res.Result = Results.Draw;
-            } else if (pgn.Result == "*") {
+            } else if (pgn.Result == "*" && !single) {
                 res.Status = Statuses.Ended;
                 res.Result = Results.Aborted;
             }
