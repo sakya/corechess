@@ -288,7 +288,7 @@ namespace CoreChess.Views
             {
                 Position = NotificationPosition.TopRight,
                 MaxItems = 3,
-                Margin = Environment.OSVersion.Platform == PlatformID.Win32NT ?  new Thickness(0, 30, 0, 0) : new Thickness(0)
+                Margin = OperatingSystem.IsWindows() ?  new Thickness(0, 30, 0, 0) : new Thickness(0)
             };
         }
 

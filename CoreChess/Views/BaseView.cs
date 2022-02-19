@@ -18,7 +18,7 @@ namespace CoreChess.Views
 #if DEBUG
             this.AttachDevTools();
 #endif
-            if (Environment.OSVersion.Platform == PlatformID.Win32NT) {
+            if (OperatingSystem.IsWindows()) {
                 this.ExtendClientAreaToDecorationsHint = true;
                 this.ExtendClientAreaTitleBarHeightHint = -1;
                 this.ExtendClientAreaChromeHints = ExtendClientAreaChromeHints.NoChrome;
@@ -27,7 +27,7 @@ namespace CoreChess.Views
             SetWindowTitle();
 
             // Fix for https://github.com/AvaloniaUI/Avalonia/issues/6433
-            if (Environment.OSVersion.Platform == PlatformID.Unix) {
+            if (!OperatingSystem.IsWindows()) {
                 var iv = this.GetObservable(Window.IsVisibleProperty);
                 iv.Subscribe(value => {
                     if (value && !m_CenterDone) {

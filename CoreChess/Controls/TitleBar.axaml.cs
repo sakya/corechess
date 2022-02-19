@@ -23,7 +23,7 @@ namespace CoreChess.Controls
         {
             AvaloniaXamlLoader.Load(this);
 
-            this.IsVisible = Environment.OSVersion.Platform == PlatformID.Win32NT;
+            this.IsVisible = OperatingSystem.IsWindows();
         }
 
         protected override void OnApplyTemplate(TemplateAppliedEventArgs e)

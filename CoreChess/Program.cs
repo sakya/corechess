@@ -170,7 +170,7 @@ namespace CoreChess
                         Arguments = "--uci"
                     }
                 );
-            } else if (Environment.OSVersion.Platform == PlatformID.Win32NT) {
+            } else if (OperatingSystem.IsWindows()) {
                 // Add default engines (Inno Setup)
                 defaultEngines.Add(
                     new Uci("Stockfish", Path.Combine(App.BinaryPath, @"Engines\stockfish\stockfish_14.1_win_x64.exe"))

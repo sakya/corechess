@@ -27,7 +27,7 @@ namespace CoreChess.Views
             AvaloniaXamlLoader.Load(this);
             base.InitializeComponent();
 
-            if (Environment.OSVersion.Platform != PlatformID.Win32NT) {
+            if (!OperatingSystem.IsWindows()) {
                 var cb = this.FindControl<ComboBox>("m_EngineType");
                 var items = cb.Items as Avalonia.Collections.AvaloniaList<object>;
                 items.RemoveAt(3);
@@ -158,7 +158,7 @@ namespace CoreChess.Views
         {
             var dlg = new OpenFileDialog();
             dlg.AllowMultiple = false;
-            if (Environment.OSVersion.Platform == PlatformID.Win32NT) {
+            if (OperatingSystem.IsWindows()) {
                 dlg.Filters = new List<FileDialogFilter>()
                 {
                     new FileDialogFilter(){ Extensions = new List<string>() {"exe" }, Name = "Executables"},
