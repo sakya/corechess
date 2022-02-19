@@ -434,7 +434,7 @@ namespace CoreChess.Views
                 chessboard.SquareBlackSelectedColor = Utils.ColorConverter.ParseHexColor(App.Settings.BlackSelectedColor);
                 chessboard.ShowFileRankNotation = false;
                 await chessboard.SetGame(game);
-                chessboard.Flipped = m_Game.GetPlayer(Game.Colors.Black) is HumanPlayer;
+                chessboard.Flipped = m_Game.GetPlayer(Game.Colors.Black) is HumanPlayer && m_Game.GetPlayer(Game.Colors.White) is EnginePlayer;
 
                 foreach (var m in m_Game.Moves) {
                     await game.DoMove(m.Coordinate, false, true);
@@ -1094,7 +1094,7 @@ namespace CoreChess.Views
                     tempBoard.SquareBlackSelectedColor = Utils.ColorConverter.ParseHexColor(App.Settings.BlackSelectedColor);
                     tempBoard.ShowFileRankNotation = false;
                     await tempBoard.SetGame(game.Copy());
-                    tempBoard.Flipped = m_Game.GetPlayer(Game.Colors.Black) is HumanPlayer;
+                    tempBoard.Flipped = m_Game.GetPlayer(Game.Colors.Black) is HumanPlayer && m_Game.GetPlayer(Game.Colors.White) is EnginePlayer;
 
                     AddMove(tempBoard, m, true);
                     idx++;
