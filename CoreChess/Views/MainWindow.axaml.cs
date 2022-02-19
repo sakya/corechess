@@ -434,6 +434,8 @@ namespace CoreChess.Views
                 chessboard.SquareBlackSelectedColor = Utils.ColorConverter.ParseHexColor(App.Settings.BlackSelectedColor);
                 chessboard.ShowFileRankNotation = false;
                 await chessboard.SetGame(game);
+                chessboard.Flipped = m_Game.GetPlayer(Game.Colors.Black) is HumanPlayer;
+
                 foreach (var m in m_Game.Moves) {
                     await game.DoMove(m.Coordinate, false, true);
                 }
@@ -1073,15 +1075,6 @@ namespace CoreChess.Views
                 settings.Players.Add(new HumanPlayer(Game.Colors.Black, string.Empty, null));
                 game.Init(settings);
 
-                var chessboard = new Chessboard();
-                chessboard.PiecesFolder = App.GetPiecesPath(App.Settings.PiecesSet);
-                chessboard.SquareWhiteColor = Utils.ColorConverter.ParseHexColor(App.Settings.WhiteColor);
-                chessboard.SquareWhiteSelectedColor = Utils.ColorConverter.ParseHexColor(App.Settings.WhiteSelectedColor);
-                chessboard.SquareBlackColor = Utils.ColorConverter.ParseHexColor(App.Settings.BlackColor);
-                chessboard.SquareBlackSelectedColor = Utils.ColorConverter.ParseHexColor(App.Settings.BlackSelectedColor);
-                chessboard.ShowFileRankNotation = false;
-                await chessboard.SetGame(game);
-
                 int idx = 0;
                 foreach (var m in m_Game.Moves) {
                     // Backward compatibility
@@ -1101,6 +1094,7 @@ namespace CoreChess.Views
                     tempBoard.SquareBlackSelectedColor = Utils.ColorConverter.ParseHexColor(App.Settings.BlackSelectedColor);
                     tempBoard.ShowFileRankNotation = false;
                     await tempBoard.SetGame(game.Copy());
+                    tempBoard.Flipped = m_Game.GetPlayer(Game.Colors.Black) is HumanPlayer;
 
                     AddMove(tempBoard, m, true);
                     idx++;
