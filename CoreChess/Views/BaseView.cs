@@ -15,8 +15,10 @@ namespace CoreChess.Views
 
         protected virtual void InitializeComponent()
         {
-            if (Environment.OSVersion.Platform == PlatformID.Win32NT)
-            {
+#if DEBUG
+            this.AttachDevTools();
+#endif
+            if (Environment.OSVersion.Platform == PlatformID.Win32NT) {
                 this.ExtendClientAreaToDecorationsHint = true;
                 this.ExtendClientAreaTitleBarHeightHint = -1;
                 this.ExtendClientAreaChromeHints = ExtendClientAreaChromeHints.NoChrome;
@@ -25,13 +27,10 @@ namespace CoreChess.Views
             SetWindowTitle();
 
             // Fix for https://github.com/AvaloniaUI/Avalonia/issues/6433
-            if (Environment.OSVersion.Platform == PlatformID.Unix)
-            {
+            if (Environment.OSVersion.Platform == PlatformID.Unix) {
                 var iv = this.GetObservable(Window.IsVisibleProperty);
-                iv.Subscribe(value =>
-                {
-                    if (value && !m_CenterDone)
-                    {
+                iv.Subscribe(value => {
+                    if (value && !m_CenterDone) {
                         m_CenterDone = true;
                         CenterWindow();
                     }
@@ -51,30 +50,28 @@ namespace CoreChess.Views
             if (this.WindowStartupLocation == WindowStartupLocation.Manual)
                 return;
 
-            Screen screen = null;
-            while (screen == null)
-            {
-                await Task.Delay(1);
-                screen = this.Screens.ScreenFromVisual(this);
+            await Task.Delay(1);
+            double scale = PlatformImpl?.DesktopScaling ?? 1.0;
+            IWindowBaseImpl powner = Owner?.PlatformImpl;
+            if(powner != null) {
+                scale = powner.DesktopScaling;
             }
-
-            if (this.WindowStartupLocation == WindowStartupLocation.CenterScreen)
-            {
-                var x = (int)Math.Floor(screen.Bounds.Width / 2 - this.Bounds.Width / 2);
-                var y = (int)Math.Floor(screen.Bounds.Height / 2 - (this.Bounds.Height + 30) / 2);
-
-                this.Position = new PixelPoint(x, y);
-            }
-            else if (this.WindowStartupLocation == WindowStartupLocation.CenterOwner)
-            {
-                var pw = this.Owner as Window;
-                if (pw != null)
-                {
-                    var x = (int)Math.Floor(pw.Bounds.Width / 2 - this.Bounds.Width / 2 + pw.Position.X);
-                    var y = (int)Math.Floor(pw.Bounds.Height / 2 - (this.Bounds.Height + 30) / 2 + pw.Position.Y);
-
-                    this.Position = new PixelPoint(x, y);
+            PixelRect rect = new PixelRect(PixelPoint.Origin,
+                PixelSize.FromSize(ClientSize, scale));
+            if(WindowStartupLocation == WindowStartupLocation.CenterScreen) {
+                Screen screen = Screens.ScreenFromPoint(powner?.Position ?? Position);
+                if(screen == null) {
+                    return;
                 }
+                Position = screen.WorkingArea.CenterRect(rect).Position;
+            }
+            else {
+                if(powner == null ||
+                    WindowStartupLocation != WindowStartupLocation.CenterOwner) {
+                    return;
+                }
+                Position = new PixelRect(powner.Position,
+                    PixelSize.FromSize(powner.ClientSize, scale)).CenterRect(rect).Position;
             }
         } // CenterWindow
     }

@@ -266,9 +266,6 @@ namespace CoreChess.Views
         {
             m_args = args;
             InitializeComponent();
-#if DEBUG
-            this.AttachDevTools();
-#endif
         }
 
         protected override void InitializeComponent()
