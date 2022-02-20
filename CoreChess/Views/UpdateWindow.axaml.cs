@@ -6,7 +6,9 @@ using Avalonia.Markup.Xaml;
 using Octokit;
 using System.Net.Http;
 using System.IO;
+using System.Linq;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Collections.Generic;
 
 namespace CoreChess.Views
@@ -57,18 +59,32 @@ namespace CoreChess.Views
 
         private async void DownloadAndInstall(CancellationToken token)
         {
-            var asset = m_Release.Assets[0];
+            try {
+                await DownloadAndInstallPrimitive(token);
+            } catch (Exception ex) {
+                var tb = this.FindControl<TextBlock>("m_Message");
+                tb.Text = $"{Localizer.Localizer.Instance["UpdateError"]} {ex.Message}";
+            }
+        } // DownloadAndInstall
+
+
+        private async Task<bool> DownloadAndInstallPrimitive(CancellationToken token)
+        {
             var progress = this.FindControl<ProgressBar>("m_Progress");
             var progressMessage = this.FindControl<TextBlock>("m_ProgressMessage");
             progressMessage.Text = $"{0.ToString("0", App.Settings.Culture)}%";
 
-            var fileName = Path.Combine(GetDownloadFolder(), asset.Name);
-            if (File.Exists(fileName))
-                File.Delete(fileName);
-
             this.FindControl<StackPanel>("m_VersionInfo").IsVisible = false;
             this.FindControl<Controls.OkCancelButtons>("m_OkCancel").IsVisible = false;
             this.FindControl<StackPanel>("m_Download").IsVisible = true;
+
+            var asset = m_Release.Assets.Where(a => a.Name.EndsWith(".exe")).FirstOrDefault();
+            if (asset == null)
+                throw new Exception("Asset not found");
+
+            var fileName = Path.Combine(GetDownloadFolder(), asset.Name);
+            if (File.Exists(fileName))
+                File.Delete(fileName);
 
             double done = 0;
             using (var client = new HttpClient()) {
@@ -96,7 +112,8 @@ namespace CoreChess.Views
             } else {
                 File.Delete(fileName);
             }
-        } // DownloadAndInstall
+            return true;
+        }
 
         private string GetDownloadFolder()
         {

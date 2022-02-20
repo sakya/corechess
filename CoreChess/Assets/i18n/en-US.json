@@ -146,6 +146,7 @@
   "TrainingMode": "Training mode",
   "TrainingModeHelp": "Disable sudden death",
   "Update": "Update",
+  "UpdateError": "An error occurred:",
   "white": "white",
   "WhiteFilesColor": "White squares color",
   "WhiteFilesSelectedColor": "White squares selected color",

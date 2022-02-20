@@ -146,6 +146,7 @@
   "TrainingMode": "Modalità allenamento",
   "TrainingModeHelp": "Disabilita il controllo del tempo",
   "Update": "Aggiorna",
+  "UpdateError": "Si è verificato un errore:",
   "white": "il bianco",
   "WhiteFilesColor": "Colore case bianche",
   "WhiteFilesSelectedColor": "Colore case bianche selezionate",
