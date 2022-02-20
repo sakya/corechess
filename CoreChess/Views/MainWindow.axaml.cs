@@ -861,10 +861,13 @@ namespace CoreChess.Views
             foreach (var child in moves.Children) {
                 var stack = child as StackPanel;
                 foreach (var t in stack.Children) {
-                    if (move != null && t.DataContext == move)
+                    if (move != null && t.DataContext == move) {
+                        t.Classes.Remove("HiglightOnOver");
                         t.Classes.Add("HiglightBackground");
-                    else
+                    } else {
                         t.Classes.Remove("HiglightBackground");
+                        t.Classes.Add("HiglightOnOver");
+                    }
                 }
             }
         } // OnMouseOnAnalysisResult
