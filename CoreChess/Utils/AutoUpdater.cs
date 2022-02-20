@@ -20,7 +20,7 @@ namespace CoreChess.Utils
         /// </summary>
         /// <param name="owner">The window owner</param>
         /// <param name="manual">If set to true a message box is displayed if no update is available</param>
-        /// <returns>True if a download has been download and started</returns>
+        /// <returns>True if an update has been downloaded and started</returns>
         public async Task<bool> CheckForUpdate(Avalonia.Controls.Window owner, bool manual = false)
         {
             var release = await GetLatestRelease();
