@@ -281,7 +281,7 @@
               </Button>
             </StackPanel>
             <ScrollViewer Grid.Row="3" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Disabled">
-              <WrapPanel Name="m_Moves" MinHeight="100" Orientation="Vertical"></WrapPanel>
+              <WrapPanel Name="m_Moves" Orientation="Vertical"></WrapPanel>
             </ScrollViewer>
           </Grid>
         </Border>

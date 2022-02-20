@@ -1023,7 +1023,7 @@ namespace CoreChess.Views
                 Thickness margin = new Thickness(0);
                 if (lastPiece?.Type == cp.Type)
                     margin = new Thickness(-10,0,0,0);
-                white.Children.Add(new Image() { Source = bitmap, Height = 40, Margin = margin });
+                white.Children.Add(new Image() { Source = bitmap, Height = 35, Margin = margin });
                 lastPiece = cp;
             }
 
@@ -1037,7 +1037,7 @@ namespace CoreChess.Views
                 Thickness margin = new Thickness(0);
                 if (lastPiece?.Type == cp.Type)
                     margin = new Thickness(-10, 0, 0, 0);
-                black.Children.Add(new Image() { Source = bitmap, Height = 40, Margin = margin });
+                black.Children.Add(new Image() { Source = bitmap, Height = 35, Margin = margin });
                 lastPiece = cp;
             }
 
