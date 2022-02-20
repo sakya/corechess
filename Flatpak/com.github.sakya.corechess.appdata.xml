@@ -36,6 +36,12 @@
       <screenshot type="default">
           <image>https://user-images.githubusercontent.com/289552/152684938-7231401d-e5ab-48bb-a445-06c139f64885.png</image>
       </screenshot>
+      <screenshot type="default">
+        <image>https://user-images.githubusercontent.com/289552/154836433-9529064c-9621-477f-ad5f-425ff4badbed.png</image>
+      </screenshot>
+      <screenshot type="default">
+        <image>https://user-images.githubusercontent.com/289552/154836456-ee2f555c-8756-431b-b7d0-4c27f939226b.png</image>
+      </screenshot>
     </screenshots>
     <releases>
       <release version="0.10.5.3" date="2022-02-20">
