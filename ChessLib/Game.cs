@@ -1062,9 +1062,9 @@ namespace ChessLib
         /// Load a game from a file in PGN format
         /// </summary>
         /// <param name="file">The file path</param>
-        /// <param name="starAsABorted">True if "*" must be interpreted as "aborted"</param>
+        /// <param name="starAsAborted">True if "*" must be interpreted as "aborted"</param>
         /// <returns></returns>
-        public static async Task<Game> LoadFromPgn(PGN pgn, bool starAsABorted = true)
+        public static async Task<Game> LoadFromPgn(PGN pgn, bool starAsAborted = true)
         {
             Game res = new Game() {
               ECO = pgn.ECO
@@ -1137,7 +1137,7 @@ namespace ChessLib
             } else if (pgn.Result == "1/2-1/2") {
                 res.Status = Statuses.Ended;
                 res.Result = Results.Draw;
-            } else if (pgn.Result == "*" && !starAsABorted) {
+            } else if (pgn.Result == "*" && !starAsAborted) {
                 res.Status = Statuses.Ended;
                 res.Result = Results.Aborted;
             }
