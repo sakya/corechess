@@ -154,6 +154,11 @@
         </MenuItem>
       </MenuItem>
       <MenuItem Header="{i18n:Localize _Help}">
+        <MenuItem IsVisible="{Binding IsWindows}" Header="{i18n:Localize _CheckForUpdates}" Click="OnCheckForUpdatesClick">
+          <MenuItem.Icon>
+            <i:Icon FontSize="14" Value="fas fa-upload" />
+          </MenuItem.Icon>
+        </MenuItem>
         <MenuItem Header="{i18n:Localize _About}" Click="OnAboutClick" InputGesture="F1">
           <MenuItem.Icon>
             <i:Icon FontSize="14" Value="far fa-question-circle" />

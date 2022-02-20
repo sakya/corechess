@@ -47,11 +47,11 @@
 
                 <TextBlock Text="{Binding Name}" TextWrapping="Wrap"/>
                 <TextBlock Grid.Row="1" FontSize="12" Text="{Binding Command}" TextTrimming="CharacterEllipsis" />
-                <Button Grid.RowSpan="2" Grid.Column="1" Click="OnEngineOptionsClick">
-                  <i:Icon Value="fas fa-cogs" />
-                </Button>
-                <Button Grid.RowSpan="2" Grid.Column="2" Click="OnConfigureEngineClick" Margin="5,0,0,0">
+                <Button Grid.RowSpan="2" Grid.Column="1" Click="OnConfigureEngineClick">
                   <i:Icon Value="fas fa-tools" />
+                </Button>
+                <Button Grid.RowSpan="2" Grid.Column="2" Click="OnEngineOptionsClick" Margin="5,0,0,0">
+                  <i:Icon Value="fas fa-cogs" />
                 </Button>
                 <Button Grid.RowSpan="2" Grid.Column="3" Click="OnRemoveEngineClick" Margin="5,0,0,0">
                   <i:Icon Value="fas fa-trash-alt" />

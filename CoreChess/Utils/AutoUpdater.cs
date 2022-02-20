@@ -15,6 +15,12 @@ namespace CoreChess.Utils
             m_Client = new GitHubClient(new ProductHeaderValue("CoreChess"));
         }
 
+        /// <summary>
+        /// Check for an update (Windows only)
+        /// </summary>
+        /// <param name="owner">The window owner</param>
+        /// <param name="manual">If set to true a message box is displayed if no update is available</param>
+        /// <returns>True if a download has been download and started</returns>
         public async Task<bool> CheckForUpdate(Avalonia.Controls.Window owner, bool manual = false)
         {
             var release = await GetLatestRelease();
@@ -35,7 +41,7 @@ namespace CoreChess.Utils
             return false;
         } // CheckForUpdate
 
-        public async Task<Release> GetLatestRelease()
+        private async Task<Release> GetLatestRelease()
         {
             try {
                 var releases = await m_Client.Repository.Release.GetAll("sakya", "CoreChess");
