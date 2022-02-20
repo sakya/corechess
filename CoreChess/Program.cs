@@ -71,6 +71,7 @@ namespace CoreChess
 
         private static async Task<Views.MainWindow> InitializeApp(string[] args)
         {
+            App.Version = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString();
             App.BinaryPath = Path.GetDirectoryName(System.Reflection.Assembly.GetEntryAssembly().Location);
             App.LocalPath = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "CoreChess");
             if (!Directory.Exists(App.LocalPath))
@@ -142,7 +143,7 @@ namespace CoreChess
             }
 
             // Fix for gnuchess in flatpak
-            if (App.Settings.Version.ToString() == "0.10.5.0" && System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString() == "0.10.5.1") {
+            if (App.Settings.Version.ToString() == "0.10.5.0" && App.Version == "0.10.5.1") {
                 var gnuchess = engines.Where(e => e.Command == "/app/bin/Engines/gnuchess/gnuchess").FirstOrDefault();
                 if (gnuchess != null)
                     engines.Remove(gnuchess);

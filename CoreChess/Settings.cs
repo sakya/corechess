@@ -75,7 +75,7 @@ namespace CoreChess
             OpeningBook = InternalOpeningBook;
         }
 
-        public Version Version { get; set; }
+        public string Version { get; set; }
         public string Language { get; set; }
 
         [JsonIgnore]
@@ -163,7 +163,7 @@ namespace CoreChess
         public void Save(string path)
         {
             using (StreamWriter sw = new StreamWriter(path)) {
-                Version = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version;
+                Version = App.Version;
 
                 var settings = new JsonSerializerSettings() { TypeNameHandling = TypeNameHandling.Objects };
                 sw.Write(JsonConvert.SerializeObject(this, Formatting.Indented, settings));

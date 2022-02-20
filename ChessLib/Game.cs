@@ -233,7 +233,7 @@ namespace ChessLib
         public Game()
             : base()
         {
-            Version = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version;
+            Version = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString();
             Winner = null;
             Board = new Board();
             Moves = new List<MoveNotation>();
@@ -257,7 +257,7 @@ namespace ChessLib
         } // Dispose
 
         #region public properties
-        public Version Version { get; set; }
+        public string Version { get; set; }
 
         /// <summary>
         /// The game initial position (FEN)
@@ -951,7 +951,7 @@ namespace ChessLib
         public async Task<bool> Save(string file)
         {
             using (Stream sw = new FileStream(file, FileMode.Create, FileAccess.Write)) {
-                Version = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version;
+                Version = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString();
 
                 string content = JsonConvert.SerializeObject(this, m_SerializerSettings);
                 byte[] data = Zip(content);
