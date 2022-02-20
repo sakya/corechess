@@ -7,6 +7,7 @@ using Octokit;
 using System.Net.Http;
 using System.IO;
 using System.Threading;
+using System.Collections.Generic;
 
 namespace CoreChess.Views
 {
@@ -61,7 +62,7 @@ namespace CoreChess.Views
             var progressMessage = this.FindControl<TextBlock>("m_ProgressMessage");
             progressMessage.Text = $"{0.ToString("0", App.Settings.Culture)}%";
 
-            var fileName = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), asset.Name);
+            var fileName = Path.Combine(GetDownloadFolder(), asset.Name);
             if (File.Exists(fileName))
                 File.Delete(fileName);
 
@@ -95,6 +96,24 @@ namespace CoreChess.Views
             } else {
                 File.Delete(fileName);
             }
-        }
+        } // DownloadAndInstall
+
+        private string GetDownloadFolder()
+        {
+            var home = Environment.GetFolderPath(Environment.SpecialFolder.Personal);
+            var folders = new List<string>()
+            {
+                Path.Combine(home, "Downloads"),
+                Path.Combine(home, "downloads"),
+                Path.Combine(home, "Download"),
+                Path.Combine(home, "download"),
+            };
+
+            foreach (var f in folders) {
+                if (Directory.Exists(f))
+                    return f;
+            }
+            return home;
+        } // GetDownloadFolder
     }
 }

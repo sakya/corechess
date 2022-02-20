@@ -953,7 +953,7 @@ namespace CoreChess.Views
             await SetGame(game);
 
             // Check for update (Windows only)
-            //if (OperatingSystem.IsWindows()) {
+            if (OperatingSystem.IsWindows()) {
                 DispatcherTimer.RunOnce(async () =>
                 {
                     var updater = new Utils.AutoUpdater();
@@ -961,7 +961,7 @@ namespace CoreChess.Views
                         this.Close();
                     }
                 }, TimeSpan.FromSeconds(3), DispatcherPriority.Background);
-            //}
+            }
         } // InitializeWindow
 
         private void SetPlayerToMove()
