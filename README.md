@@ -22,3 +22,8 @@ CoreChess is an open source chess GUI for chess engines
 - Polyglot (BIN)
 - Arena opening book (ABK)
 - Chessmaster (OBK)
+
+## Screenshots
+![image](https://user-images.githubusercontent.com/289552/154836433-9529064c-9621-477f-ad5f-425ff4badbed.png)
+
+![image](https://user-images.githubusercontent.com/289552/154836456-ee2f555c-8756-431b-b7d0-4c27f939226b.png)
