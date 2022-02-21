@@ -35,8 +35,12 @@ namespace CoreChess.Utils
                         StringBuilder sb = new StringBuilder();
                         sb.AppendLine(release.Body);
                         foreach (var r in releases) {
-                            if (r != release && Version.TryParse(r.TagName, out releaseVersion) && releaseVersion > currentVersion) {
-                                sb.AppendLine(r.Body);
+                            if (r != release && Version.TryParse(r.TagName, out releaseVersion)) {
+                                if (releaseVersion > currentVersion) {
+                                    sb.AppendLine(r.Body);
+                                } else {
+                                    break;
+                                }
                             }
                         }
 
