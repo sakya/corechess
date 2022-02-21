@@ -121,6 +121,7 @@ namespace CoreChess.Views
             bool m_CanPause = true;
             bool m_IsPaused = false;
             bool m_IsWindows = false;
+            bool m_CheckingForUpdates = false;
             Settings.Notations? m_MoveNotation = null;
             Settings.CapturedPiecesDisplay? m_CapturedPieces = null;
             bool m_ShowEngineOutput = false;
@@ -150,6 +151,12 @@ namespace CoreChess.Views
             {
                 get { return m_IsWindows; }
                 set { SetIfChanged(ref m_IsWindows, value); }
+            }
+
+            public bool CheckingForUpdates
+            {
+                get { return m_CheckingForUpdates; }
+                set { SetIfChanged(ref m_CheckingForUpdates, value); }
             }
 
             public bool IsPaused
@@ -718,10 +725,12 @@ namespace CoreChess.Views
 
         private async void OnCheckForUpdatesClick(object sender, RoutedEventArgs e)
         {
+            m_Context.CheckingForUpdates = true;
             var updater = new Utils.AutoUpdater();
             if (await updater.CheckForUpdate(this, true)) {
                 this.Close();
             }
+            m_Context.CheckingForUpdates = false;
         } // OnCheckForUpdatesClick
 
         private async void OnAboutClick(object sender, RoutedEventArgs e)
@@ -972,11 +981,13 @@ namespace CoreChess.Views
             if (OperatingSystem.IsWindows()) {
                 DispatcherTimer.RunOnce(async () =>
                 {
+                    m_Context.CheckingForUpdates = true;
                     var updater = new Utils.AutoUpdater();
                     if (await updater.CheckForUpdate(this)) {
                         this.Close();
                     }
-                }, TimeSpan.FromSeconds(3), DispatcherPriority.Background);
+                    m_Context.CheckingForUpdates = false;
+                }, TimeSpan.FromSeconds(2), DispatcherPriority.Background);
             }
         } // InitializeWindow
 

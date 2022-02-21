@@ -16,6 +16,7 @@ namespace CoreChess.Views
     public class UpdateWindow : BaseView
     {
         private Release m_Release = null;
+        private string m_Changelog = string.Empty;
         private CancellationTokenSource m_Cts;
 
         public UpdateWindow()
@@ -23,9 +24,11 @@ namespace CoreChess.Views
             this.InitializeComponent();
         }
 
-        public UpdateWindow(Release release)
+        public UpdateWindow(Release release, string changelog)
         {
             m_Release = release;
+            m_Changelog = changelog;
+
             this.InitializeComponent();
         }
 
@@ -37,7 +40,7 @@ namespace CoreChess.Views
             var tb = this.FindControl<TextBlock>("m_Version");
             tb.Text = m_Release.TagName;
             tb = this.FindControl<TextBlock>("m_Description");
-            tb.Text = m_Release.Body;
+            tb.Text = m_Changelog;
 
             this.Closing += (s, e) =>
             {
@@ -74,7 +77,7 @@ namespace CoreChess.Views
             var progressMessage = this.FindControl<TextBlock>("m_ProgressMessage");
             progressMessage.Text = $"{0.ToString("0", App.Settings.Culture)}%";
 
-            this.FindControl<StackPanel>("m_VersionInfo").IsVisible = false;
+            this.FindControl<ScrollViewer>("m_VersionInfo").IsVisible = false;
             this.FindControl<Controls.OkCancelButtons>("m_OkCancel").IsVisible = false;
             this.FindControl<StackPanel>("m_Download").IsVisible = true;
 

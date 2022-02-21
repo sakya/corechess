@@ -154,7 +154,7 @@
         </MenuItem>
       </MenuItem>
       <MenuItem Header="{i18n:Localize _Help}">
-        <MenuItem IsVisible="{Binding IsWindows}" Header="{i18n:Localize _CheckForUpdates}" Click="OnCheckForUpdatesClick">
+        <MenuItem IsVisible="{Binding IsWindows}" IsEnabled="{Binding !CheckingForUpdates}" Header="{i18n:Localize _CheckForUpdates}" Click="OnCheckForUpdatesClick">
           <MenuItem.Icon>
             <i:Icon FontSize="14" Value="fas fa-upload" />
           </MenuItem.Icon>

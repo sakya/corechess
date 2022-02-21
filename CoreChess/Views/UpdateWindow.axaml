@@ -30,10 +30,13 @@
                     <TextBlock Name="m_ProgressMessage" FontSize="12" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,5,0,5" />
                 </Grid>
             </StackPanel>
-            <StackPanel Name="m_VersionInfo" Orientation="Vertical" Margin="0,0,0,15">
+            <ScrollViewer Name="m_VersionInfo" Margin="0,0,0,15" HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto"
+                          MaxHeight="300">
+              <StackPanel Orientation="Vertical">
                 <TextBlock Name="m_Version" FontWeight="Bold" />
                 <TextBlock Name="m_Description" TextAlignment="Left" TextWrapping="Wrap" />
-            </StackPanel>
+              </StackPanel>
+            </ScrollViewer>
             <controls:OkCancelButtons Name="m_OkCancel" Grid.Row="1" OkClick="OnOkClick" CancelClick="OnCancelClick" OkText="{i18n:Localize Update}" CancelText="{i18n:Localize Cancel}" />
         </Grid>
     </DockPanel>
