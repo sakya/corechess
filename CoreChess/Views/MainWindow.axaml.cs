@@ -1259,11 +1259,6 @@ namespace CoreChess.Views
 
         private void UpdateEco()
         {
-            if (m_Game.Moves.Count > 10) {
-                m_Context.EcoName = string.Empty;
-                return;
-            }
-
             StringBuilder sb = new StringBuilder();
             foreach (var m in m_Game.Moves) {
                 sb.Append($"{m.ShortAlgebraic} ");
@@ -1278,7 +1273,7 @@ namespace CoreChess.Views
                         m_Context.EcoName = $"{foundEco.Code}: {foundEco.Name}";
                     else
                         m_Context.EcoName = $"{foundEco.Code}: {foundEco.Name}, {foundEco.Variation}";
-                } else {
+                } else if (m_Game.Moves.Count > 10) {
                     m_Context.EcoName = string.Empty;
                 }
             }
