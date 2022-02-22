@@ -456,7 +456,11 @@ namespace CoreChess.Views
                 }
 
                 if (game.Moves.Count > 0) {
-                    AddMove(chessboard, m_Game.Moves.Last());
+                    var stack = AddMove(chessboard, m_Game.Moves.Last());
+                    DispatcherTimer.RunOnce(() =>
+                    {
+                        stack.BringIntoView();
+                    }, TimeSpan.FromMilliseconds(10), DispatcherPriority.Background);
                     if (!m_Game.Settings.IsChess960)
                         UpdateEco();
                 }
@@ -698,7 +702,10 @@ namespace CoreChess.Views
 
             if (selGame != null) {
                 await SetGame(selGame);
-                DisplayMove(m_Game.Moves.Count - 1);
+                DispatcherTimer.RunOnce(() =>
+                {
+                    DisplayMove(m_Game.Moves.Count - 1);
+                }, TimeSpan.FromMilliseconds(100), DispatcherPriority.Background);
             }
         } // OnGamesDatabaseClick
 
@@ -1148,7 +1155,14 @@ namespace CoreChess.Views
             return true;
         } // UpdateMoves
 
-        private void AddMove(Chessboard chessboard, Game.MoveNotation move, bool disposeGame = false)
+        /// <summary>
+        /// Add a move to the list.
+        /// </summary>
+        /// <param name="chessboard"></param>
+        /// <param name="move"></param>
+        /// <param name="disposeGame"></param>
+        /// <returns>The StackPanel containing the move text</returns>
+        private StackPanel AddMove(Chessboard chessboard, Game.MoveNotation move, bool disposeGame = false)
         {
             var moves = this.FindControl<WrapPanel>("m_Moves");
             var stack = moves.Children.Where(s => s.Name == $"move_{move.Index}").FirstOrDefault() as StackPanel;
@@ -1216,12 +1230,14 @@ namespace CoreChess.Views
                 Height = 180
             };
 
-            DispatcherTimer.RunOnce(() =>
+            img.AttachedToVisualTree += (s, e) =>
             {
-                img.Source = chessboard.GetBitmap(new Size(300, 300), move);
-                if (disposeGame)
-                    chessboard.Game.Dispose();
-            }, TimeSpan.FromMilliseconds(100), DispatcherPriority.Background);
+                var image = s as Image;
+                if (image.Source == null)
+                    image.Source = chessboard.GetBitmap(new Size(300, 300), move);
+            };
+            if (disposeGame)
+                chessboard.Game.Dispose();
 
             tStack.Children.Add(img);
             ToolTip.SetTip(moveTxt, tStack);
@@ -1237,10 +1253,17 @@ namespace CoreChess.Views
                 tStack.Children.Add(txt);
                 moveTxt.FontWeight = FontWeight.Bold;
             }
+
+            return stack;
         } // AddMove
 
         private void UpdateEco()
         {
+            if (m_Game.Moves.Count > 10) {
+                m_Context.EcoName = string.Empty;
+                return;
+            }
+
             StringBuilder sb = new StringBuilder();
             foreach (var m in m_Game.Moves) {
                 sb.Append($"{m.ShortAlgebraic} ");
@@ -1255,7 +1278,7 @@ namespace CoreChess.Views
                         m_Context.EcoName = $"{foundEco.Code}: {foundEco.Name}";
                     else
                         m_Context.EcoName = $"{foundEco.Code}: {foundEco.Name}, {foundEco.Variation}";
-                } else if (m_Game.Moves.Count > 10) {
+                } else {
                     m_Context.EcoName = string.Empty;
                 }
             }
