@@ -141,6 +141,9 @@ namespace ChessLib
             /// </summary>
             /// <value></value>
             public string Fen { get; set; }
+
+            public int? WhiteTimeLeftMilliSecs { get; set; }
+            public int? BlackTimeLeftMilliSecs { get; set; }
         } // MoveNotation
 
         class MoveResult
@@ -346,8 +349,24 @@ namespace ChessLib
         public int BlackIncrementMillisecs { get; set; }
         public List<Engines.EngineBase.AnalyzeResult> AnalyzeResults { get; set; }
 
-        public int? LastWhiteTimeLeftMilliSecs { get; set; }
-        public int? LastBlackTimeLeftMilliSecs { get; set; }
+        public int? LastWhiteTimeLeftMilliSecs {
+            get {
+                if (Moves.Count > 0)
+                    return Moves.Last().WhiteTimeLeftMilliSecs;
+                if (Settings.MaximumTime.HasValue)
+                    return (int)Settings.MaximumTime.Value.TotalMilliseconds;
+                return null;
+            }
+        }
+        public int? LastBlackTimeLeftMilliSecs {
+            get {
+                if (Moves.Count > 0)
+                    return Moves.Last().BlackTimeLeftMilliSecs;
+                if (Settings.MaximumTime.HasValue)
+                    return (int)Settings.MaximumTime.Value.TotalMilliseconds;
+                return null;
+            }
+        }
         #endregion
 
         /// <summary>
@@ -414,9 +433,6 @@ namespace ChessLib
             if (settings.MaximumTime.HasValue) {
                 WhiteTimeLeftMilliSecs = (int)settings.MaximumTime.Value.TotalMilliseconds;
                 BlackTimeLeftMilliSecs = (int)settings.MaximumTime.Value.TotalMilliseconds;
-
-                LastWhiteTimeLeftMilliSecs = WhiteTimeLeftMilliSecs;
-                LastBlackTimeLeftMilliSecs = BlackTimeLeftMilliSecs;
             }
 
             if (settings.TimeIncrement.HasValue) {
@@ -509,7 +525,7 @@ namespace ChessLib
             return res;
         } // DoHumanPlayerMove
 
-        public async Task<List<Move>> DoEnginePlayerMove(Action<Engines.EngineBase, string> outputCallback = null)
+        public async Task<List<Move>> DoEnginePlayerMove(CancellationToken cancellationToken, Action<Engines.EngineBase, string> outputCallback = null)
         {
             if (!(ToMovePlayer is EnginePlayer))
                 throw new Exception("Not an engine player");
@@ -565,13 +581,11 @@ namespace ChessLib
             if (res == null) {
                 if (engineMove == null) {
                     await enginePlayer.Engine.SetPosition(InitialFenPosition, moves);
-                    CancellationTokenSource cts = new CancellationTokenSource();
                     engineMove = await enginePlayer.Engine.GetBestMove(WhiteTimeLeftMilliSecs ?? 0, WhiteIncrementMillisecs, BlackTimeLeftMilliSecs ?? 0,
                         BlackIncrementMillisecs, Settings.EngineDepth,
                         Settings.MaxEngineThinkingTime > TimeSpan.Zero ? Settings.MaxEngineThinkingTime : null,
-                        cts.Token, null,
+                        cancellationToken, null,
                         (output) => outputCallback(enginePlayer.Engine, output));
-                    cts.Dispose();
 
                     if (enginePlayer.Engine is Engines.Cecp) {
                         // CECP returns moves in short algebraic, convert it to coordinate
@@ -722,9 +736,9 @@ namespace ChessLib
             SetAlgebraicNotation(moveNotation, move, res, promoted, ambiguous);
 
             moveNotation.Fen = GetFenString();
+            moveNotation.WhiteTimeLeftMilliSecs = WhiteTimeLeftMilliSecs;
+            moveNotation.BlackTimeLeftMilliSecs = BlackTimeLeftMilliSecs;
 
-            LastWhiteTimeLeftMilliSecs = WhiteTimeLeftMilliSecs;
-            LastBlackTimeLeftMilliSecs = BlackTimeLeftMilliSecs;
             Moves.Add(moveNotation);
 
             FullmoveNumber++;
@@ -1106,9 +1120,7 @@ namespace ChessLib
             res.Init(settings);
 
             res.WhiteTimeLeftMilliSecs = pgn.WhiteTimeLeftMilliSecs;
-            res.LastWhiteTimeLeftMilliSecs = res.WhiteTimeLeftMilliSecs;
             res.BlackTimeLeftMilliSecs = pgn.BlackTimeLeftMilliSecs;
-            res.LastBlackTimeLeftMilliSecs = res.BlackTimeLeftMilliSecs;
 
             foreach (var m in pgn.Moves) {
                 char promotion;

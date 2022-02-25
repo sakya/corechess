@@ -627,6 +627,15 @@ namespace CoreChess.Views
             }
         } // OnLoadGameClick
 
+        private async void OnUndoMoveClick(object sender, RoutedEventArgs e)
+        {
+            if (!m_Game.Ended) {
+                m_Chessboard.UndoMove();
+                UpdateCapturedPieces();
+                await UpdateMoves();
+            }
+        } // OnUndoMoveClick
+
         private async void OnResignClick(object sender, RoutedEventArgs e)
         {
             if (!m_Game.Ended && await MessageWindow.ShowConfirmMessage(this, Localizer.Localizer.Instance["Confirm"], Localizer.Localizer.Instance["ResignGameConfirm"]))
@@ -794,6 +803,9 @@ namespace CoreChess.Views
             } else if (e.KeyModifiers == KeyModifiers.Control && e.Key == Key.G) {
                 e.Handled = true;
                 OnCopyPgnToClipboardClick(null, new RoutedEventArgs());
+            } else if (e.KeyModifiers == KeyModifiers.Control && e.Key == Key.Z) {
+                if (m_Context.IsResignEnabled)
+                    OnUndoMoveClick(null, new RoutedEventArgs());
             } else if (e.KeyModifiers == KeyModifiers.None && e.Key == Key.F1) {
                 e.Handled = true;
                 OnAboutClick(null, new RoutedEventArgs());
