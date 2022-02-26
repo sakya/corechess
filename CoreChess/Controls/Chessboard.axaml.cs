@@ -542,8 +542,8 @@ namespace CoreChess.Controls
 
         private Board.Square GetSquareFromPoint(Point pos)
         {
-            int file = Flipped ? 7 - ((int)pos.X / (int)(SquareWidth)) : (int)pos.X / (int)(m_Canvas.Bounds.Width / 8);
-            int rank = Flipped ? 7 - ((int)pos.Y / (int)(SquareHeight)) : (int)pos.Y / (int)(SquareHeight);
+            int file = Flipped ? 7 - ((int)(pos.X - BorderWidth) / (int)(SquareWidth)) : (int)(pos.X - BorderWidth) / (int)(m_Canvas.Bounds.Width / 8);
+            int rank = Flipped ? 7 - ((int)(pos.Y - BorderWidth) / (int)(SquareHeight)) : (int)(pos.Y - BorderWidth) / (int)(SquareHeight);
             if (file > 7 || rank > 7 || file < 0 || rank < 0)
                 return null;
 
