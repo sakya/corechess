@@ -22,7 +22,7 @@ namespace CoreChess.Controls
     public class Chessboard : UserControl
     {
         Game m_Game = null;
-        double m_BorderWidth = 17.0;
+        double m_BorderWidth = 18.0;
         Canvas m_Canvas = null;
         Board.Square m_SelectedSquare = null;
         DragInfo m_DragInfo = null;
@@ -615,16 +615,22 @@ namespace CoreChess.Controls
                             text.Foreground = colorIndex == 0 ? new SolidColorBrush(colors[1]) : new SolidColorBrush(colors[0]);
                             Canvas.SetLeft(text, left + squareWidth - 10);
                             Canvas.SetTop(text, top + squareHeight - 20);
+                            canvas.Children.Add(text);
                         } else {
                             text.Text = text.Text.ToUpper();
-                            text.Width = squareWidth;
-                            text.Height = BorderWidth;
-                            text.TextAlignment = TextAlignment.Center;
+                            text.HorizontalAlignment = Avalonia.Layout.HorizontalAlignment.Center;
                             text.VerticalAlignment = Avalonia.Layout.VerticalAlignment.Center;
-                            Canvas.SetLeft(text, left);
-                            Canvas.SetTop(text, height - BorderWidth);
+
+                            var border = new Border()
+                            {
+                                Height = BorderWidth,
+                                Width = squareWidth
+                            };
+                            border.Child = text;
+                            Canvas.SetLeft(border, left);
+                            Canvas.SetTop(border, height - BorderWidth);
+                            canvas.Children.Add(border);
                         }
-                        canvas.Children.Add(text);
                     }
 
                     if ((!Flipped && file == 0) || (Flipped && file == 7)) {
