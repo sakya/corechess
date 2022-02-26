@@ -129,6 +129,8 @@ namespace ChessLib.Engines
                 for (int i = 0; i < lines.Length; i++) {
                     var line = lines[i];
                     if (line.StartsWith("move ")) {
+                        if (token.IsCancellationRequested)
+                            return null;
                         if (i < lines.Length - 1 && lines[i + 1].StartsWith("Hint:"))
                             return new BestMove(line.Substring(5), lines[i + 1].Substring(5));
                         else

@@ -767,6 +767,8 @@ namespace ChessLib
 
             if (m_EngineMoveCts != null)
                 m_EngineMoveCts.Cancel();
+            while (m_EngineMoveCts != null)
+                await Task.Delay(10);
 
             int toRemove = 1;
             if (ToMovePlayer is HumanPlayer)
