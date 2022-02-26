@@ -362,6 +362,21 @@ namespace ChessLib.Engines
         {
             return 0;
         }
+
+        public async Task<bool> Undo()
+        {
+            await WriteCommand("undo");
+            await WaitPong();
+            return true;
+        }
+
+        public async Task<bool> Remove()
+        {
+            await WriteCommand("remove");
+            await WaitPong();
+            return true;
+        }
+
         #region process events
         private void ProcessExited(object sender, EventArgs e)
         {

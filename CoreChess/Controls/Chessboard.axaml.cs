@@ -317,10 +317,11 @@ namespace CoreChess.Controls
             return true;
         } // SetGame
 
-        public void UndoMove()
+        public async Task<bool> UndoMove()
         {
-            m_Game.UndoLastHumanPlayerMove();
+            await m_Game.UndoLastHumanPlayerMove();
             Redraw(m_Game.Moves.Count() > 0 ? m_Game.Moves.Last() : null);
+            return true;
         } // UndoMove
 
         public async Task<bool> ResignGame()

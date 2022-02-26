@@ -630,7 +630,7 @@ namespace CoreChess.Views
         private async void OnUndoMoveClick(object sender, RoutedEventArgs e)
         {
             if (!m_Game.Ended) {
-                m_Chessboard.UndoMove();
+                await m_Chessboard.UndoMove();
                 m_Context.IsResignEnabled = m_Game.FullmoveNumber > 0;
                 UpdateCapturedPieces();
                 await UpdateMoves();

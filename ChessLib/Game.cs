@@ -757,7 +757,7 @@ namespace ChessLib
             return res;
         } // DoMove
 
-        public bool UndoLastHumanPlayerMove()
+        public async Task<bool> UndoLastHumanPlayerMove()
         {
             if (Ended || Moves.Count == 0)
                 return false;
@@ -771,6 +771,16 @@ namespace ChessLib
             int toRemove = 1;
             if (ToMovePlayer is HumanPlayer)
                 toRemove = 2;
+
+            // CECP
+            var ep = Settings.Players.Where(p => p is EnginePlayer).FirstOrDefault() as EnginePlayer;
+            if (ep.Engine is Engines.Cecp) {
+                var cecp = ep.Engine as Engines.Cecp;
+                if (toRemove == 1)
+                    await cecp.Undo();
+                else
+                    await cecp.Remove();
+            }
 
             FullmoveNumber -= toRemove;
             while (toRemove-- > 0)
