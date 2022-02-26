@@ -14,6 +14,7 @@ namespace ChessLib.Engines
     /// <summary>
     /// CECP chess engine
     /// https://www.gnu.org/software/xboard/engine-intf.html
+    /// http://hgm.nubati.net/CECP.html
     /// </summary>
     public class Cecp : EngineBase
     {

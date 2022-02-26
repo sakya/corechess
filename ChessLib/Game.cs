@@ -145,6 +145,7 @@ namespace ChessLib
             public int? WhiteTimeLeftMilliSecs { get; set; }
             public int? BlackTimeLeftMilliSecs { get; set; }
             public int HalfmoveClock { get; set; }
+            public Piece CapturedPiece { get; set; }
         } // MoveNotation
 
         class MoveResult
@@ -159,6 +160,7 @@ namespace ChessLib
             public string Move { get; set; }
             public List<Move> Moves { get; set; }
             public bool Promoted { get; set; }
+            public Piece CapturedPiece { get; set; }
             public List<Board.Square> Ambiguous { get; set; }
         } // MoveResult
 
@@ -634,6 +636,7 @@ namespace ChessLib
                     moveIndex = Moves.Last().Index;
             }
 
+            Piece captured = null;
             bool promoted = false;
             var res = new List<Move>();
             move = move.Trim().ToLower();
@@ -675,6 +678,7 @@ namespace ChessLib
             } else {
                 var moveRes = await DoMoveNormal(move, skipAvailableSquaresCheck);
                 move = moveRes.Move;
+                captured = moveRes.CapturedPiece;
                 promoted = moveRes.Promoted;
                 ambiguous = moveRes.Ambiguous;
                 res.AddRange(moveRes.Moves);
@@ -749,6 +753,7 @@ namespace ChessLib
             SetAlgebraicNotation(moveNotation, move, res, promoted, ambiguous);
 
             moveNotation.Fen = GetFenString();
+            moveNotation.CapturedPiece = captured;
             moveNotation.WhiteTimeLeftMilliSecs = WhiteTimeLeftMilliSecs;
             moveNotation.BlackTimeLeftMilliSecs = BlackTimeLeftMilliSecs;
             moveNotation.HalfmoveClock = HalfmoveClock;
@@ -765,10 +770,12 @@ namespace ChessLib
             m_WhiteTimer.Stop();
             m_BlackTimer.Stop();
 
-            if (m_EngineMoveCts != null)
+            if (m_EngineMoveCts != null) {
                 m_EngineMoveCts.Cancel();
-            while (m_EngineMoveCts != null)
-                await Task.Delay(10);
+                // m_EngineMoveCts is set to null in DoEnginePlayerMove
+                while (m_EngineMoveCts != null)
+                    await Task.Delay(10);
+            }
 
             int toRemove = 1;
             if (ToMovePlayer is HumanPlayer)
@@ -785,8 +792,12 @@ namespace ChessLib
             }
 
             FullmoveNumber -= toRemove;
-            while (toRemove-- > 0)
-                Moves.RemoveAt(Moves.Count - 1);
+            while (toRemove-- > 0) {
+                var trm = Moves.Last();
+                if (trm.CapturedPiece != null)
+                    CapturedPieces.Remove(trm.CapturedPiece);
+                Moves.Remove(trm);
+            }
 
             var lastMove = Moves.Count() > 0 ? Moves.Last() : null;
             ToMove = Game.Colors.White;
@@ -2182,6 +2193,7 @@ namespace ChessLib
 
             res.Move = move;
             res.Moves.Add(tempMove);
+            res.CapturedPiece = captured;
 
             return res;
         } // DoMoveNormal
