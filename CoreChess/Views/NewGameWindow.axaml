@@ -43,14 +43,16 @@
         <ColumnDefinition Width="*" />
       </Grid.ColumnDefinitions>
 
-      <ToggleButton Name="m_WhiteBtn" IsThreeState="False" IsChecked="True" Click="OnWhiteClick" Grid.Column="0" HorizontalAlignment="Stretch">
+      <ToggleButton Name="m_WhiteBtn" IsThreeState="False" IsChecked="True" Click="OnWhiteClick" Grid.Column="0" HorizontalAlignment="Stretch"
+                    Classes="Left">
         <Image Name="m_White" Height="100"></Image>
       </ToggleButton>
       <ToggleButton Name="m_RandomBtn" IsThreeState="False" Click="OnRandomClick" Grid.Column="1" HorizontalAlignment="Stretch"
-                    Height="{Binding #m_WhiteBtn.Bounds.Height}">
+                    Height="{Binding #m_WhiteBtn.Bounds.Height}" Classes="Middle">
         <TextBlock Text="?" FontSize="36" VerticalAlignment="Center" HorizontalAlignment="Center" />
       </ToggleButton>
-      <ToggleButton Name="m_BlackBtn" IsThreeState="False" Click="OnBlackClick" Grid.Column="2" HorizontalAlignment="Stretch">
+      <ToggleButton Name="m_BlackBtn" IsThreeState="False" Click="OnBlackClick" Grid.Column="2" HorizontalAlignment="Stretch"
+                    Classes="Right">
         <Image Name="m_Black" Height="100"></Image>
       </ToggleButton>
 
