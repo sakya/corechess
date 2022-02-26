@@ -28,7 +28,6 @@ namespace CoreChess.Controls
         string m_HighlightedMove = string.Empty;
         bool m_GameEndedInvoked = false;
         Mutex m_GameEndedMutex = new Mutex();
-        CancellationTokenSource m_EngineMoveCts = null;
 
         class DragInfo
         {
@@ -320,18 +319,8 @@ namespace CoreChess.Controls
 
         public void UndoMove()
         {
-            if (m_EngineMoveCts != null) {
-                m_EngineMoveCts.Cancel();
-            }
-            int toRemove = 1;
-            if (m_Game.ToMove == Game.Colors.White)
-                toRemove = 2;
-            while (toRemove-- > 0)
-                m_Game.Moves.RemoveAt(m_Game.Moves.Count - 1);
-            m_Game.Board.InitFromFenString(m_Game.Moves.Last().Fen);
-            m_Game.WhiteTimeLeftMilliSecs = m_Game.Moves.Last().WhiteTimeLeftMilliSecs;
-            m_Game.BlackTimeLeftMilliSecs = m_Game.Moves.Last().BlackTimeLeftMilliSecs;
-            Redraw(m_Game.Moves.Last());
+            m_Game.UndoLastHumanPlayerMove();
+            Redraw(m_Game.Moves.Count() > 0 ? m_Game.Moves.Last() : null);
         } // UndoMove
 
         public async Task<bool> ResignGame()
@@ -482,15 +471,11 @@ namespace CoreChess.Controls
         {
             this.IsHitTestVisible = false;
 
-            m_EngineMoveCts = new CancellationTokenSource();
-            List<Game.Move> movedPieces = await m_Game.DoEnginePlayerMove(m_EngineMoveCts.Token, (engine, output) => { EngineThinking?.Invoke(this, new EngineThinkingEventArgs(engine, output)); });
-            if (m_EngineMoveCts.IsCancellationRequested)
-                movedPieces = null;
-            m_EngineMoveCts.Dispose();
-            m_EngineMoveCts = null;
-
-            if (movedPieces == null)
+            List<Game.Move> movedPieces = await m_Game.DoEnginePlayerMove((engine, output) => { EngineThinking?.Invoke(this, new EngineThinkingEventArgs(engine, output)); });
+            if (movedPieces == null) {
+                this.IsHitTestVisible = true;
                 return false;
+            }
 
             HighlightMove();
             foreach (var mp in movedPieces) {

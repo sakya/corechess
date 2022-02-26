@@ -277,9 +277,8 @@ namespace ChessLib.Engines
         {
             if (string.IsNullOrEmpty(fen))
                 await WriteCommand($"position startpos moves {string.Join(" ", moves).ToLower()}");
-            else {
+            else
                 await WriteCommand($"position fen {fen} moves {string.Join(" ", moves).ToLower()}");
-            }
 
             return true;
         } // SetPosition
@@ -506,6 +505,9 @@ namespace ChessLib.Engines
                     idx = output.IndexOf("ponder ");
                     if (idx > 0)
                         ponderMove = output.Substring(idx + 7);
+
+                    if (token.IsCancellationRequested)
+                        return null;
                     return new BestMove(move.Trim(), ponderMove.Trim());
                 }
                 await Task.Delay(100);

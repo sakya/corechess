@@ -144,6 +144,7 @@ namespace ChessLib
 
             public int? WhiteTimeLeftMilliSecs { get; set; }
             public int? BlackTimeLeftMilliSecs { get; set; }
+            public int HalfmoveClock { get; set; }
         } // MoveNotation
 
         class MoveResult
@@ -194,6 +195,7 @@ namespace ChessLib
         private System.Timers.Timer m_BlackTimer = new System.Timers.Timer(100);
         private Random m_Rnd = new Random();
 
+        CancellationTokenSource m_EngineMoveCts = null;
         Task<Engines.EngineBase.BestMove> m_PonderTask = null;
         EnginePlayer m_PonderPlayer = null;
         string m_PonderingMove = string.Empty;
@@ -525,7 +527,7 @@ namespace ChessLib
             return res;
         } // DoHumanPlayerMove
 
-        public async Task<List<Move>> DoEnginePlayerMove(CancellationToken cancellationToken, Action<Engines.EngineBase, string> outputCallback = null)
+        public async Task<List<Move>> DoEnginePlayerMove(Action<Engines.EngineBase, string> outputCallback = null)
         {
             if (!(ToMovePlayer is EnginePlayer))
                 throw new Exception("Not an engine player");
@@ -580,12 +582,17 @@ namespace ChessLib
 
             if (res == null) {
                 if (engineMove == null) {
+                    m_EngineMoveCts = new CancellationTokenSource();
                     await enginePlayer.Engine.SetPosition(InitialFenPosition, moves);
                     engineMove = await enginePlayer.Engine.GetBestMove(WhiteTimeLeftMilliSecs ?? 0, WhiteIncrementMillisecs, BlackTimeLeftMilliSecs ?? 0,
                         BlackIncrementMillisecs, Settings.EngineDepth,
                         Settings.MaxEngineThinkingTime > TimeSpan.Zero ? Settings.MaxEngineThinkingTime : null,
-                        cancellationToken, null,
+                        m_EngineMoveCts.Token, null,
                         (output) => outputCallback(enginePlayer.Engine, output));
+                    m_EngineMoveCts.Dispose();
+                    m_EngineMoveCts = null;
+                    if (engineMove == null)
+                        return null;
 
                     if (enginePlayer.Engine is Engines.Cecp) {
                         // CECP returns moves in short algebraic, convert it to coordinate
@@ -725,6 +732,12 @@ namespace ChessLib
             foreach (var m in res)
                 m.Timestamp = timeStamp;
 
+            FullmoveNumber++;
+            if (res.Count == 1 && (res[0].CapturedPiece != null || res[0].Piece.Type == Piece.Pieces.Pawn))
+                HalfmoveClock = 0;
+            else
+                HalfmoveClock++;
+
             MoveNotation moveNotation = new MoveNotation()
             {
                 Coordinate = move,
@@ -738,17 +751,50 @@ namespace ChessLib
             moveNotation.Fen = GetFenString();
             moveNotation.WhiteTimeLeftMilliSecs = WhiteTimeLeftMilliSecs;
             moveNotation.BlackTimeLeftMilliSecs = BlackTimeLeftMilliSecs;
+            moveNotation.HalfmoveClock = HalfmoveClock;
 
             Moves.Add(moveNotation);
-
-            FullmoveNumber++;
-            if (res.Count == 1 && (res[0].CapturedPiece != null || res[0].Piece.Type == Piece.Pieces.Pawn))
-                HalfmoveClock = 0;
-            else
-                HalfmoveClock++;
-
             return res;
         } // DoMove
+
+        public bool UndoLastHumanPlayerMove()
+        {
+            if (Ended || Moves.Count == 0)
+                return false;
+
+            m_WhiteTimer.Stop();
+            m_BlackTimer.Stop();
+
+            if (m_EngineMoveCts != null)
+                m_EngineMoveCts.Cancel();
+
+            int toRemove = 1;
+            if (ToMovePlayer is HumanPlayer)
+                toRemove = 2;
+
+            FullmoveNumber -= toRemove;
+            while (toRemove-- > 0)
+                Moves.RemoveAt(Moves.Count - 1);
+
+            var lastMove = Moves.Count() > 0 ? Moves.Last() : null;
+            ToMove = Game.Colors.White;
+            if (lastMove?.Color == Game.Colors.White)
+                ToMove = Game.Colors.Black;
+            HalfmoveClock = lastMove != null ? lastMove.HalfmoveClock : 0;
+            Board.InitFromFenString(lastMove != null ? lastMove.Fen : InitialFenPosition);
+            WhiteTimeLeftMilliSecs = LastWhiteTimeLeftMilliSecs;
+            BlackTimeLeftMilliSecs = LastBlackTimeLeftMilliSecs;
+
+            if (Moves.Count > 0) {
+                if (ToMove == Colors.White)
+                    m_WhiteTimer.Start();
+                else
+                    m_BlackTimer.Start();
+            }
+            BlackTimer?.Invoke(this, new EventArgs());
+            WhiteTimer?.Invoke(this, new EventArgs());
+            return true;
+        } // UndoLastHumanPlayerMove
 
         public async Task<bool> Resign()
         {
