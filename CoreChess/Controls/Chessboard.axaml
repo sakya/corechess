@@ -8,7 +8,7 @@
              PointerReleased="OnMouseUp"
              PointerMoved="OnMouseMoved">
 
-  <Canvas x:Name="m_Canvas">
-    
-  </Canvas>
+  <Border CornerRadius="5" ClipToBounds="True">
+    <Canvas x:Name="m_Canvas" />
+  </Border>
 </UserControl>

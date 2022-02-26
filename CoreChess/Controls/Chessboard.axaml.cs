@@ -93,6 +93,7 @@ namespace CoreChess.Controls
             // Default settings
             PlayerColor = Game.Colors.White;
 
+            BorderColor = Colors.Transparent;
             SquareWhiteColor = Utils.ColorConverter.ParseHexColor("#ffeeeed2");
             SquareWhiteSelectedColor = Utils.ColorConverter.ParseHexColor("#fff7f783");
 
@@ -535,7 +536,7 @@ namespace CoreChess.Controls
             int file = m_Game.Board.Files.IndexOf(square.File);
 
             if (Flipped)
-                return new Point(SquareWidth * (7 - file) + BorderWidth, SquareHeight * (rank - 1) - BorderWidth);
+                return new Point(SquareWidth * (7 - file) + BorderWidth, SquareHeight * (rank - 1) + BorderWidth);
             return new Point(SquareWidth * file + BorderWidth, m_Canvas.Bounds.Height - (SquareHeight * rank) - BorderWidth);
         } // GetSquarePosition
 
