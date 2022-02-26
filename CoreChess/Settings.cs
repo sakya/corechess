@@ -51,6 +51,13 @@ namespace CoreChess
             Light
         }
 
+        public enum FileRankNotations
+        {
+            None,
+            Inside,
+            Outside
+        }
+
         public Settings()
         {
             ShowEngineOutput = true;
@@ -59,7 +66,7 @@ namespace CoreChess
             Language = "en-US";
             EnableAudio = true;
             ShowValidMoves = true;
-            ShowFileRankNotation = true;
+            ShowFileRankNotation = FileRankNotations.Inside;
             AutoSaveGameOnExit = true;
             AutoPauseWhenMinimized = true;
 
@@ -95,7 +102,7 @@ namespace CoreChess
         public bool EnableAudio { get; set; }
         public bool EnableDragAndDrop { get; set; }
         public bool ShowValidMoves { get; set; }
-        public bool ShowFileRankNotation { get; set; }
+        public FileRankNotations ShowFileRankNotation { get; set; }
         public bool AutoSaveGameOnExit { get; set; }
         public bool AutoPauseWhenMinimized { get; set; }
         public int MaxEngineThinkingTimeSecs { get; set; }

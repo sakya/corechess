@@ -191,8 +191,8 @@ namespace CoreChess.Views
             chk.IsChecked = App.Settings.EnableDragAndDrop;
             chk = this.FindControl<ToggleSwitch>("m_ShowValidMoves");
             chk.IsChecked = App.Settings.ShowValidMoves;
-            chk = this.FindControl<ToggleSwitch>("m_ShowFileRankNotation");
-            chk.IsChecked = App.Settings.ShowFileRankNotation;
+            cb = this.FindControl<ComboBox>("m_ShowFileRankNotation");
+            cb.SelectedIndex = (int)App.Settings.ShowFileRankNotation;
 
             chk = this.FindControl<ToggleSwitch>("m_Topmost");
             chk.IsChecked = App.Settings.Topmost;
@@ -374,8 +374,8 @@ namespace CoreChess.Views
             chk = this.FindControl<ToggleSwitch>("m_ShowValidMoves");
             App.Settings.ShowValidMoves = chk.IsChecked.Value;
 
-            chk = this.FindControl<ToggleSwitch>("m_ShowFileRankNotation");
-            App.Settings.ShowFileRankNotation = chk.IsChecked.Value;
+            cb = this.FindControl<ComboBox>("m_ShowFileRankNotation");
+            App.Settings.ShowFileRankNotation = (Settings.FileRankNotations)cb.SelectedIndex;
 
             chk = this.FindControl<ToggleSwitch>("m_Topmost");
             App.Settings.Topmost = chk.IsChecked.Value;

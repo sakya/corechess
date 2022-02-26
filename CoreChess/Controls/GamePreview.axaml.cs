@@ -84,7 +84,7 @@ namespace CoreChess.Controls
             var img = this.FindControl<Image>("m_Image");
             var chessboard = new Chessboard();
             chessboard.PiecesFolder = App.GetPiecesPath(App.Settings.PiecesSet);
-            chessboard.ShowFileRankNotation = false;
+            chessboard.ShowFileRankNotation = Settings.FileRankNotations.None;
             await chessboard.SetGame(game);
 
             img.Source = chessboard.GetBitmap(new Size(150, 150));

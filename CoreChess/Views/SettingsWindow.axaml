@@ -80,7 +80,7 @@
                             Minimum="0"/>
 
               <TextBlock Grid.Row="8" Text="{i18n:Localize OpeningBook}" VerticalAlignment="Center" Margin="0,5,0,5" />
-              <ComboBox Name="m_OpeningBookType" Grid.Row="9" Grid.Column="1"
+              <ComboBox Name="m_OpeningBookType" Grid.Row="9" Grid.Column="1" Margin="0,5,0,5"
                         SelectionChanged="OnOpeningBookTypeChanged">
                 <ComboBoxItem Content="{i18n:Localize None}" />
                 <ComboBoxItem Content="{i18n:Localize Internal}" />
@@ -163,7 +163,11 @@
               <TextBlock Grid.Row="1" Text="{i18n:Localize ShowValidMoves}" VerticalAlignment="Center" />
               <ToggleSwitch Grid.Row="1" Grid.Column="1" Name="m_ShowValidMoves" HorizontalAlignment="Right" />
               <TextBlock Grid.Row="2" Text="{i18n:Localize ShowFileRankNotation}" VerticalAlignment="Center" />
-              <ToggleSwitch Grid.Row="2" Grid.Column="1" Name="m_ShowFileRankNotation" HorizontalAlignment="Right" />
+              <ComboBox Name="m_ShowFileRankNotation" Grid.Row="2" Grid.Column="1">
+                <ComboBoxItem Content="{i18n:Localize None}" />
+                <ComboBoxItem Content="{i18n:Localize Inside}" />
+                <ComboBoxItem Content="{i18n:Localize Outside}" />
+              </ComboBox>
 
               <TextBlock Grid.Row="3" Text="{i18n:Localize PiecesSet}" VerticalAlignment="Center" />
               <ComboBox Name="m_PiecesSet" Grid.Row="3" Grid.Column="1">

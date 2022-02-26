@@ -447,7 +447,7 @@ namespace CoreChess.Views
                 chessboard.SquareWhiteSelectedColor = Utils.ColorConverter.ParseHexColor(App.Settings.WhiteSelectedColor);
                 chessboard.SquareBlackColor = Utils.ColorConverter.ParseHexColor(App.Settings.BlackColor);
                 chessboard.SquareBlackSelectedColor = Utils.ColorConverter.ParseHexColor(App.Settings.BlackSelectedColor);
-                chessboard.ShowFileRankNotation = false;
+                chessboard.ShowFileRankNotation = Settings.FileRankNotations.None;
                 await chessboard.SetGame(game);
                 chessboard.Flipped = m_Game.GetPlayer(Game.Colors.Black) is HumanPlayer && m_Game.GetPlayer(Game.Colors.White) is EnginePlayer;
 
@@ -1153,7 +1153,7 @@ namespace CoreChess.Views
                     tempBoard.SquareWhiteSelectedColor = Utils.ColorConverter.ParseHexColor(App.Settings.WhiteSelectedColor);
                     tempBoard.SquareBlackColor = Utils.ColorConverter.ParseHexColor(App.Settings.BlackColor);
                     tempBoard.SquareBlackSelectedColor = Utils.ColorConverter.ParseHexColor(App.Settings.BlackSelectedColor);
-                    tempBoard.ShowFileRankNotation = false;
+                    tempBoard.ShowFileRankNotation = Settings.FileRankNotations.None;
                     await tempBoard.SetGame(game.Copy());
                     tempBoard.Flipped = m_Game.GetPlayer(Game.Colors.Black) is HumanPlayer && m_Game.GetPlayer(Game.Colors.White) is EnginePlayer;
 
@@ -1375,6 +1375,7 @@ namespace CoreChess.Views
             m_Chessboard.ShowFileRankNotation = App.Settings.ShowFileRankNotation;
 
             m_Chessboard.PiecesFolder = App.GetPiecesPath(App.Settings.PiecesSet);
+            m_Chessboard.BorderColor = (Color)this.FindResource("SectionBackgroundColor");
             m_Chessboard.SquareWhiteColor = Utils.ColorConverter.ParseHexColor(App.Settings.WhiteColor);
             m_Chessboard.SquareWhiteSelectedColor = Utils.ColorConverter.ParseHexColor(App.Settings.WhiteSelectedColor);
             m_Chessboard.SquareBlackColor = Utils.ColorConverter.ParseHexColor(App.Settings.BlackColor);

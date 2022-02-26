@@ -44,6 +44,14 @@
       </screenshot>
     </screenshots>
     <releases>
+      <release version="0.11.0.0" date="2022-02-27">
+        <description>
+          <ul>
+            <li>Added undo move</li>
+            <li>Show file/rank notation inside or outside the chessboard</li>
+          </ul>
+        </description>
+      </release>
       <release version="0.10.5.3" date="2022-02-20">
         <description>
           <ul>

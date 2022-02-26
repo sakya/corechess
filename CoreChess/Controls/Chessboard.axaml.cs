@@ -22,6 +22,7 @@ namespace CoreChess.Controls
     public class Chessboard : UserControl
     {
         Game m_Game = null;
+        double m_BorderWidth = 17.0;
         Canvas m_Canvas = null;
         Board.Square m_SelectedSquare = null;
         DragInfo m_DragInfo = null;
@@ -100,7 +101,7 @@ namespace CoreChess.Controls
 
             PiecesFolder = $"{App.PiecesPath}{System.IO.Path.DirectorySeparatorChar}Default";
             ShowAvailableMoves = true;
-            ShowFileRankNotation = true;
+            ShowFileRankNotation = Settings.FileRankNotations.Inside;
         }
 
         private void InitializeComponent()
@@ -119,6 +120,7 @@ namespace CoreChess.Controls
         }
 
         public Game.Colors PlayerColor { get; set; }
+        public Color BorderColor { get; set; }
         public Color SquareWhiteColor { get; set; }
         public Color SquareBlackColor { get; set; }
         public Color SquareWhiteSelectedColor { get; set; }
@@ -126,16 +128,24 @@ namespace CoreChess.Controls
         public string PiecesFolder { get; set; }
         public bool EnableDragAndDrop { get; set; }
         public bool ShowAvailableMoves { get; set; }
-        public bool ShowFileRankNotation { get; set; }
+        public Settings.FileRankNotations ShowFileRankNotation { get; set; }
         public bool EnableAudio { get; set; }
         public bool Flipped { get; set; }
 
+        public double BorderWidth {
+            get {
+                if (ShowFileRankNotation == Settings.FileRankNotations.Outside)
+                    return m_BorderWidth;
+                return 0;
+            }
+        }
         public double SquareWidth
         {
             get
             {
-                if (m_Canvas != null)
-                    return m_Canvas.Bounds.Width / 8.0;
+                if (m_Canvas != null) {
+                    return (m_Canvas.Bounds.Width - BorderWidth * 2.0) / 8.0;
+                }
                 return 0;
             }
         }
@@ -145,7 +155,7 @@ namespace CoreChess.Controls
             get
             {
                 if (m_Canvas != null)
-                    return m_Canvas.Bounds.Height / 8.0;
+                    return (m_Canvas.Bounds.Height - BorderWidth * 2.0) / 8.0;
                 return 0;
             }
         }
@@ -164,9 +174,7 @@ namespace CoreChess.Controls
                     if (m_SelectedSquare != null) {
                         this.Cursor = new Avalonia.Input.Cursor(Avalonia.Input.StandardCursorType.Hand);
                     } else {
-                        var overSquare = GetSquareFromPoint(args.GetPosition(m_Canvas));
-                        if (overSquare?.Piece != null && overSquare.Piece.Color == PlayerColor)
-                            this.Cursor = new Avalonia.Input.Cursor(Avalonia.Input.StandardCursorType.Hand);
+                        SetMouseCursor(args.GetPosition(m_Canvas));
                     }
                 }
             } else {
@@ -195,11 +203,7 @@ namespace CoreChess.Controls
                     HighlightDragAndDropSquare(GetSquareFromPoint(new Point(targetX + (piece.Width / 2.0), targetY + (piece.Height / 2.0))));
                 } else {
                     if (!m_Game.Ended && m_Game.ToMove == PlayerColor) {
-                        var overSquare = GetSquareFromPoint(relPos);
-                        if (overSquare?.Piece != null && overSquare.Piece.Color == PlayerColor)
-                            this.Cursor = new Avalonia.Input.Cursor(Avalonia.Input.StandardCursorType.Hand);
-                        else
-                            this.Cursor = new Avalonia.Input.Cursor(Avalonia.Input.StandardCursorType.Arrow);
+                        SetMouseCursor(relPos);
                     } else
                         this.Cursor = new Avalonia.Input.Cursor(Avalonia.Input.StandardCursorType.Arrow);
                 }
@@ -279,6 +283,7 @@ namespace CoreChess.Controls
                     await AnimatePiece(dragInfo.Piece, dragInfo.StartPosition, 250, false);
                 }
             }
+            SetMouseCursor(args.GetPosition(m_Canvas));
         } // OnMouseUp
         #endregion
 
@@ -530,8 +535,8 @@ namespace CoreChess.Controls
             int file = m_Game.Board.Files.IndexOf(square.File);
 
             if (Flipped)
-                return new Point(SquareWidth * (7 - file), SquareHeight * (rank - 1));
-            return new Point(SquareWidth * file, m_Canvas.Bounds.Height - (SquareHeight * rank));
+                return new Point(SquareWidth * (7 - file) + BorderWidth, SquareHeight * (rank - 1) - BorderWidth);
+            return new Point(SquareWidth * file + BorderWidth, m_Canvas.Bounds.Height - (SquareHeight * rank) - BorderWidth);
         } // GetSquarePosition
 
         private Board.Square GetSquareFromPoint(Point pos)
@@ -548,15 +553,33 @@ namespace CoreChess.Controls
         {
             m_HighlightedMove = string.Empty;
             canvas.Children.Clear();
-            canvas.Background = new SolidColorBrush(SquareWhiteColor);
 
-            double width = targetWidth == 0 ? canvas.Bounds.Width / 8.0 : targetWidth / 8.0;
-            double height = targetHeight == 0 ? canvas.Bounds.Height / 8.0 : targetHeight / 8.0;
+            canvas.Background = new SolidColorBrush(BorderColor);
+
+            double width = targetWidth == 0 ? canvas.Bounds.Width : targetWidth;
+            double height = targetHeight == 0 ? canvas.Bounds.Height : targetHeight;
             if (width == 0)
                 return;
 
-            double top = 0;
-            double left = 0;
+            double squareWidth = (width - BorderWidth * 2.0) / 8.0;
+            double squareHeight = (height - BorderWidth * 2.0) / 8.0;
+
+            double top = BorderWidth;
+            double left = BorderWidth;
+
+            // Background to mask
+            // https://github.com/AvaloniaUI/Avalonia/issues/4984
+            Rectangle bkg = new Rectangle()
+            {
+                Width = squareWidth * 8.0,
+                Height = squareHeight * 8.0,
+                Fill = new SolidColorBrush(SquareWhiteColor),
+                ZIndex = 0,
+            };
+            Canvas.SetLeft(bkg, left);
+            Canvas.SetTop(bkg, top);
+            canvas.Children.Add(bkg);
+
             List<Color> colors = new List<Color>() { SquareWhiteColor, SquareBlackColor };
             int colorIndex = 0;
 
@@ -568,8 +591,8 @@ namespace CoreChess.Controls
                 Rectangle rect = new Rectangle()
                 {
                     Name = $"Rect_{square.Notation}",
-                    Width = width,
-                    Height = height,
+                    Width = squareWidth,
+                    Height = squareHeight,
                     Fill = new SolidColorBrush(colors[colorIndex]),
                     ZIndex = 0,
                 };
@@ -577,18 +600,29 @@ namespace CoreChess.Controls
                 Canvas.SetTop(rect, top);
                 canvas.Children.Add(rect);
 
-                if (ShowFileRankNotation) {
+                if (ShowFileRankNotation != Settings.FileRankNotations.None) {
                     if ((!Flipped && rank == 7) || (Flipped && rank == 0)) {
                         TextBlock text = new TextBlock()
                         {
                             TextAlignment = TextAlignment.Right,
                             Text = char.ToLower(m_Game.Board.Files[file]).ToString(),
                             FontWeight = FontWeight.Medium,
-                            Foreground = colorIndex == 0 ? new SolidColorBrush(colors[1]) : new SolidColorBrush(colors[0]),
                             FontSize = 14
                         };
-                        Canvas.SetLeft(text, left + width - 10);
-                        Canvas.SetTop(text, top + height - 20);
+
+                        if (ShowFileRankNotation == Settings.FileRankNotations.Inside) {
+                            text.Foreground = colorIndex == 0 ? new SolidColorBrush(colors[1]) : new SolidColorBrush(colors[0]);
+                            Canvas.SetLeft(text, left + squareWidth - 10);
+                            Canvas.SetTop(text, top + squareHeight - 20);
+                        } else {
+                            text.Text = text.Text.ToUpper();
+                            text.Width = squareWidth;
+                            text.Height = BorderWidth;
+                            text.TextAlignment = TextAlignment.Center;
+                            text.VerticalAlignment = Avalonia.Layout.VerticalAlignment.Center;
+                            Canvas.SetLeft(text, left);
+                            Canvas.SetTop(text, height - BorderWidth);
+                        }
                         canvas.Children.Add(text);
                     }
 
@@ -598,12 +632,28 @@ namespace CoreChess.Controls
                             TextAlignment = TextAlignment.Left,
                             Text = (8 - rank).ToString(),
                             FontWeight = FontWeight.Medium,
-                            Foreground = colorIndex == 0 ? new SolidColorBrush(colors[1]) : new SolidColorBrush(colors[0]),
                             FontSize = 14
                         };
-                        Canvas.SetLeft(text, 5);
-                        Canvas.SetTop(text, top + 5);
-                        canvas.Children.Add(text);
+
+                        if (ShowFileRankNotation == Settings.FileRankNotations.Inside) {
+                            text.Foreground = colorIndex == 0 ? new SolidColorBrush(colors[1]) : new SolidColorBrush(colors[0]);
+                            Canvas.SetLeft(text, 5);
+                            Canvas.SetTop(text, top + 5);
+                            canvas.Children.Add(text);
+                        } else {
+                            text.HorizontalAlignment = Avalonia.Layout.HorizontalAlignment.Center;
+                            text.VerticalAlignment = Avalonia.Layout.VerticalAlignment.Center;
+
+                            var border = new Border()
+                            {
+                                Height = squareHeight,
+                                Width = BorderWidth
+                            };
+                            border.Child = text;
+                            Canvas.SetLeft(border, 0);
+                            Canvas.SetTop(border, top);
+                            canvas.Children.Add(border);
+                        }
                     }
                 }
 
@@ -613,8 +663,8 @@ namespace CoreChess.Controls
                     var pCanvas = new Canvas()
                     {
                         Name = $"Piece_{square.Piece.Id}",
-                        Width = width,
-                        Height = height,
+                        Width = squareWidth,
+                        Height = squareHeight,
                         Background = new ImageBrush(bitmap) { BitmapInterpolationMode = Avalonia.Visuals.Media.Imaging.BitmapInterpolationMode.HighQuality },
                         DataContext = square.Piece.Type,
                         ZIndex = 1
@@ -625,11 +675,11 @@ namespace CoreChess.Controls
                     canvas.Children.Add(pCanvas);
                 }
 
-                left += width;
+                left += squareWidth;
                 if (Flipped) {
                     if (file == 0) {
-                        left = 0;
-                        top += height;
+                        left = BorderWidth;
+                        top += squareHeight;
                         file = 7;
                         rank--;
                     } else {
@@ -638,8 +688,8 @@ namespace CoreChess.Controls
                     }
                 } else {
                     if (file == 7) {
-                        left = 0;
-                        top += height;
+                        left = BorderWidth;
+                        top += squareHeight;
                         file = 0;
                         rank++;
                     } else {
@@ -875,6 +925,15 @@ namespace CoreChess.Controls
             }
             m_GameEndedMutex.ReleaseMutex();
         } // InvokeGameEnded
+
+        private void SetMouseCursor(Point point)
+        {
+            var overSquare = GetSquareFromPoint(point);
+            if (overSquare?.Piece != null && overSquare.Piece.Color == PlayerColor)
+                this.Cursor = new Avalonia.Input.Cursor(Avalonia.Input.StandardCursorType.Hand);
+            else
+                this.Cursor = new Avalonia.Input.Cursor(Avalonia.Input.StandardCursorType.Arrow);
+        } // SetMouseCursor
         #endregion
     }
 }
