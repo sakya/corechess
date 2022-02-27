@@ -1352,7 +1352,7 @@ namespace CoreChess.Views
             }
 
             m_Context.CanPause = !m_Game.Ended;
-            m_Context.IsResignEnabled = m_Game.FullmoveNumber > 0;
+            m_Context.IsResignEnabled = m_Game.FullmoveNumber > 0 && !m_Game.Ended;
             SetChessboardOptions();
 
             try {
