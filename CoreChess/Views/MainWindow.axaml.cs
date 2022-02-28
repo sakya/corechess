@@ -262,6 +262,7 @@ namespace CoreChess.Views
         #endregion
 
         string[] m_args = null;
+        bool m_Initialized = false;
         Context m_Context = null;
         Game m_Game = null;
         Grid m_Wait = null;
@@ -943,6 +944,10 @@ namespace CoreChess.Views
         #region private operations
         private async void InitializeWindow(object sender, VisualTreeAttachmentEventArgs e)
         {
+            if (m_Initialized)
+                return;
+            m_Initialized = true;
+
             SetWaitAnimation(true);
 
             // Show engine output setting
