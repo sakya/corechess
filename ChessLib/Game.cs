@@ -767,6 +767,12 @@ namespace ChessLib
             if (Ended || Moves.Count == 0)
                 return false;
 
+            int toRemove = 1;
+            if (ToMovePlayer is HumanPlayer)
+                toRemove = 2;
+            if (toRemove > Moves.Count)
+                return false;
+
             m_WhiteTimer.Stop();
             m_BlackTimer.Stop();
 
@@ -776,10 +782,6 @@ namespace ChessLib
                 while (m_EngineMoveCts != null)
                     await Task.Delay(10);
             }
-
-            int toRemove = 1;
-            if (ToMovePlayer is HumanPlayer)
-                toRemove = 2;
 
             // CECP
             var ep = Settings.Players.Where(p => p is EnginePlayer).FirstOrDefault() as EnginePlayer;
