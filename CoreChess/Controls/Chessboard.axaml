@@ -9,6 +9,6 @@
              PointerMoved="OnMouseMoved">
 
   <Border CornerRadius="5" ClipToBounds="True">
-    <Canvas x:Name="m_Canvas" />
+    <Canvas x:Name="m_Canvas" UseLayoutRounding="False" />
   </Border>
 </UserControl>
