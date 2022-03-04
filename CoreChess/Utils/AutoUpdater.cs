@@ -44,6 +44,10 @@ namespace CoreChess.Utils
                             }
                         }
 
+                        // Wait that other dialogs are closed
+                        while (owner.OwnedWindows?.Count > 0)
+                            await Task.Delay(100);
+
                         var dlg = new Views.UpdateWindow(release, sb.ToString());
                         if (await dlg.ShowDialog<bool>(owner)) {
                             return true;
