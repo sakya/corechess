@@ -44,6 +44,14 @@
       </screenshot>
     </screenshots>
     <releases>
+      <release version="0.11.1.0" date="2022-03-05">
+        <description>
+          <ul>
+            <li>Fixed crash when undoing the first move playing with black</li>
+            <li>Fixed game restarts when changing theme and clicking cancel</li>
+          </ul>
+        </description>
+      </release>
       <release version="0.11.0.0" date="2022-02-27">
         <description>
           <ul>
