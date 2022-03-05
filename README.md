@@ -30,7 +30,7 @@ CoreChess is an open source chess GUI for chess engines
 
 ## Download
 <a href="https://flathub.org/apps/details/com.github.sakya.corechess" align="center">
-  <img width="200" src="https://flathub.org/assets/badges/flathub-badge-i-en.png">
+  <img width="200" src="https://flathub.org/assets/badges/flathub-badge-en.png">
 </a>
 <br/>
 <a href="https://github.com/sakya/corechess/releases" align="center">
