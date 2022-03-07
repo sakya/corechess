@@ -120,7 +120,7 @@ namespace CoreChess.Views
 
         private string GetDownloadFolder()
         {
-            var home = Environment.GetFolderPath(Environment.SpecialFolder.Personal);
+            var home = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
             var folders = new List<string>()
             {
                 Path.Combine(home, "Downloads"),
