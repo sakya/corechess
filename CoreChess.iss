@@ -28,6 +28,9 @@ SolidCompression=yes
 WizardStyle=modern
 UninstallDisplayIcon={app}\{#MyAppExeName}
 
+[InstallDelete]
+Type: filesandordirs; Name: "{app}\Engines"
+
 [Languages]
 Name: "english"; MessagesFile: "compiler:Default.isl"
 
