@@ -44,6 +44,13 @@
       </screenshot>
     </screenshots>
     <releases>
+      <release version="0.11.1.1" date="2022-04-28">
+        <description>
+          <ul>
+            <li>Upgraded Stockfish to version 15</li>
+          </ul>
+        </description>
+      </release>
       <release version="0.11.1.0" date="2022-03-05">
         <description>
           <ul>
