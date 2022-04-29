@@ -44,6 +44,13 @@
       </screenshot>
     </screenshots>
     <releases>
+      <release version="0.11.1.2" date="2022-04-29">
+        <description>
+          <ul>
+            <li>Fixed Stockfish eval file</li>
+          </ul>
+        </description>
+      </release>
       <release version="0.11.1.1" date="2022-04-28">
         <description>
           <ul>
