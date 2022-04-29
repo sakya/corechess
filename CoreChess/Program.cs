@@ -152,7 +152,7 @@ namespace CoreChess
             List<EngineBase> defaultEngines = new List<EngineBase>();
             if (Environment.OSVersion.Platform == PlatformID.Unix) {
                 // Check nnue
-                var sf = engines.Where(e => e.Name == "Stockfish 14").FirstOrDefault();
+                var sf = engines.Where(e => e.Command == "/app/bin/Engines/stockfish/stockfish").FirstOrDefault();
                 if (sf != null) {
                     var efo = sf.GetOption("EvalFile");
                     if (efo != null) {
