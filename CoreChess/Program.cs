@@ -143,7 +143,7 @@ namespace CoreChess
             }
 
             // Fix for gnuchess in flatpak
-            if (App.Settings.Version.ToString() == "0.10.5.0" && App.Version == "0.10.5.1") {
+            if (App.Settings.Version == "0.10.5.0" && App.Version == "0.10.5.1") {
                 var gnuchess = engines.Where(e => e.Command == "/app/bin/Engines/gnuchess/gnuchess").FirstOrDefault();
                 if (gnuchess != null)
                     engines.Remove(gnuchess);
@@ -151,6 +151,20 @@ namespace CoreChess
 
             List<EngineBase> defaultEngines = new List<EngineBase>();
             if (Environment.OSVersion.Platform == PlatformID.Unix) {
+                // Check nnue
+                var sf = engines.Where(e => e.Name == "Stockfish 14").FirstOrDefault();
+                if (sf != null) {
+                    var efo = sf.GetOption("EvalFile");
+                    if (efo != null) {
+                        if (!File.Exists($"app/bin/Engines/stockfish/{efo.Value}")) {
+                            if (File.Exists($"app/bin/Engines/stockfish/{efo.Default}"))
+                                efo.Value = efo.Default;
+                            else
+                                efo.Value = string.Empty;
+                        }
+                    }
+                }
+
                 // Add default engines (flatpak)
                 defaultEngines.Add(
                     new Uci("Stockfish", "/app/bin/Engines/stockfish/stockfish")
