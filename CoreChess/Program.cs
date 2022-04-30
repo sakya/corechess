@@ -157,8 +157,9 @@ namespace CoreChess
                     var efo = sf.GetOption("EvalFile");
                     if (efo != null) {
                         if (!File.Exists($"/app/bin/Engines/stockfish/{efo.Value}")) {
-                            if (File.Exists($"/app/bin/Engines/stockfish/{efo.Default}"))
-                                efo.Value = efo.Default;
+                            var evalFile = Directory.GetFiles("/app/bin/Engines/stockfish/", "*.nnue").FirstOrDefault();
+                            if (!string.IsNullOrEmpty(evalFile))
+                                efo.Value = Path.GetFileName(evalFile);
                             else
                                 efo.Value = string.Empty;
                         }
