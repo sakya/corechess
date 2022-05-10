@@ -32,17 +32,11 @@ namespace CoreChess
         public static AppBuilder BuildAvaloniaApp()
         {
             return AppBuilder.Configure<App>()
-                .AfterSetup(AfterSetupCallback)
                 .UsePlatformDetect()
                 .With(new Win32PlatformOptions { AllowEglInitialization = true })
                 .LogToTrace()
-                .UseSkia();
-        }
-
-        private static void AfterSetupCallback(AppBuilder appBuilder)
-        {
-            // Register icon provider(s)
-            IconProvider.Register<FontAwesomeIconProvider>();
+                .UseSkia()
+                .WithIcons(container => container.Register<FontAwesomeIconProvider>());
         }
 
         private static void AppMain(Application app, string[] args)
