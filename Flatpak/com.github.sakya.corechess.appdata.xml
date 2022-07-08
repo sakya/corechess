@@ -44,6 +44,13 @@
       </screenshot>
     </screenshots>
     <releases>
+      <release version="0.11.2.0" date="2022-07-08">
+        <description>
+          <ul>
+            <li>Upgraded Avalonia to v0.10.15</li>
+          </ul>
+        </description>
+      </release>      
       <release version="0.11.1.2" date="2022-04-29">
         <description>
           <ul>
