@@ -24,7 +24,13 @@ namespace CoreChess.Utils
         /// <returns>True if an update has been downloaded and started</returns>
         public async Task<bool> CheckForUpdate(Avalonia.Controls.Window owner, bool manual = false)
         {
-            var releases = await m_Client.Repository.Release.GetAll("sakya", "CoreChess");
+            IReadOnlyList<Release> releases = null;
+            try {
+                releases = await m_Client.Repository.Release.GetAll("sakya", "CoreChess");
+            } catch (Exception) {
+                return false;
+            }
+
             var release = releases?.Count > 0 ? releases[0] : null;
             if (release != null && release.Assets?.Count > 0) {
                 Version releaseVersion;
