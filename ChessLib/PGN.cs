@@ -332,14 +332,14 @@ namespace ChessLib
             var moveMatch = Regex.Match(moves, "([0-9]+\\.) ?([^ ]+) ?({[^{]+})? ?([^ ]+)? ?({[^{]+})?");
             while (moveMatch.Success) {
                 if (moveMatch.Groups.Count < 4)
-                    throw new Exception("Failed to load file");
+                    throw new Exception("Failed to load file (cannot parse move)");
 
                 int number;
                 if (!int.TryParse(moveMatch.Groups[1].Value.Remove(moveMatch.Groups[1].Value.Length - 1, 1), out number))
-                    throw new Exception("Failed to load file");
+                    throw new Exception("Failed to load file (cannot parse index)");
 
                 if (number != ++moveIdx)
-                    throw new Exception("Failed to load file");
+                    throw new Exception("Failed to load file (wrong index)");
 
                 res.Moves.Add(new Move()
                 {
