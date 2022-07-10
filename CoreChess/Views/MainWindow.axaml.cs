@@ -577,10 +577,15 @@ namespace CoreChess.Views
             };
             string file = await dlg.ShowAsync(this);
             if (!string.IsNullOrEmpty(file)) {
-                if (Path.GetExtension(file) == ".pgn")
-                    await m_Game.SaveToPgn(file);
-                else
-                    await m_Game.Save(file);
+                try {
+                    if (Path.GetExtension(file) == ".pgn")
+                        await m_Game.SaveToPgn(file);
+                    else
+                        await m_Game.Save(file);
+                } catch (Exception ex) {
+                    await MessageWindow.ShowMessage(this, Localizer.Localizer.Instance["Error"],
+                            string.Format(Localizer.Localizer.Instance["SaveGameError"], ex.Message), MessageWindow.Icons.Error);
+                }
             }
         } // OnSaveGameClick
 

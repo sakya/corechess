@@ -137,6 +137,7 @@
   "ResignGameConfirm": "Abbandonare la partita in corso?",
   "ResignationMessage": "Partita abbandonata, il {0} vince!",
   "Resume": "Riprendi",
+  "SaveGameError": "Errore durante il salvataggio della partita:\n{0}",
   "SaveGameOnExit": "Salva partita all'uscita",
   "ShowFileRankNotation": "Mostra nome righe e colonne",
   "ShowValidMoves": "Mostra mosse valide",

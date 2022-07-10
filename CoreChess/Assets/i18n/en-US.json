@@ -137,6 +137,7 @@
   "ResignGameConfirm": "Resign the current game?",
   "ResignationMessage": "Resignation, {0} wins!",
   "Resume": "Resume",
+  "SaveGameError": "Error saving game:\n{0}",
   "SaveGameOnExit": "Save game on exit",
   "ShowFileRankNotation": "Show file and rank notation",
   "ShowValidMoves": "Show valid moves",
