@@ -598,7 +598,15 @@ namespace CoreChess.Views
                 if (Path.GetExtension(files[0]) == ".pgn") {
                     var wDlg = new WaitWindow(Localizer.Localizer.Instance["LoadingPGN"]);
                     var wTask = wDlg.ShowDialog(this);
-                    var games = await PGN.LoadFile(files[0]);
+                    List<PGN> games = null;
+                    try {
+                        games = await PGN.LoadFile(files[0]);
+                    } catch (Exception ex) {
+                        wDlg.Close();
+                        await MessageWindow.ShowMessage(this, Localizer.Localizer.Instance["Error"],
+                            string.Format(Localizer.Localizer.Instance["LoadPgnError"], ex.Message), MessageWindow.Icons.Error);
+                        return;
+                    }
                     wDlg.Close();
 
                     Game game = null;

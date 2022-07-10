@@ -106,6 +106,7 @@
   "LoadGameError": "Error loading game",
   "LoadingGames": "Loading games",
   "LoadingPGN": "Loading PGN file",
+  "LoadPgnError": "Error loading PGN file:\\n{0}",
   "MaxEngineDepth": "Max engine depth\\n(set to 0 for no limit)",
   "MaxEngineThinkingTime": "Max engine thinking time in secs\\n(set to 0 for no limit)",
   "Message": "Message",

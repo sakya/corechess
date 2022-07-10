@@ -106,6 +106,7 @@
   "LoadGameError": "Errore durante il caricamento della partita",
   "LoadingGames": "Caricamento partite",
   "LoadingPGN": "Caricamento file PGN",
+  "LoadPgnError": "Errore durante il caricamento del file PGN:\\n{0}",
   "MaxEngineDepth": "Profondità massima engine\\n(imposta a 0 per nessun limite)",
   "MaxEngineThinkingTime": "Tempo massimo engine in secondi\\n(imposta a 0 per nessun limite)",
   "Message": "Messaggio",
