@@ -227,15 +227,14 @@ namespace ChessLib
             Regex propsRegEx = new Regex("\\[(.*) \"(.*)\"\\]");
             while ((line = await ReadLineFromStream(stream)) != null) {
                 line = line.Trim();
+                if (movesStarted && string.IsNullOrEmpty(line)) {
+                    break;
+                }
+
                 if (string.IsNullOrEmpty(line) || line.StartsWith("%"))
                     continue;
 
-                if (line.StartsWith("[")) {
-                    if (movesStarted) {
-                        stream.Position = lastPos;
-                        break;
-                    }
-
+                if (!movesStarted && line.StartsWith("[")) {
                     var m = propsRegEx.Match(line);
                     if (m.Success) {
                         string name = m.Groups[1].Value.Trim();
@@ -320,6 +319,21 @@ namespace ChessLib
             //Moves
             string moves = sb.ToString();
             moves = moves.Trim();
+
+            // Remove variations
+            moves = Regex.Replace(moves, "\\((?>\\((?<c>)|[^()]+|\\)(?<-c>))*(?(c)(?!))\\)", string.Empty);
+
+            // Remove NAGs
+            moves = Regex.Replace(moves, "\\$[0-9]+", string.Empty);
+            moves = Regex.Replace(moves, "[0-9]+\\.\\.\\.", string.Empty);
+
+            // Remove douple spaces
+            int sIdx = moves.IndexOf("  ");
+            while (sIdx >= 0) {
+                moves = moves.Replace("  ", " ");
+                sIdx = moves.IndexOf("  ");
+            }
+
             if (moves.EndsWith(" 1-0") || moves.EndsWith(" 0-1"))
                 moves = moves.Remove(moves.Length - 4, 4);
             else if (moves.EndsWith(" 1/2-1/2"))

@@ -33,7 +33,7 @@ namespace CoreChess
         {
             return AppBuilder.Configure<App>()
                 .UsePlatformDetect()
-                .With(new Win32PlatformOptions { AllowEglInitialization = true })
+                .With(new Win32PlatformOptions { AllowEglInitialization = false })
                 .LogToTrace()
                 .UseSkia()
                 .WithIcons(container => container.Register<FontAwesomeIconProvider>());
