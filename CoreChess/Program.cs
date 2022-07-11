@@ -33,6 +33,7 @@ namespace CoreChess
         {
             return AppBuilder.Configure<App>()
                 .UsePlatformDetect()
+                .With(new X11PlatformOptions { UseGpu = false })
                 .With(new Win32PlatformOptions { AllowEglInitialization = false })
                 .LogToTrace()
                 .UseSkia()
