@@ -68,6 +68,8 @@ namespace CoreChess.Views
             WindowSize ws = null;
             try {
                 ws = WindowSize.Load(Path.Join(App.LocalPath, $"ws{this.GetType().Name}.json"));
+                if (ws == null)
+                    return;
             } catch {
                 return;
             }
