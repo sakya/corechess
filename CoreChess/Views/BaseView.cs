@@ -74,7 +74,7 @@ namespace CoreChess.Views
                 return;
             }
 
-            var screen = this.Screens.ScreenFromVisual(this);
+            Screen screen = Screens.ScreenFromPoint(PlatformImpl.Position);
             if (ws.State == WindowState.Maximized ||
                 screen != null && ws.Width <= screen.Bounds.Width && ws.Height <= screen.Bounds.Height && ws.X <= screen.Bounds.Width && ws.Y <= screen.Bounds.Height) {
                 this.WindowStartupLocation = WindowStartupLocation.Manual;
