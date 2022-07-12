@@ -323,10 +323,9 @@ namespace ChessLib
             // Remove variations
             moves = Regex.Replace(moves, "\\((?>\\((?<c>)|[^()]+|\\)(?<-c>))*(?(c)(?!))\\)", string.Empty);
 
-            // Remove NAGs
-            // moves = Regex.Replace(moves, "\\$[0-9]+", string.Empty);
-            moves = Regex.Replace(moves, "\\$1 {(.*)}", "{!\n$1}");
-            moves = Regex.Replace(moves, "\\$1 ", "{!}");
+            	// Remove NAGs
+            	moves = Regex.Replace(moves, "\\$1 {(.*)}", "{!\n$1}");
+            	moves = Regex.Replace(moves, "\\$1 ", "{!}");
 	        moves = Regex.Replace(moves, "\\$2 {(.*)}", "{?\n$1}");
 	        moves = Regex.Replace(moves, "\\$2 ", "{?}");
 	        moves = Regex.Replace(moves, "\\$3 {(.*)}", "{!!\n$1}");
@@ -349,7 +348,8 @@ namespace ChessLib
 	        moves = Regex.Replace(moves, "\\$18 ", "{+-}");
 	        moves = Regex.Replace(moves, "\\$19 {(.*)}", "{-+\n$1}");
 	        moves = Regex.Replace(moves, "\\$19 ", "{-+}");
-            moves = Regex.Replace(moves, "[0-9]+\\.\\.\\.", string.Empty);
+		moves = Regex.Replace(moves, "\\$[0-9]+", string.Empty);
+            	moves = Regex.Replace(moves, "[0-9]+\\.\\.\\.", string.Empty);
             // Remove douple spaces
             int sIdx = moves.IndexOf("  ");
             while (sIdx >= 0) {
