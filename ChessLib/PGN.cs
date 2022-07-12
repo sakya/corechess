@@ -156,7 +156,7 @@ namespace ChessLib
 	            string annotation = string.Empty;
                     if (!string.IsNullOrEmpty(Moves[i].Comment)) {
 
-		        Moves[i].Comment = Regex.Replace(Moves[i].Comment, "\n", string.Empty);
+		        Moves[i].Comment = Regex.Replace(Moves[i].Comment, "\\n", " ");
 			if (Moves[i].Comment.StartsWith("!!")) {
 				annotation = "$3";
 				Moves[i].Comment = Regex.Replace(Moves[i].Comment, "!!", string.Empty);
@@ -404,7 +404,7 @@ namespace ChessLib
 	        moves = Regex.Replace(moves, "\\$5 ", "{!?}");
 	        moves = Regex.Replace(moves, "\\$6 {(.*)}", "{?! $1}");
 	        moves = Regex.Replace(moves, "\\$6 ", "{?!}");
-		moves = Regex.Replace(moves, "\\$7 {(.*)}", "{□ $1}");
+		moves = Regex.Replace(moves, "\\$7 {(.*)}", "{□  $1}");
 		moves = Regex.Replace(moves, "\\$7 ", "{□}");
 	        moves = Regex.Replace(moves, "\\$10 {(.*)}", "{= $1}");
 	        moves = Regex.Replace(moves, "\\$10 ", "{=}");
@@ -424,7 +424,6 @@ namespace ChessLib
 	        moves = Regex.Replace(moves, "\\$19 ", "{-+}");
 		moves = Regex.Replace(moves, "\\$[0-9]+", string.Empty);
             	moves = Regex.Replace(moves, "[0-9]+\\.\\.\\.", string.Empty);
-		moves = Regex.Replace(moves, "\n", string.Empty);
             // Remove douple spaces
             int sIdx = moves.IndexOf("  ");
             while (sIdx >= 0) {
