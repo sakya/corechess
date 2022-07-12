@@ -136,6 +136,7 @@
   "ResetToDefault": "Reset to default",
   "ResignGameConfirm": "Resign the current game?",
   "ResignationMessage": "Resignation, {0} wins!",
+  "RestoreWindowSizeAndPosition": "Restore window size and position",
   "Resume": "Resume",
   "SaveGameError": "Error saving game:\n{0}",
   "SaveGameOnExit": "Save game on exit",

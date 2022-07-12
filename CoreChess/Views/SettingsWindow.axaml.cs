@@ -139,6 +139,9 @@ namespace CoreChess.Views
             Grid.SetRow(m_HighlightButton, 3);
             grid.Children.Add(m_HighlightButton);
 
+            var chk = this.FindControl<ToggleSwitch>("m_RestoreWindowSizeAndPosition");
+            chk.IsChecked = App.Settings.RestoreWindowSizeAndPosition;
+
             grid = this.FindControl<Grid>("m_ChessboardGrid");
             m_WhiteButton = new AvaloniaColorPicker.ColorButton<ColorPickerWindow>()
             {
@@ -187,7 +190,7 @@ namespace CoreChess.Views
             cb.Items = m_SupportedLanguages;
             cb.SelectedItem = m_SupportedLanguages.Where(l => l.Code == Localizer.Localizer.Instance.Language).FirstOrDefault();
 
-            var chk = this.FindControl<ToggleSwitch>("m_EnableDragAndDrop");
+            chk = this.FindControl<ToggleSwitch>("m_EnableDragAndDrop");
             chk.IsChecked = App.Settings.EnableDragAndDrop;
             chk = this.FindControl<ToggleSwitch>("m_ShowValidMoves");
             chk.IsChecked = App.Settings.ShowValidMoves;
@@ -409,6 +412,8 @@ namespace CoreChess.Views
 
             App.Settings.AccentColor = Utils.ColorConverter.ToHex(m_AccentButton.Color);
             App.Settings.HighlightColor = Utils.ColorConverter.ToHex(m_HighlightButton.Color);
+            chk = this.FindControl<ToggleSwitch>("m_RestoreWindowSizeAndPosition");
+            App.Settings.RestoreWindowSizeAndPosition = chk.IsChecked.Value;
 
             App.Settings.WhiteColor = Utils.ColorConverter.ToHex(m_WhiteButton.Color);
             App.Settings.WhiteSelectedColor = Utils.ColorConverter.ToHex(m_WhiteSelectedButton.Color);

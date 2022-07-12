@@ -288,6 +288,8 @@ namespace CoreChess.Views
             AvaloniaXamlLoader.Load(this);
             base.InitializeComponent();
 
+            if (App.Settings.RestoreWindowSizeAndPosition)
+                RestoreWindowSizeAndPosition();
             m_Context = new Context(this);
             m_Context.IsWindows = OperatingSystem.IsWindows();
             m_Context.MoveNotation = App.Settings.MoveNotation;
@@ -870,6 +872,9 @@ namespace CoreChess.Views
                 await m_Game.Stop();
                 m_Game.Dispose();
                 m_Game = null;
+
+                SaveWindowSizeAndPosition();
+
                 this.Close();
             }
         } // OnWindowClosing

@@ -69,6 +69,7 @@ namespace CoreChess
             ShowFileRankNotation = FileRankNotations.Inside;
             AutoSaveGameOnExit = true;
             AutoPauseWhenMinimized = true;
+            RestoreWindowSizeAndPosition = false;
 
             AccentColor = "#cf6641";
             HighlightColor = "#fd7d00";
@@ -111,6 +112,7 @@ namespace CoreChess
         public string AccentColor { get; set; }
         public string HighlightColor { get; set; }
         public string FontFamily { get; set; }
+        public bool RestoreWindowSizeAndPosition { get; set; }
 
         public string PiecesSet { get; set; }
         public string WhiteColor { get; set; }
