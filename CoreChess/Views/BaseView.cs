@@ -74,9 +74,9 @@ namespace CoreChess.Views
                 return;
             }
 
-            var screen = this.Screens.ScreenFromVisual(this);
-            if (ws.State == WindowState.Maximized || 
-                ws.Width <= screen.Bounds.Width && ws.Height <= screen.Bounds.Height && ws.X <= screen.Bounds.Width && ws.Y <= screen.Bounds.Height) {
+            Screen screen = Screens.ScreenFromPoint(PlatformImpl.Position);
+            if (ws.State == WindowState.Maximized ||
+                screen != null && ws.Width <= screen.Bounds.Width && ws.Height <= screen.Bounds.Height && ws.X <= screen.Bounds.Width && ws.Y <= screen.Bounds.Height) {
                 this.WindowStartupLocation = WindowStartupLocation.Manual;
                 this.WindowState = ws.State;
                 if (ws.State == WindowState.Normal) {
@@ -107,7 +107,7 @@ namespace CoreChess.Views
                     return;
                 Position = screen.WorkingArea.CenterRect(rect).Position;
             } else {
-                if(powner == null || WindowStartupLocation != WindowStartupLocation.CenterOwner) 
+                if(powner == null || WindowStartupLocation != WindowStartupLocation.CenterOwner)
                     return;
                 Position = new PixelRect(powner.Position,
                     PixelSize.FromSize(powner.ClientSize, scale)).CenterRect(rect).Position;
