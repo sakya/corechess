@@ -336,6 +336,8 @@ namespace ChessLib
 	        moves = Regex.Replace(moves, "\\$5 ", "{!?}");
 	        moves = Regex.Replace(moves, "\\$6 {(.*)}", "{?!\n$1}");
 	        moves = Regex.Replace(moves, "\\$6 ", "{?!}");
+		moves = Regex.Replace(moves, "\\$7 {(.*)}", "{□\n$1}");
+		moves = Regex.Replace(moves, "\\$7 ", "{□}");
 	        moves = Regex.Replace(moves, "\\$10 {(.*)}", "{=\n$1");
 	        moves = Regex.Replace(moves, "\\$10 ", "{=}");
 	        moves = Regex.Replace(moves, "\\$13 {(.*)}", "{∞\n$1");
