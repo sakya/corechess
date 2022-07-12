@@ -152,8 +152,40 @@ namespace ChessLib
                         move = $"{move} {Moves[i].Notation}";
 
                     sb.Append(move);
-                    if (!string.IsNullOrEmpty(Moves[i].Comment))
-                        sb.Append($" {{{Moves[i].Comment}}}");
+
+	            string annotation = string.Empty;
+                    if (!string.IsNullOrEmpty(Moves[i].Comment)) {
+
+		        Moves[i].Comment = Regex.Replace(Moves[i].Comment, "\n", string.Empty);
+			if (Moves[i].Comment.StartsWith("!!")) {
+				annotation = "$3";
+				Moves[i].Comment = Regex.Replace(Moves[i].Comment, "!!", string.Empty);
+			}
+			if (Moves[i].Comment.StartsWith("??")) {
+				annotation = "$4";
+				Moves[i].Comment = Regex.Replace(Moves[i].Comment, "\\?\\?", string.Empty);
+			}
+			if (Moves[i].Comment.StartsWith("!?")) {
+				annotation = "$5";
+				Moves[i].Comment = Regex.Replace(Moves[i].Comment, "!\\?", string.Empty);
+			}
+			if (Moves[i].Comment.StartsWith("?!")) {
+				annotation = "$6";
+				Moves[i].Comment = Regex.Replace(Moves[i].Comment, "\\?!", string.Empty);
+			}
+			if (Moves[i].Comment.StartsWith("!")) {
+				annotation = "$1";
+				Moves[i].Comment = Regex.Replace(Moves[i].Comment, "!", string.Empty);
+			}
+			if (Moves[i].Comment.StartsWith("?")) {
+				annotation = "$2";
+				Moves[i].Comment = Regex.Replace(Moves[i].Comment, "\\?", string.Empty);
+			}
+                    if (!string.IsNullOrEmpty(annotation)) 
+                        sb.Append($" {annotation}");
+		    }
+		    if (!string.IsNullOrEmpty(Moves[i].Comment))
+			sb.Append($" {{{Moves[i].Comment}}}");
 
                     if (sb.Length >= 80) {
                         await sw.WriteLineAsync(sb.ToString().Trim());
@@ -324,38 +356,39 @@ namespace ChessLib
             moves = Regex.Replace(moves, "\\((?>\\((?<c>)|[^()]+|\\)(?<-c>))*(?(c)(?!))\\)", string.Empty);
 
             	// Remove NAGs
-            	moves = Regex.Replace(moves, "\\$1 {(.*)}", "{!\n$1}");
+            	moves = Regex.Replace(moves, "\\$1 {(.*)}", "{! $1}");
             	moves = Regex.Replace(moves, "\\$1 ", "{!}");
-	        moves = Regex.Replace(moves, "\\$2 {(.*)}", "{?\n$1}");
+	        moves = Regex.Replace(moves, "\\$2 {(.*)}", "{? $1}");
 	        moves = Regex.Replace(moves, "\\$2 ", "{?}");
-	        moves = Regex.Replace(moves, "\\$3 {(.*)}", "{!!\n$1}");
+	        moves = Regex.Replace(moves, "\\$3 {(.*)}", "{!! $1}");
 	        moves = Regex.Replace(moves, "\\$3 ", "{!!}");
-	        moves = Regex.Replace(moves, "\\$4 {(.*)}", "{??\n$1}");
+	        moves = Regex.Replace(moves, "\\$4 {(.*)}", "{?? $1}");
 	        moves = Regex.Replace(moves, "\\$4 ", "{??}");
-	        moves = Regex.Replace(moves, "\\$5 {(.*)}", "{!?\n$1}");
+	        moves = Regex.Replace(moves, "\\$5 {(.*)}", "{!? $1}");
 	        moves = Regex.Replace(moves, "\\$5 ", "{!?}");
-	        moves = Regex.Replace(moves, "\\$6 {(.*)}", "{?!\n$1}");
+	        moves = Regex.Replace(moves, "\\$6 {(.*)}", "{?! $1}");
 	        moves = Regex.Replace(moves, "\\$6 ", "{?!}");
-		moves = Regex.Replace(moves, "\\$7 {(.*)}", "{□\n$1}");
+		moves = Regex.Replace(moves, "\\$7 {(.*)}", "{□ $1}");
 		moves = Regex.Replace(moves, "\\$7 ", "{□}");
-	        moves = Regex.Replace(moves, "\\$10 {(.*)}", "{=\n$1");
+	        moves = Regex.Replace(moves, "\\$10 {(.*)}", "{= $1");
 	        moves = Regex.Replace(moves, "\\$10 ", "{=}");
-	        moves = Regex.Replace(moves, "\\$13 {(.*)}", "{∞\n$1");
+	        moves = Regex.Replace(moves, "\\$13 {(.*)}", "{∞ $1");
 	        moves = Regex.Replace(moves, "\\$13 ", "{∞}");
-		moves = Regex.Replace(moves, "\\$14 {(.*)}", "{+=\n$1}");
+		moves = Regex.Replace(moves, "\\$14 {(.*)}", "{+= $1}");
 	        moves = Regex.Replace(moves, "\\$14 ", "{+=}");
-	        moves = Regex.Replace(moves, "\\$15 {(.*)}", "{=+\n$1}");
+	        moves = Regex.Replace(moves, "\\$15 {(.*)}", "{=+ $1}");
 	        moves = Regex.Replace(moves, "\\$15 ", "{=+}");
-	        moves = Regex.Replace(moves, "\\$16 {(.*)}", "{±\n$1}");
+	        moves = Regex.Replace(moves, "\\$16 {(.*)}", "{± $1}");
 	        moves = Regex.Replace(moves, "\\$16 ", "{±}");
-	        moves = Regex.Replace(moves, "\\$17 {(.*)}", "{∓\n$1}");
+	        moves = Regex.Replace(moves, "\\$17 {(.*)}", "{∓ $1}");
 	        moves = Regex.Replace(moves, "\\$17 ", "{∓}");
-	        moves = Regex.Replace(moves, "\\$18 {(.*)}", "{+-\n$1}");
+	        moves = Regex.Replace(moves, "\\$18 {(.*)}", "{+- $1}");
 	        moves = Regex.Replace(moves, "\\$18 ", "{+-}");
-	        moves = Regex.Replace(moves, "\\$19 {(.*)}", "{-+\n$1}");
+	        moves = Regex.Replace(moves, "\\$19 {(.*)}", "{-+ $1}");
 	        moves = Regex.Replace(moves, "\\$19 ", "{-+}");
 		moves = Regex.Replace(moves, "\\$[0-9]+", string.Empty);
             	moves = Regex.Replace(moves, "[0-9]+\\.\\.\\.", string.Empty);
+		moves = Regex.Replace(moves, "\n", string.Empty);
             // Remove douple spaces
             int sIdx = moves.IndexOf("  ");
             while (sIdx >= 0) {
@@ -368,7 +401,7 @@ namespace ChessLib
             else if (moves.EndsWith(" 1/2-1/2"))
                 moves = moves.Remove(moves.Length - 8, 8);
             else if (moves.EndsWith(" *"))
-                moves = moves.Remove(moves.Length - 8, 8);
+                moves = moves.Remove(moves.Length - 2, 2);
             moves = moves.Trim();
 
             int moveIdx = 0;
