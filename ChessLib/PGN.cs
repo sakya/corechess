@@ -181,6 +181,42 @@ namespace ChessLib
 				annotation = "$2";
 				Moves[i].Comment = Regex.Replace(Moves[i].Comment, "\\?", string.Empty);
 			}
+			if (Moves[i].Comment.StartsWith("□")) {
+				annotation = "$7";
+				Moves[i].Comment = Regex.Replace(Moves[i].Comment, "□", string.Empty);
+			}
+			if (Moves[i].Comment.StartsWith("+=")) {
+				annotation = "$14";
+				Moves[i].Comment = Regex.Replace(Moves[i].Comment, "\\+=", string.Empty);
+			}
+			if (Moves[i].Comment.StartsWith("=+")) {
+				annotation = "$15";
+				Moves[i].Comment = Regex.Replace(Moves[i].Comment, "=\\+", string.Empty);
+			}
+			if (Moves[i].Comment.StartsWith("=")) {
+				annotation = "$10";
+				Moves[i].Comment = Regex.Replace(Moves[i].Comment, "=", string.Empty);
+			}
+			if (Moves[i].Comment.StartsWith("∞")) {
+				annotation = "$13";
+				Moves[i].Comment = Regex.Replace(Moves[i].Comment, "∞", string.Empty);
+			}
+			if (Moves[i].Comment.StartsWith("±")) {
+				annotation = "$16";
+				Moves[i].Comment = Regex.Replace(Moves[i].Comment, "±", string.Empty);
+			}
+			if (Moves[i].Comment.StartsWith("∓")) {
+				annotation = "$17";
+				Moves[i].Comment = Regex.Replace(Moves[i].Comment, "∓", string.Empty);
+			}
+			if (Moves[i].Comment.StartsWith("+-")) {
+				annotation = "$18";
+				Moves[i].Comment = Regex.Replace(Moves[i].Comment, "\\+-", string.Empty);
+			}
+			if (Moves[i].Comment.StartsWith("-+")) {
+				annotation = "$19";
+				Moves[i].Comment = Regex.Replace(Moves[i].Comment, "-\\+", string.Empty);
+			}
                     if (!string.IsNullOrEmpty(annotation)) 
                         sb.Append($" {annotation}");
 		    }
@@ -370,9 +406,9 @@ namespace ChessLib
 	        moves = Regex.Replace(moves, "\\$6 ", "{?!}");
 		moves = Regex.Replace(moves, "\\$7 {(.*)}", "{□ $1}");
 		moves = Regex.Replace(moves, "\\$7 ", "{□}");
-	        moves = Regex.Replace(moves, "\\$10 {(.*)}", "{= $1");
+	        moves = Regex.Replace(moves, "\\$10 {(.*)}", "{= $1}");
 	        moves = Regex.Replace(moves, "\\$10 ", "{=}");
-	        moves = Regex.Replace(moves, "\\$13 {(.*)}", "{∞ $1");
+	        moves = Regex.Replace(moves, "\\$13 {(.*)}", "{∞ $1}");
 	        moves = Regex.Replace(moves, "\\$13 ", "{∞}");
 		moves = Regex.Replace(moves, "\\$14 {(.*)}", "{+= $1}");
 	        moves = Regex.Replace(moves, "\\$14 ", "{+=}");
