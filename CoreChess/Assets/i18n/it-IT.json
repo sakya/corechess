@@ -136,6 +136,7 @@
   "ResetToDefault": "Reimposta a default",
   "ResignGameConfirm": "Abbandonare la partita in corso?",
   "ResignationMessage": "Partita abbandonata, il {0} vince!",
+  "RestoreWindowSizeAndPosition": "Ripristina dimensione e posizione della finestra",
   "Resume": "Riprendi",
   "SaveGameError": "Errore durante il salvataggio della partita:\n{0}",
   "SaveGameOnExit": "Salva partita all'uscita",
