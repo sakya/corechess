@@ -49,7 +49,6 @@ namespace CoreChess.Views
         protected void SaveWindowSizeAndPosition()
         {
             // Save window size and position
-            var screen = this.Screens.ScreenFromVisual(this);
             var ws = new WindowSize()
             {
                 State = this.WindowState,
