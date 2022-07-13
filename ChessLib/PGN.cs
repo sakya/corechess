@@ -426,29 +426,21 @@ namespace ChessLib
             // Moves
             string moves = sb.ToString();
             moves = moves.Trim();
-	    
-	    // Put comments before the move after it
+
+            // Remove variations
+            moves = Regex.Replace(moves, "\\((?>\\((?<c>)|[^()]+|\\)(?<-c>))*(?(c)(?!))\\)", string.Empty);
+
+            // Put comments before the move after it
+            moves = Regex.Replace(moves, "([0-9]+\\.) ({[^}]*}) ([A-Za-z]+[0-9]*[^ ]) (\\$[0-9]+) ", "$1 $3 $4 $2 ");
+	    moves = Regex.Replace(moves, "([0-9]+\\.) ({[^}]*}) (O-O[^ ]*) (\\$[0-9]+) ", "$1 $3 $4 $2 ");
             moves = Regex.Replace(moves, "([0-9]+\\.) ({[^}]*}) ([A-Za-z]+[0-9]*[^ ]) ", "$1 $3 $2 ");
 	    moves = Regex.Replace(moves, "([0-9]+\\.) ({[^}]*}) (O-O[^ ]*) ", "$1 $3 $2 ");
-		
-	    // If there was a comment already, combine them.
-	    moves = Regex.Replace(moves, "([0-9]+\\.) ([A-Za-z]+[0-9]*[^ ]) {([^}]*)} {([^}]*)} ", "$1 $2 {$3 $4} ");
-	    moves = Regex.Replace(moves, "([0-9]+\\.) (O-O[^ ]*) {([^}]*)} {([^}]*)} ", "$1 $2 {$3 $4} ");
-	    
+	        
 	    // Put comments after the result before it.
 	    moves = Regex.Replace(moves, "(1-0) ({[^}]*})", "$2 $1");
 	    moves = Regex.Replace(moves, "(0-1) ({[^}]*})", "$2 $1");
 	    moves = Regex.Replace(moves, "(1/2-1/2) ({[^}]*})", "$2 $1");
 	    moves = Regex.Replace(moves, "(\\*) ({[^}]*})", "$2 $1");
-	    
-	    // If there was a comment already, combine them.
-	    moves = Regex.Replace(moves, "{([^}]*)} {([^}]*)} (1-0)", "{$1 $2} $3");
-	    moves = Regex.Replace(moves, "{([^}]*)} {([^}]*)} (0-1)", "{$1 $2} $3");
-	    moves = Regex.Replace(moves, "{([^}]*)} {([^}]*)} (1/2-1/2)", "{$1 $2} $3");
-	    moves = Regex.Replace(moves, "{([^}]*)} {([^}]*)} (\\*)", "{$1 $2} $3");
-
-            // Remove variations
-            moves = Regex.Replace(moves, "\\((?>\\((?<c>)|[^()]+|\\)(?<-c>))*(?(c)(?!))\\)", string.Empty);
 
             // Insert NAGs into comments
             moves = Regex.Replace(moves, "\\$1 {([^}]*)}", "{! $1}");
@@ -483,6 +475,16 @@ namespace ChessLib
 	    moves = Regex.Replace(moves, "\\$19 ", "{-+} ");
 	    moves = Regex.Replace(moves, "\\$[0-9]+", string.Empty);
             moves = Regex.Replace(moves, "[0-9]+\\.\\.\\.", string.Empty);
+
+	    // If there was a comment already, combine them.
+	    moves = Regex.Replace(moves, "([0-9]+\\.) ([A-Za-z]+[0-9]*[^ ]) {([^}]*)} {([^}]*)} ", "$1 $2 {$3 $4} ");
+	    moves = Regex.Replace(moves, "([0-9]+\\.) (O-O[^ ]*) {([^}]*)} {([^}]*)} ", "$1 $2 {$3 $4} ");
+	    
+	    // If there was a comment already, combine them.
+	    moves = Regex.Replace(moves, "{([^}]*)} {([^}]*)} (1-0)", "{$1 $2} $3");
+	    moves = Regex.Replace(moves, "{([^}]*)} {([^}]*)} (0-1)", "{$1 $2} $3");
+	    moves = Regex.Replace(moves, "{([^}]*)} {([^}]*)} (1/2-1/2)", "{$1 $2} $3");
+	    moves = Regex.Replace(moves, "{([^}]*)} {([^}]*)} (\\*)", "{$1 $2} $3");
 
             // Remove double spaces
             int sIdx = moves.IndexOf("  ");
