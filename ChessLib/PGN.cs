@@ -323,7 +323,7 @@ namespace ChessLib
                         } else if (name == "Site") {
                             res.Site = value;
                         } else if (name == "Date") {
-                            if (value != "????.??.??")
+                            if (value != "????.??.??" & value != "??")
                                 res.Date = value;
                         } else if (name == "Time") {
                             TimeSpan time;
