@@ -429,6 +429,9 @@ namespace ChessLib
 
             // Remove variations
             moves = Regex.Replace(moves, "\\((?>\\((?<c>)|[^()]+|\\)(?<-c>))*(?(c)(?!))\\)", string.Empty);
+            
+            // Put comments before all the moves after the first move
+            moves = Regex.Replace(moves, "({[^}]*}) (1\\.) ", "$2 $1 ");
 
             // Put comments before the move after it
             moves = Regex.Replace(moves, "([0-9]+\\.) ({[^}]*}) ([A-Za-z]+[0-9]*[^ ]) (\\$[0-9]+) ", "$1 $3 $4 $2 ");
