@@ -137,6 +137,8 @@ namespace ChessLib
                 StringBuilder sb = new StringBuilder();
                 for (int i = 0; i < Moves.Count; i++) {
                     string move = string.Empty;
+                    string result = string.Empty;
+                    bool lastmove = false;
                     if (i % 2 == 0) {
                         if (moveNumber > 1)
                             move = $" {  moveNumber++ }.";
@@ -150,6 +152,30 @@ namespace ChessLib
                         move = $"{move} O-O-O";
                     else
                         move = $"{move} {Moves[i].Notation}";
+                        
+                    if (move.EndsWith("1-0")) {
+                        lastmove = true;
+                        result = "1-0";
+                        move = Regex.Replace(move, "1-0", string.Empty);
+                    }
+                    
+                    if (move.EndsWith("0-1")) {
+                        lastmove = true;
+                        result = "0-1";
+                        move = Regex.Replace(move, "0-1", string.Empty);
+                    }
+                    
+                    if (move.EndsWith("1/2-1/2")) {
+                        lastmove = true;
+                        result = "1/2-1/2";
+                        move = Regex.Replace(move, "1/2-1/2", string.Empty);
+                    }
+                    
+                    if (move.EndsWith("*")) {
+                        lastmove = true;
+                        result = "*";
+                        move = Regex.Replace(move, "*", string.Empty);
+                    }
 
                     sb.Append(move);
 
@@ -233,6 +259,9 @@ namespace ChessLib
 		    }
 		    if (!string.IsNullOrEmpty(Moves[i].Comment))
 			sb.Append($" {{{Moves[i].Comment}}}");
+
+                    if (lastmove)
+                    	sb.Append($" {result}");
 
                     //if (sb.Length >= 80) {
                         //await sw.WriteLineAsync(sb.ToString().Trim());
