@@ -428,11 +428,11 @@ namespace ChessLib
             moves = moves.Trim();
 
             // Remove variations
-            moves = Regex.Replace(moves, "\\([^(^)]*\\)", string.Empty);
-            moves = Regex.Replace(moves, "\\([^(^)]*\\)", string.Empty);
-            moves = Regex.Replace(moves, "\\([^(^)]*\\)", string.Empty);
-            moves = Regex.Replace(moves, "\\([^(^)]*\\)", string.Empty);
-            // moves = Regex.Replace(moves, "\\((?>\\((?<c>)|[^()]+|\\)(?<-c>))*(?(c)(?!))\\)", string.Empty);
+            int varIdx = moves.IndexOf("(");
+            while (varIdx >= 0) {
+                moves = Regex.Replace(moves, "\\([^(^)]*\\)", string.Empty);
+                varIdx = moves.IndexOf("(");
+            }
             moves = Regex.Replace(moves, "\\[pgndiagram\\]", string.Empty);
             
             // Put comments before all the moves after the first move
