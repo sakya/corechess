@@ -156,25 +156,25 @@ namespace ChessLib
                     if (move.EndsWith("1-0")) {
                         lastmove = true;
                         result = "1-0";
-                        move = Regex.Replace(move, "1-0", string.Empty);
+                        move = Regex.Replace(move, " 1-0", string.Empty);
                     }
                     
                     if (move.EndsWith("0-1")) {
                         lastmove = true;
                         result = "0-1";
-                        move = Regex.Replace(move, "0-1", string.Empty);
+                        move = Regex.Replace(move, " 0-1", string.Empty);
                     }
                     
                     if (move.EndsWith("1/2-1/2")) {
                         lastmove = true;
                         result = "1/2-1/2";
-                        move = Regex.Replace(move, "1/2-1/2", string.Empty);
+                        move = Regex.Replace(move, " 1/2-1/2", string.Empty);
                     }
                     
                     if (move.EndsWith("*")) {
                         lastmove = true;
                         result = "*";
-                        move = Regex.Replace(move, "*", string.Empty);
+                        move = Regex.Replace(move, " *", string.Empty);
                     }
 
                     sb.Append(move);
