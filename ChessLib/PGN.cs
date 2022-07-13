@@ -429,6 +429,7 @@ namespace ChessLib
 
             // Remove variations
             moves = Regex.Replace(moves, "\\((?>\\((?<c>)|[^()]+|\\)(?<-c>))*(?(c)(?!))\\)", string.Empty);
+            moves = Regex.Replace(moves, "\\[pgndiagram\\]", string.Empty);
             
             // Put comments before all the moves after the first move
             moves = Regex.Replace(moves, "({[^}]*}) (1\\.) ", "$2 $1 ");
@@ -458,7 +459,7 @@ namespace ChessLib
 	    moves = Regex.Replace(moves, "\\$5 ", "{!?} ");
 	    moves = Regex.Replace(moves, "\\$6 {([^}]*)}", "{?! $1}");
 	    moves = Regex.Replace(moves, "\\$6 ", "{?!} ");
-	    moves = Regex.Replace(moves, "\\$7 {([^}]*)}", "{□  $1}");
+	    moves = Regex.Replace(moves, "\\$7 {([^}]*)}", "{□ $1}");
 	    moves = Regex.Replace(moves, "\\$7 ", "{□} ");
 	    moves = Regex.Replace(moves, "\\$10 {([^}]*)}", "{= $1}");
 	    moves = Regex.Replace(moves, "\\$10 ", "{=} ");
@@ -482,8 +483,6 @@ namespace ChessLib
 	    // If there was a comment already, combine them.
 	    moves = Regex.Replace(moves, "([0-9]+\\.) ([A-Za-z]+[0-9]*[^ ]) {([^}]*)} {([^}]*)} ", "$1 $2 {$3 $4} ");
 	    moves = Regex.Replace(moves, "([0-9]+\\.) (O-O[^ ]*) {([^}]*)} {([^}]*)} ", "$1 $2 {$3 $4} ");
-	    
-	    // If there was a comment already, combine them.
 	    moves = Regex.Replace(moves, "{([^}]*)} {([^}]*)} (1-0)", "{$1 $2} $3");
 	    moves = Regex.Replace(moves, "{([^}]*)} {([^}]*)} (0-1)", "{$1 $2} $3");
 	    moves = Regex.Replace(moves, "{([^}]*)} {([^}]*)} (1/2-1/2)", "{$1 $2} $3");
@@ -494,6 +493,13 @@ namespace ChessLib
             while (sIdx >= 0) {
                 moves = moves.Replace("  ", " ");
                 sIdx = moves.IndexOf("  ");
+            }
+            
+            // Remove spaces from comment beginnings
+            int csIdx = moves.IndexOf("{ ");
+            while (csIdx >= 0) {
+                moves = moves.Replace("{ ", "{");
+                csIdx = moves.IndexOf("{ ");
             }
 
             if (moves.EndsWith(" 1-0") || moves.EndsWith(" 0-1"))
