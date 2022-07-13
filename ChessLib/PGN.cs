@@ -423,9 +423,13 @@ namespace ChessLib
                 lastPos = stream.Position;
             }
 
-            //Moves
+            // Moves
             string moves = sb.ToString();
             moves = moves.Trim();
+	    
+	    // Put comments before move after the move
+            moves = Regex.Replace(moves, "([0-9]+\\.) ({[^}]*}) ([A-Za-z]+[0-9]*[^ ]) ", "$1 $3 $2 ");
+	    moves = Regex.Replace(moves, "([0-9]+\\.) ({[^}]*}) (O-O[^ ]*) ", "$1 $3 $2 ");
 
             // Remove variations
             moves = Regex.Replace(moves, "\\((?>\\((?<c>)|[^()]+|\\)(?<-c>))*(?(c)(?!))\\)", string.Empty);
