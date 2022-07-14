@@ -185,6 +185,11 @@ namespace ChessLib
                         // Remove new lines
                         Moves[i].Comment = Regex.Replace(Moves[i].Comment, "\\n", " ");
                         Moves[i].Comment = Moves[i].Comment.Trim();
+                        int dsaIdx = moves.IndexOf("  ");
+                        while (dsaIdx >= 0) {
+                            moves = moves.Replace("  ", " ");
+                            dsaIdx = moves.IndexOf("  ");
+                        }
 
                         // Remove double spaces
                         int sIdx = Moves[i].Comment.IndexOf("  ");
