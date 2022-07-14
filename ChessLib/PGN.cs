@@ -428,12 +428,13 @@ namespace ChessLib
             moves = moves.Trim();
 
             // Remove variations
-             int varIdx = moves.IndexOf("(");
+            int varIdx = moves.IndexOf("(");
              while (varIdx >= 0) {
                 moves = Regex.Replace(moves, "\\([^(^)]*\\)", " ");
                 varIdx = moves.IndexOf("(");
             }
             
+            // Remove various stuff
             moves = Regex.Replace(moves, "\\[pgndiagram\\]", " ");
             moves = Regex.Replace(moves, "[0-9]+\\.\\.\\.", " ");
             moves = Regex.Replace(moves, "\\n", " ");
@@ -445,15 +446,25 @@ namespace ChessLib
                 dsIdx = moves.IndexOf("  ");
             }
             
+            // Remove empty comments
+            moves = Regex.Replace(moves, "{}", string.Empty);
             moves = Regex.Replace(moves, "{ }", string.Empty);
+            
+            // Remove double spaces again
+            // A dirty hack, but may be necessary
+            int dsaIdx = moves.IndexOf("  ");
+            while (dsaIdx >= 0) {
+                moves = moves.Replace("  ", " ");
+                dsaIdx = moves.IndexOf("  ");
+            }
             
             // Put comments before all the moves after the first move
             moves = Regex.Replace(moves, "({[^}]*}) (1\\.) ", "$2 $1 ");
 
             // Put comments before the move after it
-            moves = Regex.Replace(moves, "([0-9]+\\.) ({[^}]*}) ([A-Za-z]+[0-9]*[^ ]) (\\$[0-9]+) ", "$1 $3 $4 $2 ");
+            moves = Regex.Replace(moves, "([0-9]+\\.) ({[^}]*}) ([A-Za-z]+[0-9][^ ]*) (\\$[0-9]+) ", "$1 $3 $4 $2 ");
 	    moves = Regex.Replace(moves, "([0-9]+\\.) ({[^}]*}) (O-O[^ ]*) (\\$[0-9]+) ", "$1 $3 $4 $2 ");
-            moves = Regex.Replace(moves, "([0-9]+\\.) ({[^}]*}) ([A-Za-z]+[0-9]*[^ ]) ", "$1 $3 $2 ");
+            moves = Regex.Replace(moves, "([0-9]+\\.) ({[^}]*}) ([A-Za-z]+[0-9][^ ]*) ", "$1 $3 $2 ");
 	    moves = Regex.Replace(moves, "([0-9]+\\.) ({[^}]*}) (O-O[^ ]*) ", "$1 $3 $2 ");
 	        
 	    // Put comments after the result before it.
@@ -506,10 +517,17 @@ namespace ChessLib
             }
             
             // Remove spaces from comment beginnings
-            int csIdx = moves.IndexOf("{ ");
-            while (csIdx >= 0) {
+            int cbsIdx = moves.IndexOf("{ ");
+            while (cbsIdx >= 0) {
                 moves = moves.Replace("{ ", "{");
-                csIdx = moves.IndexOf("{ ");
+                cbsIdx = moves.IndexOf("{ ");
+            }
+            
+            // Remove spaces from comment endings
+            int cesIdx = moves.IndexOf(" }");
+            while (cesIdx >= 0) {
+                moves = moves.Replace(" }", "}");
+                cesIdx = moves.IndexOf(" }");
             }
 
             if (moves.EndsWith(" 1-0") || moves.EndsWith(" 0-1"))
