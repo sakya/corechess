@@ -428,12 +428,24 @@ namespace ChessLib
             moves = moves.Trim();
 
             // Remove variations
-            int varIdx = moves.IndexOf("(");
-            while (varIdx >= 0) {
-                moves = Regex.Replace(moves, "\\([^(^)]*\\)", string.Empty);
+             int varIdx = moves.IndexOf("(");
+             while (varIdx >= 0) {
+                moves = Regex.Replace(moves, "\\([^(^)]*\\)", " ");
                 varIdx = moves.IndexOf("(");
             }
-            moves = Regex.Replace(moves, "\\[pgndiagram\\]", string.Empty);
+            
+            moves = Regex.Replace(moves, "\\[pgndiagram\\]", " ");
+            moves = Regex.Replace(moves, "[0-9]+\\.\\.\\.", " ");
+            moves = Regex.Replace(moves, "\\n", " ");
+            
+            // Remove double spaces
+            int dsIdx = moves.IndexOf("  ");
+            while (dsIdx >= 0) {
+                moves = moves.Replace("  ", " ");
+                dsIdx = moves.IndexOf("  ");
+            }
+            
+            moves = Regex.Replace(moves, "{ }", string.Empty);
             
             // Put comments before all the moves after the first move
             moves = Regex.Replace(moves, "({[^}]*}) (1\\.) ", "$2 $1 ");
@@ -482,15 +494,9 @@ namespace ChessLib
 	    moves = Regex.Replace(moves, "\\$19 {([^}]*)}", "{-+ $1}");
 	    moves = Regex.Replace(moves, "\\$19 ", "{-+} ");
 	    moves = Regex.Replace(moves, "\\$[0-9]+", string.Empty);
-            moves = Regex.Replace(moves, "[0-9]+\\.\\.\\.", string.Empty);
 
 	    // If there was a comment already, combine them.
-	    moves = Regex.Replace(moves, "([0-9]+\\.) ([A-Za-z]+[0-9]*[^ ]) {([^}]*)} {([^}]*)} ", "$1 $2 {$3 $4} ");
-	    moves = Regex.Replace(moves, "([0-9]+\\.) (O-O[^ ]*) {([^}]*)} {([^}]*)} ", "$1 $2 {$3 $4} ");
-	    moves = Regex.Replace(moves, "{([^}]*)} {([^}]*)} (1-0)", "{$1 $2} $3");
-	    moves = Regex.Replace(moves, "{([^}]*)} {([^}]*)} (0-1)", "{$1 $2} $3");
-	    moves = Regex.Replace(moves, "{([^}]*)} {([^}]*)} (1/2-1/2)", "{$1 $2} $3");
-	    moves = Regex.Replace(moves, "{([^}]*)} {([^}]*)} (\\*)", "{$1 $2} $3");
+	    moves = Regex.Replace(moves, "{([^}]*)} {([^}]*)} ", "{$1 $2} ");
 
             // Remove double spaces
             int sIdx = moves.IndexOf("  ");
