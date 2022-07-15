@@ -444,7 +444,7 @@ namespace CoreChess.Controls
                 string playerMove = $"{from.Notation}{to.Notation}".ToLower();
                 var movedPieces = await m_Game.DoHumanPlayerMove(playerMove);
                 DeselectSquare();
-                HighlightMove();
+                HighlightMove(m_Game.Moves.Last());
 
                 bool first = true;
                 foreach (var mp in movedPieces) {
@@ -484,7 +484,7 @@ namespace CoreChess.Controls
                 return false;
             }
 
-            HighlightMove();
+            HighlightMove(m_Game.Moves.Last());
             foreach (var mp in movedPieces) {
                 var tempCanvas = await AnimatePiece(mp.Piece, GetSquarePosition(mp.To), resetZindex: mp.CapturedPiece == null);
                 if (mp.CapturedPiece != null && tempCanvas != null) {
@@ -552,7 +552,6 @@ namespace CoreChess.Controls
 
         private void DrawBoard(Canvas canvas, double targetWidth = 0, double targetHeight = 0, Game.MoveNotation lastMove = null)
         {
-            m_HighlightedMove = string.Empty;
             canvas.Children.Clear();
 
             canvas.Background = new SolidColorBrush(BorderColor);
@@ -729,7 +728,7 @@ namespace CoreChess.Controls
             }
         } // HighlightDragAndDropSquare
 
-        private void HighlightMove(Game.MoveNotation move = null)
+        private void HighlightMove(Game.MoveNotation move)
         {
             if (move == null && m_Game.Moves.Count == 0)
                 return;
@@ -753,8 +752,6 @@ namespace CoreChess.Controls
             string lastMove = string.Empty;
             if (move != null)
                 lastMove = move.Coordinate;
-            else
-                lastMove = m_Game.Moves.Count > 0 ? m_Game.Moves.Last().Coordinate : string.Empty;
 
             if (!string.IsNullOrEmpty(lastMove)) {
                 squares = new List<Board.Square>()
@@ -769,9 +766,8 @@ namespace CoreChess.Controls
                     if (rect != null)
                         rect.Fill = new SolidColorBrush(square.Color == Game.Colors.White ? SquareWhiteSelectedColor : SquareBlackSelectedColor);
                 }
-
-                m_HighlightedMove = lastMove;
             }
+            m_HighlightedMove = lastMove;
         } // HighlightMove
 
         /// <summary>

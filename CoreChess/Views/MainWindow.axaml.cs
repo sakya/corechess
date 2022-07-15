@@ -947,7 +947,7 @@ namespace CoreChess.Views
             if (m_Game != null) {
                 var btn = sender as Button;
                 if (btn.Name == "m_MoveFirst") {
-                    DisplayMove(0);
+                    DisplayMove(-1);
                 } else if (btn.Name == "m_MovePrevious") {
                     DisplayMove(m_CurrentMoveIndex.Value - 1);
                 } else if (btn.Name == "m_MoveNext") {
@@ -1428,7 +1428,7 @@ namespace CoreChess.Views
             this.FindControl<Button>("m_MoveNext").IsEnabled = false;
             this.FindControl<Button>("m_MoveLast").IsEnabled = false;
 
-            m_CurrentMoveIndex = m_Game.Moves.Count - 1;
+            m_CurrentMoveIndex = -1;
             this.FindControl<Border>("m_GameAnalyzeSection").IsVisible = true;
             this.FindControl<Border>("m_EngineMessageSection").IsVisible = false;
 
@@ -1460,17 +1460,25 @@ namespace CoreChess.Views
         /// <summary>
         /// Display the given move on the chessboard
         /// </summary>
-        /// <param name="moveIndex">The game move index</param>
+        /// <param name="moveIndex">The game move index (if equal to -1 the starting position in shown)</param>
         private bool DisplayMove(int moveIndex)
         {
-            if (m_Game != null && m_Game.Ended && moveIndex >= 0 && moveIndex < m_Game.Moves.Count) {
+            if (m_Game != null && m_Game.Ended && moveIndex < m_Game.Moves.Count) {
                 m_CurrentMoveIndex = moveIndex;
-                var move = m_Game.Moves[moveIndex];
-                m_Game.Board.InitFromFenString(move.Fen);
+                Game.MoveNotation move = null;
+                if (moveIndex == -1) {
+                    m_Game.Board.InitFromFenString(m_Game.InitialFenPosition);
+                } else {
+                    move = m_Game.Moves[moveIndex];
+                    m_Game.Board.InitFromFenString(move.Fen);
+                }
                 m_Chessboard.Redraw(move);
 
                 var gameAnalysis = this.FindControl<GameAnalyzeGraph>("m_GameGraph");
-                gameAnalysis.AddMarker(moveIndex + 1);
+                if (moveIndex == -1)
+                    gameAnalysis.RemoveMarker();
+                else
+                    gameAnalysis.AddMarker(moveIndex + 1);
 
                 var moves = this.FindControl<WrapPanel>("m_Moves");
                 foreach (var child in moves.Children) {
@@ -1484,8 +1492,8 @@ namespace CoreChess.Views
                     }
                 }
 
-                this.FindControl<Button>("m_MoveFirst").IsEnabled = moveIndex != 0;
-                this.FindControl<Button>("m_MovePrevious").IsEnabled = moveIndex != 0;
+                this.FindControl<Button>("m_MoveFirst").IsEnabled = moveIndex >= 0;
+                this.FindControl<Button>("m_MovePrevious").IsEnabled = moveIndex >= 0;
                 this.FindControl<Button>("m_MoveNext").IsEnabled = moveIndex < m_Game.Moves.Count - 1;
                 this.FindControl<Button>("m_MoveLast").IsEnabled = moveIndex < m_Game.Moves.Count - 1;
 
