@@ -91,7 +91,7 @@ namespace ChessLib
             using (StreamWriter sw = new StreamWriter(file)) {
                 await sw.WriteLineAsync($"[Event \"{Event}\"]");
                 await sw.WriteLineAsync($"[Site \"{Site}\"]");
-                await sw.WriteLineAsync($"[Date \"{(Date == null ? "??" : Date)}\"]");
+                await sw.WriteLineAsync($"[Date \"{(string.IsNullOrEmpty(Date) ? "????.??.??" : Date)}\"]");
                 await sw.WriteLineAsync($"[Round \"{(string.IsNullOrEmpty(Round) ? "?" : Round)}\"]");
                 await sw.WriteLineAsync($"[White \"{White}\"]");
                 if (WhiteElo.HasValue)
@@ -262,6 +262,25 @@ namespace ChessLib
 
                     if (lastmove)
                         sb.Append($" {result}");
+
+                    if (sb.Length > 80) {
+                        string line = sb.ToString();
+                        sb.Clear();
+                        // Find the blank space near 80
+                        int nIdx = line.IndexOf(' ', 80);
+                        int pIdx = line.LastIndexOf(' ', 80);
+                        int idx = 0;
+                        if (nIdx < 0)
+                            idx = pIdx;
+                        else
+                            idx = nIdx - 80 > 80 - pIdx ? pIdx : nIdx;
+
+                        if (idx > 0) {
+                            await sw.WriteLineAsync(line.Substring(0, idx));
+                            sb.Append(line.Substring(idx + 1));
+                        } else
+                            sb.Append(line);
+                    }
                 }
                 if (sb.Length > 0)
                     await sw.WriteLineAsync(sb.ToString().Trim());

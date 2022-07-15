@@ -1077,7 +1077,7 @@ namespace ChessLib
             {
                 Event = Settings.Event,
                 Site = "?",
-                Date = Settings.Date == null ? "??" : Settings.Date.Value.ToString("yyyy.MM.dd"),
+                Date = Settings.Date == null ? "????.??.??" : Settings.Date.Value.ToString("yyyy.MM.dd"),
                 Round = "?",
                 White = Settings.WhitePlayerName,
                 Black = Settings.BlackPlayerName,
