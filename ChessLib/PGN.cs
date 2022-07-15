@@ -265,7 +265,6 @@ namespace ChessLib
 
                     if (sb.Length > 80) {
                         string line = sb.ToString();
-                        sb.Clear();
                         // Find the blank space near 80
                         int nIdx = line.IndexOf(' ', 80);
                         int pIdx = line.LastIndexOf(' ', 80);
@@ -277,9 +276,9 @@ namespace ChessLib
 
                         if (idx > 0) {
                             await sw.WriteLineAsync(line.Substring(0, idx));
+                            sb.Clear();
                             sb.Append(line.Substring(idx + 1));
-                        } else
-                            sb.Append(line);
+                        }
                     }
                 }
                 if (sb.Length > 0)
