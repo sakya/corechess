@@ -310,7 +310,7 @@ namespace CoreChess.Controls
             m_Game.EngineError += OnEngineError;
             PlayerColor = game.GetPlayer(Game.Colors.White) is HumanPlayer ? Game.Colors.White : Game.Colors.Black;
             Flipped = PlayerColor == Game.Colors.Black;
-            DrawBoard(m_Canvas);
+            DrawBoard(m_Canvas, lastMove: m_Game.Moves?.LastOrDefault());
             NewGame?.Invoke(this, new EventArgs());
             await m_Game.Start();
 
@@ -444,7 +444,7 @@ namespace CoreChess.Controls
                 string playerMove = $"{from.Notation}{to.Notation}".ToLower();
                 var movedPieces = await m_Game.DoHumanPlayerMove(playerMove);
                 DeselectSquare();
-                HighlightMove();
+                HighlightMove(m_Game.Moves.Last());
 
                 bool first = true;
                 foreach (var mp in movedPieces) {
@@ -484,7 +484,7 @@ namespace CoreChess.Controls
                 return false;
             }
 
-            HighlightMove();
+            HighlightMove(m_Game.Moves.Last());
             foreach (var mp in movedPieces) {
                 var tempCanvas = await AnimatePiece(mp.Piece, GetSquarePosition(mp.To), resetZindex: mp.CapturedPiece == null);
                 if (mp.CapturedPiece != null && tempCanvas != null) {
@@ -542,8 +542,8 @@ namespace CoreChess.Controls
 
         private Board.Square GetSquareFromPoint(Point pos)
         {
-            int file = Flipped ? 7 - ((int)(pos.X - BorderWidth) / (int)(SquareWidth)) : (int)(pos.X - BorderWidth) / (int)(m_Canvas.Bounds.Width / 8);
-            int rank = Flipped ? 7 - ((int)(pos.Y - BorderWidth) / (int)(SquareHeight)) : (int)(pos.Y - BorderWidth) / (int)(SquareHeight);
+            int file = Flipped ? 7 - ((int)(pos.X - BorderWidth) / (int)SquareWidth) : (int)(pos.X - BorderWidth) / (int)SquareWidth;
+            int rank = Flipped ? 7 - ((int)(pos.Y - BorderWidth) / (int)SquareHeight) : (int)(pos.Y - BorderWidth) / (int)SquareHeight;
             if (file > 7 || rank > 7 || file < 0 || rank < 0)
                 return null;
 
@@ -552,7 +552,6 @@ namespace CoreChess.Controls
 
         private void DrawBoard(Canvas canvas, double targetWidth = 0, double targetHeight = 0, Game.MoveNotation lastMove = null)
         {
-            m_HighlightedMove = string.Empty;
             canvas.Children.Clear();
 
             canvas.Background = new SolidColorBrush(BorderColor);
@@ -729,7 +728,7 @@ namespace CoreChess.Controls
             }
         } // HighlightDragAndDropSquare
 
-        private void HighlightMove(Game.MoveNotation move = null)
+        private void HighlightMove(Game.MoveNotation move)
         {
             if (move == null && m_Game.Moves.Count == 0)
                 return;
@@ -750,17 +749,13 @@ namespace CoreChess.Controls
                 }
             }
 
-            string lastMove = string.Empty;
-            if (move != null)
-                lastMove = move.Coordinate;
-            else
-                lastMove = m_Game.Moves.Count > 0 ? m_Game.Moves.Last().Coordinate : string.Empty;
-
-            if (!string.IsNullOrEmpty(lastMove)) {
+            m_HighlightedMove = string.Empty;
+            if (move != null) {
+                m_HighlightedMove = move.Coordinate;
                 squares = new List<Board.Square>()
                 {
-                    m_Game.Board.GetSquare(lastMove.Substring(0, 2)),
-                    m_Game.Board.GetSquare(lastMove.Substring(2, 2))
+                    m_Game.Board.GetSquare(m_HighlightedMove.Substring(0, 2)),
+                    m_Game.Board.GetSquare(m_HighlightedMove.Substring(2, 2))
                 };
 
                 foreach (var square in squares) {
@@ -769,8 +764,6 @@ namespace CoreChess.Controls
                     if (rect != null)
                         rect.Fill = new SolidColorBrush(square.Color == Game.Colors.White ? SquareWhiteSelectedColor : SquareBlackSelectedColor);
                 }
-
-                m_HighlightedMove = lastMove;
             }
         } // HighlightMove
 

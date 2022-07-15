@@ -272,6 +272,8 @@ namespace CoreChess.Views
         Dictionary<string, Eco> m_EcoDatabase = null;
         int? m_CurrentMoveIndex = null;
         WindowNotificationManager m_NotificationManager = null;
+        private List<Piece.Pieces> m_LastWhiteCapturedPieces = new List<Piece.Pieces>();
+        private List<Piece.Pieces> m_LastBlackCapturedPieces = new List<Piece.Pieces>();
 
         public MainWindow()
         {
@@ -947,7 +949,7 @@ namespace CoreChess.Views
             if (m_Game != null) {
                 var btn = sender as Button;
                 if (btn.Name == "m_MoveFirst") {
-                    DisplayMove(0);
+                    DisplayMove(-1);
                 } else if (btn.Name == "m_MovePrevious") {
                     DisplayMove(m_CurrentMoveIndex.Value - 1);
                 } else if (btn.Name == "m_MoveNext") {
@@ -1062,10 +1064,19 @@ namespace CoreChess.Views
         {
             if (m_Game == null)
                 return;
-            var wPieces = m_Game.CapturedPieces.Where(p => p.Color == Game.Colors.White).OrderByDescending(p => p.Value).ThenBy(p => p.Acronym).ToList();
-            var bPieces = m_Game.CapturedPieces.Where(p => p.Color == Game.Colors.Black).OrderByDescending(p => p.Value).ThenBy(p => p.Acronym).ToList();
+
+            var capturedPieces = m_Game.GetCapturedPieces(m_CurrentMoveIndex.HasValue ? m_CurrentMoveIndex.Value : m_Game.Moves.Count - 1);
+            var wPieces = capturedPieces.Where(p => p.Color == Game.Colors.White).OrderByDescending(p => p.Value).ThenBy(p => p.Acronym).ToList();
+            var bPieces = capturedPieces.Where(p => p.Color == Game.Colors.Black).OrderByDescending(p => p.Value).ThenBy(p => p.Acronym).ToList();
             int wValue = m_Game.Board.GetPieces(Game.Colors.White).Where(p => p.Type != Piece.Pieces.King).Sum(p => p.Value);
             int bValue = m_Game.Board.GetPieces(Game.Colors.Black).Where(p => p.Type != Piece.Pieces.King).Sum(p => p.Value);
+
+            var updateNeeded = !m_LastWhiteCapturedPieces.SequenceEqual(wPieces.Select(p => p.Type)) || !m_LastBlackCapturedPieces.SequenceEqual(bPieces.Select(p => p.Type));
+            if (!updateNeeded)
+                return;
+
+            m_LastWhiteCapturedPieces = wPieces.Select(p => p.Type).ToList();
+            m_LastBlackCapturedPieces = bPieces.Select(p => p.Type).ToList();
 
             if (App.Settings.CapturedPieces == Settings.CapturedPiecesDisplay.Difference) {
                 var tempWhite = new List<Piece>();
@@ -1337,6 +1348,9 @@ namespace CoreChess.Views
                 m_Game.Dispose();
             }
 
+            m_LastWhiteCapturedPieces = new List<Piece.Pieces>();
+            m_LastBlackCapturedPieces = new List<Piece.Pieces>();
+
             // Clear GUI:
             var wrap = this.FindControl<WrapPanel>("m_WhiteCapturedPieces");
             wrap.Children.Clear();
@@ -1428,7 +1442,7 @@ namespace CoreChess.Views
             this.FindControl<Button>("m_MoveNext").IsEnabled = false;
             this.FindControl<Button>("m_MoveLast").IsEnabled = false;
 
-            m_CurrentMoveIndex = m_Game.Moves.Count - 1;
+            m_CurrentMoveIndex = -1;
             this.FindControl<Border>("m_GameAnalyzeSection").IsVisible = true;
             this.FindControl<Border>("m_EngineMessageSection").IsVisible = false;
 
@@ -1460,17 +1474,25 @@ namespace CoreChess.Views
         /// <summary>
         /// Display the given move on the chessboard
         /// </summary>
-        /// <param name="moveIndex">The game move index</param>
+        /// <param name="moveIndex">The game move index (if equal to -1 the starting position in shown)</param>
         private bool DisplayMove(int moveIndex)
         {
-            if (m_Game != null && m_Game.Ended && moveIndex >= 0 && moveIndex < m_Game.Moves.Count) {
+            if (m_Game != null && m_Game.Ended && moveIndex < m_Game.Moves.Count) {
                 m_CurrentMoveIndex = moveIndex;
-                var move = m_Game.Moves[moveIndex];
-                m_Game.Board.InitFromFenString(move.Fen);
+                Game.MoveNotation move = null;
+                if (moveIndex == -1) {
+                    m_Game.Board.InitFromFenString(m_Game.InitialFenPosition);
+                } else {
+                    move = m_Game.Moves[moveIndex];
+                    m_Game.Board.InitFromFenString(move.Fen);
+                }
                 m_Chessboard.Redraw(move);
 
                 var gameAnalysis = this.FindControl<GameAnalyzeGraph>("m_GameGraph");
-                gameAnalysis.AddMarker(moveIndex + 1);
+                if (moveIndex == -1)
+                    gameAnalysis.RemoveMarker();
+                else
+                    gameAnalysis.AddMarker(moveIndex + 1);
 
                 var moves = this.FindControl<WrapPanel>("m_Moves");
                 foreach (var child in moves.Children) {
@@ -1484,8 +1506,10 @@ namespace CoreChess.Views
                     }
                 }
 
-                this.FindControl<Button>("m_MoveFirst").IsEnabled = moveIndex != 0;
-                this.FindControl<Button>("m_MovePrevious").IsEnabled = moveIndex != 0;
+                UpdateCapturedPieces();
+
+                this.FindControl<Button>("m_MoveFirst").IsEnabled = moveIndex >= 0;
+                this.FindControl<Button>("m_MovePrevious").IsEnabled = moveIndex >= 0;
                 this.FindControl<Button>("m_MoveNext").IsEnabled = moveIndex < m_Game.Moves.Count - 1;
                 this.FindControl<Button>("m_MoveLast").IsEnabled = moveIndex < m_Game.Moves.Count - 1;
 
