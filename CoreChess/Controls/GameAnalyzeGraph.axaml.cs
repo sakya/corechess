@@ -123,9 +123,8 @@ namespace CoreChess.Controls
 
         public void RemoveMarker()
         {
-            if (m_Marker != null && m_Results != null) {
+            if (m_Marker != null)
                 m_Marker.IsVisible = false;
-            }
         }
 
         public void AddMarker(int resultIndex)

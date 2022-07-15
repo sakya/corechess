@@ -310,7 +310,7 @@ namespace CoreChess.Controls
             m_Game.EngineError += OnEngineError;
             PlayerColor = game.GetPlayer(Game.Colors.White) is HumanPlayer ? Game.Colors.White : Game.Colors.Black;
             Flipped = PlayerColor == Game.Colors.Black;
-            DrawBoard(m_Canvas);
+            DrawBoard(m_Canvas, lastMove: m_Game.Moves?.LastOrDefault());
             NewGame?.Invoke(this, new EventArgs());
             await m_Game.Start();
 
@@ -749,15 +749,13 @@ namespace CoreChess.Controls
                 }
             }
 
-            string lastMove = string.Empty;
-            if (move != null)
-                lastMove = move.Coordinate;
-
-            if (!string.IsNullOrEmpty(lastMove)) {
+            m_HighlightedMove = string.Empty;
+            if (move != null) {
+                m_HighlightedMove = move.Coordinate;
                 squares = new List<Board.Square>()
                 {
-                    m_Game.Board.GetSquare(lastMove.Substring(0, 2)),
-                    m_Game.Board.GetSquare(lastMove.Substring(2, 2))
+                    m_Game.Board.GetSquare(m_HighlightedMove.Substring(0, 2)),
+                    m_Game.Board.GetSquare(m_HighlightedMove.Substring(2, 2))
                 };
 
                 foreach (var square in squares) {
@@ -767,7 +765,6 @@ namespace CoreChess.Controls
                         rect.Fill = new SolidColorBrush(square.Color == Game.Colors.White ? SquareWhiteSelectedColor : SquareBlackSelectedColor);
                 }
             }
-            m_HighlightedMove = lastMove;
         } // HighlightMove
 
         /// <summary>
