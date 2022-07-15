@@ -145,7 +145,6 @@ namespace ChessLib
             public int? WhiteTimeLeftMilliSecs { get; set; }
             public int? BlackTimeLeftMilliSecs { get; set; }
             public int HalfmoveClock { get; set; }
-            public Piece CapturedPiece { get; set; }
         } // MoveNotation
 
         class MoveResult
@@ -244,7 +243,6 @@ namespace ChessLib
             Winner = null;
             Board = new Board();
             Moves = new List<MoveNotation>();
-            CapturedPieces = new List<Piece>();
             ToMove = Colors.White;
             KingCastling = new List<Colors>();
             QueenCastling = new List<Colors>();
@@ -341,7 +339,6 @@ namespace ChessLib
         /// </summary>
         public List<MoveNotation> Moves { get; set; }
 
-        public List<Piece> CapturedPieces { get; set; }
         public int HalfmoveClock { get; set; }
         public int FullmoveNumber { get; set; }
 
@@ -372,6 +369,22 @@ namespace ChessLib
             }
         }
         #endregion
+
+        public List<Piece> GetCapturedPieces(int moveIndex)
+        {
+            var res = new List<Piece>();
+
+            var board = new Board();
+            if (moveIndex >= 0 && moveIndex < Moves.Count) {
+                var move = Moves[moveIndex];
+                board.InitFromFenString(move.Fen);
+            } else if (moveIndex == -1) {
+                board.InitFromFenString(InitialFenPosition);
+            }
+            res.AddRange(GetCapturedPieces(board.GetPieces(Colors.White)));
+            res.AddRange(GetCapturedPieces(board.GetPieces(Colors.Black)));
+            return res;
+        } // GetCapturedPieces
 
         /// <summary>
         /// Initializes the game
@@ -753,7 +766,6 @@ namespace ChessLib
             SetAlgebraicNotation(moveNotation, move, res, promoted, ambiguous);
 
             moveNotation.Fen = GetFenString();
-            moveNotation.CapturedPiece = captured;
             moveNotation.WhiteTimeLeftMilliSecs = WhiteTimeLeftMilliSecs;
             moveNotation.BlackTimeLeftMilliSecs = BlackTimeLeftMilliSecs;
             moveNotation.HalfmoveClock = HalfmoveClock;
@@ -796,8 +808,6 @@ namespace ChessLib
             FullmoveNumber -= toRemove;
             while (toRemove-- > 0) {
                 var trm = Moves.Last();
-                if (trm.CapturedPiece != null)
-                    CapturedPieces.Remove(trm.CapturedPiece);
                 Moves.Remove(trm);
             }
 
@@ -2101,10 +2111,11 @@ namespace ChessLib
                 if (fromSquare.Piece.Color == Colors.Black && toSquare.Rank != 1)
                     throw new InvalidMoveException(move, "invalid promotion", GetFenString());
 
+                res.Promoted = true;
                 fromSquare.Piece.Type = Piece.GetTypeFromAcronym(piece[0]);
+
                 move = move.Remove(move.Length - 1, 1);
                 move = $"{move}{fromSquare.Piece.Acronym}";
-                res.Promoted = true;
             }
 
             // En passant capture
@@ -2152,8 +2163,6 @@ namespace ChessLib
             toSquare.Piece.Moved = true;
             // Capture the piece
             if (captured != null) {
-                CapturedPieces.Add(captured);
-
                 // If the captured pieces is a rook remove castling
                 if (captured.Type == Piece.Pieces.Rook && !captured.Moved) {
                     var tempKingSquare = Board.GetKingSquare(captured.Color);
@@ -2272,6 +2281,31 @@ namespace ChessLib
                 moveNotation.LongAlgebraic = laMove;
             }
         } // SetAlgebraicNotation
+
+        private List<Piece> GetCapturedPieces(List<Piece> pieces)
+        {
+            var res = new List<Piece>();
+            if (pieces.Count == 0)
+                return res;
+
+            var color = pieces[0].Color;
+            var tpc = pieces.Where(p => p.Type == Piece.Pieces.Pawn).Count();
+            for (int i = 0; i < 8 - tpc; i++)
+                res.Add(new Piece(color, Piece.Pieces.Pawn));
+            tpc = pieces.Where(p => p.Type == Piece.Pieces.Knight).Count();
+            for (int i = 0; i < 2 - tpc; i++)
+                res.Add(new Piece(color, Piece.Pieces.Knight));
+            tpc = pieces.Where(p => p.Type == Piece.Pieces.Bishop).Count();
+            for (int i = 0; i < 2 - tpc; i++)
+                res.Add(new Piece(color, Piece.Pieces.Bishop));
+            tpc = pieces.Where(p => p.Type == Piece.Pieces.Rook).Count();
+            for (int i = 0; i < 2 - tpc; i++)
+                res.Add(new Piece(color, Piece.Pieces.Rook));
+            tpc = pieces.Where(p => p.Type == Piece.Pieces.Queen).Count();
+            if (tpc == 0)
+                res.Add(new Piece(color, Piece.Pieces.Queen));
+            return res;
+        } // GetCapturedPieces
 
         private static byte[] Zip(string str)
         {

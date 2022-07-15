@@ -272,6 +272,8 @@ namespace CoreChess.Views
         Dictionary<string, Eco> m_EcoDatabase = null;
         int? m_CurrentMoveIndex = null;
         WindowNotificationManager m_NotificationManager = null;
+        private List<Piece.Pieces> m_LastWhiteCapturedPieces = new List<Piece.Pieces>();
+        private List<Piece.Pieces> m_LastBlackCapturedPieces = new List<Piece.Pieces>();
 
         public MainWindow()
         {
@@ -1062,10 +1064,19 @@ namespace CoreChess.Views
         {
             if (m_Game == null)
                 return;
-            var wPieces = m_Game.CapturedPieces.Where(p => p.Color == Game.Colors.White).OrderByDescending(p => p.Value).ThenBy(p => p.Acronym).ToList();
-            var bPieces = m_Game.CapturedPieces.Where(p => p.Color == Game.Colors.Black).OrderByDescending(p => p.Value).ThenBy(p => p.Acronym).ToList();
+
+            var capturedPieces = m_Game.GetCapturedPieces(m_CurrentMoveIndex.HasValue ? m_CurrentMoveIndex.Value : m_Game.Moves.Count - 1);
+            var wPieces = capturedPieces.Where(p => p.Color == Game.Colors.White).OrderByDescending(p => p.Value).ThenBy(p => p.Acronym).ToList();
+            var bPieces = capturedPieces.Where(p => p.Color == Game.Colors.Black).OrderByDescending(p => p.Value).ThenBy(p => p.Acronym).ToList();
             int wValue = m_Game.Board.GetPieces(Game.Colors.White).Where(p => p.Type != Piece.Pieces.King).Sum(p => p.Value);
             int bValue = m_Game.Board.GetPieces(Game.Colors.Black).Where(p => p.Type != Piece.Pieces.King).Sum(p => p.Value);
+
+            var updateNeeded = !m_LastWhiteCapturedPieces.SequenceEqual(wPieces.Select(p => p.Type)) || !m_LastBlackCapturedPieces.SequenceEqual(bPieces.Select(p => p.Type));
+            if (!updateNeeded)
+                return;
+
+            m_LastWhiteCapturedPieces = wPieces.Select(p => p.Type).ToList();
+            m_LastBlackCapturedPieces = bPieces.Select(p => p.Type).ToList();
 
             if (App.Settings.CapturedPieces == Settings.CapturedPiecesDisplay.Difference) {
                 var tempWhite = new List<Piece>();
@@ -1337,6 +1348,9 @@ namespace CoreChess.Views
                 m_Game.Dispose();
             }
 
+            m_LastWhiteCapturedPieces = new List<Piece.Pieces>();
+            m_LastBlackCapturedPieces = new List<Piece.Pieces>();
+
             // Clear GUI:
             var wrap = this.FindControl<WrapPanel>("m_WhiteCapturedPieces");
             wrap.Children.Clear();
@@ -1491,6 +1505,8 @@ namespace CoreChess.Views
                             t.Classes.Remove("CurrentMove");
                     }
                 }
+
+                UpdateCapturedPieces();
 
                 this.FindControl<Button>("m_MoveFirst").IsEnabled = moveIndex >= 0;
                 this.FindControl<Button>("m_MovePrevious").IsEnabled = moveIndex >= 0;
