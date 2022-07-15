@@ -44,13 +44,26 @@
       </screenshot>
     </screenshots>
     <releases>
+      <release version="0.12.0.0" date="2022-07-08">
+        <description>
+          <ul>
+            <li>Upgraded Avalonia to v0.10.16</li>
+            <li>Fixed crash when loading some PGN files (gordebak)</li>
+            <li>Added MRU</li>
+            <li>Added save to PGN with unknown date</li>
+            <li>Fixed captured material when reviewing a savd game</li>
+            <li>Added option to restore window size and position</li>
+            <li>When loading a finished game the start position is displayed</li>
+          </ul>
+        </description>
+      </release>
       <release version="0.11.2.0" date="2022-07-08">
         <description>
           <ul>
             <li>Upgraded Avalonia to v0.10.15</li>
           </ul>
         </description>
-      </release>      
+      </release>
       <release version="0.11.1.2" date="2022-04-29">
         <description>
           <ul>
