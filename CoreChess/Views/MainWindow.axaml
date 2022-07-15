@@ -35,6 +35,8 @@
             <i:Icon FontSize="14" Value="far fa-folder-open" />
           </MenuItem.Icon>
         </MenuItem>
+        <MenuItem Name="m_Mru" Header="{i18n:Localize _LoadRecentGame}">
+        </MenuItem>
         <MenuItem Header="{i18n:Localize _SaveGame}" Click="OnSaveGameClick" InputGesture="CTRL + S" >
           <MenuItem.Icon>
             <i:Icon FontSize="14" Value="far fa-save" />

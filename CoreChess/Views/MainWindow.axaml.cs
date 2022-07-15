@@ -292,6 +292,8 @@ namespace CoreChess.Views
 
             if (App.Settings.RestoreWindowSizeAndPosition)
                 RestoreWindowSizeAndPosition();
+
+            SetMru();
             m_Context = new Context(this);
             m_Context.IsWindows = OperatingSystem.IsWindows();
             m_Context.MoveNotation = App.Settings.MoveNotation;
@@ -604,44 +606,7 @@ namespace CoreChess.Views
             };
             string[] files = await dlg.ShowAsync(this);
             if (files?.Length > 0) {
-                if (Path.GetExtension(files[0]) == ".pgn") {
-                    var wDlg = new WaitWindow(Localizer.Localizer.Instance["LoadingPGN"]);
-                    var wTask = wDlg.ShowDialog(this);
-                    List<PGN> games = null;
-                    try {
-                        games = await PGN.LoadFile(files[0]);
-                    } catch (Exception ex) {
-                        wDlg.Close();
-                        await MessageWindow.ShowMessage(this, Localizer.Localizer.Instance["Error"],
-                            string.Format(Localizer.Localizer.Instance["LoadPgnError"], ex.Message), MessageWindow.Icons.Error);
-                        return;
-                    }
-                    wDlg.Close();
-
-                    Game game = null;
-                    if (games.Count == 0)
-                        await MessageWindow.ShowMessage(this, Localizer.Localizer.Instance["Error"], Localizer.Localizer.Instance["NoGameFoundInPgn"], MessageWindow.Icons.Error);
-                    else if (games.Count == 1)
-                        game = await Game.LoadFromPgn(games[0], true);
-                    else {
-                        var gDlg = new PgnGamesWindow(games);
-                        var selGame = await gDlg.ShowDialog<PGN>(this);
-                        if (selGame != null)
-                            game = await Game.LoadFromPgn(selGame, false);
-                    }
-
-                    if (game != null) {
-                        game.Settings.MaxEngineThinkingTime = TimeSpan.FromSeconds(App.Settings.MaxEngineThinkingTimeSecs);
-                        game.Settings.EngineDepth = App.Settings.MaxEngineDepth;
-                        await SetGame(game);
-                    }
-                } else {
-                    try {
-                        await SetGame(await Game.Load(files[0]));
-                    } catch {
-                        await MessageWindow.ShowMessage(this, Localizer.Localizer.Instance["Error"], Localizer.Localizer.Instance["LoadGameError"], MessageWindow.Icons.Error);
-                    }
-                }
+                await LoadGame(files[0]);
             }
         } // OnLoadGameClick
 
@@ -1035,6 +1000,56 @@ namespace CoreChess.Views
                 }, TimeSpan.FromSeconds(2), DispatcherPriority.Background);
             }
         } // InitializeWindow
+
+        private async Task<bool> LoadGame(string filePath)
+        {
+            if (Path.GetExtension(filePath) == ".pgn") {
+                var wDlg = new WaitWindow(Localizer.Localizer.Instance["LoadingPGN"]);
+                var wTask = wDlg.ShowDialog(this);
+                List<PGN> games = null;
+                try {
+                    games = await PGN.LoadFile(filePath);
+                } catch (Exception ex) {
+                    wDlg.Close();
+                    await MessageWindow.ShowMessage(this, Localizer.Localizer.Instance["Error"],
+                        string.Format(Localizer.Localizer.Instance["LoadPgnError"], ex.Message), MessageWindow.Icons.Error);
+                    return false;
+                }
+                wDlg.Close();
+
+                Game game = null;
+                if (games.Count == 0)
+                    await MessageWindow.ShowMessage(this, Localizer.Localizer.Instance["Error"], Localizer.Localizer.Instance["NoGameFoundInPgn"], MessageWindow.Icons.Error);
+                else if (games.Count == 1)
+                    game = await Game.LoadFromPgn(games[0], true);
+                else {
+                    var gDlg = new PgnGamesWindow(games);
+                    var selGame = await gDlg.ShowDialog<PGN>(this);
+                    if (selGame != null)
+                        game = await Game.LoadFromPgn(selGame, false);
+                }
+
+                if (game != null) {
+                    game.Settings.MaxEngineThinkingTime = TimeSpan.FromSeconds(App.Settings.MaxEngineThinkingTimeSecs);
+                    game.Settings.EngineDepth = App.Settings.MaxEngineDepth;
+                    await SetGame(game);
+                    App.Settings.AddRecentlyLoadedFile(filePath);
+                    App.Settings.Save(App.SettingsPath);
+                    SetMru();
+                }
+            } else {
+                try {
+                    await SetGame(await Game.Load(filePath));
+                    App.Settings.AddRecentlyLoadedFile(filePath);
+                    App.Settings.Save(App.SettingsPath);
+                    SetMru();
+                } catch {
+                    await MessageWindow.ShowMessage(this, Localizer.Localizer.Instance["Error"], Localizer.Localizer.Instance["LoadGameError"], MessageWindow.Icons.Error);
+                }
+            }
+
+            return true;
+        } // LoadGame
 
         private void SetPlayerToMove()
         {
@@ -1528,6 +1543,30 @@ namespace CoreChess.Views
             else
                 stack.Classes.Remove("spinner");
         } // SetWaitAnimation
+
+        private void SetMru()
+        {
+            var menu = this.FindControl<MenuItem>("m_Mru");
+
+            var items = new List<MenuItem>();
+            if (App.Settings.RecentlyLoadedFiles != null) {
+                for (int i = App.Settings.RecentlyLoadedFiles.Count - 1; i >= 0; i--) {
+                    var mrue = App.Settings.RecentlyLoadedFiles[i];
+                    var item = new MenuItem()
+                    {
+                        Header = mrue
+                    };
+                    item.Click += async (s, a) => {
+                        var i = s as MenuItem;
+                        await LoadGame((string)i.Header);
+                    };
+                    items.Add(item);
+                }
+            }
+
+            menu.Items = items;
+            menu.IsVisible = items.Count > 0;
+        }
         #endregion
     }
 }

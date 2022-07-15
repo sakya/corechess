@@ -133,6 +133,7 @@ namespace CoreChess
         /// </summary>
         public List<ChessLib.Engines.EngineBase> Engines { get; set; }
 
+        public List<string> RecentlyLoadedFiles { get; set;}
         /// <summary>
         /// Id of the engine used for game analysis
         /// </summary>
@@ -161,11 +162,27 @@ namespace CoreChess
             return Engines?.Where(e => e.Id == id).FirstOrDefault();
         } // GetEngine
 
+        public void AddRecentlyLoadedFile(string filePath)
+        {
+            if (RecentlyLoadedFiles == null)
+                RecentlyLoadedFiles = new List<string>();
+
+            if (RecentlyLoadedFiles.Contains(filePath))
+                RecentlyLoadedFiles.Remove(filePath);
+            RecentlyLoadedFiles.Add(filePath);
+
+            while (RecentlyLoadedFiles.Count > 5)
+                RecentlyLoadedFiles.RemoveAt(0);
+        } // AddRecentlyLoadedFile
+
         public static Settings Load(string path)
         {
             using (StreamReader sr = new StreamReader(path)) {
                 var settings = new JsonSerializerSettings() { TypeNameHandling = TypeNameHandling.Objects };
-                return JsonConvert.DeserializeObject<Settings>(sr.ReadToEnd(), settings);
+                var res =  JsonConvert.DeserializeObject<Settings>(sr.ReadToEnd(), settings);
+                if (res != null)
+                    res.CheckRecentlyLoadedFiles();
+                return res;
             }
         } // Load
 
@@ -178,5 +195,16 @@ namespace CoreChess
                 sw.Write(JsonConvert.SerializeObject(this, Formatting.Indented, settings));
             }
         } // Save
+
+        private void CheckRecentlyLoadedFiles()
+        {
+            if (RecentlyLoadedFiles != null) {
+                for (int i = 0; i < RecentlyLoadedFiles.Count; i++) {
+                    if (!File.Exists(RecentlyLoadedFiles[i])) {
+                        RecentlyLoadedFiles.RemoveAt(i--);
+                    }
+                }
+            }
+        } // CheckRecentlyLoadedFiles
     } // Settings
 }
