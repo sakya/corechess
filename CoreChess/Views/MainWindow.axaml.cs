@@ -252,13 +252,6 @@ namespace CoreChess.Views
                 }
             }
         } // Context
-
-        class Eco {
-            public string Code { get; set; }
-            public string Moves { get; set; }
-            public string Name { get; set; }
-            public string Variation { get; set; }
-        } // Eco
         #endregion
 
         string[] m_args = null;
@@ -269,7 +262,7 @@ namespace CoreChess.Views
         Chessboard m_Chessboard = null;
         TextBlock m_EngineMessage = null;
         List<string> m_EngineMessagesRows = new List<string>();
-        Dictionary<string, Eco> m_EcoDatabase = null;
+        Utils.EcoDatabase m_EcoDatabase = null;
         int? m_CurrentMoveIndex = null;
         WindowNotificationManager m_NotificationManager = null;
         private List<Piece.Pieces> m_LastWhiteCapturedPieces = new List<Piece.Pieces>();
@@ -317,30 +310,11 @@ namespace CoreChess.Views
         public async Task<bool> LoadEcoDatabase()
         {
             // Load ECO database
-            StringBuilder sb = new StringBuilder();
-            m_EcoDatabase = new Dictionary<string, Eco>();
+            m_EcoDatabase = new Utils.EcoDatabase();
             var assets = AvaloniaLocator.Current.GetService<IAssetLoader>();
             Uri uri = new Uri($"avares://CoreChess/Assets/eco.pgn");
-            using (Stream s = assets.Open(uri))
-            {
-                var pgnGames = await PGN.LoadFromStream(s);
-                foreach (var pg in pgnGames)
-                {
-                    Eco eco = new Eco()
-                    {
-                        Name = pg.White,
-                        Variation = pg.Black,
-                        Code = pg.ECO
-                    };
-
-                    sb.Clear();
-                    foreach (var m in pg.Moves)
-                    {
-                        sb.Append($"{m.Notation} ");
-                    }
-                    eco.Moves = sb.ToString().Trim();
-                    m_EcoDatabase[eco.Moves] = eco;
-                }
+            using (Stream s = assets.Open(uri)) {
+                await m_EcoDatabase.Load(s);
             }
 
             return true;
@@ -1328,14 +1302,11 @@ namespace CoreChess.Views
 
             string ecoMoves = sb.ToString().Trim();
             if (m_Game.Moves.Count > 1 && !string.IsNullOrEmpty(ecoMoves)) {
-                Eco foundEco;
-                if (m_EcoDatabase.TryGetValue(ecoMoves, out foundEco)) {
+                Utils.EcoDatabase.Eco foundEco = m_EcoDatabase.GetByMoves(ecoMoves);
+                if (foundEco != null) {
                     m_Game.ECO = foundEco.Code;
-                    if (string.IsNullOrEmpty(foundEco.Variation))
-                        m_Context.EcoName = $"{foundEco.Code}: {foundEco.Name}";
-                    else
-                        m_Context.EcoName = $"{foundEco.Code}: {foundEco.Name}, {foundEco.Variation}";
-                } else if (m_Game.Moves.Count > 10) {
+                    m_Context.EcoName = foundEco.FullName;
+                } else if (!m_Game.Ended && m_Game.Moves.Count > 10) {
                     m_Context.EcoName = string.Empty;
                 }
             }
@@ -1474,6 +1445,12 @@ namespace CoreChess.Views
                     }
                 }
             };
+
+            // Get ECO
+            m_Context.EcoName = string.Empty;
+            Utils.EcoDatabase.Eco eco = m_EcoDatabase.GetByMoves(m_Game.Moves);
+            if (eco != null)
+                m_Context.EcoName = eco.FullName;
 
             if (m_Game.AnalyzeResults == null) {
                 if (App.Settings.GameAnalysisEngine == null)

@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace CoreChess.Utils
 {
-    public static  class Animations
+    public static class Animations
     {
         public static async Task<bool> FadeOutControl(Control ctrl, TimeSpan? duration = null)
         {
