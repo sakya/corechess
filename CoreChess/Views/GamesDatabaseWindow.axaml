@@ -59,7 +59,7 @@
                   <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
 
-                <TextBlock Grid.Row="0" Text="{Binding GameType}" FontSize="12" Foreground="{DynamicResource HighlightColor}" TextTrimming="CharacterEllipsis"
+                <TextBlock Grid.Row="0" Text="{Binding GameTypeName}" FontSize="12" Foreground="{DynamicResource HighlightColor}" TextTrimming="CharacterEllipsis"
                            VerticalAlignment="Center"/>
                 <TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding StartedTime, Converter={StaticResource DateTimeToStringConverter}}" FontSize="12" TextTrimming="CharacterEllipsis"
                            VerticalAlignment="Center" HorizontalAlignment="Right"/>
