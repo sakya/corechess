@@ -884,6 +884,8 @@ namespace CoreChess.Views
         {
             m_Chessboard.Game.Resume();
             m_Context.IsPaused = false;
+            if (App.Settings.CompactMode)
+                this.FindControl<Menu>("m_Menu").IsVisible = false;
         } // OnResumeClick
 
         private void OnMoveTapped(object sender, RoutedEventArgs e)
