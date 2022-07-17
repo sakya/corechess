@@ -61,6 +61,7 @@ namespace CoreChess
         public Settings()
         {
             ShowEngineOutput = true;
+            CompactMode = false;
             MoveNotation = Notations.ShortAlgebraic;
             PlayerName = "Player 1";
             Language = "en-US";
@@ -121,6 +122,7 @@ namespace CoreChess
         public string BlackSelectedColor { get; set; }
         public string OpeningBook { get; set; }
         public bool ShowEngineOutput { get; set; }
+        public bool CompactMode { get; set; }
         public bool AutoAnalyzeGames { get; set; }
         public Notations MoveNotation { get; set; }
         public CapturedPiecesDisplay CapturedPieces { get; set; }
