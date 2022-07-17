@@ -466,7 +466,7 @@ namespace CoreChess.Views
                     var moves = this.FindControl<WrapPanel>("m_Moves");
                     var stack = moves.Children.Where(s => s.Name == $"move_{move.Index}").FirstOrDefault() as StackPanel;
 
-                    IControl toRemove = stack.Children.Last();
+                    IControl toRemove = stack?.Children.Last();
                     if (toRemove != null) {
                         stack.Children.Remove(toRemove);
                         AddMove(m_Chessboard, move);
@@ -521,7 +521,19 @@ namespace CoreChess.Views
                 };
 
                 settings.Players.Add(new HumanPlayer(newGame.Color.Value, App.Settings.PlayerName, null));
+                /*var engine1 = App.Settings.GetEngine(newGame.EngineId)?.Copy();
+                if (newGame.EngineElo.HasValue)
+                    engine1.SetElo(newGame.EngineElo.Value);
+                var enginePlayer1 = new EnginePlayer(newGame.Color == Game.Colors.White ? Game.Colors.White : Game.Colors.Black,
+                    newGame.TheKingPersonality?.DisplayName ?? engine1.Name,
+                    engine1.GetElo());
+                enginePlayer1.Engine = engine1;
+                enginePlayer1.Personality = newGame.Personality;
+                enginePlayer1.TheKingPersonality = newGame.TheKingPersonality;
+                enginePlayer1.OpeningBookFileName = App.Settings.OpeningBook;
+                settings.Players.Add(enginePlayer1);*/
 
+                //settings.Players.Add(new HumanPlayer(newGame.Color == Game.Colors.White ? Game.Colors.Black : Game.Colors.White, App.Settings.PlayerName, null));
                 var engine = App.Settings.GetEngine(newGame.EngineId)?.Copy();
                 if (newGame.EngineElo.HasValue)
                     engine.SetElo(newGame.EngineElo.Value);
@@ -1379,7 +1391,14 @@ namespace CoreChess.Views
             SetChessboardOptions();
 
             try {
-                return await m_Chessboard.SetGame(m_Game);
+                var res =  await m_Chessboard.SetGame(m_Game);
+                if (res) {
+                    DispatcherTimer.RunOnce(() =>
+                    {
+                        m_Chessboard.Start();
+                    }, TimeSpan.FromMilliseconds(100), DispatcherPriority.Background);
+                }
+                return res;
             } catch (Exception ex) {
                 SetWaitAnimation(false);
                 m_Chessboard.SetEmpty();

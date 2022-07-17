@@ -4,6 +4,7 @@ using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using ChessLib.Extensions;
 
 namespace ChessLib
 {
@@ -186,12 +187,7 @@ namespace ChessLib
                         Moves[i].Comment = Regex.Replace(Moves[i].Comment, "\\n", " ");
                         Moves[i].Comment = Moves[i].Comment.Trim();
 
-                        // Remove double spaces
-                        int sIdx = Moves[i].Comment.IndexOf("  ");
-                        while (sIdx >= 0) {
-                            Moves[i].Comment = Moves[i].Comment.Replace("  ", " ");
-                            sIdx = Moves[i].Comment.IndexOf("  ");
-                        }
+                        Moves[i].Comment = Moves[i].Comment.RemoveDoubleSpaces();
                         Moves[i].Comment = Moves[i].Comment.Trim();
 
                         if (Moves[i].Comment.StartsWith("!!")) {
@@ -452,12 +448,7 @@ namespace ChessLib
             moves = Regex.Replace(moves, "[0-9]+\\.\\.\\.", " ");
             moves = Regex.Replace(moves, "\\n", " ");
 
-            // Remove double spaces
-            int dsIdx = moves.IndexOf("  ");
-            while (dsIdx >= 0) {
-                moves = moves.Replace("  ", " ");
-                dsIdx = moves.IndexOf("  ");
-            }
+            moves = moves.RemoveDoubleSpaces();
 
             // Remove empty comments
             moves = Regex.Replace(moves, "{}", string.Empty);
@@ -465,11 +456,7 @@ namespace ChessLib
 
             // Remove double spaces again
             // A dirty hack, but may be necessary
-            int dsaIdx = moves.IndexOf("  ");
-            while (dsaIdx >= 0) {
-                moves = moves.Replace("  ", " ");
-                dsaIdx = moves.IndexOf("  ");
-            }
+            moves = moves.RemoveDoubleSpaces();
 
             // Put comments before all the moves after the first move
             moves = Regex.Replace(moves, "({[^}]*}) (1\\.) ", "$2 $1 ");
@@ -522,12 +509,7 @@ namespace ChessLib
             // If there was a comment already, combine them.
             moves = Regex.Replace(moves, "{([^}]*)} {([^}]*)} ", "{$1 $2} ");
 
-            // Remove double spaces
-            int sIdx = moves.IndexOf("  ");
-            while (sIdx >= 0) {
-                moves = moves.Replace("  ", " ");
-                sIdx = moves.IndexOf("  ");
-            }
+            moves = moves.RemoveDoubleSpaces();
 
             // Remove spaces from comment beginnings
             int cbsIdx = moves.IndexOf("{ ");

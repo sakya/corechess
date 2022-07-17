@@ -163,6 +163,14 @@ namespace ChessLib
             public List<Board.Square> Ambiguous { get; set; }
         } // MoveResult
 
+        class PonderData
+        {
+            public EnginePlayer Player { get; set; }
+            public string PonderingMove { get; set; }
+            public Task<Engines.EngineBase.BestMove> PonderTask { get; set; }
+
+        } // PonderData
+
         #endregion
         public enum Statuses
         {
@@ -171,6 +179,14 @@ namespace ChessLib
             Paused,
             Ended,
             Stopped
+        }
+
+        public enum GameTypes
+        {
+            None,
+            HumanVsHuman,
+            HumanVsEngine,
+            EngineVsEngine
         }
 
         public enum Colors
@@ -196,10 +212,9 @@ namespace ChessLib
         private System.Timers.Timer m_BlackTimer = new System.Timers.Timer(100);
         private Random m_Rnd = new Random();
 
-        CancellationTokenSource m_EngineMoveCts = null;
-        Task<Engines.EngineBase.BestMove> m_PonderTask = null;
-        EnginePlayer m_PonderPlayer = null;
-        string m_PonderingMove = string.Empty;
+        private List<PonderData> m_PonderData = new List<PonderData>();
+        private Semaphore m_PonderDataSema = new Semaphore(1, 1);
+        private CancellationTokenSource m_EngineMoveCts = null;
 
         #region events
         public event EventHandler WhiteTimer;
@@ -207,12 +222,13 @@ namespace ChessLib
 
         public class PromotionArgs : EventArgs
         {
-            public PromotionArgs(Move move)
+            public PromotionArgs(Move move, Player player)
             {
                 Move = move;
             }
 
-            public Move Move { get; set; }
+            public Move Move { get; private set; }
+            public Player Player { get; private set; }
         }
         public delegate Task<Piece.Pieces> PromotionHandler(object sender, PromotionArgs e);
         /// <summary>
@@ -262,6 +278,20 @@ namespace ChessLib
         } // Dispose
 
         #region public properties
+        public GameTypes GameType {
+            get {
+                if (Settings?.Players == null || Settings.Players.Count == 0)
+                    return GameTypes.None;
+                var w = GetPlayer(Colors.White);
+                var b = GetPlayer(Colors.Black);
+                if (w is HumanPlayer && b is HumanPlayer)
+                    return GameTypes.HumanVsHuman;
+                if (w is EnginePlayer && b is EnginePlayer)
+                    return GameTypes.EngineVsEngine;
+                return GameTypes.HumanVsEngine;
+            }
+        }
+
         public string Version { get; set; }
 
         /// <summary>
@@ -281,7 +311,7 @@ namespace ChessLib
         public string WhiteQueenCastlingMove { get; set; }
         public string BlackQueenCastlingMove { get; set; }
 
-        public string GameType {
+        public string GameTypeName {
             get {
                 string res = string.Empty;
                 if (Settings.IsChess960)
@@ -555,18 +585,23 @@ namespace ChessLib
             foreach (var m in Moves)
                 moves.Add(m.Coordinate);
 
-            if (m_PonderTask != null) {
+            m_PonderDataSema.WaitOne();
+            var ponderData = m_PonderData.Where(p => p.Player == ToMovePlayer).FirstOrDefault();
+            m_PonderDataSema.Release();
+            if (ponderData != null) {
                 // Pondering
-                if (Moves.Last().Coordinate == m_PonderingMove) {
+                if (Moves.Last().Coordinate == ponderData.PonderingMove) {
                     await enginePlayer.Engine.Ponderhit();
-                    engineMove = await m_PonderTask;
+                    engineMove = await ponderData.PonderTask;
                 } else {
                     await enginePlayer.Engine.StopCommand();
-                    await m_PonderTask;
+                    await ponderData.PonderTask;
                 }
-                m_PonderTask.Dispose();
-                m_PonderTask = null;
-                m_PonderPlayer = null;
+                ponderData.PonderTask.Dispose();
+
+                m_PonderDataSema.WaitOne();
+                m_PonderData.Remove(ponderData);
+                m_PonderDataSema.Release();
             } else {
                 // Search opening book
                 if (enginePlayer.OpeningBook != null && !enginePlayer.Engine.IsOwnBookEnabled() && !Settings.IsChess960) {
@@ -627,9 +662,17 @@ namespace ChessLib
             }
 
             // Start pondering
-            if (engineMove != null && !string.IsNullOrEmpty(engineMove.Ponder) && enginePlayer.Engine is Engines.Uci && enginePlayer.Engine.IsPonderingEnabled())
-                m_PonderTask = PonderMove(enginePlayer, engineMove.Ponder, outputCallback);
-
+            if (engineMove != null && !string.IsNullOrEmpty(engineMove.Ponder) && engineMove.Ponder != "0000" && enginePlayer.Engine is Engines.Uci && enginePlayer.Engine.IsPonderingEnabled()) {
+                m_PonderDataSema.WaitOne();
+                ponderData = new PonderData()
+                {
+                    Player = enginePlayer,
+                    PonderTask = PonderMove(enginePlayer, engineMove.Ponder, outputCallback),
+                    PonderingMove = engineMove.Ponder
+                };
+                m_PonderData.Add(ponderData);
+                m_PonderDataSema.Release();
+            }
             return res;
         } // DoEnginePlayerMove
 
@@ -1394,13 +1437,14 @@ namespace ChessLib
 
         public async Task<bool> StopPondering()
         {
-            if (m_PonderTask != null) {
-                await m_PonderPlayer.Engine.StopCommand();
-                await m_PonderTask;
-                m_PonderTask.Dispose();
-                m_PonderTask = null;
-                m_PonderPlayer = null;
+            m_PonderDataSema.WaitOne();
+            foreach (var pd in m_PonderData) {
+                await pd.Player.Engine.StopCommand();
+                await pd.PonderTask;
+                pd.PonderTask.Dispose();
             }
+            m_PonderData.Clear();
+            m_PonderDataSema.Release();
             return true;
         } // StopPondering
 
@@ -1465,8 +1509,6 @@ namespace ChessLib
 
         private async Task<Engines.EngineBase.BestMove> PonderMove(EnginePlayer enginePlayer, string move, Action<Engines.EngineBase, string> outputCallback = null)
         {
-            m_PonderingMove = move;
-            m_PonderPlayer = enginePlayer;
             List<string> moves = new List<string>();
             foreach (var m in Moves)
                 moves.Add(m.Coordinate);
@@ -1479,7 +1521,6 @@ namespace ChessLib
                 (output) => outputCallback(enginePlayer.Engine, output));
             cts.Dispose();
 
-            m_PonderingMove = string.Empty;
             return res;
         } // PonderMove
 
@@ -2191,9 +2232,9 @@ namespace ChessLib
                         if (PlayerPromotion == null || GetPlayer(tempMove.Piece.Color) is EnginePlayer)
                             tempMove.Piece.Type = Piece.Pieces.Queen;
                         else
-                            tempMove.Piece.Type = await PlayerPromotion.Invoke(this, new PromotionArgs(tempMove));
+                            tempMove.Piece.Type = await PlayerPromotion.Invoke(this, new PromotionArgs(tempMove, ToMovePlayer));
 
-                        Promoted?.Invoke(this, new PromotionArgs(tempMove));
+                        Promoted?.Invoke(this, new PromotionArgs(tempMove, ToMovePlayer));
                         res.Promoted = true;
                         move = $"{move}{tempMove.Piece.Acronym}";
                     }
