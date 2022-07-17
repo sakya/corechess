@@ -314,14 +314,14 @@ namespace CoreChess.Controls
             return true;
         } // SetGame
 
-        public void Start()
+        public void StartGame()
         {
+            this.IsHitTestVisible = true;
             if (!m_Game.Ended && m_Game.ToMovePlayer is EnginePlayer && (m_Game.ToMovePlayer as EnginePlayer).Engine != null) {
                 // Don't wait this move
                 _ = DoEngineMove();
             }
-            this.IsHitTestVisible = true;
-        } // Start
+        } // StartGame
 
         public async Task<bool> UndoMove()
         {

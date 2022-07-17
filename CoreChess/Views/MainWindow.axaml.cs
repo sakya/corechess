@@ -1395,7 +1395,7 @@ namespace CoreChess.Views
                 if (res) {
                     DispatcherTimer.RunOnce(() =>
                     {
-                        m_Chessboard.Start();
+                        m_Chessboard.StartGame();
                     }, TimeSpan.FromMilliseconds(100), DispatcherPriority.Background);
                 }
                 return res;
