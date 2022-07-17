@@ -108,7 +108,7 @@ namespace CoreChess.Views
                 filtered = new List<Game>(m_Games);
             else
                 filtered = m_Games.Where(g =>
-                    g.GameType.Contains(filter, StringComparison.InvariantCultureIgnoreCase) ||
+                    g.GameTypeName.Contains(filter, StringComparison.InvariantCultureIgnoreCase) ||
                     g.Settings.WhitePlayerName != null && g.Settings.WhitePlayerName.Contains(filter, StringComparison.InvariantCultureIgnoreCase) ||
                     g.Settings.BlackPlayerName != null && g.Settings.BlackPlayerName.Contains(filter, StringComparison.InvariantCultureIgnoreCase))
                     .ToList();
