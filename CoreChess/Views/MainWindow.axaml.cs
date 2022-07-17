@@ -115,6 +115,43 @@ namespace CoreChess.Views
                         m_Owner.Window.FindControl<Border>("m_EngineMessageSection").IsVisible = App.Settings.ShowEngineOutput;
                 }
             }
+            
+            class CompactModeCommand : ICommand
+            {
+                Context m_Owner = null;
+                public event EventHandler CanExecuteChanged {
+                    add { }
+                    remove { }
+                }
+
+                public CompactModeCommand(Context owner)
+                {
+                    m_Owner = owner;
+                }
+                public bool CanExecute(object parameter)
+                {
+                    return true;
+                }
+
+                public void Execute(object parameter)
+                {
+                    App.Settings.CompactMode = !App.Settings.CompactMode;
+                    App.Settings.Save(App.SettingsPath);
+                    m_Owner.CompactMode = App.Settings.CompactMode;
+                    if (m_Owner.CompactMode) {
+                        m_Owner.Window.SaveWindowSizeAndPosition();
+                        m_Owner.Window.FindControl<Menu>("m_Menu").IsVisible = false;
+                        m_Owner.Window.FindControl<Grid>("m_SidePanel").IsVisible = false;
+                        m_Owner.Window.SystemDecorations = SystemDecorations.None;
+                        m_Owner.Window.SizeToContent = SizeToContent.Width;
+                    } else {
+                        m_Owner.Window.FindControl<Menu>("m_Menu").IsVisible = true;
+                        m_Owner.Window.FindControl<Grid>("m_SidePanel").IsVisible = true;
+                        m_Owner.Window.SystemDecorations = SystemDecorations.Full;
+                        m_Owner.Window.RestoreWindowSizeAndPosition();
+                    }
+                }
+            }
             #endregion
 
             bool m_IsResignEnabled = true;
@@ -125,6 +162,7 @@ namespace CoreChess.Views
             Settings.Notations? m_MoveNotation = null;
             Settings.CapturedPiecesDisplay? m_CapturedPieces = null;
             bool m_ShowEngineOutput = false;
+            bool m_CompactMode = false;
             string m_WhiteName = string.Empty;
             int? m_WhiteElo;
             string m_BlackName = string.Empty;
@@ -143,6 +181,7 @@ namespace CoreChess.Views
                 OnMoveNotationClick = new MoveNotationCommand(this);
                 OnCapturedPiecesClick = new CapturedPiecesCommand(this);
                 OnShowEngineOutputClick = new ShowEngineOutputCommand(this);
+                OnCompactModeClick = new CompactModeCommand(this);
             }
 
             public MainWindow Window { get; private set; }
@@ -194,6 +233,12 @@ namespace CoreChess.Views
                 get { return m_ShowEngineOutput; }
                 set { SetIfChanged(ref m_ShowEngineOutput, value); }
             }
+            
+            public bool CompactMode
+            {
+                get { return m_CompactMode; }
+                set { SetIfChanged(ref m_CompactMode, value); }
+            }
 
             public string WhiteName
             {
@@ -240,6 +285,7 @@ namespace CoreChess.Views
             public ICommand OnMoveNotationClick { get; set; }
             public ICommand OnCapturedPiecesClick { get; set; }
             public ICommand OnShowEngineOutputClick { get; set; }
+            public ICommand OnCompactModeClick { get; set; }
 
             private void SetIfChanged<T>(ref T target, T value, [CallerMemberName] string propertyName = "")
             {
@@ -813,8 +859,13 @@ namespace CoreChess.Views
                 await m_Game.Stop();
                 m_Game.Dispose();
                 m_Game = null;
-
-                SaveWindowSizeAndPosition();
+                
+                if (!App.Settings.CompactMode)
+                    SaveWindowSizeAndPosition();
+                else {
+                    App.Settings.CompactMode = false;
+                    App.Settings.Save(App.SettingsPath);
+                }                    
 
                 this.Close();
             }
