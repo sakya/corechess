@@ -883,8 +883,9 @@ namespace CoreChess.Views
                 await m_Game.Stop();
                 m_Game.Dispose();
                 m_Game = null;
-
-                SaveWindowSizeAndPosition();
+		
+		if (!m_Context.ZenMode)
+                    SaveWindowSizeAndPosition();
 
                 this.Close();
             }
