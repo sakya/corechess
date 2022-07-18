@@ -12,7 +12,6 @@
         Title="CoreChess"
         WindowStartupLocation="CenterScreen"
         Width="800" Height="494"
-        MinHeight="500" MinWidth="600"
         KeyDown="OnWindowKeyDown"
         Closing="OnWindowClosing">
 
@@ -22,8 +21,9 @@
   </Window.Resources>
 
   <DockPanel>
+    <Label Name="m_Label" IsVisible="{Binding !#m_Menu.IsVisible}" Width="{Binding #m_Menu.Width}" Height="{Binding #m_Menu.Height}" DockPanel.Dock="Top" />
     <controls:TitleBar DockPanel.Dock="Top"/>
-    <Menu IsVisible="{Binding !IsPaused}" DockPanel.Dock="Top">
+    <Menu Name="m_Menu" IsVisible="{Binding !IsPaused}" DockPanel.Dock="Top">
       <MenuItem Header="{i18n:Localize _File}">
         <MenuItem Header="{i18n:Localize _NewGame}" Click="OnNewGameClick" InputGesture="CTRL + N">
           <MenuItem.Icon>
@@ -174,7 +174,7 @@
       </MenuItem>
     </Menu>
 
-    <Grid Margin="5">
+    <Grid Name="m_Content" HorizontalAlignment="{Binding ContentAlignment}" Margin="5">
       <Grid.ColumnDefinitions>
         <ColumnDefinition Width="Auto"/>
         <ColumnDefinition Width="*"/>
@@ -187,6 +187,7 @@
       <Grid Margin="0,5,0,5" Width="{Binding #m_Chessboard.Bounds.Width}">
         <Grid.ColumnDefinitions>
           <ColumnDefinition Width="*"/>
+          <ColumnDefinition Width="Auto"/>
           <ColumnDefinition Width="Auto"/>
           <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
@@ -206,14 +207,20 @@
           </StackPanel>
         </Grid>
 
-        <Button Name="m_PauseBtn" Classes="Small" Grid.Column="1" Click="OnPauseClick" ToolTip.Tip="Ctrl-P">
+        <Button Name="m_PauseBtn" Classes="Small" Grid.Column="1" Click="OnPauseClick" ToolTip.Tip="Pause Ctrl-P">
           <StackPanel Orientation="Horizontal">
             <i:Icon Value="fas fa-pause" />
-            <TextBlock Text="{i18n:Localize Pause}" Margin="5,0,0,0"/>
           </StackPanel>
         </Button>
 
-        <Grid Grid.Column="2">
+	<Button Name="m_ZenModeBtn" Classes="Small" Grid.Column="2" Command="{Binding OnZenModeClick}" ToolTip.Tip="Zen Mode">
+          <StackPanel Orientation="Horizontal">
+            <i:Icon Value="fas fa-chess-board" />
+          </StackPanel>
+        </Button>
+
+
+        <Grid Grid.Column="3">
           <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*" />
             <ColumnDefinition Width="Auto" />
@@ -249,7 +256,7 @@
         </StackPanel>
       </Grid>
 
-      <Grid Margin="5,5,0,0" Grid.Row="0" Grid.RowSpan="2" Grid.Column="1">
+      <Grid Name="m_SidePanel" Margin="5,5,0,0" Grid.Row="0" Grid.RowSpan="2" Grid.Column="1">
         <Grid.RowDefinitions>
           <RowDefinition Height="Auto" />
           <RowDefinition Height="*" />
