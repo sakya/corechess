@@ -146,11 +146,13 @@ namespace CoreChess.Views
 			    m_Owner.ContentAlignment = "Center";
 			else
                             m_Owner.ContentAlignment = "Stretch";
+			m_Owner.Window.SystemDecorations = SystemDecorations.None;
 		    } else {
 			m_Owner.Window.FindControl<Grid>("m_SidePanel").IsVisible = true;
 			m_Owner.Window.FindControl<Menu>("m_Menu").IsVisible = true;
 			m_Owner.Window.RestoreWindowSizeAndPosition();
 			m_Owner.ContentAlignment = "Stretch";
+			m_Owner.Window.SystemDecorations = SystemDecorations.Full;
 		    }
                 }
             }
