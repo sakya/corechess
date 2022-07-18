@@ -115,6 +115,46 @@ namespace CoreChess.Views
                         m_Owner.Window.FindControl<Border>("m_EngineMessageSection").IsVisible = App.Settings.ShowEngineOutput;
                 }
             }
+
+	    class ZenModeCommand : ICommand
+            {
+                Context m_Owner = null;
+                public event EventHandler CanExecuteChanged {
+                    add { }
+                    remove { }
+                }
+
+                public ZenModeCommand(Context owner)
+                {
+                    m_Owner = owner;
+                }
+                public bool CanExecute(object parameter)
+                {
+                    return true;
+                }
+
+                public void Execute(object parameter)
+                {
+                    m_Owner.ZenMode = !m_Owner.ZenMode;
+
+		    if (m_Owner.ZenMode) {
+			m_Owner.Window.SaveWindowSizeAndPosition();
+			m_Owner.Window.FindControl<Grid>("m_SidePanel").IsVisible = false;
+			m_Owner.Window.FindControl<Menu>("m_Menu").IsVisible = false;
+			m_Owner.Window.SizeToContent = SizeToContent.Width;
+			if (m_Owner.Window.WindowState == WindowState.Maximized)
+			    m_Owner.ContentAlignment = "Center";
+			else
+                            m_Owner.ContentAlignment = "Stretch";
+		    } else {
+			m_Owner.Window.FindControl<Grid>("m_SidePanel").IsVisible = true;
+			m_Owner.Window.FindControl<Menu>("m_Menu").IsVisible = true;
+			m_Owner.Window.RestoreWindowSizeAndPosition();
+			m_Owner.ContentAlignment = "Stretch";
+		    }
+                }
+            }
+
             #endregion
 
             bool m_IsResignEnabled = true;
@@ -125,6 +165,8 @@ namespace CoreChess.Views
             Settings.Notations? m_MoveNotation = null;
             Settings.CapturedPiecesDisplay? m_CapturedPieces = null;
             bool m_ShowEngineOutput = false;
+	    bool m_ZenMode = false;
+	    string m_ContentAlignment = "Stretch";
             string m_WhiteName = string.Empty;
             int? m_WhiteElo;
             string m_BlackName = string.Empty;
@@ -143,6 +185,7 @@ namespace CoreChess.Views
                 OnMoveNotationClick = new MoveNotationCommand(this);
                 OnCapturedPiecesClick = new CapturedPiecesCommand(this);
                 OnShowEngineOutputClick = new ShowEngineOutputCommand(this);
+		OnZenModeClick = new ZenModeCommand(this);
             }
 
             public MainWindow Window { get; private set; }
@@ -195,6 +238,18 @@ namespace CoreChess.Views
                 set { SetIfChanged(ref m_ShowEngineOutput, value); }
             }
 
+	    public bool ZenMode
+            {
+                get { return m_ZenMode; }
+                set { SetIfChanged(ref m_ZenMode, value); }
+            }
+            
+	    public string ContentAlignment
+            {
+                get { return m_ContentAlignment; }
+                set { SetIfChanged(ref m_ContentAlignment, value); }
+            }
+
             public string WhiteName
             {
                 get { return m_WhiteName; }
@@ -240,6 +295,7 @@ namespace CoreChess.Views
             public ICommand OnMoveNotationClick { get; set; }
             public ICommand OnCapturedPiecesClick { get; set; }
             public ICommand OnShowEngineOutputClick { get; set; }
+            public ICommand OnZenModeClick { get; set; }
 
             private void SetIfChanged<T>(ref T target, T value, [CallerMemberName] string propertyName = "")
             {
@@ -845,6 +901,13 @@ namespace CoreChess.Views
         {
             m_Chessboard.Game.Resume();
             m_Context.IsPaused = false;
+            if (m_Context.ZenMode) {
+		this.FindControl<Grid>("m_SidePanel").IsVisible = false;
+		this.FindControl<Menu>("m_Menu").IsVisible = false;
+	    } else {
+		this.FindControl<Grid>("m_SidePanel").IsVisible = true;
+		this.FindControl<Menu>("m_Menu").IsVisible = true;
+	    }
         } // OnResumeClick
 
         private void OnMoveTapped(object sender, RoutedEventArgs e)
@@ -923,6 +986,7 @@ namespace CoreChess.Views
 
             // Show engine output setting
             m_Context.ShowEngineOutput = App.Settings.ShowEngineOutput;
+	    m_Context.ZenMode = false;
 
             Game game = null;
 
