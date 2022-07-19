@@ -66,7 +66,7 @@
             <i:Icon FontSize="14" Value="fas fa-undo" />
           </MenuItem.Icon>
         </MenuItem>
-        <MenuItem Header="{i18n:Localize _Resign}" Click="OnResignClick" IsEnabled="{Binding IsResignEnabled}">
+        <MenuItem Header="{i18n:Localize _Resign}" Click="OnResignClick" IsEnabled="{Binding IsResignEnabled}" InputGesture="CTRL + R">
           <MenuItem.Icon>
             <i:Icon FontSize="14" Value="fas fa-chess-king" />
           </MenuItem.Icon>
