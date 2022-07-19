@@ -828,12 +828,15 @@ namespace CoreChess.Views
             } else if (e.KeyModifiers == KeyModifiers.Control && e.Key == Key.C) {
                 e.Handled = true;
                 OnCopyFenClick(null, new RoutedEventArgs());
-            } else if (e.KeyModifiers == KeyModifiers.Control && e.Key == Key.G) {
+	            } else if (e.KeyModifiers == KeyModifiers.Control && e.Key == Key.G) {
                 e.Handled = true;
                 OnCopyPgnToClipboardClick(null, new RoutedEventArgs());
             } else if (e.KeyModifiers == KeyModifiers.Control && e.Key == Key.Z) {
                 if (m_Context.IsResignEnabled)
                     OnUndoMoveClick(null, new RoutedEventArgs());
+	    } else if (e.KeyModifiers == KeyModifiers.Control && e.Key == Key.R) {
+		e.Handled = true;
+		OnResignClick(null, new RoutedEventArgs());
             } else if (e.KeyModifiers == KeyModifiers.None && e.Key == Key.F1) {
                 e.Handled = true;
                 OnAboutClick(null, new RoutedEventArgs());
