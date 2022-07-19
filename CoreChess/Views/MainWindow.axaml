@@ -213,7 +213,7 @@
           </StackPanel>
         </Button>
 
-	<Button Name="m_ZenModeBtn" Classes="Small" Grid.Column="2" Click="OnZenModeClick" ToolTip.Tip="Zen Mode (C)">
+	<Button Name="m_ZenModeBtn" Classes="Small" Grid.Column="2" Click="OnZenModeClick" ToolTip.Tip="Zen Mode (Z)">
           <StackPanel Orientation="Horizontal">
             <i:Icon Value="fas fa-chess-board" />
           </StackPanel>
