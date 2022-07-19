@@ -1,4 +1,4 @@
-﻿using Avalonia;
+using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.Notifications;
 using Avalonia.Input;
@@ -864,6 +864,9 @@ namespace CoreChess.Views
                     OnMoveNavigationClick(btn, new RoutedEventArgs());
                     e.Handled = true;
                 }
+	    } else if (e.KeyModifiers == KeyModifiers.None && e.Key == Key.C) {
+		    OnZenModeClick(null, new RoutedEventArgs());
+                    e.Handled = true;
             }
         } // OnWindowKeyDown
 
@@ -893,6 +896,11 @@ namespace CoreChess.Views
         #endregion
 
         #region Other events
+	private void OnZenModeClick(object sender, RoutedEventArgs e)
+        {
+		m_Context.OnZenModeClick.Execute(this);
+        } // OnZenModeClick
+
         private void OnPauseClick(object sender, RoutedEventArgs e)
         {
             if (m_Chessboard.Game.Pause()) {
