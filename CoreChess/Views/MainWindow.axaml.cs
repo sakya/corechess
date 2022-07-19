@@ -864,7 +864,7 @@ namespace CoreChess.Views
                     OnMoveNavigationClick(btn, new RoutedEventArgs());
                     e.Handled = true;
                 }
-	    } else if (e.KeyModifiers == KeyModifiers.None && e.Key == Key.C) {
+	    } else if (e.KeyModifiers == KeyModifiers.None && e.Key == Key.Z) {
 		    OnZenModeClick(null, new RoutedEventArgs());
                     e.Handled = true;
             }
