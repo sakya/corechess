@@ -1,4 +1,4 @@
-﻿<Window xmlns="https://github.com/avaloniaui"
+<Window xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:vm="clr-namespace:CoreChess.ViewModels;assembly=CoreChess"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -207,13 +207,13 @@
           </StackPanel>
         </Grid>
 
-        <Button Name="m_PauseBtn" Classes="Small" Grid.Column="1" Click="OnPauseClick" ToolTip.Tip="Pause Ctrl-P">
+        <Button Name="m_PauseBtn" Classes="Small" Grid.Column="1" Click="OnPauseClick" ToolTip.Tip="Pause (Ctrl-P)">
           <StackPanel Orientation="Horizontal">
             <i:Icon Value="fas fa-pause" />
           </StackPanel>
         </Button>
 
-	<Button Name="m_ZenModeBtn" Classes="Small" Grid.Column="2" Command="{Binding OnZenModeClick}" ToolTip.Tip="Zen Mode">
+	<Button Name="m_ZenModeBtn" Classes="Small" Grid.Column="2" Click="OnZenModeClick" ToolTip.Tip="Zen Mode (C)">
           <StackPanel Orientation="Horizontal">
             <i:Icon Value="fas fa-chess-board" />
           </StackPanel>
