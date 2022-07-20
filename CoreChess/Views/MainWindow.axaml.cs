@@ -871,12 +871,11 @@ namespace CoreChess.Views
 		    OnZenModeClick(null, new RoutedEventArgs());
                     e.Handled = true;
             } else if (e.KeyModifiers == KeyModifiers.Control && e.Key == Key.A) {
-		    e.Handled = true;
-		    if (m_CurrentMoveIndex.HasValue && m_CurrentMoveIndex >= 0) {
-		           var move = m_Game.Moves[m_CurrentMoveIndex.Value];
-		           TextBlock moveTxt = new TextBlock() { DataContext = move };
-		           OnMoveDoubleTapped(moveTxt, new RoutedEventArgs());
-		    }
+		var btn = this.FindControl<Button>("m_ViewCommentBtn");
+                if (btn.IsEnabled) {
+                    OnViewCommentBtnClick(btn, new RoutedEventArgs());
+                    e.Handled = true;
+                }
             }
         } // OnWindowKeyDown
 
@@ -952,6 +951,17 @@ namespace CoreChess.Views
                 }
             }
         } // OnMoveDoubleTapped
+	
+	private void OnViewCommentBtnClick(object sender, RoutedEventArgs e)
+        {
+		e.Handled = true;
+		if (m_CurrentMoveIndex.HasValue && m_CurrentMoveIndex >= 0) {
+		           var move = m_Game.Moves[m_CurrentMoveIndex.Value];
+		           TextBlock moveTxt = new TextBlock() { DataContext = move };
+		           OnMoveDoubleTapped(moveTxt, new RoutedEventArgs());
+		}
+        } // OnViewCommentBtnClick
+
 
         private void OnMouseOnAnalysisResult(object sender, GameAnalyzeGraph.MouseEventArgs args)
         {
@@ -1469,6 +1479,7 @@ namespace CoreChess.Views
                 this.FindControl<TextBlock>("m_WhiteTimeLeft").IsVisible = true;
                 this.FindControl<TextBlock>("m_BlackTimeLeft").IsVisible = true;
                 this.FindControl<Button>("m_PauseBtn").IsVisible = true;
+		this.FindControl<Button>("m_ViewCommentBtn").IsVisible = false;
             }
 
             m_Context.CanPause = !m_Game.Ended;
@@ -1526,6 +1537,7 @@ namespace CoreChess.Views
             this.FindControl<TextBlock>("m_WhiteTimeLeft").IsVisible = false;
             this.FindControl<TextBlock>("m_BlackTimeLeft").IsVisible = false;
             this.FindControl<StackPanel>("m_MoveNavigator").IsVisible = true;
+	    this.FindControl<Button>("m_ViewCommentBtn").IsVisible = true;
 
             this.FindControl<Button>("m_MoveFirst").IsEnabled = true;
             this.FindControl<Button>("m_MovePrevious").IsEnabled = true;
@@ -1596,7 +1608,16 @@ namespace CoreChess.Views
                     foreach (var t in stack.Children) {
                         if (move != null && t.DataContext == move) {
                             t.Classes.Add("CurrentMove");
-                            stack.BringIntoView();
+                 	    stack.BringIntoView();
+			    string moveTxt = move.Comment;
+			    if (!String.IsNullOrEmpty(moveTxt)) {
+				this.FindControl<Border>("m_ViewCommentBtnBorder").Classes.Add("Selected");
+
+			    } else {
+				this.FindControl<Border>("m_ViewCommentBtnBorder").Classes.Remove("Selected");
+
+			    }
+
                         } else
                             t.Classes.Remove("CurrentMove");
                     }
