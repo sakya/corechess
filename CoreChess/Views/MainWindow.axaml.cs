@@ -1468,6 +1468,9 @@ namespace CoreChess.Views
             m_Context.BlackName = m_Game.Settings.BlackPlayerName;
             m_Context.BlackElo = m_Game.Settings.BlackPlayer?.Elo;
 
+
+
+            this.FindControl<Border>("m_ViewCommentBtnBorder").Classes.Remove("Selected");
             if (m_Game.Ended) {
                 SetAnalyzeMode();
             } else {
