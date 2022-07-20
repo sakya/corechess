@@ -870,6 +870,13 @@ namespace CoreChess.Views
 	    } else if (e.KeyModifiers == KeyModifiers.None && e.Key == Key.Z) {
 		    OnZenModeClick(null, new RoutedEventArgs());
                     e.Handled = true;
+            } else if (e.KeyModifiers == KeyModifiers.Control && e.Key == Key.A) {
+		    e.Handled = true;
+		    if (m_CurrentMoveIndex.HasValue && m_CurrentMoveIndex >= 0) {
+		           var move = m_Game.Moves[m_CurrentMoveIndex.Value];
+		           TextBlock moveTxt = new TextBlock() { DataContext = move };
+		           OnMoveDoubleTapped(moveTxt, new RoutedEventArgs());
+		    }
             }
         } // OnWindowKeyDown
 
