@@ -207,18 +207,25 @@
           </StackPanel>
         </Grid>
 
-        <Button Name="m_PauseBtn" Classes="Small" Grid.Column="1" Click="OnPauseClick" ToolTip.Tip="Pause (Ctrl-P)">
+        <Button Name="m_PauseBtn" Classes="Small" Grid.Column="1" Click="OnPauseClick" ToolTip.Tip="Pause (Ctrl-P)" Width="40" Height="40">
           <StackPanel Orientation="Horizontal">
             <i:Icon Value="fas fa-pause" />
           </StackPanel>
         </Button>
 
-	<Button Name="m_ZenModeBtn" Classes="Small" Grid.Column="2" Click="OnZenModeClick" ToolTip.Tip="Zen Mode (Z)">
+        <Border Grid.Column="1" Name="m_ViewCommentBtnBorder" CornerRadius="3" BorderThickness="1.5">
+	<Button Name="m_ViewCommentBtn" Classes="Small" IsVisible="{Binding !#m_PauseBtn.IsVisible}" Click="OnViewCommentBtnClick" ToolTip.Tip="Annotation (Ctrl-A)" Width="40" Height="40">
+          <StackPanel Orientation="Horizontal">
+            <i:Icon Value="fas fa-file" />
+          </StackPanel>
+        </Button>
+        </Border>
+
+	<Button Name="m_ZenModeBtn" Classes="Small" Grid.Column="2" Click="OnZenModeClick" ToolTip.Tip="Zen Mode (Z)" Width="40" Height="40">
           <StackPanel Orientation="Horizontal">
             <i:Icon Value="fas fa-chess-board" />
           </StackPanel>
         </Button>
-
 
         <Grid Grid.Column="3">
           <Grid.ColumnDefinitions>
