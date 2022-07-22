@@ -31,7 +31,7 @@ namespace ChessLib.Engines
         private Semaphore m_ProcessOutputSema = null;
         private Semaphore m_ProcessInputSema = null;
         private Process m_Process = null;
-        public Uci (string name, string command)
+        public Uci(string name, string command)
             : base(name, command)
         {
         }
@@ -63,7 +63,7 @@ namespace ChessLib.Engines
             m_Process.Exited += ProcessExited;
             m_Process.StartInfo = si;
 
-            try  {
+            try {
                 m_Process.Start();
                 m_Process.BeginOutputReadLine();
                 m_Process.BeginErrorReadLine();
@@ -166,7 +166,8 @@ namespace ChessLib.Engines
             }
         } // SetOwnBook
 
-        public override int? GetElo() {
+        public override int? GetElo()
+        {
             if (GetOption(LimitStrengthOptionName)?.Value == "true") {
                 int res;
                 if (int.TryParse(GetOption(EloOptionName).Value, out res))
@@ -352,7 +353,8 @@ namespace ChessLib.Engines
                 await SetPosition(fen, new List<string>());
                 await GetBestMovePrimitive(false, 0, 0, 0, 0,
                     depth, maxTimeSpan, token, null,
-                    (output) => {
+                    (output) =>
+                    {
                         var info = ParseThinkingInfo(output);
                         if (info != null)
                             res.Score = info.Score;
@@ -384,7 +386,7 @@ namespace ChessLib.Engines
             Info res = null;
             int value = 0;
 
-            List<string> parts = output.Replace("\t", string.Empty).ToLower().Split(new char[] {' '}, StringSplitOptions.RemoveEmptyEntries).ToList();
+            List<string> parts = output.Replace("\t", string.Empty).ToLower().Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries).ToList();
             int idx = parts.IndexOf("score");
             if (idx >= 0) {
                 res = new Info();

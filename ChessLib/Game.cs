@@ -35,15 +35,15 @@ namespace ChessLib
                     return Players.Where(p => p.Color == Colors.White).FirstOrDefault();
                 }
             }
-            public string WhitePlayerName {
+            public string WhitePlayerName
+            {
                 get {
                     return Players.Where(p => p.Color == Colors.White).FirstOrDefault()?.Name;
                 }
             }
             public string WhitePlayerDisplayName
             {
-                get
-                {
+                get {
                     return Players.Where(p => p.Color == Colors.White).FirstOrDefault()?.DisplayName;
                 }
             }
@@ -53,15 +53,15 @@ namespace ChessLib
                     return Players.Where(p => p.Color == Colors.Black).FirstOrDefault();
                 }
             }
-            public string BlackPlayerName {
+            public string BlackPlayerName
+            {
                 get {
                     return Players.Where(p => p.Color == Colors.Black).FirstOrDefault()?.Name;
                 }
             }
             public string BlackPlayerDisplayName
             {
-                get
-                {
+                get {
                     return Players.Where(p => p.Color == Colors.Black).FirstOrDefault()?.DisplayName;
                 }
             }
@@ -72,7 +72,8 @@ namespace ChessLib
             /// Get the human player color. If there's no human player or two human player null is returned
             /// </summary>
             /// <value></value>
-            public Colors? HumanPlayerColor {
+            public Colors? HumanPlayerColor
+            {
                 get {
                     List<Player> hp = Players.Where(p => p is HumanPlayer).ToList();
                     if (hp.Count == 1)
@@ -278,7 +279,8 @@ namespace ChessLib
         } // Dispose
 
         #region public properties
-        public GameTypes GameType {
+        public GameTypes GameType
+        {
             get {
                 if (Settings?.Players == null || Settings.Players.Count == 0)
                     return GameTypes.None;
@@ -311,7 +313,8 @@ namespace ChessLib
         public string WhiteQueenCastlingMove { get; set; }
         public string BlackQueenCastlingMove { get; set; }
 
-        public string GameTypeName {
+        public string GameTypeName
+        {
             get {
                 string res = string.Empty;
                 if (Settings.IsChess960)
@@ -344,7 +347,8 @@ namespace ChessLib
         public DateTime StartedTime { get; set; }
         public Statuses Status { get; set; }
         public string ECO { get; set; }
-        public bool Ended {
+        public bool Ended
+        {
             get {
                 return Status == Statuses.Ended || Status == Statuses.Stopped;
             }
@@ -380,7 +384,8 @@ namespace ChessLib
         public int BlackIncrementMillisecs { get; set; }
         public List<Engines.EngineBase.AnalyzeResult> AnalyzeResults { get; set; }
 
-        public int? LastWhiteTimeLeftMilliSecs {
+        public int? LastWhiteTimeLeftMilliSecs
+        {
             get {
                 if (Moves.Count > 0)
                     return Moves.Last().WhiteTimeLeftMilliSecs;
@@ -389,7 +394,8 @@ namespace ChessLib
                 return null;
             }
         }
-        public int? LastBlackTimeLeftMilliSecs {
+        public int? LastBlackTimeLeftMilliSecs
+        {
             get {
                 if (Moves.Count > 0)
                     return Moves.Last().BlackTimeLeftMilliSecs;
@@ -709,7 +715,7 @@ namespace ChessLib
                 if (tempSquare.Piece?.Type == Piece.Pieces.King) {
                     bool confirmed = true;
 
-                    if (Settings.IsChess960 && ToMovePlayer is HumanPlayer){
+                    if (Settings.IsChess960 && ToMovePlayer is HumanPlayer) {
                         if (CastlingConfirm != null)
                             confirmed = await CastlingConfirm.Invoke(this, new EventArgs());
                     }
@@ -956,7 +962,7 @@ namespace ChessLib
         /// <returns>A list of <see cref="Board.Square"/></returns>
         public List<Board.Square> GetAvailableSquares(Board.Square startSquare)
         {
-            var res =  GetAvailableSquaresPrimitive(startSquare, false);
+            var res = GetAvailableSquaresPrimitive(startSquare, false);
             // Check for check
             foreach (var square in new List<Board.Square>(res)) {
                 if (square.Notation == startSquare.Notation)
@@ -1055,7 +1061,7 @@ namespace ChessLib
             }
 
             var white = Board.GetPieces(Colors.White);
-            var black  = Board.GetPieces(Colors.Black);
+            var black = Board.GetPieces(Colors.Black);
 
             // King vs King
             if (white.Count == 1 && black.Count == 1)
@@ -1204,8 +1210,9 @@ namespace ChessLib
         /// <returns></returns>
         public static async Task<Game> LoadFromPgn(PGN pgn, bool starAsAborted = true)
         {
-            Game res = new Game() {
-              ECO = pgn.ECO
+            Game res = new Game()
+            {
+                ECO = pgn.ECO
             };
 
             Game.GameSettings settings = new GameSettings()
@@ -1353,7 +1360,7 @@ namespace ChessLib
                     // Normal (Nf3)
                     toSquareNotation = shortAlgebraicNotation.Substring(1);
                 } else if (shortAlgebraicNotation.Length == 4) {
-                    if (char.IsLetter(shortAlgebraicNotation[1])){
+                    if (char.IsLetter(shortAlgebraicNotation[1])) {
                         // File disambiguation (Ngf3)
                         movePieces = movePieces.Where(p => Board.GetSquare(p).File == char.ToUpper(shortAlgebraicNotation[1])).ToList();
                     } else {
@@ -1409,7 +1416,7 @@ namespace ChessLib
                 if (Result == Results.Checkmate || Result == Results.Stalemate)
                     moves.RemoveAt(moves.Count - 1);
 
-                foreach(var move in moves) {
+                foreach (var move in moves) {
                     if (token.IsCancellationRequested)
                         break;
 
@@ -1667,7 +1674,7 @@ namespace ChessLib
             }
 
             // Check squares the king must travel
-            for (int i = idxFrom; i < idxTo; i++){
+            for (int i = idxFrom; i < idxTo; i++) {
                 var square = Board.GetSquare($"{Board.Files[i]}{rank}");
                 if (square.Piece != null) {
                     if (Settings.IsChess960 && (square.Piece.Color != color || (square.Piece.Type != Piece.Pieces.King && square.Piece.Type != Piece.Pieces.Rook)))
@@ -1774,7 +1781,7 @@ namespace ChessLib
                 if (prevFile != null) {
                     if (piece.Color == Colors.White && startSquare.Rank < 8)
                         nextSquare = Board.GetSquare($"{prevFile}{startSquare.Rank + 1}");
-                    else if(piece.Color == Colors.Black && startSquare.Rank > 1)
+                    else if (piece.Color == Colors.Black && startSquare.Rank > 1)
                         nextSquare = Board.GetSquare($"{prevFile}{startSquare.Rank - 1}");
 
                     if (nextSquare != null && nextSquare.Piece != null && nextSquare.Piece.Color != piece.Color)

@@ -130,7 +130,8 @@ namespace CoreChess.Controls
         public bool EnableAudio { get; set; }
         public bool Flipped { get; set; }
 
-        public double BorderWidth {
+        public double BorderWidth
+        {
             get {
                 if (ShowFileRankNotation == Settings.FileRankNotations.Outside)
                     return m_BorderWidth;
@@ -139,8 +140,7 @@ namespace CoreChess.Controls
         }
         public double SquareWidth
         {
-            get
-            {
+            get {
                 if (m_Canvas != null) {
                     return (m_Canvas.Bounds.Width - BorderWidth * 2.0) / 8.0;
                 }
@@ -150,8 +150,7 @@ namespace CoreChess.Controls
 
         public double SquareHeight
         {
-            get
-            {
+            get {
                 if (m_Canvas != null)
                     return (m_Canvas.Bounds.Height - BorderWidth * 2.0) / 8.0;
                 return 0;
@@ -905,7 +904,7 @@ namespace CoreChess.Controls
             if (resetZindex)
                 pGraphics.ZIndex = 1;
 
-            while(audioStream != 0 && Bass.BASS_ChannelIsActive(audioStream) == BASSActive.BASS_ACTIVE_PLAYING)
+            while (audioStream != 0 && Bass.BASS_ChannelIsActive(audioStream) == BASSActive.BASS_ACTIVE_PLAYING)
                 await Task.Delay(10);
             Bass.BASS_StreamFree(audioStream);
 
