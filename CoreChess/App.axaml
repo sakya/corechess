@@ -55,6 +55,13 @@
       <Setter Property="CornerRadius" Value="5" />
     </Style>
 
+    <Style Selector="Button.Left /template/ ContentPresenter">
+      <Setter Property="CornerRadius" Value="5,0,0,5" />
+    </Style>
+    <Style Selector="Button.Right /template/ ContentPresenter">
+      <Setter Property="CornerRadius" Value="0,5,5,5" />
+    </Style>
+
     <Style Selector="ToggleButton.Left /template/ ContentPresenter">
       <Setter Property="CornerRadius" Value="5,0,0,5" />
     </Style>
