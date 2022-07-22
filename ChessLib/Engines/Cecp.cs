@@ -342,7 +342,8 @@ namespace ChessLib.Engines
         {
         } // SetOwnBook
 
-        public override int? GetElo() {
+        public override int? GetElo()
+        {
             return null;
         } // GetElo
 
@@ -422,8 +423,7 @@ namespace ChessLib.Engines
             while (m_Process != null && !m_Process.HasExited) {
                 m_ProcessOutputSema.WaitOne();
                 res = m_ProcessOutput.ToString();
-                if (commandEnd == null && res.Length > 0 || commandEnd != null && res.TrimEnd().EndsWith(commandEnd))
-                {
+                if (commandEnd == null && res.Length > 0 || commandEnd != null && res.TrimEnd().EndsWith(commandEnd)) {
                     m_ProcessOutput.Clear();
                     m_ProcessOutputSema.Release();
                     break;

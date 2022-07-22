@@ -1,0 +1,9 @@
+{
+	"FormattingOptions": {
+		"NewLinesForBracesInAccessors": false,
+		"NewLinesForBracesInControlBlocks": false,
+		"NewLineForElse": false,
+		"NewLineForCatch": false,
+		"NewLineForFinally": false
+	}
+}

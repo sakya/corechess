@@ -12,7 +12,7 @@ namespace ChessLib.Extensions
         /// <param name="rnd"></param>
         /// <param name="probs">The probabilities</param>
         /// <returns></returns>
-        public static int GetAlias(this Random rnd,  IEnumerable<int> probs)
+        public static int GetAlias(this Random rnd, IEnumerable<int> probs)
         {
             int pick = rnd.Next(probs.Sum());
             int sum = 0;
