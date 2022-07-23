@@ -59,7 +59,11 @@
       <Setter Property="CornerRadius" Value="5,0,0,5" />
     </Style>
     <Style Selector="Button.Right /template/ ContentPresenter">
-      <Setter Property="CornerRadius" Value="0,5,5,5" />
+      <Setter Property="CornerRadius" Value="0,5,5,0" />
+    </Style>
+
+    <Style Selector="Button.Selected /template/ ContentPresenter">
+      <Setter Property="BorderBrush" Value="{DynamicResource SystemAccentColor}" />
     </Style>
 
     <Style Selector="ToggleButton.Left /template/ ContentPresenter">

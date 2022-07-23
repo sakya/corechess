@@ -1,4 +1,4 @@
-<Window xmlns="https://github.com/avaloniaui"
+﻿<Window xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:vm="clr-namespace:CoreChess.ViewModels;assembly=CoreChess"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -12,6 +12,7 @@
         Title="CoreChess"
         WindowStartupLocation="CenterScreen"
         Width="800" Height="494"
+        MinHeight="500" MinWidth="600"
         KeyDown="OnWindowKeyDown"
         Closing="OnWindowClosing">
 
@@ -21,7 +22,6 @@
   </Window.Resources>
 
   <DockPanel>
-    <Label Name="m_Label" IsVisible="{Binding !#m_Menu.IsVisible}" Width="{Binding #m_Menu.Width}" Height="{Binding #m_Menu.Height}" DockPanel.Dock="Top" />
     <controls:TitleBar DockPanel.Dock="Top"/>
     <Menu Name="m_Menu" IsVisible="{Binding !IsPaused}" DockPanel.Dock="Top">
       <MenuItem Header="{i18n:Localize _File}">
@@ -207,21 +207,19 @@
           </StackPanel>
         </Grid>
 
-        <Button Name="m_PauseBtn" Classes="Small" Grid.Column="1" Click="OnPauseClick" ToolTip.Tip="Pause (Ctrl-P)" Width="40" Height="40">
+        <Button Name="m_PauseBtn" Classes="Small Left" Grid.Column="1" Click="OnPauseClick" ToolTip.Tip="Pause (Ctrl-P)" Width="40" Height="40">
           <StackPanel Orientation="Horizontal">
             <i:Icon Value="fas fa-pause" />
           </StackPanel>
         </Button>
 
-        <Border Grid.Column="1" Name="m_ViewCommentBtnBorder" CornerRadius="3" BorderThickness="1.5">
-	<Button Name="m_ViewCommentBtn" Classes="Small" IsVisible="{Binding !#m_PauseBtn.IsVisible}" Click="OnViewCommentBtnClick" ToolTip.Tip="Annotation (Ctrl-A)" Width="40" Height="40">
+        <Button Name="m_ViewCommentBtn" Grid.Column="1" Classes="Small Left" IsVisible="{Binding !#m_PauseBtn.IsVisible}" Click="OnViewCommentBtnClick" ToolTip.Tip="Annotation (Ctrl-A)" Width="40" Height="40">
           <StackPanel Orientation="Horizontal">
-            <i:Icon Value="fas fa-file" />
+            <i:Icon Value="fas fa-comment-alt" />
           </StackPanel>
         </Button>
-        </Border>
 
-	<Button Name="m_ZenModeBtn" Classes="Small" Grid.Column="2" Click="OnZenModeClick" ToolTip.Tip="Zen Mode (Z)" Width="40" Height="40">
+	      <Button Name="m_ZenModeBtn" Classes="Small Right" Grid.Column="2" Click="OnZenModeClick" ToolTip.Tip="Zen Mode (Z)" Width="40" Height="40">
           <StackPanel Orientation="Horizontal">
             <i:Icon Value="fas fa-chess-board" />
           </StackPanel>
