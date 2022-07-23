@@ -154,10 +154,12 @@ namespace CoreChess.Views
                             var cb = m_Owner.Window.FindControl<Controls.Chessboard>("m_Chessboard");
                             var content = m_Owner.Window.FindControl<Grid>("m_Content");
                             m_Owner.Window.Width = cb.Width + content.Margin.Left + content.Margin.Right;
+                            m_Owner.Window.MaxWidth = m_Owner.Window.Width;
                         }
                         m_Owner.Window.CanResize = false;
                     } else {
                         m_Owner.Window.MinWidth = 600;
+                        m_Owner.Window.MaxWidth = double.PositiveInfinity;
                         m_Owner.Window.FindControl<Grid>("m_SidePanel").IsVisible = true;
                         m_Owner.Window.FindControl<Menu>("m_Menu").IsVisible = true;
                         m_Owner.Window.RestoreWindowSizeAndPosition();
