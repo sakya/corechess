@@ -142,21 +142,24 @@ namespace CoreChess.Views
                     m_Owner.ZenMode = !m_Owner.ZenMode;
 
                     if (m_Owner.ZenMode) {
+                        m_Owner.Window.MinWidth = 0;
                         m_Owner.Window.SaveWindowSizeAndPosition();
                         m_Owner.Window.FindControl<Grid>("m_SidePanel").IsVisible = false;
-                        m_Owner.Window.FindControl<Menu>("m_Menu").IsVisible = false;
-                        m_Owner.Window.SizeToContent = SizeToContent.Width;
+                        m_Owner.Window.FindControl<Menu>("m_Menu").IsVisible = false;                        
                         if (m_Owner.Window.WindowState == WindowState.Maximized)
                             m_Owner.ContentAlignment = "Center";
-                        else
-                            m_Owner.ContentAlignment = "Stretch";
+                        else {
+                            m_Owner.ContentAlignment = "Stretch";                        
+                            m_Owner.Window.SizeToContent = SizeToContent.Width;
+                        }
                         m_Owner.Window.CanResize = false;
                     } else {
+                        m_Owner.Window.MinWidth = 600;
                         m_Owner.Window.FindControl<Grid>("m_SidePanel").IsVisible = true;
                         m_Owner.Window.FindControl<Menu>("m_Menu").IsVisible = true;
                         m_Owner.Window.SizeToContent = SizeToContent.Manual;
                         m_Owner.Window.RestoreWindowSizeAndPosition();
-                        m_Owner.ContentAlignment = "Stretch";
+                        m_Owner.ContentAlignment = "Stretch";                        
                         m_Owner.Window.CanResize = true;
                     }
                 }

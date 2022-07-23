@@ -39,6 +39,12 @@ namespace CoreChess.Controls
                     SetTitle(value);
                 });
 
+                var canResize = pw.GetObservable(Window.CanResizeProperty);
+                canResize.Subscribe(value =>
+                {
+                    this.FindControl<Button>("m_MaximizeBtn").IsEnabled = CanMaximize && value;
+                });
+
                 var wState = pw.GetObservable(Window.WindowStateProperty);
                 wState.Subscribe(s =>
                 {
