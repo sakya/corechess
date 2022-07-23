@@ -1,4 +1,4 @@
-﻿using Avalonia;
+using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.Notifications;
 using Avalonia.Input;
@@ -115,6 +115,48 @@ namespace CoreChess.Views
                         m_Owner.Window.FindControl<Border>("m_EngineMessageSection").IsVisible = App.Settings.ShowEngineOutput;
                 }
             }
+
+	    class ZenModeCommand : ICommand
+            {
+                Context m_Owner = null;
+                public event EventHandler CanExecuteChanged {
+                    add { }
+                    remove { }
+                }
+
+                public ZenModeCommand(Context owner)
+                {
+                    m_Owner = owner;
+                }
+                public bool CanExecute(object parameter)
+                {
+                    return true;
+                }
+
+                public void Execute(object parameter)
+                {
+                    m_Owner.ZenMode = !m_Owner.ZenMode;
+
+		    if (m_Owner.ZenMode) {
+			m_Owner.Window.SaveWindowSizeAndPosition();
+			m_Owner.Window.FindControl<Grid>("m_SidePanel").IsVisible = false;
+			m_Owner.Window.FindControl<Menu>("m_Menu").IsVisible = false;
+			m_Owner.Window.SizeToContent = SizeToContent.Width;
+			if (m_Owner.Window.WindowState == WindowState.Maximized)
+			    m_Owner.ContentAlignment = "Center";
+			else
+                            m_Owner.ContentAlignment = "Stretch";
+			m_Owner.Window.SystemDecorations = SystemDecorations.None;
+		    } else {
+			m_Owner.Window.FindControl<Grid>("m_SidePanel").IsVisible = true;
+			m_Owner.Window.FindControl<Menu>("m_Menu").IsVisible = true;
+			m_Owner.Window.RestoreWindowSizeAndPosition();
+			m_Owner.ContentAlignment = "Stretch";
+			m_Owner.Window.SystemDecorations = SystemDecorations.Full;
+		    }
+                }
+            }
+
             #endregion
 
             bool m_IsResignEnabled = true;
@@ -125,6 +167,8 @@ namespace CoreChess.Views
             Settings.Notations? m_MoveNotation = null;
             Settings.CapturedPiecesDisplay? m_CapturedPieces = null;
             bool m_ShowEngineOutput = false;
+	    bool m_ZenMode = false;
+	    string m_ContentAlignment = "Stretch";
             string m_WhiteName = string.Empty;
             int? m_WhiteElo;
             string m_BlackName = string.Empty;
@@ -143,6 +187,7 @@ namespace CoreChess.Views
                 OnMoveNotationClick = new MoveNotationCommand(this);
                 OnCapturedPiecesClick = new CapturedPiecesCommand(this);
                 OnShowEngineOutputClick = new ShowEngineOutputCommand(this);
+		OnZenModeClick = new ZenModeCommand(this);
             }
 
             public MainWindow Window { get; private set; }
@@ -195,6 +240,18 @@ namespace CoreChess.Views
                 set { SetIfChanged(ref m_ShowEngineOutput, value); }
             }
 
+	    public bool ZenMode
+            {
+                get { return m_ZenMode; }
+                set { SetIfChanged(ref m_ZenMode, value); }
+            }
+            
+	    public string ContentAlignment
+            {
+                get { return m_ContentAlignment; }
+                set { SetIfChanged(ref m_ContentAlignment, value); }
+            }
+
             public string WhiteName
             {
                 get { return m_WhiteName; }
@@ -240,6 +297,7 @@ namespace CoreChess.Views
             public ICommand OnMoveNotationClick { get; set; }
             public ICommand OnCapturedPiecesClick { get; set; }
             public ICommand OnShowEngineOutputClick { get; set; }
+            public ICommand OnZenModeClick { get; set; }
 
             private void SetIfChanged<T>(ref T target, T value, [CallerMemberName] string propertyName = "")
             {
@@ -770,12 +828,15 @@ namespace CoreChess.Views
             } else if (e.KeyModifiers == KeyModifiers.Control && e.Key == Key.C) {
                 e.Handled = true;
                 OnCopyFenClick(null, new RoutedEventArgs());
-            } else if (e.KeyModifiers == KeyModifiers.Control && e.Key == Key.G) {
+	            } else if (e.KeyModifiers == KeyModifiers.Control && e.Key == Key.G) {
                 e.Handled = true;
                 OnCopyPgnToClipboardClick(null, new RoutedEventArgs());
             } else if (e.KeyModifiers == KeyModifiers.Control && e.Key == Key.Z) {
                 if (m_Context.IsResignEnabled)
                     OnUndoMoveClick(null, new RoutedEventArgs());
+	    } else if (e.KeyModifiers == KeyModifiers.Control && e.Key == Key.R) {
+		e.Handled = true;
+		OnResignClick(null, new RoutedEventArgs());
             } else if (e.KeyModifiers == KeyModifiers.None && e.Key == Key.F1) {
                 e.Handled = true;
                 OnAboutClick(null, new RoutedEventArgs());
@@ -806,6 +867,15 @@ namespace CoreChess.Views
                     OnMoveNavigationClick(btn, new RoutedEventArgs());
                     e.Handled = true;
                 }
+	    } else if (e.KeyModifiers == KeyModifiers.None && e.Key == Key.Z) {
+		    OnZenModeClick(null, new RoutedEventArgs());
+                    e.Handled = true;
+            } else if (e.KeyModifiers == KeyModifiers.Control && e.Key == Key.A) {
+		var btn = this.FindControl<Button>("m_ViewCommentBtn");
+                if (btn.IsEnabled) {
+                    OnViewCommentBtnClick(btn, new RoutedEventArgs());
+                    e.Handled = true;
+                }
             }
         } // OnWindowKeyDown
 
@@ -825,8 +895,9 @@ namespace CoreChess.Views
                 await m_Game.Stop();
                 m_Game.Dispose();
                 m_Game = null;
-
-                SaveWindowSizeAndPosition();
+		
+		if (!m_Context.ZenMode)
+                    SaveWindowSizeAndPosition();
 
                 this.Close();
             }
@@ -834,6 +905,11 @@ namespace CoreChess.Views
         #endregion
 
         #region Other events
+	private void OnZenModeClick(object sender, RoutedEventArgs e)
+        {
+		m_Context.OnZenModeClick.Execute(this);
+        } // OnZenModeClick
+
         private void OnPauseClick(object sender, RoutedEventArgs e)
         {
             if (m_Chessboard.Game.Pause()) {
@@ -845,6 +921,13 @@ namespace CoreChess.Views
         {
             m_Chessboard.Game.Resume();
             m_Context.IsPaused = false;
+            if (m_Context.ZenMode) {
+		this.FindControl<Grid>("m_SidePanel").IsVisible = false;
+		this.FindControl<Menu>("m_Menu").IsVisible = false;
+	    } else {
+		this.FindControl<Grid>("m_SidePanel").IsVisible = true;
+		this.FindControl<Menu>("m_Menu").IsVisible = true;
+	    }
         } // OnResumeClick
 
         private void OnMoveTapped(object sender, RoutedEventArgs e)
@@ -868,6 +951,17 @@ namespace CoreChess.Views
                 }
             }
         } // OnMoveDoubleTapped
+	
+	private void OnViewCommentBtnClick(object sender, RoutedEventArgs e)
+        {
+		e.Handled = true;
+		if (m_CurrentMoveIndex.HasValue && m_CurrentMoveIndex >= 0) {
+		           var move = m_Game.Moves[m_CurrentMoveIndex.Value];
+		           TextBlock moveTxt = new TextBlock() { DataContext = move };
+		           OnMoveDoubleTapped(moveTxt, new RoutedEventArgs());
+		}
+        } // OnViewCommentBtnClick
+
 
         private void OnMouseOnAnalysisResult(object sender, GameAnalyzeGraph.MouseEventArgs args)
         {
@@ -923,6 +1017,7 @@ namespace CoreChess.Views
 
             // Show engine output setting
             m_Context.ShowEngineOutput = App.Settings.ShowEngineOutput;
+	    m_Context.ZenMode = false;
 
             Game game = null;
 
@@ -1373,6 +1468,9 @@ namespace CoreChess.Views
             m_Context.BlackName = m_Game.Settings.BlackPlayerName;
             m_Context.BlackElo = m_Game.Settings.BlackPlayer?.Elo;
 
+
+
+            this.FindControl<Border>("m_ViewCommentBtnBorder").Classes.Remove("Selected");
             if (m_Game.Ended) {
                 SetAnalyzeMode();
             } else {
@@ -1384,6 +1482,7 @@ namespace CoreChess.Views
                 this.FindControl<TextBlock>("m_WhiteTimeLeft").IsVisible = true;
                 this.FindControl<TextBlock>("m_BlackTimeLeft").IsVisible = true;
                 this.FindControl<Button>("m_PauseBtn").IsVisible = true;
+		this.FindControl<Button>("m_ViewCommentBtn").IsVisible = false;
             }
 
             m_Context.CanPause = !m_Game.Ended;
@@ -1441,6 +1540,7 @@ namespace CoreChess.Views
             this.FindControl<TextBlock>("m_WhiteTimeLeft").IsVisible = false;
             this.FindControl<TextBlock>("m_BlackTimeLeft").IsVisible = false;
             this.FindControl<StackPanel>("m_MoveNavigator").IsVisible = true;
+	    this.FindControl<Button>("m_ViewCommentBtn").IsVisible = true;
 
             this.FindControl<Button>("m_MoveFirst").IsEnabled = true;
             this.FindControl<Button>("m_MovePrevious").IsEnabled = true;
@@ -1511,7 +1611,16 @@ namespace CoreChess.Views
                     foreach (var t in stack.Children) {
                         if (move != null && t.DataContext == move) {
                             t.Classes.Add("CurrentMove");
-                            stack.BringIntoView();
+                 	    stack.BringIntoView();
+			    string moveTxt = move.Comment;
+			    if (!String.IsNullOrEmpty(moveTxt)) {
+				this.FindControl<Border>("m_ViewCommentBtnBorder").Classes.Add("Selected");
+
+			    } else {
+				this.FindControl<Border>("m_ViewCommentBtnBorder").Classes.Remove("Selected");
+
+			    }
+
                         } else
                             t.Classes.Remove("CurrentMove");
                     }
