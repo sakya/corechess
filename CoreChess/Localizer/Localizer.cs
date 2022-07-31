@@ -17,7 +17,6 @@
 
         public Localizer()
         {
-
         }
 
         public bool LoadLanguage(string language)

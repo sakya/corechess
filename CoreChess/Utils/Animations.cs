@@ -80,6 +80,5 @@ namespace CoreChess.Utils
 
             return true;
         } // FadeInControl
-
     }
 }

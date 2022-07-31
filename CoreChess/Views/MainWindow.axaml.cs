@@ -974,7 +974,6 @@ namespace CoreChess.Views
             }
         } // OnViewCommentBtnClick
 
-
         private void OnMouseOnAnalysisResult(object sender, GameAnalyzeGraph.MouseEventArgs args)
         {
             var move = args.Index.HasValue ? m_Game.Moves[args.Index.Value - 1] : null;
@@ -1479,8 +1478,6 @@ namespace CoreChess.Views
             m_Context.WhiteElo = m_Game.Settings.WhitePlayer?.Elo;
             m_Context.BlackName = m_Game.Settings.BlackPlayerName;
             m_Context.BlackElo = m_Game.Settings.BlackPlayer?.Elo;
-
-
 
             this.FindControl<Button>("m_ViewCommentBtn").Classes.Remove("Selected");
             if (m_Game.Ended) {

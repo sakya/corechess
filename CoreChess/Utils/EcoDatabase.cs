@@ -30,7 +30,6 @@ namespace CoreChess.Utils
 
         public EcoDatabase()
         {
-
         }
 
         public Eco GetByMoves(string moves)

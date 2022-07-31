@@ -7,7 +7,6 @@ using System.Linq;
 
 namespace CoreChess.Utils
 {
-
     public class AutoUpdater
     {
         private GitHubClient m_Client = null;

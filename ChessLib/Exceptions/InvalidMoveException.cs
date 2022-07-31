@@ -20,6 +20,5 @@ namespace ChessLib.Exceptions
                 return $"Invalid move {Move} ({Reason}), FEN '{FEN}'";
             }
         }
-
     }
 }

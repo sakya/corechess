@@ -174,7 +174,6 @@ namespace ChessLib
 
             InitialKingSquare[0] = GetKingSquare(Game.Colors.White).File;
             InitialKingSquare[1] = GetKingSquare(Game.Colors.Black).File;
-
         } // Init
 
         /// <summary>

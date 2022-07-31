@@ -211,7 +211,6 @@ namespace CoreChess
 
                         engines.Add(dEngine);
                     } catch {
-
                     }
                 }
             }

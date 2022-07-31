@@ -182,7 +182,6 @@ namespace ChessLib
 
                     string annotation = string.Empty;
                     if (!string.IsNullOrEmpty(Moves[i].Comment)) {
-
                         // Remove new lines
                         Moves[i].Comment = Regex.Replace(Moves[i].Comment, "\\n", " ");
                         Moves[i].Comment = Moves[i].Comment.Trim();
@@ -569,7 +568,6 @@ namespace ChessLib
                     comment = comment.Remove(0, 1);
                 if (comment.EndsWith("}"))
                     comment = comment.Remove(comment.Length - 1, 1);
-
             }
             return comment;
         } // GetComment

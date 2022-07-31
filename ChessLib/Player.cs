@@ -36,7 +36,6 @@ namespace ChessLib
         public EnginePlayer(Game.Colors color, string name, int? elo)
             : base(color, name, elo)
         {
-
         }
 
         public Engines.EngineBase Engine { get; set; }
@@ -56,7 +55,6 @@ namespace ChessLib
         public HumanPlayer(Game.Colors color, string name, int? elo)
             : base(color, name, elo)
         {
-
         }
     } // HumanPlayer
 }

@@ -169,7 +169,6 @@ namespace ChessLib
             public EnginePlayer Player { get; set; }
             public string PonderingMove { get; set; }
             public Task<Engines.EngineBase.BestMove> PonderTask { get; set; }
-
         } // PonderData
 
         #endregion

@@ -10,7 +10,6 @@ namespace CoreChess.Controls
 {
     public class GamePreview : UserControl
     {
-
         private static System.Threading.Semaphore m_Semaphore = new System.Threading.Semaphore(1, 3);
         private PGN m_PgnGame = null;
         private Game m_Game = null;

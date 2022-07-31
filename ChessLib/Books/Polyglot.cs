@@ -276,7 +276,6 @@ namespace ChessLib.Books
 
         public Polyglot()
         {
-
         }
 
         public string FileName { get; set; }

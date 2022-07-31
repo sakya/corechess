@@ -40,7 +40,6 @@ namespace ChessLib.Books
 
         public Abk()
         {
-
         }
 
         public string FileName { get; set; }
@@ -59,7 +58,6 @@ namespace ChessLib.Books
 
         public void Dispose()
         {
-            
         }
 
         public List<IBookEntry> GetMovesFromFen(string fenString)
@@ -115,7 +113,6 @@ namespace ChessLib.Books
 
                     entry = ReadEntry(fs);
                 }
-
             }
             return res.OrderByDescending(m => m.Priority).ToList<IBookEntry>();
         } // GetMovesFromMoves

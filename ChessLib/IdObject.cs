@@ -7,9 +7,8 @@ namespace ChessLib
         public IdObject()
         {
             Id = Guid.NewGuid().ToString("N");
-        
         }
-        
+
         public string Id { get; set; }
     }
 }

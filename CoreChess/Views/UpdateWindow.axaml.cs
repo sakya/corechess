@@ -70,7 +70,6 @@ namespace CoreChess.Views
             }
         } // DownloadAndInstall
 
-
         private async Task<bool> DownloadAndInstallPrimitive(CancellationToken token)
         {
             var progress = this.FindControl<ProgressBar>("m_Progress");

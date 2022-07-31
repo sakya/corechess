@@ -319,7 +319,6 @@ namespace ChessLib.EBoards
                     Clock = new DgtClock();
                     Clock.Version = cv;
                 }
-
             } catch {
                 return false;
             }

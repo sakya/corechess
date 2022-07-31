@@ -162,7 +162,6 @@ namespace CoreChess.Views
                     }
                 }
             }
-
         } // OnEngineChanged
 
         private void OnOkClick(object sender, RoutedEventArgs e)

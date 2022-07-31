@@ -379,7 +379,6 @@ namespace ChessLib.Engines
         public TheKing(string name, string command)
             : base(name, command)
         {
-
         }
 
         public override async Task<bool> ApplyOptions(bool onlyModified)

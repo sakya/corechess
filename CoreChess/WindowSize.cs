@@ -13,7 +13,6 @@ namespace CoreChess
     {
         public WindowSize()
         {
-
         }
 
         public WindowState State { get; set; }

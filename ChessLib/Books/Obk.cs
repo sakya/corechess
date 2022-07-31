@@ -57,7 +57,6 @@ namespace ChessLib.Books
 
         public Obk()
         {
-
         }
 
         public string FileName { get; set; }
@@ -96,7 +95,6 @@ namespace ChessLib.Books
 
         public void Dispose()
         {
-
         }
 
         public List<IBookEntry> GetMovesFromFen(string fenString)
