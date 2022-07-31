@@ -12,8 +12,6 @@ namespace CoreChess.Views
 {
     public abstract class BaseView : Window
     {
-        private bool m_CenterDone = false;
-
         protected virtual void InitializeComponent()
         {
 #if DEBUG
@@ -26,19 +24,14 @@ namespace CoreChess.Views
             }
 
             SetWindowTitle();
-
-            // Fix for https://github.com/AvaloniaUI/Avalonia/issues/6433
-            if (!OperatingSystem.IsWindows()) {
-                var iv = this.GetObservable(Window.IsVisibleProperty);
-                iv.Subscribe(value =>
-                {
-                    if (value && !m_CenterDone) {
-                        m_CenterDone = true;
-                        CenterWindow();
-                    }
-                });
-            }
         } // InitializeComponent
+
+        protected override void OnOpened(EventArgs e)
+        {
+            // Fix for https://github.com/AvaloniaUI/Avalonia/issues/6433
+            if (!OperatingSystem.IsWindows())
+                CenterWindow();
+        }
 
         protected void SetWindowTitle()
         {
@@ -88,12 +81,11 @@ namespace CoreChess.Views
             }
         } // RestoreWindowSizeAndPosition
 
-        private async void CenterWindow()
+        private void CenterWindow()
         {
             if (this.WindowStartupLocation == WindowStartupLocation.Manual)
                 return;
 
-            await Task.Delay(1);
             double scale = PlatformImpl?.DesktopScaling ?? 1.0;
             IWindowBaseImpl powner = Owner?.PlatformImpl;
             if (powner != null) {
