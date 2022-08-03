@@ -23,6 +23,7 @@ dist/
 .flatpak-builder/
 build-dir/
 Output/
+.idea/
 
 # Roslyn cache directories
 *.ide/
