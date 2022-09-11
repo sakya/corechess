@@ -44,6 +44,14 @@
       </screenshot>
     </screenshots>
     <releases>
+      <release version="0.14.0.0" date="2022-09-11">
+        <description>
+          <ul>
+            <li>Upgraded Avalonia to v0.10.18</li>
+            <li>Upgraded freedesktop sdk to v22.08</li>
+          </ul>
+        </description>
+      </release>
       <release version="0.13.0.0" date="2022-07-23">
         <description>
           <ul>
@@ -60,7 +68,7 @@
             <li>Fixed crash when loading some PGN files</li>
             <li>Added MRU</li>
             <li>Added save to PGN with unknown date</li>
-            <li>Fixed captured material when reviewing a savd game</li>
+            <li>Fixed captured material when reviewing a saved game</li>
             <li>Added option to restore window size and position</li>
             <li>When loading a finished game the start position is displayed</li>
           </ul>
