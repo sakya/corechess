@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Avalonia;
 using Avalonia.Animation;
 using Avalonia.Controls;
+using Avalonia.Controls.Notifications;
 using Avalonia.Input;
 using Avalonia.Markup.Xaml;
 using Avalonia.Media;
@@ -22,6 +23,7 @@ public class MainWindow : Abstracts.BaseView
     readonly List<BasePage> m_PageHistory = new();
     private readonly Dictionary<string, BasePage.PageState> m_PageStates = new();
     private bool m_ChangingPage;
+    private WindowNotificationManager m_NotificationManager = null;
 
     #region classes
     public class TransitionSettings
@@ -90,7 +92,10 @@ public class MainWindow : Abstracts.BaseView
     {
         base.OnOpened(e);
         await Task.Delay(500);
-        await NavigateTo(new MainPage());
+        var mp = new MainPage();
+        // Load the ECO database
+        await mp.LoadEcoDatabase();
+        await NavigateTo(mp);
         SetWaitAnimation(false);
     }
 
@@ -100,6 +105,13 @@ public class MainWindow : Abstracts.BaseView
 
         if (App.Settings.RestoreWindowSizeAndPosition)
             RestoreWindowSizeAndPosition();
+
+        m_NotificationManager = new WindowNotificationManager(this)
+        {
+            Position = NotificationPosition.TopRight,
+            MaxItems = 3,
+            Margin = OperatingSystem.IsWindows() ? new Thickness(0, 30, 0, 0) : new Thickness(0)
+        };
 
         Transition = new TransitionSettings(TransitionSettings.EnterTransitions.SlideLeft, TimeSpan.FromMilliseconds(250));
         BackKey = Key.Escape;
@@ -180,6 +192,12 @@ public class MainWindow : Abstracts.BaseView
         if (page != null)
             m_PageStates.Remove(page.Id);
     } // RemovePageState
+
+    public void ShowNotification(string title, string message)
+    {
+        m_NotificationManager.Show(new Notification(title, message));
+    }
+
     #endregion
 
     private async Task ChangePage(BasePage exiting, BasePage entering, bool back)

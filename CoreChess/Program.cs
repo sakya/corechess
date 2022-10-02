@@ -103,9 +103,6 @@ namespace CoreChess
             }
 
             var res = new Views.MainWindow(args);
-            // Load the ECO database
-            //await res.LoadEcoDatabase();
-
             return res;
         } // InitializeApp
 

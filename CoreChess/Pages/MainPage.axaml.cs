@@ -1,6 +1,5 @@
 ﻿using Avalonia;
 using Avalonia.Controls;
-using Avalonia.Controls.Notifications;
 using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
@@ -337,7 +336,6 @@ namespace CoreChess.Pages
         List<string> m_EngineMessagesRows = new List<string>();
         Utils.EcoDatabase m_EcoDatabase = null;
         int? m_CurrentMoveIndex = null;
-        WindowNotificationManager m_NotificationManager = null;
         private List<Piece.Pieces> m_LastWhiteCapturedPieces = new List<Piece.Pieces>();
         private List<Piece.Pieces> m_LastBlackCapturedPieces = new List<Piece.Pieces>();
 
@@ -368,13 +366,6 @@ namespace CoreChess.Pages
             m_EngineMessage = this.FindControl<TextBlock>("m_EngineMessage");
 
             m_Wait.AttachedToVisualTree += InitializeWindow;
-
-            m_NotificationManager = new WindowNotificationManager(App.MainWindow)
-            {
-                Position = NotificationPosition.TopRight,
-                MaxItems = 3,
-                Margin = OperatingSystem.IsWindows() ? new Thickness(0, 30, 0, 0) : new Thickness(0)
-            };
         }
 
         public async Task<bool> LoadEcoDatabase()
@@ -691,7 +682,7 @@ namespace CoreChess.Pages
                         string pgn = await sr.ReadToEndAsync();
                         try {
                             await Application.Current.Clipboard.SetTextAsync(pgn);
-                            m_NotificationManager.Show(new Notification(Localizer.Localizer.Instance["Message"], Localizer.Localizer.Instance["PgnCopied"]));
+                            App.MainWindow.ShowNotification(Localizer.Localizer.Instance["Message"], Localizer.Localizer.Instance["PgnCopied"]);
                         } catch (Exception ex) {
                             await MessageWindow.ShowMessage(App.MainWindow, Localizer.Localizer.Instance["Error"], string.Format(Localizer.Localizer.Instance["ErrorCopyingString"], ex.Message), MessageWindow.Icons.Error);
                         }
@@ -724,7 +715,7 @@ namespace CoreChess.Pages
         {
             try {
                 await Application.Current.Clipboard.SetTextAsync(m_Game.GetFenString());
-                m_NotificationManager.Show(new Notification(Localizer.Localizer.Instance["Message"], Localizer.Localizer.Instance["FenStringCopied"]));
+                App.MainWindow.ShowNotification(Localizer.Localizer.Instance["Message"], Localizer.Localizer.Instance["FenStringCopied"]);
             } catch (Exception ex) {
                 await MessageWindow.ShowMessage(App.MainWindow, Localizer.Localizer.Instance["Error"], string.Format(Localizer.Localizer.Instance["ErrorCopyingString"], ex.Message), MessageWindow.Icons.Error);
             }
