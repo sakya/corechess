@@ -1,14 +1,14 @@
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Platform;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
+using Avalonia.Interactivity;
+using Avalonia.Markup.Xaml;
+using System.Threading;
 using System.Threading.Tasks;
+using System;
+using System.IO;
 
-namespace CoreChess.Views
+namespace CoreChess.Abstracts
 {
     public abstract class BaseView : Window
     {
@@ -22,9 +22,7 @@ namespace CoreChess.Views
                 this.ExtendClientAreaTitleBarHeightHint = -1;
                 this.ExtendClientAreaChromeHints = ExtendClientAreaChromeHints.NoChrome;
             }
-
-            SetWindowTitle();
-        } // InitializeComponent
+        }
 
         protected override void OnOpened(EventArgs e)
         {
@@ -33,14 +31,33 @@ namespace CoreChess.Views
                 CenterWindow();
         }
 
-        protected void SetWindowTitle()
+        private async void CenterWindow()
         {
-            string title = Localizer.Localizer.Instance[$"WT_{this.GetType().Name}"];
-            if (!string.IsNullOrEmpty(title))
-                this.Title = $"CoreChess - {title}";
-        }
+            if (this.WindowStartupLocation == WindowStartupLocation.Manual)
+                return;
 
-        protected void SaveWindowSizeAndPosition()
+            await Task.Delay(1);
+            double scale = PlatformImpl?.DesktopScaling ?? 1.0;
+            IWindowBaseImpl? powner = Owner?.PlatformImpl;
+            if (powner != null) {
+                scale = powner.DesktopScaling;
+            }
+            PixelRect rect = new PixelRect(PixelPoint.Origin,
+                PixelSize.FromSize(ClientSize, scale));
+            if (WindowStartupLocation == WindowStartupLocation.CenterScreen) {
+                Screen? screen = Screens.ScreenFromPoint(powner?.Position ?? Position);
+                if (screen == null)
+                    return;
+                Position = screen.WorkingArea.CenterRect(rect).Position;
+            } else {
+                if (powner == null || WindowStartupLocation != WindowStartupLocation.CenterOwner)
+                    return;
+                Position = new PixelRect(powner.Position,
+                    PixelSize.FromSize(powner.ClientSize, scale)).CenterRect(rect).Position;
+            }
+        } // CenterWindow
+
+        public void SaveWindowSizeAndPosition()
         {
             // Save window size and position
             var ws = new WindowSize()
@@ -56,7 +73,7 @@ namespace CoreChess.Views
             ws.Save(Path.Join(App.LocalPath, $"ws{this.GetType().Name}.json"));
         } // SaveWindowSizeAndPosition
 
-        protected void RestoreWindowSizeAndPosition()
+        public void RestoreWindowSizeAndPosition()
         {
             WindowSize ws = null;
             try {
@@ -80,30 +97,5 @@ namespace CoreChess.Views
                 }
             }
         } // RestoreWindowSizeAndPosition
-
-        private void CenterWindow()
-        {
-            if (this.WindowStartupLocation == WindowStartupLocation.Manual)
-                return;
-
-            double scale = PlatformImpl?.DesktopScaling ?? 1.0;
-            IWindowBaseImpl powner = Owner?.PlatformImpl;
-            if (powner != null) {
-                scale = powner.DesktopScaling;
-            }
-            PixelRect rect = new PixelRect(PixelPoint.Origin,
-                PixelSize.FromSize(ClientSize, scale));
-            if (WindowStartupLocation == WindowStartupLocation.CenterScreen) {
-                Screen screen = Screens.ScreenFromPoint(powner?.Position ?? Position);
-                if (screen == null)
-                    return;
-                Position = screen.WorkingArea.CenterRect(rect).Position;
-            } else {
-                if (powner == null || WindowStartupLocation != WindowStartupLocation.CenterOwner)
-                    return;
-                Position = new PixelRect(powner.Position,
-                    PixelSize.FromSize(powner.ClientSize, scale)).CenterRect(rect).Position;
-            }
-        } // CenterWindow
     }
 }

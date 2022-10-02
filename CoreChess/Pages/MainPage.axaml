@@ -1,0 +1,342 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:converters="clr-namespace:CoreChess.Converters"
+             xmlns:i="clr-namespace:Projektanker.Icons.Avalonia;assembly=Projektanker.Icons.Avalonia"
+             xmlns:i18n="clr-namespace:CoreChess.Localizer"
+             xmlns:controls="clr-namespace:CoreChess.Controls"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="400"
+             x:Class="CoreChess.Pages.MainPage"
+             KeyDown="OnWindowKeyDown">
+
+  <UserControl.Resources>
+    <converters:NotationToVisibilityConverter x:Key="NotationToVisibilityConverter"/>
+    <converters:CapturedPiecesToVisibilityConverter x:Key="CapturedPiecesToVisibilityConverter"/>
+  </UserControl.Resources>
+
+  <DockPanel>
+    <controls:TitleBar DockPanel.Dock="Top"/>
+    <Menu Name="m_Menu" IsVisible="{Binding !IsPaused}" DockPanel.Dock="Top">
+      <MenuItem Header="{i18n:Localize _File}">
+        <MenuItem Header="{i18n:Localize _NewGame}" Click="OnNewGameClick" InputGesture="CTRL + N">
+          <MenuItem.Icon>
+            <i:Icon FontSize="14" Value="far fa-file" />
+          </MenuItem.Icon>
+        </MenuItem>
+        <MenuItem Header="{i18n:Localize _LoadGame}" Click="OnLoadGameClick" InputGesture="CTRL + L" >
+          <MenuItem.Icon>
+            <i:Icon FontSize="14" Value="far fa-folder-open" />
+          </MenuItem.Icon>
+        </MenuItem>
+        <MenuItem Name="m_Mru" Header="{i18n:Localize _LoadRecentGame}">
+        </MenuItem>
+        <MenuItem Header="{i18n:Localize _SaveGame}" Click="OnSaveGameClick" InputGesture="CTRL + S" >
+          <MenuItem.Icon>
+            <i:Icon FontSize="14" Value="far fa-save" />
+          </MenuItem.Icon>
+        </MenuItem>
+        <Separator />
+        <MenuItem Header="{i18n:Localize _Exit}" Click="OnExitClick" InputGesture="Alt + F4" >
+          <MenuItem.Icon>
+            <i:Icon FontSize="14" Value="fas fa-sign-out-alt" />
+          </MenuItem.Icon>
+        </MenuItem>
+      </MenuItem>
+      <MenuItem Header="{i18n:Localize _Game}">
+        <MenuItem Header="{i18n:Localize Pause}" Click="OnPauseClick" InputGesture="CTRL + P">
+          <MenuItem.IsEnabled>
+            <MultiBinding Converter="{x:Static BoolConverters.And}">
+              <Binding Path="!IsPaused"/>
+              <Binding Path="CanPause"/>
+            </MultiBinding>
+          </MenuItem.IsEnabled>
+          <MenuItem.Icon>
+            <i:Icon FontSize="14" Value="fas fa-pause" />
+          </MenuItem.Icon>
+        </MenuItem>
+        <MenuItem Header="{i18n:Localize _UndoMove}" Click="OnUndoMoveClick" IsEnabled="{Binding IsResignEnabled}" InputGesture="CTRL + Z">
+          <MenuItem.Icon>
+            <i:Icon FontSize="14" Value="fas fa-undo" />
+          </MenuItem.Icon>
+        </MenuItem>
+        <MenuItem Header="{i18n:Localize _Resign}" Click="OnResignClick" IsEnabled="{Binding IsResignEnabled}" InputGesture="CTRL + R">
+          <MenuItem.Icon>
+            <i:Icon FontSize="14" Value="fas fa-chess-king" />
+          </MenuItem.Icon>
+        </MenuItem>
+        <MenuItem Header="{i18n:Localize _CopyPgnToClipboard}" Click="OnCopyPgnToClipboardClick" InputGesture="CTRL + G">
+          <MenuItem.Icon>
+            <i:Icon FontSize="14" Value="fas fa-copy" />
+          </MenuItem.Icon>
+        </MenuItem>
+        <MenuItem Header="{i18n:Localize _EngineSettings}" Click="OnEngineSettingsClick">
+          <MenuItem.Icon>
+            <i:Icon FontSize="14" Value="fas fa-cog" />
+          </MenuItem.Icon>
+        </MenuItem>
+      </MenuItem>
+      <MenuItem Header="{i18n:Localize _Chessboard}">
+        <MenuItem Header="{i18n:Localize _FlipBoard}" Click="OnFlipBoardClick" InputGesture="CTRL + F">
+          <MenuItem.Icon>
+            <i:Icon FontSize="14" Value="fas fa-retweet" />
+          </MenuItem.Icon>
+        </MenuItem>
+        <MenuItem Header="{i18n:Localize _SaveToPNG}" Click="OnSaveToPngClick">
+          <MenuItem.Icon>
+            <i:Icon FontSize="14" Value="fas fa-image" />
+          </MenuItem.Icon>
+        </MenuItem>
+        <MenuItem Header="{i18n:Localize _CopyFENstringToClipboard}" Click="OnCopyFenClick" InputGesture="CTRL + C">
+          <MenuItem.Icon>
+            <i:Icon FontSize="14" Value="fas fa-copy" />
+          </MenuItem.Icon>
+        </MenuItem>
+      </MenuItem>
+      <MenuItem Header="{i18n:Localize _View}">
+        <MenuItem Header="{i18n:Localize _Notation}">
+          <MenuItem.Icon>
+            <i:Icon FontSize="14" Value="fas fa-chess-board" />
+          </MenuItem.Icon>
+          <controls:CheckableMenuItem Header="{i18n:Localize _ShortAlgebraic}"
+                    Command="{Binding OnMoveNotationClick}" CommandParameter="ShortAlgebraic"
+                    IsChecked="{Binding MoveNotation, Converter={StaticResource NotationToVisibilityConverter}, ConverterParameter=ShortAlgebraic}"
+                    Group="notation" />
+          <controls:CheckableMenuItem Header="{i18n:Localize _FigurineShortAlgebraic}"
+                    Command="{Binding OnMoveNotationClick}" CommandParameter="FigurineShortAlgebraic"
+                    IsChecked="{Binding MoveNotation, Converter={StaticResource NotationToVisibilityConverter}, ConverterParameter=FigurineShortAlgebraic}"
+                    Group="notation" />
+          <controls:CheckableMenuItem Header="{i18n:Localize _LongAlgebraic}"
+                    Command="{Binding OnMoveNotationClick}" CommandParameter="LongAlgebraic"
+                    IsChecked="{Binding MoveNotation, Converter={StaticResource NotationToVisibilityConverter}, ConverterParameter=LongAlgebraic}"
+                    Group="notation" />
+          <controls:CheckableMenuItem Header="{i18n:Localize _FigurineLongAlgebraic}"
+                    Command="{Binding OnMoveNotationClick}" CommandParameter="FigurineLongAlgebraic"
+                    IsChecked="{Binding MoveNotation, Converter={StaticResource NotationToVisibilityConverter}, ConverterParameter=FigurineLongAlgebraic}"
+                    Group="notation" />
+          <controls:CheckableMenuItem Header="{i18n:Localize _Coordinate}"
+                    Command="{Binding OnMoveNotationClick}" CommandParameter="Coordinate"
+                    IsChecked="{Binding MoveNotation, Converter={StaticResource NotationToVisibilityConverter}, ConverterParameter=Coordinate}"
+                    Group="notation" />
+        </MenuItem>
+        <MenuItem Header="{i18n:Localize _CapturedPieces}">
+          <MenuItem.Icon>
+            <i:Icon FontSize="14" Value="fas fa-chess-knight" />
+          </MenuItem.Icon>
+          <controls:CheckableMenuItem Header="{i18n:Localize _CapturedAll}"
+                    Command="{Binding OnCapturedPiecesClick}" CommandParameter="All"
+                    IsChecked="{Binding CapturedPieces, Converter={StaticResource CapturedPiecesToVisibilityConverter}, ConverterParameter=All}"
+                    Group="captuter" />
+          <controls:CheckableMenuItem Header="{i18n:Localize _CapturedDifference}"
+                    Command="{Binding OnCapturedPiecesClick}" CommandParameter="Difference"
+                    IsChecked="{Binding CapturedPieces, Converter={StaticResource CapturedPiecesToVisibilityConverter}, ConverterParameter=Difference}"
+                    Group="captuter" />
+        </MenuItem>
+        <controls:CheckableMenuItem Header="{i18n:Localize _ShowEngineOutput}"
+                                    Command="{Binding OnShowEngineOutputClick}"
+                                    IsChecked="{Binding ShowEngineOutput}" />
+      </MenuItem>
+      <MenuItem Header="{i18n:Localize _Tools}">
+        <MenuItem Header="{i18n:Localize _GamesDatabase}" Click="OnGamesDatabaseClick">
+          <MenuItem.Icon>
+            <i:Icon FontSize="14" Value="fas fa-history" />
+          </MenuItem.Icon>
+        </MenuItem>
+        <MenuItem Header="{i18n:Localize _Engines}" Click="OnEnginesClick">
+          <MenuItem.Icon>
+            <i:Icon FontSize="14" Value="fas fa-chess" />
+          </MenuItem.Icon>
+        </MenuItem>
+        <Separator />
+        <MenuItem Header="{i18n:Localize _Settings}" Click="OnSettingsClick">
+          <MenuItem.Icon>
+            <i:Icon FontSize="14" Value="fas fa-cogs" />
+          </MenuItem.Icon>
+        </MenuItem>
+      </MenuItem>
+      <MenuItem Header="{i18n:Localize _Help}">
+        <MenuItem IsVisible="{Binding IsWindows}" IsEnabled="{Binding !CheckingForUpdates}" Header="{i18n:Localize _CheckForUpdates}" Click="OnCheckForUpdatesClick">
+          <MenuItem.Icon>
+            <i:Icon FontSize="14" Value="fas fa-upload" />
+          </MenuItem.Icon>
+        </MenuItem>
+        <MenuItem Header="{i18n:Localize _About}" Click="OnAboutClick" InputGesture="F1">
+          <MenuItem.Icon>
+            <i:Icon FontSize="14" Value="far fa-question-circle" />
+          </MenuItem.Icon>
+        </MenuItem>
+      </MenuItem>
+    </Menu>
+
+    <Grid Name="m_Content" HorizontalAlignment="{Binding ContentAlignment}" Margin="5">
+      <Grid.ColumnDefinitions>
+        <ColumnDefinition Width="Auto"/>
+        <ColumnDefinition Width="*"/>
+      </Grid.ColumnDefinitions>
+      <Grid.RowDefinitions>
+        <RowDefinition Height="Auto"/>
+        <RowDefinition Height="*"/>
+      </Grid.RowDefinitions>
+
+      <Grid Margin="0,5,0,5" Width="{Binding #m_Chessboard.Bounds.Width}">
+        <Grid.ColumnDefinitions>
+          <ColumnDefinition Width="*"/>
+          <ColumnDefinition Width="Auto"/>
+          <ColumnDefinition Width="Auto"/>
+          <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+
+        <Grid>
+          <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="*" />
+          </Grid.ColumnDefinitions>
+
+          <Border Name="m_WhiteBorder" ToolTip.Tip="{Binding WhiteElo}" CornerRadius="3" BorderThickness="1.5" Margin="0,0,5,0">
+            <Image Name="m_White" Height="40" Width="40"></Image>
+          </Border>
+          <StackPanel Grid.Column="1" Orientation="Vertical">
+            <TextBlock Name="m_WhiteName" Text="{Binding WhiteName}" VerticalAlignment="Center" FontSize="14" TextTrimming="CharacterEllipsis" />
+            <TextBlock Name="m_WhiteTimeLeft" Text="{Binding WhiteTime}" FontSize="20" VerticalAlignment="Center"/>
+          </StackPanel>
+        </Grid>
+
+        <Button Name="m_PauseBtn" Classes="Small Left" Grid.Column="1" Click="OnPauseClick" ToolTip.Tip="Pause (Ctrl-P)" Width="40" Height="40">
+          <StackPanel Orientation="Horizontal">
+            <i:Icon Value="fas fa-pause" />
+          </StackPanel>
+        </Button>
+
+        <Button Name="m_ViewCommentBtn" Grid.Column="1" Classes="Small Left" IsVisible="{Binding !#m_PauseBtn.IsVisible}" Click="OnViewCommentBtnClick" ToolTip.Tip="Annotation (Ctrl-A)" Width="40" Height="40">
+          <StackPanel Orientation="Horizontal">
+            <i:Icon Value="fas fa-comment-alt" />
+          </StackPanel>
+        </Button>
+
+	      <Button Name="m_ZenModeBtn" Classes="Small Right" Grid.Column="2" Click="OnZenModeClick" ToolTip.Tip="Zen Mode (Z)" Width="40" Height="40">
+          <StackPanel Orientation="Horizontal">
+            <i:Icon Value="fas fa-chess-board" />
+          </StackPanel>
+        </Button>
+
+        <Grid Grid.Column="3">
+          <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="Auto" />
+          </Grid.ColumnDefinitions>
+
+          <StackPanel Orientation="Vertical">
+            <TextBlock Name="m_BlackName" Text="{Binding BlackName}" VerticalAlignment="Center" FontSize="14" TextTrimming="CharacterEllipsis" HorizontalAlignment="Right" />
+            <TextBlock Name="m_BlackTimeLeft" Text="{Binding BlackTime}" FontSize="20" VerticalAlignment="Center" HorizontalAlignment="Right"/>
+          </StackPanel>
+          <Border Grid.Column="1" Name="m_BlackBorder" ToolTip.Tip="{Binding BlackElo}" CornerRadius="3" BorderThickness="1.5" Margin="5,0,0,0">
+            <Image Name="m_Black" Height="40" Width="40"></Image>
+          </Border>
+        </Grid>
+      </Grid>
+
+      <controls:Chessboard
+        Grid.Row="1"
+        Name="m_Chessboard"
+        NewGame="OnNewGame"
+        EngineError="OnEngineError"
+        EngineThinking="OnEngineThinking"
+        MoveMade="OnMoveMade"
+        GameEnded="OnGameEnded"
+        WhiteTimer="OnWhiteTimer"
+        BlackTimer="OnBlackTimer"
+        Width="{Binding #m_Chessboard.Bounds.Height}"/>
+
+      <Grid Name="m_Wait" Grid.Row="0" Grid.RowSpan="2" Background="{DynamicResource SystemControlBackgroundAltHighBrush}" IsVisible="True">
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+          <StackPanel Name="m_WaitSpinner" VerticalAlignment="Center" HorizontalAlignment="Center" Width="40" Height="40">
+            <i:Icon HorizontalAlignment="Center" VerticalAlignment="Center" Width="40" Height="40" FontSize="32" Value="fas fa-circle-notch" />
+          </StackPanel>
+        </StackPanel>
+      </Grid>
+
+      <Grid Name="m_SidePanel" Margin="5,5,0,0" Grid.Row="0" Grid.RowSpan="2" Grid.Column="1">
+        <Grid.RowDefinitions>
+          <RowDefinition Height="Auto" />
+          <RowDefinition Height="*" />
+          <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <!-- Captured pieces -->
+        <Border Grid.Row="0" Classes="Section">
+          <StackPanel Orientation="Vertical">
+            <TextBlock Classes="HighlightColor" Text="{i18n:Localize CapturedPieces}" VerticalAlignment="Center" />
+            <WrapPanel Name="m_WhiteCapturedPieces" MinHeight="50" Orientation="Horizontal"></WrapPanel>
+            <WrapPanel Name="m_BlackCapturedPieces" MinHeight="50" Orientation="Horizontal"></WrapPanel>
+          </StackPanel>
+        </Border>
+
+        <!-- Moves -->
+        <Border Grid.Row="1" Classes="Section" Margin="0,5,0,0">
+          <Grid>
+            <Grid.RowDefinitions>
+              <RowDefinition Height="Auto" />
+              <RowDefinition Height="Auto" />
+              <RowDefinition Height="Auto" />
+              <RowDefinition Height="*" />
+              <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+
+            <TextBlock Grid.Row="0" Text="{i18n:Localize Moves}" Classes="HighlightColor" />
+            <TextBlock Grid.Row="1" FontSize="12" Text="{Binding EcoName}" TextTrimming="CharacterEllipsis" />
+            <StackPanel Grid.Row="2" Name="m_MoveNavigator" Orientation="Horizontal" IsVisible="False">
+              <Button Name="m_MoveFirst" Classes="Small" Margin="0,0,5,0" Click="OnMoveNavigationClick">
+                <i:Icon Value="fas fa-step-backward" />
+              </Button>
+              <Button Name="m_MovePrevious" Classes="Small" Margin="0,0,5,0" Click="OnMoveNavigationClick">
+                <i:Icon Value="fas fa-caret-left" />
+              </Button>
+              <Button Name="m_MoveNext" Classes="Small" Margin="0,0,5,0" Click="OnMoveNavigationClick">
+                <i:Icon Value="fas fa-caret-right" />
+              </Button>
+              <Button Name="m_MoveLast" Classes="Small" Margin="0,0,5,0" Click="OnMoveNavigationClick">
+                <i:Icon Value="fas fa-step-forward" />
+              </Button>
+            </StackPanel>
+            <ScrollViewer Grid.Row="3" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Disabled">
+              <WrapPanel Name="m_Moves" Orientation="Vertical"></WrapPanel>
+            </ScrollViewer>
+          </Grid>
+        </Border>
+
+        <!-- Engine messages-->
+        <Border Name="m_EngineMessageSection" Grid.Row="2" Classes="Section" Margin="0,5,0,0">
+          <StackPanel Orientation="Vertical" MinHeight="100">
+            <TextBlock Text="{i18n:Localize EngineMessages}" Classes="HighlightColor" />
+            <TextBlock Name="m_EngineMessage" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" FontSize="14" />
+          </StackPanel>
+        </Border>
+
+        <!-- Game analysis -->
+        <Border Name="m_GameAnalyzeSection" Grid.Row="2" Classes="Section" IsVisible="False" Margin="0,5,0,0">
+          <StackPanel Grid.Row="5" Orientation="Vertical" MinHeight="100">
+            <TextBlock Text="{i18n:Localize GameAnalysis}" Classes="HighlightColor" />
+            <controls:GameAnalyzeGraph Name="m_GameGraph" MinHeight="50"
+              IsInteractive="True"
+              MouseClickOnResult="OnMouseClickOnAnalysisResult"
+              MouseOnResult="OnMouseOnAnalysisResult" />
+          </StackPanel>
+        </Border>
+      </Grid>
+
+      <Grid Grid.Row="0" Grid.RowSpan="2" Grid.ColumnSpan="2"
+            IsVisible="{Binding IsPaused}"
+            Background="{DynamicResource SystemControlBackgroundAltHighBrush}">
+        <StackPanel Orientation="Vertical" VerticalAlignment="Center">
+          <Button Grid.Column="1" Click="OnResumeClick" HorizontalAlignment="Center" ToolTip.Tip="Ctrl-P">
+            <StackPanel Orientation="Horizontal">
+              <i:Icon Value="fas fa-play" />
+              <TextBlock Text="{i18n:Localize Resume}" Margin="5,0,0,0"/>
+            </StackPanel>
+          </Button>
+          <TextBlock HorizontalAlignment="Center" Text="{i18n:Localize PauseMessage}" Margin="0,5,0,0" />
+        </StackPanel>
+      </Grid>
+    </Grid>
+  </DockPanel>
+</UserControl>

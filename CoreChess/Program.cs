@@ -53,10 +53,10 @@ namespace CoreChess
                 var splash = new Views.SplashWindow();
                 splash.Show();
                 await Task.Delay(100);
-                mApp.MainWindow = await InitializeApp(args);
-                mApp.MainWindow.Closed += (_, __) => stop.Cancel();
-                mApp.MainWindow.Show();
-                mApp.MainWindow.Activate();
+                App.MainWindow = await InitializeApp(args);
+                App.MainWindow.Closed += (_, __) => stop.Cancel();
+                App.MainWindow.Show();
+                App.MainWindow.Activate();
                 splash.Close();
             }
             Start();
@@ -104,7 +104,7 @@ namespace CoreChess
 
             var res = new Views.MainWindow(args);
             // Load the ECO database
-            await res.LoadEcoDatabase();
+            //await res.LoadEcoDatabase();
 
             return res;
         } // InitializeApp

@@ -11,10 +11,11 @@ using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using CoreChess.Abstracts;
 
-namespace CoreChess.Views
+namespace CoreChess.Dialogs
 {
-    public class NewGameWindow : BaseView
+    public class NewGameWindow : BaseDialog
     {
         public class Result
         {
@@ -35,10 +36,9 @@ namespace CoreChess.Views
             this.InitializeComponent();
         }
 
-        protected override void InitializeComponent()
+        private void InitializeComponent()
         {
             AvaloniaXamlLoader.Load(this);
-            base.InitializeComponent();
 
             var white = this.FindControl<Image>("m_White");
             white.Source = new Bitmap(System.IO.Path.Combine(App.GetPiecesPath(App.Settings.PiecesSet), "wKnight.png"));

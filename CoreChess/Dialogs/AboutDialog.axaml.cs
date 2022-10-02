@@ -3,12 +3,13 @@ using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
 using Avalonia.Input;
 using System.Reflection;
+using CoreChess.Abstracts;
 
-namespace CoreChess.Views
+namespace CoreChess.Dialogs
 {
-    public class AboutWindow : BaseView
+    public class AboutDialog : BaseDialog
     {
-        public AboutWindow()
+        public AboutDialog()
         {
             this.InitializeComponent();
 
@@ -19,10 +20,9 @@ namespace CoreChess.Views
             txt.Text = ((AssemblyCopyrightAttribute)System.Attribute.GetCustomAttribute(Assembly.GetExecutingAssembly(), typeof(AssemblyCopyrightAttribute), false)).Copyright;
         }
 
-        protected override void InitializeComponent()
+        protected void InitializeComponent()
         {
             AvaloniaXamlLoader.Load(this);
-            base.InitializeComponent();
         }
 
         private void OnKeyDown(object sender, KeyEventArgs args)
