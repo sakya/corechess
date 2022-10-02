@@ -91,7 +91,7 @@ public class MainWindow : Abstracts.BaseView
     protected override async void OnOpened(EventArgs e)
     {
         base.OnOpened(e);
-        await Task.Delay(500);
+        await Task.Delay(100);
         var mp = new MainPage();
         // Load the ECO database
         await mp.LoadEcoDatabase();
