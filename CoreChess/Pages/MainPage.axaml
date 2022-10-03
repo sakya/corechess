@@ -16,7 +16,6 @@
   </UserControl.Resources>
 
   <DockPanel>
-    <controls:TitleBar DockPanel.Dock="Top"/>
     <Menu Name="m_Menu" IsVisible="{Binding !IsPaused}" DockPanel.Dock="Top">
       <MenuItem Header="{i18n:Localize _File}">
         <MenuItem Header="{i18n:Localize _NewGame}" Click="OnNewGameClick" InputGesture="CTRL + N">
