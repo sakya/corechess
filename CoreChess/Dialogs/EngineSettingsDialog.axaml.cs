@@ -4,10 +4,11 @@ using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
 using ChessLib;
 using System.Linq;
+using CoreChess.Abstracts;
 
-namespace CoreChess.Views
+namespace CoreChess.Dialogs
 {
-    public class EngineSettingsWindow : BaseView
+    public class EngineSettingsWindow : BaseDialog
     {
         public EngineSettingsWindow()
         {
@@ -30,10 +31,9 @@ namespace CoreChess.Views
             }
         }
 
-        protected override void InitializeComponent()
+        private void InitializeComponent()
         {
             AvaloniaXamlLoader.Load(this);
-            base.InitializeComponent();
         }
 
         private void OnOkClick(object sender, RoutedEventArgs e)

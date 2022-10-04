@@ -6,11 +6,12 @@ using ChessLib.Engines;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using CoreChess.Abstracts;
 using CoreChess.Dialogs;
 
 namespace CoreChess.Views
 {
-    public class EnginesWindow : BaseView
+    public class EnginesWindow : BasePage
     {
         Controls.ItemsList m_List = null;
         Grid m_EngineProperties = null;
@@ -23,10 +24,9 @@ namespace CoreChess.Views
             this.InitializeComponent();
         }
 
-        protected override void InitializeComponent()
+        private void InitializeComponent()
         {
             AvaloniaXamlLoader.Load(this);
-            base.InitializeComponent();
 
             if (!OperatingSystem.IsWindows()) {
                 var cb = this.FindControl<ComboBox>("m_EngineType");
@@ -144,7 +144,7 @@ namespace CoreChess.Views
         private async void OnRemoveEngineClick(object sender, RoutedEventArgs e)
         {
             EngineBase engine = (sender as Button).DataContext as EngineBase;
-            if (await MessageDialog.ShowConfirmMessage(this, Localizer.Localizer.Instance["Confirm"], string.Format(Localizer.Localizer.Instance["RemoveEngine"], engine.Name))) {
+            if (await MessageDialog.ShowConfirmMessage(App.MainWindow, Localizer.Localizer.Instance["Confirm"], string.Format(Localizer.Localizer.Instance["RemoveEngine"], engine.Name))) {
                 m_Engines.Remove(engine);
                 m_List.Items = m_Engines.OrderBy(e => e.Name);
             }
@@ -165,7 +165,7 @@ namespace CoreChess.Views
                     new FileDialogFilter(){ Extensions = new List<string>() {"exe" }, Name = "Executables"},
                 };
             }
-            string[] files = await dlg.ShowAsync(this);
+            string[] files = await dlg.ShowAsync(App.MainWindow);
             if (files?.Length > 0) {
                 var txt = this.FindControl<TextBox>("m_EngineExePath");
                 txt.Text = files[0];
@@ -175,7 +175,7 @@ namespace CoreChess.Views
         private async void OnWorkingDirClick(object sender, RoutedEventArgs e)
         {
             var dlg = new OpenFolderDialog();
-            string path = await dlg.ShowAsync(this);
+            string path = await dlg.ShowAsync(App.MainWindow);
             if (!string.IsNullOrEmpty(path)) {
                 var txt = this.FindControl<TextBox>("m_EngineWorkingDir");
                 txt.Text = path;
@@ -198,7 +198,7 @@ namespace CoreChess.Views
                 engine.Arguments = txt.Text;
 
                 if (string.IsNullOrEmpty(engine.Command)) {
-                    await MessageDialog.ShowMessage(this, Localizer.Localizer.Instance["Error"], Localizer.Localizer.Instance["MissingEngineCommand"], MessageDialog.Icons.Error);
+                    await MessageDialog.ShowMessage(App.MainWindow, Localizer.Localizer.Instance["Error"], Localizer.Localizer.Instance["MissingEngineCommand"], MessageDialog.Icons.Error);
                     return;
                 }
 
@@ -211,13 +211,13 @@ namespace CoreChess.Views
                         m_Engines.Add(engine);
                         m_List.Items = m_Engines.OrderBy(e => e.Name);
                     } catch (Exception ex) {
-                        await MessageDialog.ShowMessage(this, Localizer.Localizer.Instance["Error"], string.Format(Localizer.Localizer.Instance["ErrorStartingEngine"], ex.Message), MessageDialog.Icons.Error);
+                        await MessageDialog.ShowMessage(App.MainWindow, Localizer.Localizer.Instance["Error"], string.Format(Localizer.Localizer.Instance["ErrorStartingEngine"], ex.Message), MessageDialog.Icons.Error);
                         return;
                     }
                 }
 
                 if (string.IsNullOrEmpty(engine.Name)) {
-                    await MessageDialog.ShowMessage(this, Localizer.Localizer.Instance["Error"], Localizer.Localizer.Instance["MissingEngineName"], MessageDialog.Icons.Error);
+                    await MessageDialog.ShowMessage(App.MainWindow, Localizer.Localizer.Instance["Error"], Localizer.Localizer.Instance["MissingEngineName"], MessageDialog.Icons.Error);
                     return;
                 }
 
@@ -232,11 +232,11 @@ namespace CoreChess.Views
             } else {
                 App.Settings.Engines = m_Engines;
                 App.Settings.Save(App.SettingsPath);
-                this.Close();
+                await NavigateBack();
             }
         } // OnOkClick
 
-        private void OnCancelClick(object sender, RoutedEventArgs e)
+        private async void OnCancelClick(object sender, RoutedEventArgs e)
         {
             if (m_EngineProperties.IsVisible) {
                 m_EngineProperties.IsVisible = false;
@@ -245,7 +245,7 @@ namespace CoreChess.Views
                 m_EngineOptions.IsVisible = false;
                 m_List.IsVisible = true;
             } else
-                this.Close();
+                await NavigateBack();
         } // OnCancelClick
     }
 }

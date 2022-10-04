@@ -215,16 +215,12 @@
       <DependentUpon>ColorPickerWindow.axaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Update="Pages\EnginesWindow.axaml.cs">
+    <Compile Update="Pages\EnginesPage.axaml.cs">
       <DependentUpon>EnginesWindow.axaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Update="Pages\GamesDatabaseWindow.axaml.cs">
+    <Compile Update="Pages\GamesDatabasePage.axaml.cs">
       <DependentUpon>GamesDatabaseWindow.axaml</DependentUpon>
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Update="Pages\EngineSettingsWindow.axaml.cs">
-      <DependentUpon>EngineSettingsWindow.axaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
     <Compile Update="Pages\MainPage.axaml.cs">
@@ -256,6 +252,10 @@
     </Compile>
     <Compile Update="Dialogs\NewGameDialog.axaml.cs">
       <DependentUpon>NewGameWindow.axaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="Dialogs\EngineSettingsDialog.axaml.cs">
+      <DependentUpon>EngineSettingsWindow.axaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
   </ItemGroup>

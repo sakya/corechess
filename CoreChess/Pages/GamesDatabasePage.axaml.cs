@@ -8,11 +8,12 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using CoreChess.Abstracts;
 using CoreChess.Dialogs;
 
-namespace CoreChess.Views
+namespace CoreChess.Pages
 {
-    public class GamesDatabaseWindow : BaseView
+    public class GamesDatabaseWindow : BasePage
     {
         List<Game> m_Games = null;
 
@@ -29,10 +30,9 @@ namespace CoreChess.Views
             SetGamesList();
         }
 
-        protected override void InitializeComponent()
+        private void InitializeComponent()
         {
             AvaloniaXamlLoader.Load(this);
-            base.InitializeComponent();
         }
 
         private void OnKeyDown(object sender, KeyEventArgs e)
@@ -58,13 +58,13 @@ namespace CoreChess.Views
         private void OnListDoubleTapped(object sender, RoutedEventArgs e)
         {
             var selected = (sender as Controls.ItemsList).SelectedItem as Game;
-            if (selected != null)
-                this.Close(selected);
+            //if (selected != null)
+            //    this.Close(selected);
         } // OnListDoubleTapped
 
         private async void OnRemoveClick(object sender, RoutedEventArgs e)
         {
-            if (await MessageDialog.ShowConfirmMessage(this, Localizer.Localizer.Instance["Confirm"], Localizer.Localizer.Instance["RemoveGame"])) {
+            if (await MessageDialog.ShowConfirmMessage(App.MainWindow, Localizer.Localizer.Instance["Confirm"], Localizer.Localizer.Instance["RemoveGame"])) {
                 var game = (sender as Button).DataContext as Game;
                 File.Delete(game.FileName);
 
@@ -79,13 +79,13 @@ namespace CoreChess.Views
             var list = this.FindControl<Controls.ItemsList>("m_List");
 
             var selected = list.SelectedItem as Game;
-            if (selected != null)
-                this.Close(selected);
+            //if (selected != null)
+            //    this.Close(selected);
         }
 
-        private void OnCancelClick(object sender, RoutedEventArgs e)
+        private async void OnCancelClick(object sender, RoutedEventArgs e)
         {
-            this.Close(null);
+            await NavigateBack();
         }
 
         private void SetGamesList(int? selectedIndex = null)

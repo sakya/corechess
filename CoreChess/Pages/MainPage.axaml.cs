@@ -695,7 +695,7 @@ namespace CoreChess.Pages
         private async void OnEngineSettingsClick(object sender, RoutedEventArgs e)
         {
             var dlg = new EngineSettingsWindow(m_Game);
-            await dlg.ShowDialog(App.MainWindow);
+            await dlg.Show(App.MainWindow);
         } // OnEngineSettingsClick
 
         private async void OnSaveToPngClick(object sender, RoutedEventArgs e)
@@ -738,7 +738,8 @@ namespace CoreChess.Pages
             }
             wDlg.Close();
             var gDlg = new GamesDatabaseWindow(games);
-            var selGame = await gDlg.ShowDialog<Game>(App.MainWindow);
+            await NavigateTo(gDlg);
+            /*var selGame = await gDlg.ShowDialog<Game>(App.MainWindow);
 
             if (selGame != null) {
                 await SetGame(selGame);
@@ -746,13 +747,13 @@ namespace CoreChess.Pages
                 {
                     DisplayMove(m_Game.Moves.Count - 1);
                 }, TimeSpan.FromMilliseconds(100), DispatcherPriority.Background);
-            }
+            }*/
         } // OnGamesDatabaseClick
 
         private async void OnEnginesClick(object sender, RoutedEventArgs e)
         {
             var dlg = new EnginesWindow();
-            await dlg.ShowDialog(App.MainWindow);
+            await NavigateTo(dlg);
         } // OnEnginesClick
 
         private async void OnSettingsClick(object sender, RoutedEventArgs e)
