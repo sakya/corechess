@@ -1,9 +1,6 @@
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Platform;
-using Avalonia.Interactivity;
-using Avalonia.Markup.Xaml;
-using System.Threading;
 using System.Threading.Tasks;
 using System;
 using System.IO;
@@ -38,14 +35,14 @@ namespace CoreChess.Abstracts
 
             await Task.Delay(1);
             double scale = PlatformImpl?.DesktopScaling ?? 1.0;
-            IWindowBaseImpl? powner = Owner?.PlatformImpl;
+            IWindowBaseImpl powner = Owner?.PlatformImpl;
             if (powner != null) {
                 scale = powner.DesktopScaling;
             }
             PixelRect rect = new PixelRect(PixelPoint.Origin,
                 PixelSize.FromSize(ClientSize, scale));
             if (WindowStartupLocation == WindowStartupLocation.CenterScreen) {
-                Screen? screen = Screens.ScreenFromPoint(powner?.Position ?? Position);
+                Screen screen = Screens.ScreenFromPoint(powner?.Position ?? Position);
                 if (screen == null)
                     return;
                 Position = screen.WorkingArea.CenterRect(rect).Position;
@@ -75,7 +72,7 @@ namespace CoreChess.Abstracts
 
         public void RestoreWindowSizeAndPosition()
         {
-            WindowSize ws = null;
+            WindowSize ws;
             try {
                 ws = WindowSize.Load(Path.Join(App.LocalPath, $"ws{this.GetType().Name}.json"));
                 if (ws == null)

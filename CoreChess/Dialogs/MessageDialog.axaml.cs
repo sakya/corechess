@@ -1,15 +1,16 @@
-﻿using Avalonia;
-using Avalonia.Controls;
+﻿using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
 using Avalonia.Media;
 using System.Threading.Tasks;
+using Avalonia.Input;
+using CoreChess.Abstracts;
 
-namespace CoreChess.Views
+namespace CoreChess.Dialogs
 {
-    public class MessageWindow : BaseView
+    public class MessageDialog : BaseDialog
     {
-        private static MessageWindow m_OpenedMessageWindow = null;
+        private static MessageDialog _openedMessageDialog = null;
 
         public enum Buttons
         {
@@ -26,15 +27,15 @@ namespace CoreChess.Views
             Info
         }
 
-        public MessageWindow()
+        public MessageDialog()
         {
         }
 
-        public MessageWindow(string title, string message, Buttons buttons = Buttons.YesNo, Icons icon = Icons.None)
+        public MessageDialog(string title, string message, Buttons buttons = Buttons.YesNo, Icons icon = Icons.None)
         {
             this.InitializeComponent();
 
-            this.Title = title;
+            KeyDown += OnKeyDown;
             var txt = this.FindControl<TextBlock>("m_Message");
             txt.Text = message;
 
@@ -73,23 +74,41 @@ namespace CoreChess.Views
                     break;
                 case Icons.Error:
                     i.Value = "fas fa-exclamation-triangle";
-                    i.Foreground = new SolidColorBrush((Color)this.FindResource("DangerColor"));
+                    i.Foreground = new SolidColorBrush((Color)App.MainWindow.FindResource("DangerColor"));
                     break;
                 case Icons.Info:
                     i.Value = "fas fa-info-circle";
-                    i.Foreground = new SolidColorBrush((Color)this.FindResource("InfoColor"));
+                    i.Foreground = new SolidColorBrush((Color)App.MainWindow.FindResource("InfoColor"));
                     break;
                 case Icons.Question:
                     i.Value = "fas fa-question-circle";
-                    i.Foreground = new SolidColorBrush((Color)this.FindResource("InfoColor"));
+                    i.Foreground = new SolidColorBrush((Color)App.MainWindow.FindResource("InfoColor"));
                     break;
             }
         }
 
-        protected override void InitializeComponent()
+        private void InitializeComponent()
         {
             AvaloniaXamlLoader.Load(this);
-            base.InitializeComponent();
+        }
+
+        private void OnKeyDown(object sender, KeyEventArgs e)
+        {
+            base.OnKeyDown(e);
+
+            var btn1 = this.FindControl<Button>("m_Button1");
+            var btn2 = this.FindControl<Button>("m_Button2");
+
+            var cancelBtn = btn1.IsCancel  || btn2.IsCancel;
+            var defaultBtn = btn1.IsDefault  || btn2.IsDefault;
+
+            if (e.Key == Key.Enter && defaultBtn) {
+                e.Handled = true;
+                Close(true);
+            } else if (e.Key == Key.Escape && cancelBtn) {
+                e.Handled = true;
+                Close(false);
+            }
         }
 
         private void OnButton1Click(object sender, RoutedEventArgs e)
@@ -105,17 +124,17 @@ namespace CoreChess.Views
         #region static operations
         public static void CloseOpenedWindow()
         {
-            if (m_OpenedMessageWindow != null) {
-                m_OpenedMessageWindow.Close(false);
-                m_OpenedMessageWindow = null;
+            if (_openedMessageDialog != null) {
+                _openedMessageDialog.Close(false);
+                _openedMessageDialog = null;
             }
         } // CloseOpenedWindow
 
         public static async Task<bool> ShowMessage(Window owner, string title, string message, Icons icon = Icons.None)
         {
             CloseOpenedWindow();
-            m_OpenedMessageWindow = new MessageWindow(title, message, Buttons.Ok, icon);
-            await m_OpenedMessageWindow.ShowDialog<bool>(owner);
+            _openedMessageDialog = new MessageDialog(title, message, Buttons.Ok, icon);
+            await _openedMessageDialog.Show<bool>(owner);
 
             return true;
         } // ShowMessage
@@ -123,8 +142,8 @@ namespace CoreChess.Views
         public static async Task<bool> ShowConfirmMessage(Window owner, string title, string message)
         {
             CloseOpenedWindow();
-            m_OpenedMessageWindow = new MessageWindow(title, message, Buttons.YesNo, Icons.Question);
-            return await m_OpenedMessageWindow.ShowDialog<bool>(owner);
+            _openedMessageDialog = new MessageDialog(title, message, Buttons.YesNo, Icons.Question);
+            return await _openedMessageDialog.Show<bool>(owner);
         } // ShowConfirmMessage
         #endregion
     }

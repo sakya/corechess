@@ -326,7 +326,7 @@ namespace CoreChess.Pages
         } // Context
         #endregion
 
-        string[] m_args = null;
+        string[] m_Args = null;
         bool m_Initialized = false;
         Context m_Context = null;
         Game m_Game = null;
@@ -346,7 +346,7 @@ namespace CoreChess.Pages
 
         public MainPage(string[] args)
         {
-            m_args = args;
+            m_Args = args;
             InitializeComponent();
         }
 
@@ -435,7 +435,7 @@ namespace CoreChess.Pages
         {
             await Dispatcher.UIThread.InvokeAsync(async () =>
             {
-                await MessageWindow.ShowMessage(App.MainWindow, Localizer.Localizer.Instance["Error"], error, MessageWindow.Icons.Error);
+                await MessageDialog.ShowMessage(App.MainWindow, Localizer.Localizer.Instance["Error"], error, MessageDialog.Icons.Error);
             });
         } // OnEngineError
 
@@ -519,7 +519,7 @@ namespace CoreChess.Pages
             await Dispatcher.UIThread.InvokeAsync(async () =>
             {
                 OnResumeClick(null, new RoutedEventArgs());
-                MessageWindow.CloseOpenedWindow();
+                MessageDialog.CloseOpenedWindow();
 
                 // Update the last move
                 if ((e.Reason == Game.Results.Timeout || e.Reason == Game.Results.Resignation) && m_Game.Moves.Count > 0) {
@@ -556,7 +556,7 @@ namespace CoreChess.Pages
         private async void OnNewGameClick(object sender, RoutedEventArgs e)
         {
             if (App.Settings.Engines == null || App.Settings.Engines.Count == 0) {
-                await MessageWindow.ShowMessage(App.MainWindow, Localizer.Localizer.Instance["Error"], Localizer.Localizer.Instance["NoEnginesError"], MessageWindow.Icons.Error);
+                await MessageDialog.ShowMessage(App.MainWindow, Localizer.Localizer.Instance["Error"], Localizer.Localizer.Instance["NoEnginesError"], MessageDialog.Icons.Error);
                 return;
             }
 
@@ -610,7 +610,7 @@ namespace CoreChess.Pages
                 try {
                     game.Init(settings);
                 } catch (Exception) {
-                    await MessageWindow.ShowMessage(App.MainWindow, Localizer.Localizer.Instance["Error"], Localizer.Localizer.Instance["InvalidFenString"], MessageWindow.Icons.Error);
+                    await MessageDialog.ShowMessage(App.MainWindow, Localizer.Localizer.Instance["Error"], Localizer.Localizer.Instance["InvalidFenString"], MessageDialog.Icons.Error);
 
                     settings.InitialFenPosition = string.Empty;
                     game.Init(settings);
@@ -636,8 +636,8 @@ namespace CoreChess.Pages
                     else
                         await m_Game.Save(file);
                 } catch (Exception ex) {
-                    await MessageWindow.ShowMessage(App.MainWindow, Localizer.Localizer.Instance["Error"],
-                            string.Format(Localizer.Localizer.Instance["SaveGameError"], ex.Message), MessageWindow.Icons.Error);
+                    await MessageDialog.ShowMessage(App.MainWindow, Localizer.Localizer.Instance["Error"],
+                            string.Format(Localizer.Localizer.Instance["SaveGameError"], ex.Message), MessageDialog.Icons.Error);
                 }
             }
         } // OnSaveGameClick
@@ -669,7 +669,7 @@ namespace CoreChess.Pages
 
         private async void OnResignClick(object sender, RoutedEventArgs e)
         {
-            if (!m_Game.Ended && await MessageWindow.ShowConfirmMessage(App.MainWindow, Localizer.Localizer.Instance["Confirm"], Localizer.Localizer.Instance["ResignGameConfirm"]))
+            if (!m_Game.Ended && await MessageDialog.ShowConfirmMessage(App.MainWindow, Localizer.Localizer.Instance["Confirm"], Localizer.Localizer.Instance["ResignGameConfirm"]))
                 await m_Chessboard.ResignGame();
         } // OnFlipBoardClick
 
@@ -684,7 +684,7 @@ namespace CoreChess.Pages
                             await Application.Current.Clipboard.SetTextAsync(pgn);
                             App.MainWindow.ShowNotification(Localizer.Localizer.Instance["Message"], Localizer.Localizer.Instance["PgnCopied"]);
                         } catch (Exception ex) {
-                            await MessageWindow.ShowMessage(App.MainWindow, Localizer.Localizer.Instance["Error"], string.Format(Localizer.Localizer.Instance["ErrorCopyingString"], ex.Message), MessageWindow.Icons.Error);
+                            await MessageDialog.ShowMessage(App.MainWindow, Localizer.Localizer.Instance["Error"], string.Format(Localizer.Localizer.Instance["ErrorCopyingString"], ex.Message), MessageDialog.Icons.Error);
                         }
                     }
                     File.Delete(tempFile);
@@ -717,7 +717,7 @@ namespace CoreChess.Pages
                 await Application.Current.Clipboard.SetTextAsync(m_Game.GetFenString());
                 App.MainWindow.ShowNotification(Localizer.Localizer.Instance["Message"], Localizer.Localizer.Instance["FenStringCopied"]);
             } catch (Exception ex) {
-                await MessageWindow.ShowMessage(App.MainWindow, Localizer.Localizer.Instance["Error"], string.Format(Localizer.Localizer.Instance["ErrorCopyingString"], ex.Message), MessageWindow.Icons.Error);
+                await MessageDialog.ShowMessage(App.MainWindow, Localizer.Localizer.Instance["Error"], string.Format(Localizer.Localizer.Instance["ErrorCopyingString"], ex.Message), MessageDialog.Icons.Error);
             }
         } // OnCopyFenClick
 
@@ -729,8 +729,8 @@ namespace CoreChess.Pages
 
         private async void OnGamesDatabaseClick(object sender, RoutedEventArgs e)
         {
-            var wDlg = new WaitWindow(Localizer.Localizer.Instance["LoadingGames"]);
-            var wTask = wDlg.ShowDialog(App.MainWindow);
+            var wDlg = new WaitDialog(Localizer.Localizer.Instance["LoadingGames"]);
+            var wTask = wDlg.Show(App.MainWindow);
             List<Game> games = new List<Game>();
             foreach (var f in Directory.GetFiles(App.GamesDatabasePath, "*.ccsf")) {
                 var tempGame = await Game.Load(f);
@@ -1024,10 +1024,10 @@ namespace CoreChess.Pages
             Game game = null;
 
             // Check arguments
-            if (m_args != null && m_args.Length > 0) {
-                if (File.Exists(m_args[0])) {
+            if (m_Args != null && m_Args.Length > 0) {
+                if (File.Exists(m_Args[0])) {
                     try {
-                        game = await Game.Load(m_args[0]);
+                        game = await Game.Load(m_Args[0]);
                     } catch {
                     }
                 }
@@ -1038,7 +1038,9 @@ namespace CoreChess.Pages
                     try {
                         game = await Game.Load(autoSave);
                     } catch {
+                        // ignored
                     }
+
                     File.Delete(autoSave);
                 }
             }
@@ -1087,22 +1089,22 @@ namespace CoreChess.Pages
         private async Task<bool> LoadGame(string filePath)
         {
             if (Path.GetExtension(filePath) == ".pgn") {
-                var wDlg = new WaitWindow(Localizer.Localizer.Instance["LoadingPGN"]);
-                var wTask = wDlg.ShowDialog(App.MainWindow);
+                var wDlg = new WaitDialog(Localizer.Localizer.Instance["LoadingPGN"]);
+                var wTask = wDlg.Show(App.MainWindow);
                 List<PGN> games = null;
                 try {
                     games = await PGN.LoadFile(filePath);
                 } catch (Exception ex) {
                     wDlg.Close();
-                    await MessageWindow.ShowMessage(App.MainWindow, Localizer.Localizer.Instance["Error"],
-                        string.Format(Localizer.Localizer.Instance["LoadPgnError"], ex.Message), MessageWindow.Icons.Error);
+                    await MessageDialog.ShowMessage(App.MainWindow, Localizer.Localizer.Instance["Error"],
+                        string.Format(Localizer.Localizer.Instance["LoadPgnError"], ex.Message), MessageDialog.Icons.Error);
                     return false;
                 }
                 wDlg.Close();
 
                 Game game = null;
                 if (games.Count == 0)
-                    await MessageWindow.ShowMessage(App.MainWindow, Localizer.Localizer.Instance["Error"], Localizer.Localizer.Instance["NoGameFoundInPgn"], MessageWindow.Icons.Error);
+                    await MessageDialog.ShowMessage(App.MainWindow, Localizer.Localizer.Instance["Error"], Localizer.Localizer.Instance["NoGameFoundInPgn"], MessageDialog.Icons.Error);
                 else if (games.Count == 1)
                     game = await Game.LoadFromPgn(games[0], true);
                 else {
@@ -1127,7 +1129,7 @@ namespace CoreChess.Pages
                     App.Settings.Save(App.SettingsPath);
                     SetMru();
                 } catch {
-                    await MessageWindow.ShowMessage(App.MainWindow, Localizer.Localizer.Instance["Error"], Localizer.Localizer.Instance["LoadGameError"], MessageWindow.Icons.Error);
+                    await MessageDialog.ShowMessage(App.MainWindow, Localizer.Localizer.Instance["Error"], Localizer.Localizer.Instance["LoadGameError"], MessageDialog.Icons.Error);
                 }
             }
 
@@ -1431,7 +1433,7 @@ namespace CoreChess.Pages
                 m_Chessboard.SetEmpty();
                 SetChessboardOptions();
                 SetWaitAnimation(false);
-                await MessageWindow.ShowMessage(App.MainWindow, Localizer.Localizer.Instance["Error"], Localizer.Localizer.Instance["NoEnginesError"], MessageWindow.Icons.Error);
+                await MessageDialog.ShowMessage(App.MainWindow, Localizer.Localizer.Instance["Error"], Localizer.Localizer.Instance["NoEnginesError"], MessageDialog.Icons.Error);
                 return false;
             }
 
@@ -1501,7 +1503,7 @@ namespace CoreChess.Pages
             } catch (Exception ex) {
                 SetWaitAnimation(false);
                 m_Chessboard.SetEmpty();
-                await MessageWindow.ShowMessage(App.MainWindow, Localizer.Localizer.Instance["Error"], string.Format(Localizer.Localizer.Instance["ErrorStartingEngine"], ex.Message, MessageWindow.Icons.Error));
+                await MessageDialog.ShowMessage(App.MainWindow, Localizer.Localizer.Instance["Error"], string.Format(Localizer.Localizer.Instance["ErrorStartingEngine"], ex.Message, MessageDialog.Icons.Error));
             } finally {
                 SetWaitAnimation(false);
             }

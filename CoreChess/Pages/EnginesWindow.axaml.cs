@@ -6,6 +6,7 @@ using ChessLib.Engines;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using CoreChess.Dialogs;
 
 namespace CoreChess.Views
 {
@@ -143,7 +144,7 @@ namespace CoreChess.Views
         private async void OnRemoveEngineClick(object sender, RoutedEventArgs e)
         {
             EngineBase engine = (sender as Button).DataContext as EngineBase;
-            if (await MessageWindow.ShowConfirmMessage(this, Localizer.Localizer.Instance["Confirm"], string.Format(Localizer.Localizer.Instance["RemoveEngine"], engine.Name))) {
+            if (await MessageDialog.ShowConfirmMessage(this, Localizer.Localizer.Instance["Confirm"], string.Format(Localizer.Localizer.Instance["RemoveEngine"], engine.Name))) {
                 m_Engines.Remove(engine);
                 m_List.Items = m_Engines.OrderBy(e => e.Name);
             }
@@ -197,7 +198,7 @@ namespace CoreChess.Views
                 engine.Arguments = txt.Text;
 
                 if (string.IsNullOrEmpty(engine.Command)) {
-                    await MessageWindow.ShowMessage(this, Localizer.Localizer.Instance["Error"], Localizer.Localizer.Instance["MissingEngineCommand"], MessageWindow.Icons.Error);
+                    await MessageDialog.ShowMessage(this, Localizer.Localizer.Instance["Error"], Localizer.Localizer.Instance["MissingEngineCommand"], MessageDialog.Icons.Error);
                     return;
                 }
 
@@ -210,13 +211,13 @@ namespace CoreChess.Views
                         m_Engines.Add(engine);
                         m_List.Items = m_Engines.OrderBy(e => e.Name);
                     } catch (Exception ex) {
-                        await MessageWindow.ShowMessage(this, Localizer.Localizer.Instance["Error"], string.Format(Localizer.Localizer.Instance["ErrorStartingEngine"], ex.Message), MessageWindow.Icons.Error);
+                        await MessageDialog.ShowMessage(this, Localizer.Localizer.Instance["Error"], string.Format(Localizer.Localizer.Instance["ErrorStartingEngine"], ex.Message), MessageDialog.Icons.Error);
                         return;
                     }
                 }
 
                 if (string.IsNullOrEmpty(engine.Name)) {
-                    await MessageWindow.ShowMessage(this, Localizer.Localizer.Instance["Error"], Localizer.Localizer.Instance["MissingEngineName"], MessageWindow.Icons.Error);
+                    await MessageDialog.ShowMessage(this, Localizer.Localizer.Instance["Error"], Localizer.Localizer.Instance["MissingEngineName"], MessageDialog.Icons.Error);
                     return;
                 }
 

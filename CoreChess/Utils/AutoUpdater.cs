@@ -58,7 +58,7 @@ namespace CoreChess.Utils
                             return true;
                         }
                     } else if (manual) {
-                        await Views.MessageWindow.ShowMessage(owner, Localizer.Localizer.Instance["Info"], Localizer.Localizer.Instance["NoUpdateAvailable"], Views.MessageWindow.Icons.Info);
+                        await Dialogs.MessageDialog.ShowMessage(owner, Localizer.Localizer.Instance["Info"], Localizer.Localizer.Instance["NoUpdateAvailable"], Dialogs.MessageDialog.Icons.Info);
                     }
                 }
             }

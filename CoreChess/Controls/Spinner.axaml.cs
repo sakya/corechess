@@ -8,14 +8,14 @@ namespace CoreChess.Controls;
 
 public class Spinner : UserControl
 {
-    public static readonly DirectProperty<Spinner, string?> MessageProperty =
-        AvaloniaProperty.RegisterDirect<Spinner, string?>(
+    public static readonly DirectProperty<Spinner, string> MessageProperty =
+        AvaloniaProperty.RegisterDirect<Spinner, string>(
             nameof(Message),
             o => o.Message,
             (o, v) => o.Message = v);
 
     private readonly SpinnerModel _model = new();
-    private string? _message;
+    private string _message;
 
     public Spinner()
     {
@@ -23,7 +23,7 @@ public class Spinner : UserControl
         InitializeComponent();
     }
 
-    public string? Message
+    public string Message
     {
         get => _message;
         set

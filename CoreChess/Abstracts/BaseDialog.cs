@@ -18,6 +18,7 @@ public abstract class BaseDialog : UserControl, IDisposable
 
     protected BaseDialog()
     {
+        Margin = new Thickness(5);
         VerticalAlignment = VerticalAlignment.Center;
         HorizontalAlignment = HorizontalAlignment.Center;
 
@@ -88,12 +89,12 @@ public abstract class BaseDialog : UserControl, IDisposable
         return (T)m_Result;
     }
 
-    protected virtual void Close()
+    public virtual void Close()
     {
         Close(null);
     }
 
-    protected virtual void Close(object result)
+    public virtual void Close(object result)
     {
         m_Result = result;
         m_Closed = true;

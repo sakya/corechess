@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using CoreChess.Dialogs;
 
 namespace CoreChess.Views
 {
@@ -63,7 +64,7 @@ namespace CoreChess.Views
 
         private async void OnRemoveClick(object sender, RoutedEventArgs e)
         {
-            if (await MessageWindow.ShowConfirmMessage(this, Localizer.Localizer.Instance["Confirm"], Localizer.Localizer.Instance["RemoveGame"])) {
+            if (await MessageDialog.ShowConfirmMessage(this, Localizer.Localizer.Instance["Confirm"], Localizer.Localizer.Instance["RemoveGame"])) {
                 var game = (sender as Button).DataContext as Game;
                 File.Delete(game.FileName);
 

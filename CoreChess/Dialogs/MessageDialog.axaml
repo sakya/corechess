@@ -1,26 +1,18 @@
-<Window xmlns="https://github.com/avaloniaui"
+<UserControl xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:controls="clr-namespace:CoreChess.Controls"
         xmlns:i="clr-namespace:Projektanker.Icons.Avalonia;assembly=Projektanker.Icons.Avalonia"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-        x:Class="CoreChess.Views.MessageWindow"
-        WindowStartupLocation="CenterOwner"
-        ShowInTaskbar="False"
-        CanResize="False"
-        SizeToContent="WidthAndHeight">
+        x:Class="CoreChess.Dialogs.MessageDialog">
 
-  <Window.Styles>
+  <UserControl.Styles>
       <Style Selector="Button.Ok">
           <Setter Property="Margin" Value="5,0,0,0" />
       </Style>
-  </Window.Styles>
+  </UserControl.Styles>
 
-  <DockPanel>
-    <controls:TitleBar
-      CanMinimize="False" CanMaximize="False"
-      DockPanel.Dock="Top"/>
     <Grid Margin="10,10,10,5" DockPanel.Dock="Top">
       <Grid.RowDefinitions>
         <RowDefinition Height="*" />
@@ -43,5 +35,4 @@
         <Button Name="m_Button1" Classes="Small Accent Ok" Click="OnButton1Click" IsDefault="True" Margin="5,0,0,0">Yes</Button>
       </StackPanel>
     </Grid>
-  </DockPanel>
-</Window>
+</UserControl>

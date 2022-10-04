@@ -1,18 +1,18 @@
-﻿using Avalonia;
-using Avalonia.Controls;
+﻿using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
 using System.Threading.Tasks;
+using CoreChess.Abstracts;
 
-namespace CoreChess.Views
+namespace CoreChess.Dialogs
 {
-    public class WaitWindow : BaseView
+    public class WaitDialog : BaseDialog
     {
-        public WaitWindow()
+        public WaitDialog()
         {
             this.InitializeComponent();
         }
 
-        public WaitWindow(string message)
+        public WaitDialog(string message)
         {
             this.InitializeComponent();
 
@@ -20,16 +20,15 @@ namespace CoreChess.Views
             txt.Text = message;
         }
 
-        protected override void InitializeComponent()
+        private void InitializeComponent()
         {
             AvaloniaXamlLoader.Load(this);
-            base.InitializeComponent();
         }
 
         public static async Task<bool> ShowWaitWindow(Window owner, string message)
         {
-            var dlg = new WaitWindow();
-            await dlg.ShowDialog(owner);
+            var dlg = new WaitDialog();
+            await dlg.Show(owner);
 
             return true;
         } // ShowWaitWindow
