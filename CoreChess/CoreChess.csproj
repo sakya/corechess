@@ -207,10 +207,6 @@
       <DependentUpon>SettingsWindow.axaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Update="Pages\MoveCommentWindow.axaml.cs">
-      <DependentUpon>MoveCommentWindow.axaml</DependentUpon>
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Update="Pages\ColorPickerWindow.axaml.cs">
       <DependentUpon>ColorPickerWindow.axaml</DependentUpon>
       <SubType>Code</SubType>
@@ -256,6 +252,10 @@
     </Compile>
     <Compile Update="Dialogs\EngineSettingsDialog.axaml.cs">
       <DependentUpon>EngineSettingsWindow.axaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="Dialogs\MoveCommentDialog.axaml.cs">
+      <DependentUpon>MoveCommentWindow.axaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
   </ItemGroup>

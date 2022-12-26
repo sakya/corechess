@@ -560,8 +560,8 @@ namespace CoreChess.Pages
                 return;
             }
 
-            var ngw = new NewGameWindow();
-            var newGame = await ngw.Show<NewGameWindow.Result>(App.MainWindow);
+            var ngw = new NewGameDialog();
+            var newGame = await ngw.Show<NewGameDialog.Result>(App.MainWindow);
 
             if (newGame != null) {
                 if (newGame.Color == null) {
@@ -948,9 +948,9 @@ namespace CoreChess.Pages
         private async void OnMoveDoubleTapped(object sender, RoutedEventArgs e)
         {
             var move = (sender as TextBlock).DataContext as Game.MoveNotation;
-            var dlg = new MoveCommentWindow(move);
+            var dlg = new MoveCommentDialog(move);
 
-            if (await dlg.ShowDialog<bool>(App.MainWindow)) {
+            if (await dlg.Show<bool?>(App.MainWindow) == true) {
                 await UpdateMoves();
                 if (!string.IsNullOrEmpty(m_Game.FileName)) {
                     try {

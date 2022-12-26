@@ -3,19 +3,20 @@ using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
 using ChessLib;
+using CoreChess.Abstracts;
 
-namespace CoreChess.Views
+namespace CoreChess.Dialogs
 {
-    public class MoveCommentWindow : BaseView
+    public class MoveCommentDialog : BaseDialog
     {
         private Game.MoveNotation m_Move = null;
 
-        public MoveCommentWindow()
+        public MoveCommentDialog()
         {
             this.InitializeComponent();
         }
 
-        public MoveCommentWindow(Game.MoveNotation move)
+        public MoveCommentDialog(Game.MoveNotation move)
         {
             this.InitializeComponent();
 
@@ -25,10 +26,9 @@ namespace CoreChess.Views
             txt.AttachedToVisualTree += (s, e) => txt.Focus();
         }
 
-        protected override void InitializeComponent()
+        private void InitializeComponent()
         {
             AvaloniaXamlLoader.Load(this);
-            base.InitializeComponent();
         }
 
         private void OnOkClick(object sender, RoutedEventArgs e)

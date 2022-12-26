@@ -15,7 +15,7 @@ using CoreChess.Abstracts;
 
 namespace CoreChess.Dialogs
 {
-    public class NewGameWindow : BaseDialog
+    public class NewGameDialog : BaseDialog
     {
         public class Result
         {
@@ -31,7 +31,7 @@ namespace CoreChess.Dialogs
             public TheKing.Personality TheKingPersonality { get; set; }
         }
 
-        public NewGameWindow()
+        public NewGameDialog()
         {
             this.InitializeComponent();
         }
