@@ -738,16 +738,19 @@ namespace CoreChess.Pages
             }
             wDlg.Close();
             var gDlg = new GamesDatabaseWindow(games);
-            await NavigateTo(gDlg);
-            /*var selGame = await gDlg.ShowDialog<Game>(App.MainWindow);
+            gDlg.Navigating += async (s) =>
+            {
+                var selGame = gDlg.SelectedGame;
 
-            if (selGame != null) {
-                await SetGame(selGame);
-                DispatcherTimer.RunOnce(() =>
-                {
-                    DisplayMove(m_Game.Moves.Count - 1);
-                }, TimeSpan.FromMilliseconds(100), DispatcherPriority.Background);
-            }*/
+                if (selGame != null) {
+                    await SetGame(selGame);
+                    DispatcherTimer.RunOnce(() =>
+                    {
+                        DisplayMove(m_Game.Moves.Count - 1);
+                    }, TimeSpan.FromMilliseconds(100), DispatcherPriority.Background);
+                }
+            };
+            await NavigateTo(gDlg);
         } // OnGamesDatabaseClick
 
         private async void OnEnginesClick(object sender, RoutedEventArgs e)
@@ -758,17 +761,19 @@ namespace CoreChess.Pages
 
         private async void OnSettingsClick(object sender, RoutedEventArgs e)
         {
-            var dlg = new SettingsWindow();
-            await dlg.ShowDialog(App.MainWindow);
+            var dlg = new SettingsPage();
+            dlg.Navigating += async (s) =>
+            {
+                App.MainWindow.Topmost = App.Settings.Topmost;
+                SetChessboardOptions();
+                m_Chessboard.Redraw();
 
-            App.MainWindow.Topmost = App.Settings.Topmost;
-            SetChessboardOptions();
-            m_Chessboard.Redraw();
-
-            if (m_Game != null) {
-                UpdateCapturedPieces();
-                await UpdateMoves();
-            }
+                if (m_Game != null) {
+                    UpdateCapturedPieces();
+                    await UpdateMoves();
+                }
+            };
+            await NavigateTo(dlg);
         } // OnSettingsClick
 
         private async void OnCheckForUpdatesClick(object sender, RoutedEventArgs e)

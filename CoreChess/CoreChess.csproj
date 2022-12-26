@@ -203,7 +203,7 @@
       <DependentUpon>UpdateWindow.axaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Update="Pages\SettingsWindow.axaml.cs">
+    <Compile Update="Pages\SettingsPage.axaml.cs">
       <DependentUpon>SettingsWindow.axaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>

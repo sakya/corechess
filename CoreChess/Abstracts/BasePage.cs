@@ -22,6 +22,11 @@ namespace CoreChess.Abstracts
             public string PageId {get; private set; }
         } // PageState
 
+        #region events
+        public delegate void NavigatingHandler(object sender);
+        public event NavigatingHandler Navigating;
+        #endregion
+
         public BasePage()
         {
             Id = Guid.NewGuid().ToString("N");
@@ -85,7 +90,10 @@ namespace CoreChess.Abstracts
 
         public async Task<bool> NavigateBack()
         {
-            return await MainWindow!.NavigateBack();
+            var res =await MainWindow!.NavigateBack();
+            if (res)
+                Navigating?.Invoke(this);
+            return res;
         }
 
         public void SaveState(PageState state) {

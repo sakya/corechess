@@ -30,6 +30,8 @@ namespace CoreChess.Pages
             SetGamesList();
         }
 
+        public Game SelectedGame { get; set; }
+
         private void InitializeComponent()
         {
             AvaloniaXamlLoader.Load(this);
@@ -55,11 +57,11 @@ namespace CoreChess.Pages
             FilterGames();
         }
 
-        private void OnListDoubleTapped(object sender, RoutedEventArgs e)
+        private async void OnListDoubleTapped(object sender, RoutedEventArgs e)
         {
-            var selected = (sender as Controls.ItemsList).SelectedItem as Game;
-            //if (selected != null)
-            //    this.Close(selected);
+            SelectedGame = (sender as Controls.ItemsList).SelectedItem as Game;
+            if (SelectedGame != null)
+                await NavigateBack();
         } // OnListDoubleTapped
 
         private async void OnRemoveClick(object sender, RoutedEventArgs e)
@@ -74,13 +76,13 @@ namespace CoreChess.Pages
             }
         } // OnRemoveClick
 
-        private void OnOkClick(object sender, RoutedEventArgs e)
+        private async void OnOkClick(object sender, RoutedEventArgs e)
         {
             var list = this.FindControl<Controls.ItemsList>("m_List");
 
-            var selected = list.SelectedItem as Game;
-            //if (selected != null)
-            //    this.Close(selected);
+            SelectedGame = list.SelectedItem as Game;
+            if (SelectedGame != null)
+                await NavigateBack();
         }
 
         private async void OnCancelClick(object sender, RoutedEventArgs e)

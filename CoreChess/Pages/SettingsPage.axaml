@@ -1,23 +1,18 @@
-﻿<Window xmlns="https://github.com/avaloniaui"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:i="clr-namespace:Projektanker.Icons.Avalonia;assembly=Projektanker.Icons.Avalonia"
-        xmlns:i18n="clr-namespace:CoreChess.Localizer"
-        xmlns:converters="clr-namespace:CoreChess.Converters"
-        xmlns:controls="clr-namespace:CoreChess.Controls"
-        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-        x:Class="CoreChess.Views.SettingsWindow"
-        ShowInTaskbar="False"
-        WindowStartupLocation="CenterOwner"
-        Width="650" MinWidth="500"
-        MinHeight="400"
-        Title="CoreChess - Settings">
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:i="clr-namespace:Projektanker.Icons.Avalonia;assembly=Projektanker.Icons.Avalonia"
+             xmlns:i18n="clr-namespace:CoreChess.Localizer"
+             xmlns:converters="clr-namespace:CoreChess.Converters"
+             xmlns:controls="clr-namespace:CoreChess.Controls"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="CoreChess.Pages.SettingsPage">
 
-  <Window.Resources>
+  <UserControl.Resources>
     <converters:BitmapValueConverter x:Key="BitmapConverter"/>
     <converters:ObjectToBoolConverter x:Key="ObjectToBoolConverter"/>
-  </Window.Resources>
+  </UserControl.Resources>
 
   <DockPanel>
     <controls:TitleBar DockPanel.Dock="Top"/>
@@ -253,4 +248,4 @@
                                 OkText="{i18n:Localize Ok}" CancelText="{i18n:Localize Cancel}" />
     </Grid>
   </DockPanel>
-</Window>
+</UserControl>

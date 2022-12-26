@@ -6,10 +6,12 @@ using ChessLib.Engines;
 using System.Collections.Generic;
 using System.Linq;
 using System.ComponentModel;
+using AvaloniaColorPicker;
+using CoreChess.Abstracts;
 
-namespace CoreChess.Views
+namespace CoreChess.Pages
 {
-    public class SettingsWindow : BaseView
+    public class SettingsPage : BasePage
     {
         private bool? m_Result;
         private AvaloniaColorPicker.ColorButton<ColorPickerWindow> m_AccentButton;
@@ -90,17 +92,16 @@ namespace CoreChess.Views
             new ColorTheme("Symbol", "#ffffffff", "#ffc3c6be", "#ff58ac8a", "#ff18ab70"),
         };
 
-        public SettingsWindow()
+        public SettingsPage()
         {
             this.InitializeComponent();
         }
 
-        protected override void InitializeComponent()
+        private void InitializeComponent()
         {
             AvaloniaXamlLoader.Load(this);
-            base.InitializeComponent();
 
-            this.Closing += OnWindowClosing;
+            //this.Closing += OnWindowClosing;
 
             var cb = this.FindControl<ComboBox>("m_Fonts");
             var fonts = SkiaSharp.SKFontManager.Default.FontFamilies.OrderBy(f => f).ToList();
@@ -305,7 +306,6 @@ namespace CoreChess.Views
             var cb = sender as ComboBox;
             var language = (Language)cb.SelectedItem;
             Localizer.Localizer.Instance.LoadLanguage(language.Code);
-            SetWindowTitle();
         } // OnLanguageChanged
 
         private void OnColorThemeChanged(object sender, SelectionChangedEventArgs args)
@@ -348,14 +348,14 @@ namespace CoreChess.Views
                 new FileDialogFilter(){ Extensions = new List<string>() {"abk" }, Name = "Arena opening book"},
                 new FileDialogFilter(){ Extensions = new List<string>() {"obk" }, Name = "Chessmaster opening book"},
             };
-            string[] files = await dlg.ShowAsync(this);
+            string[] files = await dlg.ShowAsync(App.MainWindow);
             if (files?.Length > 0) {
                 var txt = this.FindControl<TextBox>("m_OpeningBook");
                 txt.Text = files[0];
             }
         } // OnOpeningBookClick
 
-        private void OnOkClick(object sender, RoutedEventArgs e)
+        private async void OnOkClick(object sender, RoutedEventArgs e)
         {
             var txt = this.FindControl<TextBox>("m_PlayerName");
             App.Settings.PlayerName = txt.Text;
@@ -425,16 +425,17 @@ namespace CoreChess.Views
 
             App.Settings.Save(App.SettingsPath);
             m_Result = true;
-            this.Close(m_Result);
+
+            await NavigateBack();
         } // OnOkClick
 
-        private void OnCancelClick(object sender, RoutedEventArgs e)
+        private async void OnCancelClick(object sender, RoutedEventArgs e)
         {
             Localizer.Localizer.Instance.LoadLanguage(App.Settings.Language);
             App.SetStyle(App.Settings.Style, App.Settings.AccentColor, App.Settings.HighlightColor, App.Settings.FontFamily);
 
             m_Result = false;
-            this.Close(m_Result);
+            await NavigateBack();
         } // OnCancelClick
 
         private void OnWindowClosing(object sender, CancelEventArgs args)
