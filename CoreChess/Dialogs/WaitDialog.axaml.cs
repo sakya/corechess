@@ -10,12 +10,16 @@ namespace CoreChess.Dialogs
         public WaitDialog()
         {
             this.InitializeComponent();
+            Animated = false;
+            CloseOnBackdropClick = false;
         }
 
         public WaitDialog(string message)
         {
             this.InitializeComponent();
 
+            Animated = false;
+            CloseOnBackdropClick = false;
             var txt = this.FindControl<TextBlock>("m_Message");
             txt.Text = message;
         }

@@ -18,6 +18,8 @@ public abstract class BaseDialog : UserControl, IDisposable
 
     protected BaseDialog()
     {
+        Animated = true;
+        CloseOnBackdropClick = true;
         Margin = new Thickness(5);
         VerticalAlignment = VerticalAlignment.Center;
         HorizontalAlignment = HorizontalAlignment.Center;
@@ -31,6 +33,9 @@ public abstract class BaseDialog : UserControl, IDisposable
         if (c != null)
             BorderBrush = new SolidColorBrush(c.Value);
     }
+
+    public bool Animated { get; set; }
+    public bool CloseOnBackdropClick { get; set; }
 
     public virtual void Dispose()
     {
@@ -64,12 +69,18 @@ public abstract class BaseDialog : UserControl, IDisposable
             Background = new SolidColorBrush(new Color(255, 0, 0, 0)),
             Opacity = 0.8
         };
+        border.Tapped += (s, a) =>
+        {
+            if (CloseOnBackdropClick)
+                Close();
+        };
         container.Children.Add(border);
         var bAnim = AnimateBackdrop(border, 0, 0.8);
 
         // Animate entrance
         container.Children.Add(this);
-        await Animate(container.Bounds.Height, 0.0);
+        if (Animated)
+            await Animate(container.Bounds.Height, 0.0);
         await bAnim;
         Focus();
         Opened();
@@ -79,7 +90,8 @@ public abstract class BaseDialog : UserControl, IDisposable
 
         // Animate exit
         bAnim = AnimateBackdrop(border, 0.8, 0);
-        await Animate(0.0, container.Bounds.Height);
+        if (Animated)
+            await Animate(0.0, container.Bounds.Height);
         await bAnim;
 
         container.Children.Remove(this);
