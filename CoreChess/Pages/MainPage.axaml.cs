@@ -155,13 +155,13 @@ namespace CoreChess.Pages
                             App.MainWindow.LayoutManager.ExecuteLayoutPass();
                             var cb = m_Owner.Page.FindControl<Controls.Chessboard>("m_Chessboard");
                             var content = m_Owner.Page.FindControl<Grid>("m_Content");
-                            m_Owner.Page.Width = cb.Width + content.Margin.Left + content.Margin.Right;
-                            m_Owner.Page.MaxWidth = m_Owner.Page.Width;
+                            App.MainWindow.Width = cb.Width + content.Margin.Left + content.Margin.Right;
+                            App.MainWindow.MaxWidth = App.MainWindow.Width;
                         }
                         App.MainWindow.CanResize = false;
                     } else {
-                        m_Owner.Page.MinWidth = 600;
-                        m_Owner.Page.MaxWidth = double.PositiveInfinity;
+                        App.MainWindow.MinWidth = 600;
+                        App.MainWindow.MaxWidth = double.PositiveInfinity;
                         m_Owner.Page.FindControl<Grid>("m_SidePanel").IsVisible = true;
                         m_Owner.Page.FindControl<Menu>("m_Menu").IsVisible = true;
                         App.MainWindow.RestoreWindowSizeAndPosition();

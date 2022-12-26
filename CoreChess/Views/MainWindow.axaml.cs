@@ -23,7 +23,7 @@ public class MainWindow : Abstracts.BaseView
     readonly List<BasePage> m_PageHistory = new();
     private readonly Dictionary<string, BasePage.PageState> m_PageStates = new();
     private bool m_ChangingPage;
-    private WindowNotificationManager m_NotificationManager = null;
+    private WindowNotificationManager m_NotificationManager;
 
     #region classes
     public class TransitionSettings
@@ -331,6 +331,7 @@ public class MainWindow : Abstracts.BaseView
 
         entering.IsHitTestVisible = true;
         m_Container.Children.Remove(exiting);
+        entering.Focus();
 
         //m_TitleBar!.CanGoBack = CanNavigateBack;
         m_ChangingPage = false;
