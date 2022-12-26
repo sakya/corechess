@@ -191,7 +191,7 @@
     <Compile Update="Controls\ItemsList.axaml.cs">
       <DependentUpon>ItemsList.axaml</DependentUpon>
     </Compile>
-    <Compile Update="Pages\PgnGamesWindow.axaml.cs">
+    <Compile Update="Pages\PgnGamesPage.axaml.cs">
       <DependentUpon>PgnGamesWindow.axaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>

@@ -63,7 +63,7 @@
               <TextBlock Grid.Row="1" Text="{Binding Settings.WhitePlayerDisplayName}" TextTrimming="CharacterEllipsis" />
               <TextBlock Grid.Row="2" Text="{Binding Settings.BlackPlayerDisplayName}" TextTrimming="CharacterEllipsis" />
 
-              <TextBlock Grid.Row="3" FontSize="24" Text="{Binding, Converter={StaticResource GameResultConverter}}"
+              <TextBlock Grid.Row="3" FontSize="24" Text="{Binding ., Converter={StaticResource GameResultConverter}}"
                          VerticalAlignment="Center" />
 
               <controls:GamePreview Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2" Grid.RowSpan="3"

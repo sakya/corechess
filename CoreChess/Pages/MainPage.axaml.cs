@@ -1114,19 +1114,23 @@ namespace CoreChess.Pages
                 else if (games.Count == 1)
                     game = await Game.LoadFromPgn(games[0], true);
                 else {
-                    var gDlg = new PgnGamesWindow(games);
-                    var selGame = await gDlg.ShowDialog<PGN>(App.MainWindow);
-                    if (selGame != null)
-                        game = await Game.LoadFromPgn(selGame, false);
-                }
+                    var gDlg = new PgnGamesPage(games);
+                    gDlg.Navigating += async (s) =>
+                    {
+                        var selGame = gDlg.SelectedGame;
+                        if (selGame != null)
+                            game = await Game.LoadFromPgn(selGame, false);
 
-                if (game != null) {
-                    game.Settings.MaxEngineThinkingTime = TimeSpan.FromSeconds(App.Settings.MaxEngineThinkingTimeSecs);
-                    game.Settings.EngineDepth = App.Settings.MaxEngineDepth;
-                    await SetGame(game);
-                    App.Settings.AddRecentlyLoadedFile(filePath);
-                    App.Settings.Save(App.SettingsPath);
-                    SetMru();
+                        if (game != null) {
+                            game.Settings.MaxEngineThinkingTime = TimeSpan.FromSeconds(App.Settings.MaxEngineThinkingTimeSecs);
+                            game.Settings.EngineDepth = App.Settings.MaxEngineDepth;
+                            await SetGame(game);
+                            App.Settings.AddRecentlyLoadedFile(filePath);
+                            App.Settings.Save(App.SettingsPath);
+                            SetMru();
+                        }
+                    };
+                    await NavigateTo(gDlg);
                 }
             } else {
                 try {

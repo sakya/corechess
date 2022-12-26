@@ -7,19 +7,20 @@ using ChessLib;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using CoreChess.Abstracts;
 
-namespace CoreChess.Views
+namespace CoreChess.Pages
 {
-    public class PgnGamesWindow : BaseView
+    public class PgnGamesPage : BasePage
     {
         List<PGN> m_Games = null;
 
-        public PgnGamesWindow()
+        public PgnGamesPage()
         {
             this.InitializeComponent();
         }
 
-        public PgnGamesWindow(List<PGN> games)
+        public PgnGamesPage(List<PGN> games)
         {
             this.InitializeComponent();
 
@@ -30,24 +31,25 @@ namespace CoreChess.Views
             UpdateInfoMessage();
         }
 
-        protected override void InitializeComponent()
+        public PGN SelectedGame { get; set; }
+
+        private void InitializeComponent()
         {
             AvaloniaXamlLoader.Load(this);
-            base.InitializeComponent();
         }
 
-        private void OnOkClick(object sender, RoutedEventArgs e)
+        private async void OnOkClick(object sender, RoutedEventArgs e)
         {
             var list = this.FindControl<Controls.ItemsList>("m_List");
 
-            var selected = list.SelectedItem as PGN;
-            if (selected != null)
-                this.Close(selected);
+            SelectedGame = list.SelectedItem as PGN;
+            if (SelectedGame != null)
+                await NavigateBack();
         }
 
-        private void OnCancelClick(object sender, RoutedEventArgs e)
+        private async void OnCancelClick(object sender, RoutedEventArgs e)
         {
-            this.Close(null);
+            await NavigateBack();
         }
 
         private void OnKeyDown(object sender, KeyEventArgs e)
@@ -70,11 +72,11 @@ namespace CoreChess.Views
             FilterGames();
         }
 
-        private void OnListDoubleTapped(object sender, RoutedEventArgs e)
+        private async void OnListDoubleTapped(object sender, RoutedEventArgs e)
         {
-            var selected = (sender as Controls.ItemsList).SelectedItem as PGN;
-            if (selected != null)
-                this.Close(selected);
+            SelectedGame = (sender as Controls.ItemsList).SelectedItem as PGN;
+            if (SelectedGame != null)
+                await NavigateBack();
         } // OnListDoubleTapped
 
         private void FilterGames()
