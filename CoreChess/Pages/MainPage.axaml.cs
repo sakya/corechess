@@ -534,10 +534,11 @@ namespace CoreChess.Pages
                     }
                 }
 
-                var dlg = new GameEndedWindow(m_Game);
-                if (await dlg.ShowDialog<bool?>(App.MainWindow) == true) {
+                var dlg = new GameEndedDialog(m_Game);
+                if (await dlg.Show<bool?>(App.MainWindow) == true) {
                     // Rematch
                     var settings = m_Game.Settings;
+                    settings.InitialFenPosition = string.Empty;
                     settings.Players[0].Color = settings.Players[0].Color == Game.Colors.White ? Game.Colors.Black : Game.Colors.White;
                     settings.Players[1].Color = settings.Players[1].Color == Game.Colors.White ? Game.Colors.Black : Game.Colors.White;
 

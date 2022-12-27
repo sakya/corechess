@@ -6,20 +6,21 @@ using Avalonia.Interactivity;
 using Avalonia.Media.Imaging;
 using ChessLib;
 using System.Threading.Tasks;
+using CoreChess.Abstracts;
 
-namespace CoreChess.Views
+namespace CoreChess.Dialogs
 {
-    public class GameEndedWindow : BaseView
+    public class GameEndedDialog : BaseDialog
     {
         private Game m_Game = null;
         private Controls.GameAnalyzeGraph m_Graph = null;
 
-        public GameEndedWindow()
+        public GameEndedDialog()
         {
             this.InitializeComponent();
         }
 
-        public GameEndedWindow(Game game)
+        public GameEndedDialog(Game game)
         {
             this.InitializeComponent();
 
@@ -66,10 +67,9 @@ namespace CoreChess.Views
             }
         }
 
-        protected override void InitializeComponent()
+        private void InitializeComponent()
         {
             AvaloniaXamlLoader.Load(this);
-            base.InitializeComponent();
         }
 
         private async void OnRematchClick(object sender, RoutedEventArgs e)

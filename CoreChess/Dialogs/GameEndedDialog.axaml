@@ -1,0 +1,31 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:controls="clr-namespace:CoreChess.Controls"
+        xmlns:i18n="clr-namespace:CoreChess.Localizer"
+        mc:Ignorable="d" d:DesignWidth="400" d:DesignHeight="450"
+        x:Class="CoreChess.Dialogs.GameEndedDialog"
+        Width="400">
+
+  <Grid Margin="15" DockPanel.Dock="Top">
+    <Grid.RowDefinitions>
+      <RowDefinition Height="*" />
+      <RowDefinition Height="Auto" />
+    </Grid.RowDefinitions>
+
+    <Grid.ColumnDefinitions>
+      <ColumnDefinition Width="*" />
+      <ColumnDefinition Width="*" />
+    </Grid.ColumnDefinitions>
+
+    <StackPanel Grid.ColumnSpan="2" Orientation="Vertical">
+      <Image Name="m_Image" Width="100"></Image>
+      <TextBlock Name="m_Message" HorizontalAlignment="Center" TextWrapping="Wrap" />
+      <controls:GameAnalyzeGraph Name="m_Graph" MinHeight="50" Margin="15" />
+    </StackPanel>
+
+    <Button Grid.Row="1" Grid.Column="0" Margin="5" Content="{i18n:Localize Rematch}" Click="OnRematchClick" />
+    <Button Grid.Row="1" Grid.Column="1" Margin="5" Content="{i18n:Localize Close}" Click="OnCloseClick" IsCancel="True" />
+  </Grid>
+</UserControl>
