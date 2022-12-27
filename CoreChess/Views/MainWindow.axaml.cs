@@ -93,8 +93,6 @@ public class MainWindow : Abstracts.BaseView
         base.OnOpened(e);
         await Task.Delay(100);
         var mp = new MainPage();
-        // Load the ECO database
-        await mp.LoadEcoDatabase();
         await NavigateTo(mp);
         SetWaitAnimation(false);
     }
@@ -125,7 +123,12 @@ public class MainWindow : Abstracts.BaseView
         base.InitializeComponent();
     }
 
-   #region public operations
+    protected override void HandleWindowStateChanged(WindowState state)
+    {
+        CurrentPage?.HandleWindowStateChanged(state);
+    }
+
+    #region public operations
     /// <summary>
     /// Navigate to a new page
     /// </summary>

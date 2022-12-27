@@ -9,6 +9,7 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Avalonia.Platform;
 using Un4seen.Bass;
 
 namespace CoreChess
@@ -100,6 +101,14 @@ namespace CoreChess
                 App.Settings.Language = "en-US";
                 Localizer.Localizer.Instance.LoadLanguage(App.Settings.Language);
                 App.Settings.Save(App.SettingsPath);
+            }
+
+            // Load ECO database
+            App.EcoDatabase = new Utils.EcoDatabase();
+            var assets = AvaloniaLocator.Current.GetService<IAssetLoader>();
+            Uri uri = new Uri($"avares://CoreChess/Assets/eco.pgn");
+            using (Stream s = assets.Open(uri)) {
+                await App.EcoDatabase.Load(s);
             }
 
             var res = new Views.MainWindow(args);

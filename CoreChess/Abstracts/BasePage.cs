@@ -1,5 +1,6 @@
 using Avalonia.Controls;
 using System;
+using System.ComponentModel;
 using System.Threading.Tasks;
 using Avalonia.Input;
 using CoreChess.Views;
@@ -92,6 +93,11 @@ namespace CoreChess.Abstracts
         /// <returns></returns>
         public virtual void OnKeyDown(object sender, KeyEventArgs e)
         {
+        }
+
+        public virtual void HandleWindowStateChanged(WindowState state)
+        {
+
         }
 
         public async Task<bool> NavigateTo(BasePage page)

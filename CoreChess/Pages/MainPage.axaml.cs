@@ -354,6 +354,8 @@ namespace CoreChess.Pages
         {
             AvaloniaXamlLoader.Load(this);
 
+            m_EcoDatabase = App.EcoDatabase;
+
             SetMru();
             m_Context = new Context(this);
             m_Context.IsWindows = OperatingSystem.IsWindows();
@@ -366,20 +368,9 @@ namespace CoreChess.Pages
             m_EngineMessage = this.FindControl<TextBlock>("m_EngineMessage");
 
             m_Wait.AttachedToVisualTree += InitializeWindow;
+
+            App.MainWindow.Closing += OnWindowClosing;
         }
-
-        public async Task<bool> LoadEcoDatabase()
-        {
-            // Load ECO database
-            m_EcoDatabase = new Utils.EcoDatabase();
-            var assets = AvaloniaLocator.Current.GetService<IAssetLoader>();
-            Uri uri = new Uri($"avares://CoreChess/Assets/eco.pgn");
-            using (Stream s = assets.Open(uri)) {
-                await m_EcoDatabase.Load(s);
-            }
-
-            return true;
-        } // LoadEcoDatabase
 
         #region Chessboard events
         public async void OnNewGame(object sender, EventArgs e)
@@ -800,7 +791,7 @@ namespace CoreChess.Pages
         #endregion
 
         #region Window events
-        /*protected override void HandleWindowStateChanged(WindowState state)
+        public override void HandleWindowStateChanged(WindowState state)
         {
             if (state == WindowState.Minimized && App.Settings.AutoPauseWhenMinimized && m_Game?.Status == Game.Statuses.InProgress) {
                 OnPauseClick(null, new RoutedEventArgs());
@@ -808,7 +799,7 @@ namespace CoreChess.Pages
 
             base.HandleWindowStateChanged(state);
         } // HandleWindowStateChanged
-        */
+
         public override void OnKeyDown(object sender, KeyEventArgs e)
         {
             if (e.KeyModifiers == KeyModifiers.Control && e.Key == Key.P) {

@@ -8,6 +8,7 @@ using System.Threading;
 using System.Collections.Generic;
 using Avalonia.Controls;
 using Avalonia.Media;
+using CoreChess.Utils;
 using CoreChess.Views;
 
 namespace CoreChess
@@ -27,6 +28,8 @@ namespace CoreChess
         {
             get; set;
         }
+
+        public static EcoDatabase EcoDatabase { get; set; }
 
         public static void SetStyle(Settings.Styles style, string accentColor, string highlightColor, string fontFamily)
         {
