@@ -13,6 +13,7 @@ namespace CoreChess.Abstracts;
 
 public abstract class BaseDialog : UserControl, IDisposable
 {
+    public static BaseDialog CurrentDialog = null;
     private bool m_Closed;
     private object m_Result;
 
@@ -85,8 +86,9 @@ public abstract class BaseDialog : UserControl, IDisposable
         Focus();
         Opened();
 
+        CurrentDialog = this;
         while (!m_Closed)
-            await Task.Delay(100);
+            await Task.Delay(100);        
 
         // Animate exit
         bAnim = AnimateBackdrop(border, 0.8, 0);
@@ -97,6 +99,7 @@ public abstract class BaseDialog : UserControl, IDisposable
         container.Children.Remove(this);
         container.Children.Remove(border);
         owner.Closing -= OwnerOnClosing;
+        CurrentDialog = null;
 
         return (T)m_Result;
     }
