@@ -14,12 +14,12 @@ namespace CoreChess.Pages
     public class SettingsPage : BasePage
     {
         private bool? m_Result;
-        private AvaloniaColorPicker.ColorButton<ColorPickerWindow> m_AccentButton;
-        private AvaloniaColorPicker.ColorButton<ColorPickerWindow> m_HighlightButton;
-        private AvaloniaColorPicker.ColorButton<ColorPickerWindow> m_WhiteButton;
-        private AvaloniaColorPicker.ColorButton<ColorPickerWindow> m_WhiteSelectedButton;
-        private AvaloniaColorPicker.ColorButton<ColorPickerWindow> m_BlackButton;
-        private AvaloniaColorPicker.ColorButton<ColorPickerWindow> m_BlackSelectedButton;
+        private ColorButton<Views.ColorPickerWindow> m_AccentButton;
+        private ColorButton<Views.ColorPickerWindow> m_HighlightButton;
+        private ColorButton<Views.ColorPickerWindow> m_WhiteButton;
+        private ColorButton<Views.ColorPickerWindow> m_WhiteSelectedButton;
+        private ColorButton<Views.ColorPickerWindow> m_BlackButton;
+        private ColorButton<Views.ColorPickerWindow> m_BlackSelectedButton;
 
         public class PiecesSet
         {
@@ -110,7 +110,7 @@ namespace CoreChess.Pages
             cb.SelectedItem = fonts.Where(f => f == App.Settings.FontFamily).FirstOrDefault() ?? fonts[0];
 
             var grid = this.FindControl<Grid>("m_AppearenceGrid");
-            m_AccentButton = new AvaloniaColorPicker.ColorButton<ColorPickerWindow>()
+            m_AccentButton = new ColorButton<Views.ColorPickerWindow>()
             {
                 Margin = new Thickness(5, 5, 5, 5),
                 HorizontalAlignment = Avalonia.Layout.HorizontalAlignment.Right,
@@ -118,14 +118,14 @@ namespace CoreChess.Pages
             };
             m_AccentButton.PropertyChanged += (s, e) =>
             {
-                if (e.Property.Name == AvaloniaColorPicker.ColorButton.ColorProperty.Name)
+                if (e.Property.Name == ColorButton.ColorProperty.Name)
                     Application.Current.Resources["SystemAccentColor"] = m_AccentButton.Color;
             };
             Grid.SetColumn(m_AccentButton, 1);
             Grid.SetRow(m_AccentButton, 2);
             grid.Children.Add(m_AccentButton);
 
-            m_HighlightButton = new AvaloniaColorPicker.ColorButton<ColorPickerWindow>()
+            m_HighlightButton = new ColorButton<Views.ColorPickerWindow>()
             {
                 Margin = new Thickness(5, 5, 5, 5),
                 HorizontalAlignment = Avalonia.Layout.HorizontalAlignment.Right,
@@ -133,7 +133,7 @@ namespace CoreChess.Pages
             };
             m_HighlightButton.PropertyChanged += (s, e) =>
             {
-                if (e.Property.Name == AvaloniaColorPicker.ColorButton.ColorProperty.Name)
+                if (e.Property.Name == ColorButton.ColorProperty.Name)
                     Application.Current.Resources["HighlightColor"] = m_HighlightButton.Color;
             };
             Grid.SetColumn(m_HighlightButton, 1);
@@ -144,7 +144,7 @@ namespace CoreChess.Pages
             chk.IsChecked = App.Settings.RestoreWindowSizeAndPosition;
 
             grid = this.FindControl<Grid>("m_ChessboardGrid");
-            m_WhiteButton = new AvaloniaColorPicker.ColorButton<ColorPickerWindow>()
+            m_WhiteButton = new ColorButton<Views.ColorPickerWindow>()
             {
                 Margin = new Thickness(5, 5, 5, 5),
                 HorizontalAlignment = Avalonia.Layout.HorizontalAlignment.Right,
@@ -153,7 +153,7 @@ namespace CoreChess.Pages
             Grid.SetRow(m_WhiteButton, 5);
             grid.Children.Add(m_WhiteButton);
 
-            m_WhiteSelectedButton = new AvaloniaColorPicker.ColorButton<ColorPickerWindow>()
+            m_WhiteSelectedButton = new ColorButton<Views.ColorPickerWindow>()
             {
                 Margin = new Thickness(5, 5, 5, 5),
                 HorizontalAlignment = Avalonia.Layout.HorizontalAlignment.Right,
@@ -162,7 +162,7 @@ namespace CoreChess.Pages
             Grid.SetRow(m_WhiteSelectedButton, 6);
             grid.Children.Add(m_WhiteSelectedButton);
 
-            m_BlackButton = new AvaloniaColorPicker.ColorButton<ColorPickerWindow>()
+            m_BlackButton = new ColorButton<Views.ColorPickerWindow>()
             {
                 Margin = new Thickness(5, 5, 5, 5),
                 HorizontalAlignment = Avalonia.Layout.HorizontalAlignment.Right,
@@ -171,7 +171,7 @@ namespace CoreChess.Pages
             Grid.SetRow(m_BlackButton, 7);
             grid.Children.Add(m_BlackButton);
 
-            m_BlackSelectedButton = new AvaloniaColorPicker.ColorButton<ColorPickerWindow>()
+            m_BlackSelectedButton = new ColorButton<Views.ColorPickerWindow>()
             {
                 Margin = new Thickness(5, 5, 5, 5),
                 HorizontalAlignment = Avalonia.Layout.HorizontalAlignment.Right,

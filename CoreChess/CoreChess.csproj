@@ -207,10 +207,6 @@
       <DependentUpon>SettingsWindow.axaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Update="Pages\ColorPickerWindow.axaml.cs">
-      <DependentUpon>ColorPickerWindow.axaml</DependentUpon>
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Update="Pages\EnginesPage.axaml.cs">
       <DependentUpon>EnginesWindow.axaml</DependentUpon>
       <SubType>Code</SubType>
@@ -256,6 +252,14 @@
     </Compile>
     <Compile Update="Dialogs\MoveCommentDialog.axaml.cs">
       <DependentUpon>MoveCommentWindow.axaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="Dialogs\ColorPickerDialog.axaml.cs">
+      <DependentUpon>ColorPickerWindow.axaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="Dialogs\ColorPickerDialog.axaml.cs">
+      <DependentUpon>ColorPickerWindow.axaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
   </ItemGroup>
