@@ -23,30 +23,44 @@
       <DockPanel>
         <StackPanel Orientation="Horizontal"
                     DockPanel.Dock="Left"
-                    IsHitTestVisible="False"
                     Height="30">
 
+          <Button Name="BackBtn" Height="30" Width="30" Margin="0" Padding="5" IsVisible="False">
+            <Button.Styles>
+              <Style Selector="Button /template/ ContentPresenter">
+                <Setter Property="CornerRadius" Value="0" />
+              </Style>
+              <Style Selector="Button:not(:pointerover) /template/ ContentPresenter#PART_ContentPresenter">
+                <Setter Property="Background" Value="Transparent"/>
+              </Style>
+            </Button.Styles>
+            <i:Icon Value="fas fa-arrow-left" />
+          </Button>
+
           <Image Source="/Assets/icon.ico"
+                 Name="Icon"
                  Height="20"
                  Width="20"
                  VerticalAlignment="Center"
+                 IsHitTestVisible="False"
                  Margin="5,0,5,0" />
-          <TextBlock Name="m_Title"
+          <TextBlock Name="Title"
                      FontSize="16"
+                     IsHitTestVisible="False"
                      VerticalAlignment="Center" />
         </StackPanel>
 
         <StackPanel HorizontalAlignment="Right"
                     Orientation="Horizontal">
-          <Button Name="m_MinimizeBtn" Height="30" Width="46" Padding="0">
+          <Button Name="MinimizeBtn" Height="30" Width="46" Padding="0">
             <i:Icon Value="fas fa-window-minimize" />
           </Button>
 
-          <Button Name="m_MaximizeBtn" Height="30" Width="46" Padding="0">
+          <Button Name="MaximizeBtn" Height="30" Width="46" Padding="0">
             <i:Icon Value="fas fa-window-maximize" />
           </Button>
 
-          <Button Name="m_CloseBtn" Height="30" Width="46" Padding="0">
+          <Button Name="CloseBtn" Height="30" Width="46" Padding="0">
             <Button.Styles>
               <Style Selector="Button:pointerover /template/ ContentPresenter#PART_ContentPresenter">
                 <Setter Property="Background" Value="DarkRed"/>

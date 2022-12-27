@@ -333,7 +333,7 @@ public class MainWindow : Abstracts.BaseView
         m_Container.Children.Remove(exiting);
         entering.Focus();
 
-        //m_TitleBar!.CanGoBack = CanNavigateBack;
+        m_TitleBar!.CanGoBack = CanNavigateBack;
         m_ChangingPage = false;
     } // ChangePage
 

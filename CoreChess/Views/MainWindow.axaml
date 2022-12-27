@@ -9,7 +9,7 @@
         x:Class="CoreChess.Views.MainWindow"
         Title="CoreChess">
     <DockPanel>
-        <controls:TitleBar DockPanel.Dock="Top"/>
+        <controls:TitleBar Name="TitleBar" DockPanel.Dock="Top"/>
         <Grid Name="Container">
             <controls:Spinner Name="Spinner" />
         </Grid>
