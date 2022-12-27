@@ -8,66 +8,63 @@
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="CoreChess.Pages.PgnGamesPage">
 
-  <DockPanel>
-    <controls:TitleBar DockPanel.Dock="Top"/>
-    <Grid Margin="15,15,15,5" DockPanel.Dock="Top">
-      <Grid.RowDefinitions>
-        <RowDefinition Height="Auto"/>
-        <RowDefinition Height="Auto"/>
-        <RowDefinition Height="*"/>
-        <RowDefinition Height="Auto"/>
-      </Grid.RowDefinitions>
+  <Grid Margin="15,15,15,5" DockPanel.Dock="Top">
+    <Grid.RowDefinitions>
+      <RowDefinition Height="Auto"/>
+      <RowDefinition Height="Auto"/>
+      <RowDefinition Height="*"/>
+      <RowDefinition Height="Auto"/>
+    </Grid.RowDefinitions>
 
-      <Grid>
-        <Grid.ColumnDefinitions>
-          <ColumnDefinition Width="*" />
-          <ColumnDefinition Width="Auto" />
-        </Grid.ColumnDefinitions>
+    <Grid>
+      <Grid.ColumnDefinitions>
+        <ColumnDefinition Width="*" />
+        <ColumnDefinition Width="Auto" />
+      </Grid.ColumnDefinitions>
 
-        <TextBox Name="m_Search" KeyDown="OnKeyDown" />
-        <Button Grid.Column="1" Click="OnSearchClick">
-          <i:Icon Value="fas fa-search" />
-        </Button>
-      </Grid>
-      <TextBlock Grid.Row="1" Name="m_Info" TextTrimming="CharacterEllipsis" FontSize="14" Margin="5" />
-
-      <controls:ItemsList Grid.Row="2" Name="m_List" Selectable="True" DoubleTapped="OnListDoubleTapped">
-        <controls:ItemsList.ItemTemplate>
-          <DataTemplate>
-            <Border Padding="10,5,10,5">
-              <Grid>
-                <Grid.RowDefinitions>
-                  <RowDefinition Height="Auto"/>
-                  <RowDefinition Height="Auto"/>
-                  <RowDefinition Height="Auto"/>
-                  <RowDefinition Height="Auto"/>
-                  <RowDefinition Height="*"/>
-                </Grid.RowDefinitions>
-                <Grid.ColumnDefinitions>
-                  <ColumnDefinition Width="*"/>
-                  <ColumnDefinition Width="Auto"/>
-                </Grid.ColumnDefinitions>
-
-                <TextBlock Grid.ColumnSpan="2" Text="{Binding Event}" FontSize="12" Foreground="{DynamicResource HighlightColor}" />
-
-                <TextBlock Grid.Row="1" Text="{Binding Site}" FontSize="12" TextTrimming="CharacterEllipsis" />
-                <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding Date}" FontSize="12" TextTrimming="CharacterEllipsis"
-                           HorizontalAlignment="Right"/>
-
-                <TextBlock Grid.Row="2" Text="{Binding White}" TextTrimming="CharacterEllipsis" />
-                <TextBlock Grid.Row="3" Text="{Binding Black}" TextTrimming="CharacterEllipsis" />
-
-                <TextBlock Grid.Row="4" FontSize="24" Text="{Binding Result}"
-                           VerticalAlignment="Center" />
-
-                <controls:GamePreview Grid.Row="2" Grid.Column="1" Grid.RowSpan="3" PgnGame="{Binding}" />
-              </Grid>
-            </Border>
-          </DataTemplate>
-        </controls:ItemsList.ItemTemplate>
-      </controls:ItemsList>
-
-      <controls:OkCancelButtons Grid.Row="3" OkClick="OnOkClick" CancelClick="OnCancelClick" />
+      <TextBox Name="m_Search" KeyDown="OnKeyDown" />
+      <Button Grid.Column="1" Click="OnSearchClick">
+        <i:Icon Value="fas fa-search" />
+      </Button>
     </Grid>
-  </DockPanel>
+    <TextBlock Grid.Row="1" Name="m_Info" TextTrimming="CharacterEllipsis" FontSize="14" Margin="5" />
+
+    <controls:ItemsList Grid.Row="2" Name="m_List" Selectable="True" DoubleTapped="OnListDoubleTapped">
+      <controls:ItemsList.ItemTemplate>
+        <DataTemplate>
+          <Border Padding="10,5,10,5">
+            <Grid>
+              <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+              </Grid.RowDefinitions>
+              <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+              </Grid.ColumnDefinitions>
+
+              <TextBlock Grid.ColumnSpan="2" Text="{Binding Event}" FontSize="12" Foreground="{DynamicResource HighlightColor}" />
+
+              <TextBlock Grid.Row="1" Text="{Binding Site}" FontSize="12" TextTrimming="CharacterEllipsis" />
+              <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding Date}" FontSize="12" TextTrimming="CharacterEllipsis"
+                         HorizontalAlignment="Right"/>
+
+              <TextBlock Grid.Row="2" Text="{Binding White}" TextTrimming="CharacterEllipsis" />
+              <TextBlock Grid.Row="3" Text="{Binding Black}" TextTrimming="CharacterEllipsis" />
+
+              <TextBlock Grid.Row="4" FontSize="24" Text="{Binding Result}"
+                         VerticalAlignment="Center" />
+
+              <controls:GamePreview Grid.Row="2" Grid.Column="1" Grid.RowSpan="3" PgnGame="{Binding}" />
+            </Grid>
+          </Border>
+        </DataTemplate>
+      </controls:ItemsList.ItemTemplate>
+    </controls:ItemsList>
+
+    <controls:OkCancelButtons Grid.Row="3" OkClick="OnOkClick" CancelClick="OnCancelClick" />
+  </Grid>
 </UserControl>

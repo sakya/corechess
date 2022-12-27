@@ -9,17 +9,14 @@
              x:Class="CoreChess.Dialogs.MoveCommentDialog"
              Width="400" Height="300">
 
-  <DockPanel>
-    <controls:TitleBar DockPanel.Dock="Top"/>
-    <Grid Margin="15,15,15,5" DockPanel.Dock="Top">
-      <Grid.RowDefinitions>
-        <RowDefinition Height="*"/>
-        <RowDefinition Height="Auto"/>
-      </Grid.RowDefinitions>
+  <Grid Margin="15,15,15,5" DockPanel.Dock="Top">
+    <Grid.RowDefinitions>
+      <RowDefinition Height="*"/>
+      <RowDefinition Height="Auto"/>
+    </Grid.RowDefinitions>
 
-      <TextBox Name="m_Comment" AcceptsReturn="True" VerticalAlignment="Stretch" TextWrapping="Wrap" />
+    <TextBox Name="m_Comment" AcceptsReturn="True" VerticalAlignment="Stretch" TextWrapping="Wrap" />
 
-      <controls:OkCancelButtons Grid.Row="1" OkClick="OnOkClick" CancelClick="OnCancelClick" />
-    </Grid>
-  </DockPanel>
+    <controls:OkCancelButtons Grid.Row="1" OkClick="OnOkClick" CancelClick="OnCancelClick" />
+  </Grid>
 </UserControl>
