@@ -1,6 +1,7 @@
 using Avalonia.Controls;
 using System;
 using System.Threading.Tasks;
+using Avalonia.Input;
 using CoreChess.Views;
 
 namespace CoreChess.Abstracts
@@ -81,6 +82,16 @@ namespace CoreChess.Abstracts
         public virtual void Dispose()
         {
 
+        }
+
+        /// <summary>
+        /// Key down event.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        /// <returns></returns>
+        public virtual void OnKeyDown(object sender, KeyEventArgs e)
+        {
         }
 
         public async Task<bool> NavigateTo(BasePage page)

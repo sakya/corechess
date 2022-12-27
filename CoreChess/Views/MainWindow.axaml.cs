@@ -357,6 +357,10 @@ public class MainWindow : Abstracts.BaseView
         if (m_ChangingPage)
             return;
 
+        CurrentPage.OnKeyDown(sender, e);
+        if (e.Handled)
+            return;
+
         if (CurrentPage != null && CurrentPage.NavigateBackWithKeyboard && e.KeyModifiers == KeyModifiers.None && e.Key == BackKey) {
             e.Handled = true;
             await NavigateBack();

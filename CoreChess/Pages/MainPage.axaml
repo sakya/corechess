@@ -7,8 +7,7 @@
              xmlns:i18n="clr-namespace:CoreChess.Localizer"
              xmlns:controls="clr-namespace:CoreChess.Controls"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="400"
-             x:Class="CoreChess.Pages.MainPage"
-             KeyDown="OnWindowKeyDown">
+             x:Class="CoreChess.Pages.MainPage">
 
   <UserControl.Resources>
     <converters:NotationToVisibilityConverter x:Key="NotationToVisibilityConverter"/>

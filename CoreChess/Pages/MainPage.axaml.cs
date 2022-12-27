@@ -809,7 +809,7 @@ namespace CoreChess.Pages
             base.HandleWindowStateChanged(state);
         } // HandleWindowStateChanged
         */
-        private void OnWindowKeyDown(object sender, KeyEventArgs e)
+        public override void OnKeyDown(object sender, KeyEventArgs e)
         {
             if (e.KeyModifiers == KeyModifiers.Control && e.Key == Key.P) {
                 e.Handled = true;
