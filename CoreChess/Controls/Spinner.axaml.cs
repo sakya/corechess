@@ -14,22 +14,22 @@ public class Spinner : UserControl
             o => o.Message,
             (o, v) => o.Message = v);
 
-    private readonly SpinnerModel _model = new();
-    private string _message;
+    private readonly SpinnerModel m_Model = new();
+    private string m_Message;
 
     public Spinner()
     {
-        DataContext = _model;
+        DataContext = m_Model;
         InitializeComponent();
     }
 
     public string Message
     {
-        get => _message;
+        get => m_Message;
         set
         {
-            if (SetAndRaise(MessageProperty, ref _message, value)) {
-                _model.Message = value;
+            if (SetAndRaise(MessageProperty, ref m_Message, value)) {
+                m_Model.Message = value;
             }
         }
     }

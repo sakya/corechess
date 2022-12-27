@@ -9,7 +9,7 @@ namespace CoreChess.Controls
 {
     public class TitleBar : UserControl
     {
-        bool _canGoBack;
+        bool m_CanGoBack;
 
         public TitleBar()
         {
@@ -23,15 +23,15 @@ namespace CoreChess.Controls
         public bool CanMaximize { get; set; }
 
         public bool CanGoBack {
-            get => _canGoBack;
+            get => m_CanGoBack;
             set
             {
-                _canGoBack = value;
+                m_CanGoBack = value;
                 var btn = this.FindControl<Button>("BackBtn");
-                btn.IsVisible = _canGoBack;
+                btn.IsVisible = m_CanGoBack;
 
                 var icon = this.FindControl<Image>("Icon");
-                icon.IsVisible = !_canGoBack;
+                icon.IsVisible = !m_CanGoBack;
             }
         }
 
@@ -49,10 +49,7 @@ namespace CoreChess.Controls
             if (this.VisualRoot is Window pw) {
                 SetTitle(pw.Title);
                 var title = pw.GetObservable(Window.TitleProperty);
-                title.Subscribe(value =>
-                {
-                    SetTitle(value);
-                });
+                title.Subscribe(SetTitle);
 
                 var canResize = pw.GetObservable(Window.CanResizeProperty);
                 canResize.Subscribe(value =>
@@ -83,12 +80,8 @@ namespace CoreChess.Controls
                 btn = this.FindControl<Button>("MaximizeBtn");
                 btn.Click += (s, a) =>
                 {
-                    var parentWindow = VisualRoot as Window;
-                    if (parentWindow != null) {
-                        if (parentWindow.WindowState == WindowState.Maximized)
-                            parentWindow.WindowState = WindowState.Normal;
-                        else
-                            parentWindow.WindowState = WindowState.Maximized;
+                    if (VisualRoot is Window parentWindow) {
+                        parentWindow.WindowState = parentWindow.WindowState == WindowState.Maximized ? WindowState.Normal : WindowState.Maximized;
                     }
                 };
                 btn.IsVisible = CanMinimize;
