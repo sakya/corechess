@@ -11,7 +11,7 @@
     <DockPanel>
         <controls:TitleBar Name="TitleBar" DockPanel.Dock="Top"/>
         <Grid Name="Container">
-            <controls:Spinner Name="Spinner" />
+
         </Grid>
     </DockPanel>
 </Window>

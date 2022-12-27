@@ -91,10 +91,9 @@ public class MainWindow : Abstracts.BaseView
     protected override async void OnOpened(EventArgs e)
     {
         base.OnOpened(e);
-        await Task.Delay(100);
+        await Task.Delay(10);
         var mp = new MainPage();
         await NavigateTo(mp);
-        SetWaitAnimation(false);
     }
 
     protected sealed override void InitializeComponent()
@@ -371,11 +370,4 @@ public class MainWindow : Abstracts.BaseView
             await NavigateBack();
         }
     } // OnKeyDown
-
-    private void SetWaitAnimation(bool visible)
-    {
-        var spinner = this.FindControl<Controls.Spinner>("Spinner");
-        spinner.IsVisible = visible;
-    } // SetWaitAnimation
-
 }
