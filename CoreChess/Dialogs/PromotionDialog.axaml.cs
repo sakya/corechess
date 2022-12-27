@@ -19,6 +19,7 @@ namespace CoreChess.Dialogs
         {
             this.InitializeComponent();
 
+            CloseOnBackdropClick = false;
             Color = color;
 
             // Draw pieces

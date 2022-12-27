@@ -6,6 +6,7 @@
              xmlns:i18n="clr-namespace:CoreChess.Localizer"
              xmlns:converters="clr-namespace:CoreChess.Converters"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             MaxWidth="600"
              x:Class="CoreChess.Dialogs.NewGameDialog">
 
   <UserControl.Resources>
