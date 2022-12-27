@@ -195,10 +195,6 @@
       <DependentUpon>PgnGamesWindow.axaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Update="Pages\UpdateWindow.axaml.cs">
-      <DependentUpon>UpdateWindow.axaml</DependentUpon>
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Update="Pages\SettingsPage.axaml.cs">
       <DependentUpon>SettingsWindow.axaml</DependentUpon>
       <SubType>Code</SubType>
@@ -260,6 +256,10 @@
     </Compile>
     <Compile Update="Dialogs\GameEndedDialog.axaml.cs">
       <DependentUpon>GameEndedWindow.axaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="Dialogs\UpdateDialog.axaml.cs">
+      <DependentUpon>UpdateDialog.axaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
   </ItemGroup>

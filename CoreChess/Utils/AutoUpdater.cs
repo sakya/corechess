@@ -53,8 +53,8 @@ namespace CoreChess.Utils
                         while (owner.OwnedWindows?.Count > 0)
                             await Task.Delay(100);
 
-                        var dlg = new Views.UpdateWindow(release, sb.ToString());
-                        if (await dlg.ShowDialog<bool>(owner)) {
+                        var dlg = new Dialogs.UpdateDialog(release, sb.ToString());
+                        if (await dlg.Show<bool>(owner)) {
                             return true;
                         }
                     } else if (manual) {

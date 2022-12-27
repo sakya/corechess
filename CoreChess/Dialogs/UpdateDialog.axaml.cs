@@ -10,21 +10,22 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Collections.Generic;
+using CoreChess.Abstracts;
 
-namespace CoreChess.Views
+namespace CoreChess.Dialogs
 {
-    public class UpdateWindow : BaseView
+    public class UpdateDialog : BaseDialog
     {
         private Release m_Release = null;
         private string m_Changelog = string.Empty;
         private CancellationTokenSource m_Cts;
 
-        public UpdateWindow()
+        public UpdateDialog()
         {
             this.InitializeComponent();
         }
 
-        public UpdateWindow(Release release, string changelog)
+        public UpdateDialog(Release release, string changelog)
         {
             m_Release = release;
             m_Changelog = changelog;
@@ -32,21 +33,14 @@ namespace CoreChess.Views
             this.InitializeComponent();
         }
 
-        protected override void InitializeComponent()
+        private void InitializeComponent()
         {
             AvaloniaXamlLoader.Load(this);
-            base.InitializeComponent();
 
             var tb = this.FindControl<TextBlock>("m_Version");
             tb.Text = m_Release.TagName;
             tb = this.FindControl<TextBlock>("m_Description");
             tb.Text = m_Changelog;
-
-            this.Closing += (s, e) =>
-            {
-                if (m_Cts != null)
-                    m_Cts.Cancel();
-            };
         }
 
         private void OnOkClick(object sender, RoutedEventArgs e)
