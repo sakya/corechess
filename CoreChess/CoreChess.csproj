@@ -231,7 +231,7 @@
       <DependentUpon>WaitWindow.axaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Update="Dialogs\PromotionWindow.axaml.cs">
+    <Compile Update="Dialogs\PromotionDialog.axaml.cs">
       <DependentUpon>PromotionWindow.axaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>

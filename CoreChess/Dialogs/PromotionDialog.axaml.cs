@@ -4,16 +4,18 @@ using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
 using Avalonia.Media.Imaging;
 using ChessLib;
+using CoreChess.Abstracts;
 
-namespace CoreChess.Views
+namespace CoreChess.Dialogs
 {
-    public class PromotionWindow : BaseView
+    public class PromotionDialog : BaseDialog
     {
-        public PromotionWindow()
+        public PromotionDialog()
         {
+            this.InitializeComponent();
         }
 
-        public PromotionWindow(string imageFolder, ChessLib.Game.Colors color)
+        public PromotionDialog(string imageFolder, ChessLib.Game.Colors color)
         {
             this.InitializeComponent();
 
@@ -39,12 +41,6 @@ namespace CoreChess.Views
             btn = this.FindControl<Button>("m_Queen");
             bitmap = new Bitmap($"{imageFolder}{System.IO.Path.DirectorySeparatorChar}{col}{Piece.Pieces.Queen.ToString()}.png");
             btn.Content = new Image() { Source = bitmap, Height = 75 };
-
-            this.Closing += (s, e) =>
-            {
-                if (Result == null)
-                    e.Cancel = true;
-            };
         }
 
         public ChessLib.Game.Colors Color
@@ -59,10 +55,9 @@ namespace CoreChess.Views
             set;
         }
 
-        protected override void InitializeComponent()
+        private void InitializeComponent()
         {
             AvaloniaXamlLoader.Load(this);
-            base.InitializeComponent();
         }
 
         private void OnButtonClick(object sender, RoutedEventArgs e)

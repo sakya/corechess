@@ -392,10 +392,8 @@ namespace CoreChess.Controls
 
         private async Task<Piece.Pieces> OnPlayerPromotion(object sender, Game.PromotionArgs args)
         {
-            var dlg = new PromotionWindow(PiecesFolder, args.Player.Color);
-            await dlg.ShowDialog((Window)this.VisualRoot);
-
-            return dlg.Result ?? Piece.Pieces.Queen;
+            var dlg = new PromotionDialog(PiecesFolder, args.Player.Color);
+            return await dlg.Show<Piece.Pieces>((Window)this.VisualRoot);
         } // OnPromotion
 
         private async Task<bool> OnCastlingConfirm(object sender, EventArgs args)
