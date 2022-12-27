@@ -134,7 +134,7 @@ namespace CoreChess.Dialogs
         {
             CloseOpenedWindow();
             _openedMessageDialog = new MessageDialog(title, message, Buttons.Ok, icon);
-            await _openedMessageDialog.Show<bool>(owner);
+            await _openedMessageDialog.Show<bool?>(owner);
 
             return true;
         } // ShowMessage
@@ -143,7 +143,7 @@ namespace CoreChess.Dialogs
         {
             CloseOpenedWindow();
             _openedMessageDialog = new MessageDialog(title, message, Buttons.YesNo, Icons.Question);
-            return await _openedMessageDialog.Show<bool>(owner);
+            return await _openedMessageDialog.Show<bool?>(owner) == true;
         } // ShowConfirmMessage
         #endregion
     }
