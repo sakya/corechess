@@ -61,6 +61,7 @@ public abstract class BaseDialog : UserControl, IDisposable
         if (container == null)
             throw new Exception("Container not found");
 
+        CurrentDialog = this;
         m_Closed = false;
         owner.Closing += OwnerOnClosing;
 
@@ -85,8 +86,7 @@ public abstract class BaseDialog : UserControl, IDisposable
         await bAnim;
         Focus();
         Opened();
-
-        CurrentDialog = this;
+        
         while (!m_Closed)
             await Task.Delay(100);        
 
