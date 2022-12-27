@@ -86,9 +86,9 @@ public abstract class BaseDialog : UserControl, IDisposable
         await bAnim;
         Focus();
         Opened();
-        
+
         while (!m_Closed)
-            await Task.Delay(100);        
+            await Task.Delay(100);
 
         // Animate exit
         bAnim = AnimateBackdrop(border, 0.8, 0);
