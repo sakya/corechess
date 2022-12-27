@@ -28,7 +28,7 @@
         <ColumnDefinition Width="Auto" />
       </Grid.ColumnDefinitions>
 
-      <TextBox Name="m_Search" KeyDown="OnKeyDown" />
+      <TextBox Name="m_Search" KeyDown="OnSearchKeyDown" />
       <Button Grid.Column="1" Click="OnSearchClick">
         <i:Icon Value="fas fa-search" />
       </Button>

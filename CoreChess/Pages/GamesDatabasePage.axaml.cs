@@ -37,7 +37,7 @@ namespace CoreChess.Pages
             AvaloniaXamlLoader.Load(this);
         }
 
-        private void OnKeyDown(object sender, KeyEventArgs e)
+        private void OnSearchKeyDown(object sender, KeyEventArgs e)
         {
             if (e.Key == Key.Return) {
                 e.Handled = true;
