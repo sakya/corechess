@@ -36,6 +36,7 @@ namespace CoreChess.Pages
         private void InitializeComponent()
         {
             AvaloniaXamlLoader.Load(this);
+            PageTitle = Localizer.Localizer.Instance["WT_PgnGamesWindow"];
         }
 
         private async void OnOkClick(object sender, RoutedEventArgs e)

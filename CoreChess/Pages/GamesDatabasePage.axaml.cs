@@ -26,6 +26,7 @@ namespace CoreChess.Pages
         {
             this.InitializeComponent();
 
+            PageTitle = Localizer.Localizer.Instance["WT_GamesDatabaseWindow"];
             m_Games = games?.OrderByDescending(g => g.StartedTime).ToList();
             SetGamesList();
         }

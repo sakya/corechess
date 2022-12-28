@@ -104,6 +104,7 @@ namespace CoreChess.Pages
 
             //this.Closing += OnWindowClosing;
 
+            PageTitle = Localizer.Localizer.Instance["WT_SettingsWindow"];
             var cb = this.FindControl<ComboBox>("m_Fonts");
             var fonts = SkiaSharp.SKFontManager.Default.FontFamilies.OrderBy(f => f).ToList();
             fonts.Insert(0, "Default (Roboto)");
