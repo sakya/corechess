@@ -756,13 +756,15 @@ namespace CoreChess.Pages
             var dlg = new SettingsPage();
             dlg.Navigating += async (s) =>
             {
-                App.MainWindow.Topmost = App.Settings.Topmost;
-                SetChessboardOptions();
-                m_Chessboard.Redraw();
+                if (dlg.Result == true) {
+                    App.MainWindow.Topmost = App.Settings.Topmost;
+                    SetChessboardOptions();
+                    m_Chessboard.Redraw();
 
-                if (m_Game != null) {
-                    UpdateCapturedPieces();
-                    await UpdateMoves();
+                    if (m_Game != null) {
+                        UpdateCapturedPieces();
+                        await UpdateMoves();
+                    }
                 }
             };
             await NavigateTo(dlg);

@@ -13,7 +13,6 @@ namespace CoreChess.Pages
 {
     public class SettingsPage : BasePage
     {
-        private bool? m_Result;
         private ColorButton<Views.ColorPickerWindow> m_AccentButton;
         private ColorButton<Views.ColorPickerWindow> m_HighlightButton;
         private ColorButton<Views.ColorPickerWindow> m_WhiteButton;
@@ -96,6 +95,8 @@ namespace CoreChess.Pages
         {
             this.InitializeComponent();
         }
+
+        public bool? Result { get; private set; }
 
         private void InitializeComponent()
         {
@@ -424,7 +425,7 @@ namespace CoreChess.Pages
             App.Settings.GameAnalysisEngineId = (cmb.SelectedItem as EngineBase)?.Id;
 
             App.Settings.Save(App.SettingsPath);
-            m_Result = true;
+            Result = true;
 
             await NavigateBack();
         } // OnOkClick
@@ -434,13 +435,13 @@ namespace CoreChess.Pages
             Localizer.Localizer.Instance.LoadLanguage(App.Settings.Language);
             App.SetStyle(App.Settings.Style, App.Settings.AccentColor, App.Settings.HighlightColor, App.Settings.FontFamily);
 
-            m_Result = false;
+            Result = false;
             await NavigateBack();
         } // OnCancelClick
 
         private void OnWindowClosing(object sender, CancelEventArgs args)
         {
-            if (m_Result == null) {
+            if (Result == null) {
                 args.Cancel = true;
                 OnCancelClick(null, null);
             }
