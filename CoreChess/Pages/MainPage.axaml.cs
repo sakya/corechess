@@ -5,12 +5,10 @@ using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
 using Avalonia.Media;
 using Avalonia.Media.Imaging;
-using Avalonia.Platform;
 using Avalonia.Threading;
 using ChessLib;
 using ChessLib.Engines;
 using CoreChess.Controls;
-using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -22,7 +20,6 @@ using System.Threading.Tasks;
 using System.Windows.Input;
 using CoreChess.Abstracts;
 using CoreChess.Dialogs;
-using CoreChess.Views;
 
 namespace CoreChess.Pages
 {

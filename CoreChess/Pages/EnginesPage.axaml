@@ -6,7 +6,7 @@
         xmlns:i18n="clr-namespace:CoreChess.Localizer"
         xmlns:controls="clr-namespace:CoreChess.Controls"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-        x:Class="CoreChess.Views.EnginesWindow">
+        x:Class="CoreChess.Pages.EnginesWindow">
 
   <Grid Margin="15,15,15,5" DockPanel.Dock="Top">
     <Grid.RowDefinitions>

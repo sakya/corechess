@@ -1,6 +1,5 @@
 using Avalonia.Controls;
 using System;
-using System.ComponentModel;
 using System.Threading.Tasks;
 using Avalonia.Input;
 using CoreChess.Views;

@@ -9,7 +9,7 @@ using System.Linq;
 using CoreChess.Abstracts;
 using CoreChess.Dialogs;
 
-namespace CoreChess.Views
+namespace CoreChess.Pages
 {
     public class EnginesWindow : BasePage
     {
@@ -46,13 +46,13 @@ namespace CoreChess.Views
 
         private void OnEngineOptionsClick(object sender, RoutedEventArgs e)
         {
-            EngineBase engine = (sender as Button).DataContext as EngineBase;
+            EngineBase engine = (sender as Button)?.DataContext as EngineBase;
             ShowEngineOptions(engine);
         }
 
         private void OnConfigureEngineClick(object sender, RoutedEventArgs e)
         {
-            EngineBase engine = (sender as Button).DataContext as EngineBase;
+            EngineBase engine = (sender as Button)?.DataContext as EngineBase;
             ShowEngineProperties(engine);
         }
 
