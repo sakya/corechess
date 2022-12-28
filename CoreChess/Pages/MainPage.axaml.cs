@@ -1060,7 +1060,6 @@ namespace CoreChess.Pages
                     lastUsedEngine = App.Settings.Engines?.FirstOrDefault();
 
                 var enginePlayer = new EnginePlayer(Game.Colors.Black, lastUsedEngine?.Name, lastUsedEngine?.GetElo());
-                var sSettings = new JsonSerializerSettings() { TypeNameHandling = TypeNameHandling.Objects };
                 enginePlayer.Engine = lastUsedEngine?.Copy();
                 enginePlayer.OpeningBookFileName = App.Settings.OpeningBook;
                 settings.Players.Add(enginePlayer);
