@@ -53,12 +53,12 @@ namespace CoreChess.Utils
                         while (owner.OwnedWindows?.Count > 0)
                             await Task.Delay(100);
 
-                        var dlg = new Views.UpdateWindow(release, sb.ToString());
-                        if (await dlg.ShowDialog<bool>(owner)) {
+                        var dlg = new Dialogs.UpdateDialog(release, sb.ToString());
+                        if (await dlg.Show<bool>(owner)) {
                             return true;
                         }
                     } else if (manual) {
-                        await Views.MessageWindow.ShowMessage(owner, Localizer.Localizer.Instance["Info"], Localizer.Localizer.Instance["NoUpdateAvailable"], Views.MessageWindow.Icons.Info);
+                        await Dialogs.MessageDialog.ShowMessage(owner, Localizer.Localizer.Instance["Info"], Localizer.Localizer.Instance["NoUpdateAvailable"], Dialogs.MessageDialog.Icons.Info);
                     }
                 }
             }

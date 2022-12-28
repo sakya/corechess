@@ -1,0 +1,127 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:i="clr-namespace:Projektanker.Icons.Avalonia;assembly=Projektanker.Icons.Avalonia"
+        xmlns:i18n="clr-namespace:CoreChess.Localizer"
+        xmlns:controls="clr-namespace:CoreChess.Controls"
+        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        x:Class="CoreChess.Pages.EnginesWindow">
+
+  <Grid Margin="15,15,15,5" DockPanel.Dock="Top">
+    <Grid.RowDefinitions>
+      <RowDefinition Height="Auto"/>
+      <RowDefinition Height="*"/>
+      <RowDefinition Height="Auto"/>
+    </Grid.RowDefinitions>
+
+    <Button Grid.Row="0" Click="OnAddEngineClick" IsVisible="{Binding #m_List.IsVisible}">
+      <StackPanel Orientation="Horizontal">
+        <i:Icon Value="fas fa-plus" />
+        <TextBlock Text="{i18n:Localize AddNewEngine}" Margin="5,0,0,0" />
+      </StackPanel>
+    </Button>
+
+    <controls:ItemsList Grid.Row="1" Name="m_List" Selectable="False">
+      <controls:ItemsList.ItemTemplate>
+        <DataTemplate>
+          <Border Padding="15">
+            <Grid>
+              <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+              </Grid.RowDefinitions>
+              <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+              </Grid.ColumnDefinitions>
+
+              <TextBlock Text="{Binding Name}" TextWrapping="Wrap"/>
+              <TextBlock Grid.Row="1" FontSize="12" Text="{Binding Command}" TextTrimming="CharacterEllipsis" />
+              <Button Grid.RowSpan="2" Grid.Column="1" Click="OnConfigureEngineClick">
+                <i:Icon Value="fas fa-tools" />
+              </Button>
+              <Button Grid.RowSpan="2" Grid.Column="2" Click="OnEngineOptionsClick" Margin="5,0,0,0">
+                <i:Icon Value="fas fa-cogs" />
+              </Button>
+              <Button Grid.RowSpan="2" Grid.Column="3" Click="OnRemoveEngineClick" Margin="5,0,0,0">
+                <i:Icon Value="fas fa-trash-alt" />
+              </Button>
+            </Grid>
+          </Border>
+        </DataTemplate>
+      </controls:ItemsList.ItemTemplate>
+    </controls:ItemsList>
+
+    <Grid Grid.Row="0" Grid.RowSpan="2" Name="m_EngineOptions" IsVisible="False">
+      <Grid.RowDefinitions>
+        <RowDefinition Height="Auto" />
+        <RowDefinition Height="*" />
+      </Grid.RowDefinitions>
+
+      <Button Grid.Row="0" Click="OnResetEngineOptionsClick">
+        <StackPanel Orientation="Horizontal">
+          <i:Icon Value="fas fa-undo" />
+          <TextBlock Text="{i18n:Localize ResetToDefault}" Margin="5,0,0,0" />
+        </StackPanel>
+      </Button>
+      <ScrollViewer Grid.Row="1" Name="m_OptionsScrollViewer" HorizontalScrollBarVisibility="Disabled" Padding="0,0,5,0">
+        <controls:EngineOptions Name="m_EngineOptionsControl"/>
+      </ScrollViewer>
+    </Grid>
+
+    <Grid Grid.Row="0" Grid.RowSpan="2" Name="m_EngineProperties" IsVisible="False">
+      <ScrollViewer Name="m_PropertiesScrollViewer" HorizontalScrollBarVisibility="Disabled" Padding="0,0,5,0">
+        <StackPanel Orientation="Vertical">
+          <TextBlock Classes="Label" Text="{i18n:Localize EngineType}" />
+          <ComboBox Name="m_EngineType" Margin="0,5,0,15" SelectionChanged="OnEngineTypeChanged">
+            <ComboBoxItem Content="{i18n:Localize EngineSelect}" />
+            <ComboBoxItem Content="{i18n:Localize EngineUci}" />
+            <ComboBoxItem Content="{i18n:Localize EngineCecp}" />
+            <ComboBoxItem Content="{i18n:Localize EngineTheKing}" />
+          </ComboBox>
+
+          <TextBlock Classes="Label" Text="{i18n:Localize EngineName}"/>
+          <TextBox Name="m_EngineName" Margin="0,5,0,15" />
+
+          <TextBlock Classes="Label" Text="{i18n:Localize EngineExePath}" VerticalAlignment="Center" />
+          <Grid Margin="0,0,0,15">
+            <Grid.ColumnDefinitions>
+              <ColumnDefinition Width="*" />
+              <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+            <TextBox Name="m_EngineExePath" Margin="0,5,0,5" />
+            <Button Name="m_BtnEngineExePath" Grid.Column="1" Margin="0" Click="OnCommandClick">
+              <i:Icon Value="fas fa-folder-open" />
+            </Button>
+          </Grid>
+
+          <TextBlock Classes="Label" Text="{i18n:Localize EngineWorkingDir}" VerticalAlignment="Center" />
+          <Grid Margin="0,0,0,15">
+            <Grid.ColumnDefinitions>
+              <ColumnDefinition Width="*" />
+              <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+            <TextBox Name="m_EngineWorkingDir" Margin="0,5,0,5" />
+            <Button Name="m_BtnEngineWorkingDir" Grid.Column="1" Margin="0" Click="OnWorkingDirClick">
+              <i:Icon Value="fas fa-folder-open" />
+            </Button>
+          </Grid>
+
+          <TextBlock Classes="Label" Text="{i18n:Localize EngineArguments}" VerticalAlignment="Center" />
+          <TextBox Name="m_EngineArguments" Margin="0,5,0,15" />
+
+          <TextBlock Classes="Label" Text="{i18n:Localize EngineRegisterName}" VerticalAlignment="Center" />
+          <TextBox Name="m_EngineRegisterName" Margin="0,5,0,15" />
+
+          <TextBlock Classes="Label" Text="{i18n:Localize EngineRegisterCode}" VerticalAlignment="Center" />
+          <TextBox Name="m_EngineRegisterCode" Margin="0,5,0,15" />
+        </StackPanel>
+      </ScrollViewer>
+    </Grid>
+
+    <controls:OkCancelButtons Grid.Row="2" OkClick="OnOkClick" CancelClick="OnCancelClick" />
+  </Grid>
+</UserControl>

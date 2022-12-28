@@ -225,6 +225,7 @@ namespace ChessLib
             public PromotionArgs(Move move, Player player)
             {
                 Move = move;
+                Player = player;
             }
 
             public Move Move { get; private set; }

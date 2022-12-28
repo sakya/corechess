@@ -7,6 +7,7 @@ using Avalonia.Markup.Xaml;
 using Avalonia.Media;
 using System.Collections.Generic;
 using System.Linq;
+using Avalonia.Remote.Protocol;
 
 namespace CoreChess.Controls
 {
@@ -118,7 +119,7 @@ namespace CoreChess.Controls
                 case Key.Down:
                 case Key.FnDownArrow:
                     if (selectedIndex + 1 < count)
-                        SelectedItem = m_Items.ElementAt(selectedIndex.Value + 1);                        
+                        SelectedItem = m_Items.ElementAt(selectedIndex.Value + 1);
                     break;
                 case Key.PageDown:
                     selectedIndex += 10;
@@ -209,6 +210,7 @@ namespace CoreChess.Controls
         private void SetItemBackground(ContentControl ctrl)
         {
             if (ctrl.DataContext == SelectedItem) {
+                m_SelectedControl = ctrl;
                 ctrl.Background = (SolidColorBrush)this.FindResource("SystemControlHighlightListAccentLowBrush");
             } else {
                 ctrl.Background = new SolidColorBrush(Colors.Transparent);

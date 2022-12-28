@@ -9,6 +9,7 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Avalonia.Platform;
 using Un4seen.Bass;
 
 namespace CoreChess
@@ -53,10 +54,10 @@ namespace CoreChess
                 var splash = new Views.SplashWindow();
                 splash.Show();
                 await Task.Delay(100);
-                mApp.MainWindow = await InitializeApp(args);
-                mApp.MainWindow.Closed += (_, __) => stop.Cancel();
-                mApp.MainWindow.Show();
-                mApp.MainWindow.Activate();
+                App.MainWindow = await InitializeApp(args);
+                App.MainWindow.Closed += (_, __) => stop.Cancel();
+                App.MainWindow.Show();
+                App.MainWindow.Activate();
                 splash.Close();
             }
             Start();
@@ -102,10 +103,15 @@ namespace CoreChess
                 App.Settings.Save(App.SettingsPath);
             }
 
-            var res = new Views.MainWindow(args);
-            // Load the ECO database
-            await res.LoadEcoDatabase();
+            // Load ECO database
+            App.EcoDatabase = new Utils.EcoDatabase();
+            var assets = AvaloniaLocator.Current.GetService<IAssetLoader>();
+            Uri uri = new Uri($"avares://CoreChess/Assets/eco.pgn");
+            using (Stream s = assets.Open(uri)) {
+                await App.EcoDatabase.Load(s);
+            }
 
+            var res = new Views.MainWindow(args);
             return res;
         } // InitializeApp
 

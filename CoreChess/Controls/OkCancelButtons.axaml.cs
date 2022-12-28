@@ -81,10 +81,7 @@ namespace CoreChess.Controls
                     btn.IsCancel = !value;
                     Grid.SetColumn(btn, value ? 1 : 0);
                     Grid.SetColumnSpan(btn, value ? 1 : 2);
-                    if (value)
-                        btn.Margin = new Thickness(5,0,0,0);
-                    else
-                        btn.Margin = new Thickness(0, 0, 0, 0);
+                    btn.Margin = value ? new Thickness(5,0,0,0) : new Thickness(0, 0, 0, 0);
                 }
             }
         }

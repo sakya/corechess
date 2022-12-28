@@ -2,11 +2,10 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
 using System.Reflection;
-using System.Threading.Tasks;
 
 namespace CoreChess.Views
 {
-    public class SplashWindow : BaseView
+    public class SplashWindow : Abstracts.BaseView
     {
         public SplashWindow()
         {

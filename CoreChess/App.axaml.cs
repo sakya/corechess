@@ -6,6 +6,10 @@ using System;
 using System.IO;
 using System.Threading;
 using System.Collections.Generic;
+using Avalonia.Controls;
+using Avalonia.Media;
+using CoreChess.Utils;
+using CoreChess.Views;
 
 namespace CoreChess
 {
@@ -19,11 +23,13 @@ namespace CoreChess
         public static string PiecesPath { get; set; }
         public static string LocalPiecesPath { get; set; }
         public static Settings.Styles? CurrentStyle { get; private set; } = Settings.Styles.Dark;
-        public Avalonia.Controls.Window MainWindow { get; set; }
+        public static MainWindow MainWindow { get; set; }
         public static Settings Settings
         {
             get; set;
         }
+
+        public static EcoDatabase EcoDatabase { get; set; }
 
         public static void SetStyle(Settings.Styles style, string accentColor, string highlightColor, string fontFamily)
         {
@@ -140,5 +146,15 @@ namespace CoreChess
                 }
             }
         } // Run
+
+        public static Color? GetStyleColor(string name)
+        {
+            if (Current is App app && App.MainWindow != null) {
+                var resource = App.MainWindow.FindResource(name);
+                if (resource is Color col)
+                    return col;
+            }
+            return null;
+        }
     }
 }

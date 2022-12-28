@@ -1,0 +1,38 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:controls="clr-namespace:CoreChess.Controls"
+        xmlns:i="clr-namespace:Projektanker.Icons.Avalonia;assembly=Projektanker.Icons.Avalonia"
+        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        x:Class="CoreChess.Dialogs.MessageDialog">
+
+  <UserControl.Styles>
+      <Style Selector="Button.Ok">
+          <Setter Property="Margin" Value="5,0,0,0" />
+      </Style>
+  </UserControl.Styles>
+
+  <Grid Margin="10,10,10,5" DockPanel.Dock="Top">
+    <Grid.RowDefinitions>
+      <RowDefinition Height="*" />
+      <RowDefinition Height="Auto" />
+    </Grid.RowDefinitions>
+
+    <Grid>
+      <Grid.ColumnDefinitions>
+        <ColumnDefinition Width="Auto" />
+        <ColumnDefinition Width="*" />
+      </Grid.ColumnDefinitions>
+
+      <i:Icon Name="m_Icon" Margin="0,2,5,0" VerticalAlignment="Top" Foreground="{DynamicResource HighlightColor}" />
+      <TextBlock Grid.Column="1" Name="m_Message" TextWrapping="Wrap" MaxWidth="500" HorizontalAlignment="Left"></TextBlock>
+    </Grid>
+
+
+    <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,15,0,0">
+      <Button Name="m_Button2" Classes="Small" Click="OnButton2Click" IsCancel="True">No</Button>
+      <Button Name="m_Button1" Classes="Small Accent Ok" Click="OnButton1Click" IsDefault="True" Margin="5,0,0,0">Yes</Button>
+    </StackPanel>
+  </Grid>
+</UserControl>

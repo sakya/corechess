@@ -16,6 +16,7 @@ using System.Diagnostics;
 using Avalonia.Threading;
 using Un4seen.Bass;
 using System.Threading;
+using CoreChess.Dialogs;
 
 namespace CoreChess.Controls
 {
@@ -391,15 +392,13 @@ namespace CoreChess.Controls
 
         private async Task<Piece.Pieces> OnPlayerPromotion(object sender, Game.PromotionArgs args)
         {
-            var dlg = new PromotionWindow(PiecesFolder, args.Player.Color);
-            await dlg.ShowDialog((Window)this.VisualRoot);
-
-            return dlg.Result ?? Piece.Pieces.Queen;
+            var dlg = new PromotionDialog(PiecesFolder, args.Player.Color);
+            return await dlg.Show<Piece.Pieces>((Window)this.VisualRoot);
         } // OnPromotion
 
         private async Task<bool> OnCastlingConfirm(object sender, EventArgs args)
         {
-            return await MessageWindow.ShowConfirmMessage((Window)this.VisualRoot, Localizer.Localizer.Instance["Confirm"], Localizer.Localizer.Instance["ConfirmCastling"]);
+            return await MessageDialog.ShowConfirmMessage((Window)this.VisualRoot, Localizer.Localizer.Instance["Confirm"], Localizer.Localizer.Instance["ConfirmCastling"]);
         } // OnCastlingConfirm
 
         private bool OnPromoted(object sender, Game.PromotionArgs args)
