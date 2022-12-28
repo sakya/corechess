@@ -54,7 +54,6 @@ public abstract class BaseDialog : UserControl, IDisposable
 
     protected virtual void Opened()
     {
-
     }
 
     public virtual async Task<T> Show<T>(Window owner)

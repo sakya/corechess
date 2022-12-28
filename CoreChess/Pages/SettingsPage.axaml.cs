@@ -102,8 +102,6 @@ namespace CoreChess.Pages
         {
             AvaloniaXamlLoader.Load(this);
 
-            //this.Closing += OnWindowClosing;
-
             PageTitle = Localizer.Localizer.Instance["WT_SettingsWindow"];
             var cb = this.FindControl<ComboBox>("m_Fonts");
             var fonts = SkiaSharp.SKFontManager.Default.FontFamilies.OrderBy(f => f).ToList();
@@ -439,13 +437,5 @@ namespace CoreChess.Pages
             Result = false;
             await NavigateBack();
         } // OnCancelClick
-
-        private void OnWindowClosing(object sender, CancelEventArgs args)
-        {
-            if (Result == null) {
-                args.Cancel = true;
-                OnCancelClick(null, null);
-            }
-        }
-    }
+   }
 }

@@ -47,6 +47,4 @@ public class Spinner : UserControl
                 stack.Classes.Remove("spinner");
         });
     }
-
-
 }
