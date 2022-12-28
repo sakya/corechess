@@ -6,8 +6,7 @@
              x:Class="CoreChess.Dialogs.AboutDialog"
              VerticalAlignment="Center"
              HorizontalAlignment="Center"
-             Width="400"
-             KeyDown="OnKeyDown">
+             Width="400">
     <Grid Margin="15">
       <Grid.RowDefinitions>
         <RowDefinition Height="Auto"/>

@@ -5,6 +5,7 @@ using Avalonia;
 using Avalonia.Animation;
 using Avalonia.Animation.Easings;
 using Avalonia.Controls;
+using Avalonia.Input;
 using Avalonia.Layout;
 using Avalonia.Media;
 using Avalonia.Styling;
@@ -39,6 +40,10 @@ public abstract class BaseDialog : UserControl, IDisposable
     public bool CloseOnBackdropClick { get; set; }
 
     public virtual void Dispose()
+    {
+    }
+
+    public virtual void OnKeyDown(object sender, KeyEventArgs e)
     {
     }
 

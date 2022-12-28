@@ -92,7 +92,7 @@ namespace CoreChess.Dialogs
             AvaloniaXamlLoader.Load(this);
         }
 
-        private void OnKeyDown(object sender, KeyEventArgs e)
+        public override void OnKeyDown(object sender, KeyEventArgs e)
         {
             base.OnKeyDown(e);
 

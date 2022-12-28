@@ -25,10 +25,12 @@ namespace CoreChess.Dialogs
             AvaloniaXamlLoader.Load(this);
         }
 
-        private void OnKeyDown(object sender, KeyEventArgs args)
+        public override void OnKeyDown(object sender, KeyEventArgs e)
         {
-            if (args.Key == Key.Escape || args.Key == Key.Enter)
+            if (e.Key == Key.Escape || e.Key == Key.Enter) {
+                e.Handled = true;
                 this.Close();
+            }
         }
     }
 }

@@ -359,7 +359,11 @@ public class MainWindow : Abstracts.BaseView
         if (m_ChangingPage)
             return;
 
-        if (BaseDialog.CurrentDialog == null) {
+        if (BaseDialog.CurrentDialog != null) {
+            BaseDialog.CurrentDialog.OnKeyDown(sender, e);
+            if (e.Handled)
+                return;
+        } else if (CurrentPage != null) {
             CurrentPage.OnKeyDown(sender, e);
             if (e.Handled)
                 return;

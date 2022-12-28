@@ -217,5 +217,13 @@ namespace CoreChess.Dialogs
         {
             this.Close();
         } // OnCancelClick
+
+        public override void OnKeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyModifiers == KeyModifiers.None && e.Key == Key.Escape) {
+                e.Handled = true;
+                OnCancelClick(null, null);
+            }
+        }
     }
 }
