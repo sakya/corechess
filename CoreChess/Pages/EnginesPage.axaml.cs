@@ -28,6 +28,7 @@ namespace CoreChess.Views
         {
             AvaloniaXamlLoader.Load(this);
 
+            NavigateBackWithKeyboard = false;
             PageTitle = Localizer.Localizer.Instance["WT_EnginesWindow"];
             if (!OperatingSystem.IsWindows()) {
                 var cb = this.FindControl<ComboBox>("m_EngineType");
