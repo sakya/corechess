@@ -190,7 +190,7 @@ namespace CoreChess
             } else if (OperatingSystem.IsWindows()) {
                 // Add default engines (Inno Setup)
                 defaultEngines.Add(
-                    new Uci("Stockfish", Path.Combine(App.BinaryPath, @"Engines\stockfish\stockfish_15_x64.exe"))
+                    new Uci("Stockfish", Path.Combine(App.BinaryPath, @"Engines\stockfish\stockfish-windows-2022-x86-64.exe"))
                     {
                         WorkingDir = Path.Combine(App.BinaryPath, @"Engines\stockfish")
                     }
