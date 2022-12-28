@@ -16,8 +16,9 @@ using CoreChess.Pages;
 
 namespace CoreChess.Views;
 
-public class MainWindow : Abstracts.BaseView
+public class MainWindow : BaseView
 {
+    private string[] m_Args;
     private Grid m_Container;
     private Controls.TitleBar m_TitleBar;
     readonly List<BasePage> m_PageHistory = new();
@@ -58,6 +59,7 @@ public class MainWindow : Abstracts.BaseView
     {
         InitializeComponent();
 
+        m_Args = args;
         WindowTitle = Title;
         Transition = new TransitionSettings(TransitionSettings.EnterTransitions.SlideLeft, TimeSpan.FromMilliseconds(250));
         BackKey = Key.Escape;
@@ -92,7 +94,7 @@ public class MainWindow : Abstracts.BaseView
     {
         base.OnOpened(e);
         await Task.Delay(10);
-        var mp = new MainPage();
+        var mp = new MainPage(m_Args);
         await NavigateTo(mp);
     }
 
@@ -184,8 +186,7 @@ public class MainWindow : Abstracts.BaseView
 
     public BasePage.PageState LoadPageState<T>(BasePage page) where T : BasePage.PageState
     {
-        BasePage.PageState res;
-        if (m_PageStates.TryGetValue(page.Id, out res))
+        if (m_PageStates.TryGetValue(page.Id, out var res))
             return res as T;
         return null;
     } // LoadPageState
