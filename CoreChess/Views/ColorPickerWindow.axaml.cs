@@ -8,6 +8,7 @@ using System.Linq;
 using AvaloniaColorPicker;
 using Avalonia.Media;
 using System.Threading.Tasks;
+using CoreChess.Abstracts;
 
 namespace CoreChess.Views
 {
