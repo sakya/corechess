@@ -467,7 +467,7 @@ namespace ChessLib.Engines
             string cmd = "go";
             if (ponder)
                 cmd = $"{cmd} ponder";
-            if (whiteIncrement > 0)
+            if (whiteTimeLeft > 0)
                 cmd = $"{cmd} wtime {whiteTimeLeft}";
             if (blackTimeLeft > 0)
                 cmd = $"{cmd} btime {blackTimeLeft}";
