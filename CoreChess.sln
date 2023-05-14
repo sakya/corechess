@@ -28,7 +28,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Flatpak", "Flatpak", "{130BE586-35BB-479B-B8F9-F1A225318D4B}"
 	ProjectSection(SolutionItems) = preProject
 		Flatpak\com.github.sakya.corechess.appdata.xml = Flatpak\com.github.sakya.corechess.appdata.xml
-		Flatpak\com.github.sakya.CoreChess.desktop = Flatpak\com.github.sakya.CoreChess.desktop
+		Flatpak\com.github.sakya.corechess.desktop = Flatpak\com.github.sakya.corechess.desktop
 	EndProjectSection
 EndProject
 Global
