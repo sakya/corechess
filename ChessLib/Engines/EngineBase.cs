@@ -3,7 +3,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -27,7 +26,7 @@ namespace ChessLib.Engines
             public string Max { get; set; }
             public List<string> ValidValues { get; set; }
             /// <summary>
-            /// Internal options won't be applyed by <see cref="ApplyOptions(bool)"/>
+            /// Internal options won't be applied by <see cref="ApplyOptions(bool)"/>
             /// </summary>
             public bool Internal { get; set; }
         } // Option
