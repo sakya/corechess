@@ -65,6 +65,9 @@ public partial class MainWindow : BaseView
 
         Closing += OnWindowClosing;
         KeyDown += OnKeyDown;
+
+        var title = this.GetObservable(Window.WindowStateProperty);
+        title.Subscribe(HandleWindowStateChanged);
     }
 
 
@@ -118,10 +121,10 @@ public partial class MainWindow : BaseView
         base.InitializeComponent();
     }
 
-    /*protected override void HandleWindowStateChanged(WindowState state)
+    private void HandleWindowStateChanged(WindowState state)
     {
         CurrentPage?.HandleWindowStateChanged(state);
-    }*/
+    }
 
     #region public operations
     /// <summary>
