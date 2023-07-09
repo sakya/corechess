@@ -209,16 +209,16 @@
             </ComboBox>
 
             <TextBlock Grid.Row="5" Text="{i18n:Localize WhiteFilesColor}" VerticalAlignment="Center" />
-            <ColorPicker Grid.Column="1" Grid.Row="5" Name="m_WhiteButton" />
+            <ColorPicker Grid.Column="1" Grid.Row="5" Name="m_WhiteButton" HorizontalAlignment="Right" />
 
             <TextBlock Grid.Row="6" Text="{i18n:Localize WhiteFilesSelectedColor}" VerticalAlignment="Center" />
-            <ColorPicker Grid.Column="1" Grid.Row="6" Name="m_WhiteSelectedButton" />
+            <ColorPicker Grid.Column="1" Grid.Row="6" Name="m_WhiteSelectedButton" HorizontalAlignment="Right" />
 
             <TextBlock Grid.Row="7" Text="{i18n:Localize BlackFilesColor}" VerticalAlignment="Center" />
-            <ColorPicker Grid.Column="1" Grid.Row="7" Name="m_BlackButton" />
+            <ColorPicker Grid.Column="1" Grid.Row="7" Name="m_BlackButton" HorizontalAlignment="Right" />
 
             <TextBlock Grid.Row="8" Text="{i18n:Localize BlackFilesSelectedColor}" VerticalAlignment="Center" />
-            <ColorPicker Grid.Column="1" Grid.Row="8" Name="m_BlackSelectedButton" />
+            <ColorPicker Grid.Column="1" Grid.Row="8" Name="m_BlackSelectedButton" HorizontalAlignment="Right" />
           </Grid>
         </ScrollViewer>
       </TabItem>

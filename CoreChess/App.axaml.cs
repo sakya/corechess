@@ -51,7 +51,7 @@ namespace CoreChess
                     };
                 }
 
-                Application.Current.Styles[1] = include;
+                Application.Current.Styles[2] = include;
             }
 
             if (string.IsNullOrEmpty(fontFamily))

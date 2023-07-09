@@ -37,8 +37,6 @@ namespace CoreChess
 
             return AppBuilder.Configure<App>()
                 .UsePlatformDetect()
-                .With(new X11PlatformOptions())
-                .With(new Win32PlatformOptions())
                 .LogToTrace()
                 .UseSkia();
         }
