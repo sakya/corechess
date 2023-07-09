@@ -2,11 +2,12 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:local="clr-namespace:CoreChess"
              x:Class="CoreChess.App"
+             RequestedThemeVariant="Dark"
              Name="CoreChess">
 
   <Application.Styles>
-    <StyleInclude Source="avares://Avalonia.Themes.Default/Accents/BaseDark.xaml"/>
-    <StyleInclude Source="avares://Avalonia.Themes.Fluent/FluentDark.xaml"/>
+    <FluentTheme />
+    <StyleInclude Source="avares://Avalonia.Controls.ColorPicker/Themes/Fluent/Fluent.xaml" />
     <StyleInclude Source="avares://CoreChess/Assets/Styles/PaletteDark.axaml" />
 
     <!-- Common styles -->

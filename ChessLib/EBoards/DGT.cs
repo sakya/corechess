@@ -594,7 +594,7 @@ namespace ChessLib.EBoards
             DateTime started = DateTime.UtcNow;
             while(true) {
                 m_MessagesSema.WaitOne();
-                var msg = m_Messages.Where(m => m.Message == message).FirstOrDefault();
+                var msg = m_Messages.FirstOrDefault(m => m.Message == message);
                 if (msg != null)
                     m_Messages.Remove(msg);
                 m_MessagesSema.Release();

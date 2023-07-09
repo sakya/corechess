@@ -32,37 +32,37 @@ namespace ChessLib
             public Player WhitePlayer
             {
                 get {
-                    return Players.Where(p => p.Color == Colors.White).FirstOrDefault();
+                    return Players.FirstOrDefault(p => p.Color == Colors.White);
                 }
             }
             public string WhitePlayerName
             {
                 get {
-                    return Players.Where(p => p.Color == Colors.White).FirstOrDefault()?.Name;
+                    return Players.FirstOrDefault(p => p.Color == Colors.White)?.Name;
                 }
             }
             public string WhitePlayerDisplayName
             {
                 get {
-                    return Players.Where(p => p.Color == Colors.White).FirstOrDefault()?.DisplayName;
+                    return Players.FirstOrDefault(p => p.Color == Colors.White)?.DisplayName;
                 }
             }
             public Player BlackPlayer
             {
                 get {
-                    return Players.Where(p => p.Color == Colors.Black).FirstOrDefault();
+                    return Players.FirstOrDefault(p => p.Color == Colors.Black);
                 }
             }
             public string BlackPlayerName
             {
                 get {
-                    return Players.Where(p => p.Color == Colors.Black).FirstOrDefault()?.Name;
+                    return Players.FirstOrDefault(p => p.Color == Colors.Black)?.Name;
                 }
             }
             public string BlackPlayerDisplayName
             {
                 get {
-                    return Players.Where(p => p.Color == Colors.Black).FirstOrDefault()?.DisplayName;
+                    return Players.FirstOrDefault(p => p.Color == Colors.Black)?.DisplayName;
                 }
             }
             public bool TrainingMode { get; set; }
@@ -592,7 +592,7 @@ namespace ChessLib
                 moves.Add(m.Coordinate);
 
             m_PonderDataSema.WaitOne();
-            var ponderData = m_PonderData.Where(p => p.Player == ToMovePlayer).FirstOrDefault();
+            var ponderData = m_PonderData.FirstOrDefault(p => p.Player == ToMovePlayer);
             m_PonderDataSema.Release();
             if (ponderData != null) {
                 // Pondering
@@ -845,7 +845,7 @@ namespace ChessLib
             }
 
             // CECP
-            var ep = Settings.Players.Where(p => p is EnginePlayer).FirstOrDefault() as EnginePlayer;
+            var ep = Settings.Players.FirstOrDefault(p => p is EnginePlayer) as EnginePlayer;
             if (ep.Engine is Engines.Cecp) {
                 var cecp = ep.Engine as Engines.Cecp;
                 if (toRemove == 1)
@@ -1079,8 +1079,8 @@ namespace ChessLib
 
             // King and Bishop vs King and Bishop with bishops on the same color
             if (white.Count == 2 && black.Count == 2) {
-                var bBishop = black.Where(p => p.Type == Piece.Pieces.Bishop).FirstOrDefault();
-                var wBishop = white.Where(p => p.Type == Piece.Pieces.Bishop).FirstOrDefault();
+                var bBishop = black.FirstOrDefault(p => p.Type == Piece.Pieces.Bishop);
+                var wBishop = white.FirstOrDefault(p => p.Type == Piece.Pieces.Bishop);
                 if (bBishop != null && wBishop != null && bBishop.InitialSquareColor == wBishop.InitialSquareColor)
                     return true;
             }
@@ -1438,8 +1438,8 @@ namespace ChessLib
 
         public Player GetPlayer(Colors color)
         {
-            return Settings?.Players.Where(p => p.Color == color)
-            .FirstOrDefault();
+            return (Settings?.Players)
+                .FirstOrDefault(p => p.Color == color);
         } // GetPlayer
 
         public async Task<bool> StopPondering()
@@ -1723,8 +1723,8 @@ namespace ChessLib
         /// <returns></returns>
         private Board.Square GetKingRook(Game.Colors color)
         {
-            return Board.Squares.Where(s => s.Piece != null && !s.Piece.Moved && s.Piece.Type == Piece.Pieces.Rook
-                && s.Piece.Color == color && s.File > 'E').FirstOrDefault();
+            return Board.Squares.FirstOrDefault(s => s.Piece != null && !s.Piece.Moved && s.Piece.Type == Piece.Pieces.Rook
+                                                     && s.Piece.Color == color && s.File > 'E');
         } // GetKingRook
 
         /// <summary>
@@ -1734,8 +1734,8 @@ namespace ChessLib
         /// <returns></returns>
         private Board.Square GetQueenRook(Game.Colors color)
         {
-            return Board.Squares.Where(s => s.Piece != null && !s.Piece.Moved && s.Piece.Type == Piece.Pieces.Rook
-                && s.Piece.Color == color && s.File < 'E').FirstOrDefault();
+            return Board.Squares.FirstOrDefault(s => s.Piece != null && !s.Piece.Moved && s.Piece.Type == Piece.Pieces.Rook
+                                                     && s.Piece.Color == color && s.File < 'E');
         } // GetQueenRook
 
         private List<Board.Square> GetAvailableSquaresPawn(Board.Square startSquare)

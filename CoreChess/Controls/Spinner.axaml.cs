@@ -6,7 +6,7 @@ using CoreChess.Controls.Models;
 
 namespace CoreChess.Controls;
 
-public class Spinner : UserControl
+public partial class Spinner : UserControl
 {
     public static readonly DirectProperty<Spinner, string> MessageProperty =
         AvaloniaProperty.RegisterDirect<Spinner, string>(
@@ -21,6 +21,16 @@ public class Spinner : UserControl
     {
         DataContext = m_Model;
         InitializeComponent();
+
+        var iv = this.GetObservable(UserControl.IsVisibleProperty);
+        iv.Subscribe(value =>
+        {
+            var stack = this.FindControl<StackPanel>("WaitSpinner");
+            if (value)
+                stack.Classes.Add("spinner");
+            else
+                stack.Classes.Remove("spinner");
+        });
     }
 
     public string Message
@@ -32,19 +42,5 @@ public class Spinner : UserControl
                 m_Model.Message = value;
             }
         }
-    }
-
-    private void InitializeComponent()
-    {
-        AvaloniaXamlLoader.Load(this);
-        var iv = this.GetObservable(UserControl.IsVisibleProperty);
-        iv.Subscribe(value =>
-        {
-            var stack = this.FindControl<StackPanel>("WaitSpinner");
-            if (value)
-                stack.Classes.Add("spinner");
-            else
-                stack.Classes.Remove("spinner");
-        });
     }
 }

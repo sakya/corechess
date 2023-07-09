@@ -14,7 +14,7 @@ using CoreChess.Abstracts;
 
 namespace CoreChess.Dialogs
 {
-    public class UpdateDialog : BaseDialog
+    public partial class UpdateDialog : BaseDialog
     {
         private Release m_Release = null;
         private string m_Changelog = string.Empty;
@@ -31,11 +31,6 @@ namespace CoreChess.Dialogs
             m_Changelog = changelog;
 
             this.InitializeComponent();
-        }
-
-        private void InitializeComponent()
-        {
-            AvaloniaXamlLoader.Load(this);
 
             var tb = this.FindControl<TextBlock>("m_Version");
             tb.Text = m_Release.TagName;
@@ -74,7 +69,7 @@ namespace CoreChess.Dialogs
             this.FindControl<Controls.OkCancelButtons>("m_OkCancel").IsVisible = false;
             this.FindControl<StackPanel>("m_Download").IsVisible = true;
 
-            var asset = m_Release.Assets.Where(a => a.Name.EndsWith(".exe")).FirstOrDefault();
+            var asset = m_Release.Assets.FirstOrDefault(a => a.Name.EndsWith(".exe"));
             if (asset == null)
                 throw new Exception("Asset not found");
 

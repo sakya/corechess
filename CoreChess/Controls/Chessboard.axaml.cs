@@ -2,12 +2,10 @@
 using Avalonia.Animation;
 using Avalonia.Controls;
 using Avalonia.Controls.Shapes;
-using Avalonia.Markup.Xaml;
 using Avalonia.Media;
 using Avalonia.Media.Imaging;
 using Avalonia.Styling;
 using ChessLib;
-using CoreChess.Views;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -20,16 +18,15 @@ using CoreChess.Dialogs;
 
 namespace CoreChess.Controls
 {
-    public class Chessboard : UserControl
+    public partial class Chessboard : UserControl
     {
-        Game m_Game = null;
-        double m_BorderWidth = 18.0;
-        Canvas m_Canvas = null;
-        Board.Square m_SelectedSquare = null;
-        DragInfo m_DragInfo = null;
-        string m_HighlightedMove = string.Empty;
-        bool m_GameEndedInvoked = false;
-        Mutex m_GameEndedMutex = new Mutex();
+        private Game m_Game = null;
+        private readonly double m_BorderWidth = 18.0;
+        private Board.Square m_SelectedSquare = null;
+        private DragInfo m_DragInfo = null;
+        private string m_HighlightedMove = string.Empty;
+        private bool m_GameEndedInvoked = false;
+        private readonly Mutex m_GameEndedMutex = new();
 
         class DragInfo
         {
@@ -91,6 +88,16 @@ namespace CoreChess.Controls
         {
             this.InitializeComponent();
 
+            m_Canvas = this.FindControl<Canvas>("m_Canvas");
+
+            // Subscribe to bounds changed
+            var bounds = m_Canvas.GetObservable(Canvas.BoundsProperty);
+            bounds.Subscribe(value =>
+            {
+                if (m_Game != null)
+                    DrawBoard(m_Canvas);
+            });
+
             // Default settings
             BorderColor = Colors.Transparent;
             SquareWhiteColor = Utils.ColorConverter.ParseHexColor("#ffeeeed2");
@@ -102,21 +109,6 @@ namespace CoreChess.Controls
             PiecesFolder = $"{App.PiecesPath}{System.IO.Path.DirectorySeparatorChar}Default";
             ShowAvailableMoves = true;
             ShowFileRankNotation = Settings.FileRankNotations.Inside;
-        }
-
-        private void InitializeComponent()
-        {
-            AvaloniaXamlLoader.Load(this);
-
-            m_Canvas = this.FindControl<Canvas>("m_Canvas");
-
-            // Subscribe to bounds changed
-            var bounds = m_Canvas.GetObservable(Canvas.BoundsProperty);
-            bounds.Subscribe(value =>
-            {
-                if (m_Game != null)
-                    DrawBoard(m_Canvas);
-            });
         }
 
         public Color BorderColor { get; set; }
@@ -226,8 +218,8 @@ namespace CoreChess.Controls
 
                         if (clickedSquare.Piece?.Color == m_Game.ToMove) {
                             // Select the square
-                            var rect = m_Canvas.Children.Where(c => c.Name == $"Rect_{clickedSquare.Notation}")
-                                .FirstOrDefault() as Rectangle;
+                            var rect = m_Canvas.Children
+                                .FirstOrDefault(c => c.Name == $"Rect_{clickedSquare.Notation}") as Rectangle;
                             if (rect != null)
                                 rect.Fill = new SolidColorBrush(clickedSquare.Color == Game.Colors.White ? SquareWhiteSelectedColor : SquareBlackSelectedColor);
                             m_SelectedSquare = clickedSquare;
@@ -369,8 +361,8 @@ namespace CoreChess.Controls
         #region private operations
         private Canvas GetPieceGraphicElement(Piece piece)
         {
-            return m_Canvas.Children.Where(c => c.Name == $"Piece_{piece.Id}")
-                .FirstOrDefault() as Canvas;
+            return m_Canvas.Children
+                .FirstOrDefault(c => c.Name == $"Piece_{piece.Id}") as Canvas;
         } // GetPieceGraphicElement
 
         private async Task<bool> CancelDragAndDrop()
@@ -407,7 +399,7 @@ namespace CoreChess.Controls
             piece.DataContext = args.Move.Piece.Type;
 
             var bitmap = new Bitmap(GetPieceImagePath(args.Move.Piece));
-            piece.Background = Background = new ImageBrush(bitmap) { BitmapInterpolationMode = Avalonia.Visuals.Media.Imaging.BitmapInterpolationMode.HighQuality };
+            piece.Background = Background = new ImageBrush(bitmap);
 
             return true;
         } // OnPromoted
@@ -500,7 +492,7 @@ namespace CoreChess.Controls
                     piece.DataContext = movedPieces[0].Piece.Type;
 
                     var bitmap = new Bitmap(GetPieceImagePath(movedPieces[0].Piece));
-                    piece.Background = Background = new ImageBrush(bitmap) { BitmapInterpolationMode = Avalonia.Visuals.Media.Imaging.BitmapInterpolationMode.HighQuality };
+                    piece.Background = Background = new ImageBrush(bitmap);
                 }
             }
             this.IsHitTestVisible = true;
@@ -518,8 +510,8 @@ namespace CoreChess.Controls
         private void DeselectSquare()
         {
             if (m_SelectedSquare != null) {
-                var rect = m_Canvas.Children.Where(c => c.Name == $"Rect_{m_SelectedSquare.Notation}")
-                    .FirstOrDefault() as Rectangle;
+                var rect = m_Canvas.Children
+                    .FirstOrDefault(c => c.Name == $"Rect_{m_SelectedSquare.Notation}") as Rectangle;
                 if (rect != null) {
                     rect.Fill = new SolidColorBrush(m_SelectedSquare.Color == Game.Colors.White ? SquareWhiteColor : SquareBlackColor);
                     rect.Stroke = null;
@@ -673,7 +665,7 @@ namespace CoreChess.Controls
                         Name = $"Piece_{square.Piece.Id}",
                         Width = squareWidth,
                         Height = squareHeight,
-                        Background = new ImageBrush(bitmap) { BitmapInterpolationMode = Avalonia.Visuals.Media.Imaging.BitmapInterpolationMode.HighQuality },
+                        Background = new ImageBrush(bitmap),
                         DataContext = square.Piece.Type,
                         ZIndex = 1
                     };
@@ -713,15 +705,15 @@ namespace CoreChess.Controls
         {
             Rectangle rect = null;
             if (m_DragInfo.PreviousSquare != null) {
-                rect = m_Canvas.Children.Where(c => c.Name == $"Rect_{m_DragInfo.PreviousSquare.Notation}")
-                    .FirstOrDefault() as Rectangle;
+                rect = m_Canvas.Children
+                    .FirstOrDefault(c => c.Name == $"Rect_{m_DragInfo.PreviousSquare.Notation}") as Rectangle;
                 if (rect != null)
                     rect.Fill = m_DragInfo.PreviousSquareFill;
             }
 
             if (square != null) {
-                rect = m_Canvas.Children.Where(c => c.Name == $"Rect_{square.Notation}")
-                    .FirstOrDefault() as Rectangle;
+                rect = m_Canvas.Children
+                    .FirstOrDefault(c => c.Name == $"Rect_{square.Notation}") as Rectangle;
                 if (rect != null) {
                     m_DragInfo.PreviousSquare = square;
                     m_DragInfo.PreviousSquareFill = rect.Fill;
@@ -744,8 +736,8 @@ namespace CoreChess.Controls
                 };
 
                 foreach (var square in squares) {
-                    var rect = m_Canvas.Children.Where(c => c.Name == $"Rect_{square.Notation}")
-                        .FirstOrDefault() as Rectangle;
+                    var rect = m_Canvas.Children
+                        .FirstOrDefault(c => c.Name == $"Rect_{square.Notation}") as Rectangle;
                     if (rect != null)
                         rect.Fill = new SolidColorBrush(square.Color == Game.Colors.White ? SquareWhiteColor : SquareBlackColor);
                 }
@@ -761,8 +753,8 @@ namespace CoreChess.Controls
                 };
 
                 foreach (var square in squares) {
-                    var rect = m_Canvas.Children.Where(c => c.Name == $"Rect_{square.Notation}")
-                        .FirstOrDefault() as Rectangle;
+                    var rect = m_Canvas.Children
+                        .FirstOrDefault(c => c.Name == $"Rect_{square.Notation}") as Rectangle;
                     if (rect != null)
                         rect.Fill = new SolidColorBrush(square.Color == Game.Colors.White ? SquareWhiteSelectedColor : SquareBlackSelectedColor);
                 }
@@ -780,8 +772,8 @@ namespace CoreChess.Controls
                 squares = m_Game.GetAvailableSquares(square);
 
             if (EnableDragAndDrop) {
-                var rect = m_Canvas.Children.Where(c => c.Name == $"Rect_{square.Notation}")
-                    .FirstOrDefault() as Rectangle;
+                var rect = m_Canvas.Children
+                    .FirstOrDefault(c => c.Name == $"Rect_{square.Notation}") as Rectangle;
                 if (rect != null)
                     rect.Fill = new SolidColorBrush(square.Color == Game.Colors.White ? SquareWhiteSelectedColor : SquareBlackSelectedColor);
             }
@@ -792,8 +784,8 @@ namespace CoreChess.Controls
                 if (created.Contains(s.Notation))
                     continue;
 
-                var fRect = m_Canvas.Children.Where(c => c.Name == $"Rect_{s.Notation}")
-                    .FirstOrDefault() as Rectangle;
+                var fRect = m_Canvas.Children
+                    .FirstOrDefault(c => c.Name == $"Rect_{s.Notation}") as Rectangle;
                 if (fRect != null) {
                     double size = fRect.Width / 4;
                     if (s.Piece != null && s != square)
@@ -823,8 +815,8 @@ namespace CoreChess.Controls
         private void RemoveAvailableSquares(Board.Square square = null)
         {
             if (square != null) {
-                var rect = m_Canvas.Children.Where(c => c.Name == $"Rect_{square.Notation}")
-                    .FirstOrDefault() as Rectangle;
+                var rect = m_Canvas.Children
+                    .FirstOrDefault(c => c.Name == $"Rect_{square.Notation}") as Rectangle;
                 if (rect != null)
                     rect.Fill = new SolidColorBrush(square.Color == Game.Colors.White ? SquareWhiteColor : SquareBlackColor);
             }
@@ -841,7 +833,8 @@ namespace CoreChess.Controls
             Animation anim = new Animation()
             {
                 Duration = TimeSpan.FromMilliseconds(durationMs),
-                Easing = new Avalonia.Animation.Easings.LinearEasing()
+                Easing = new Avalonia.Animation.Easings.LinearEasing(),
+                FillMode = FillMode.Forward
             };
 
             var kf = new KeyFrame()
@@ -895,7 +888,7 @@ namespace CoreChess.Controls
                     Bass.BASS_StreamCreateFile("Audio/move_black.mp3", 0, 0, BASSFlag.BASS_DEFAULT);
                 Bass.BASS_ChannelPlay(audioStream, false);
             }
-            await anim.RunAsync(pGraphics, null);
+            await anim.RunAsync(pGraphics, CancellationToken.None);
 
             Canvas.SetTop(pGraphics, targetPosition.Y);
             Canvas.SetLeft(pGraphics, targetPosition.X);

@@ -6,7 +6,7 @@ using Avalonia.Markup.Xaml;
 
 namespace CoreChess.Controls
 {
-    public class OkCancelButtons : UserControl
+    public partial class OkCancelButtons : UserControl
     {
         private string m_OkText;
         private bool m_OkEnabled;
@@ -42,6 +42,19 @@ namespace CoreChess.Controls
         public OkCancelButtons()
         {
             InitializeComponent();
+
+            OkEnabled = true;
+            OkText = Localizer.Localizer.Instance["Ok"];
+            CancelText = Localizer.Localizer.Instance["Cancel"];
+            CancelVisible = true;
+            DataContext = this;
+
+            this.FindControl<Button>("m_Ok").Click += (s, args) => {
+                OkClick?.Invoke(this, new RoutedEventArgs());
+            };
+            this.FindControl<Button>("m_Cancel").Click += (s, args) => {
+                CancelClick?.Invoke(this, new RoutedEventArgs());
+            };
         }
 
         public string OkText
@@ -84,24 +97,6 @@ namespace CoreChess.Controls
                     btn.Margin = value ? new Thickness(5,0,0,0) : new Thickness(0, 0, 0, 0);
                 }
             }
-        }
-
-        private void InitializeComponent()
-        {
-            AvaloniaXamlLoader.Load(this);
-
-            OkEnabled = true;
-            OkText = Localizer.Localizer.Instance["Ok"];
-            CancelText = Localizer.Localizer.Instance["Cancel"];
-            CancelVisible = true;
-            DataContext = this;
-
-            this.FindControl<Button>("m_Ok").Click += (s, args) => {
-                OkClick?.Invoke(this, new RoutedEventArgs());
-            };
-            this.FindControl<Button>("m_Cancel").Click += (s, args) => {
-                CancelClick?.Invoke(this, new RoutedEventArgs());
-            };
         }
     }
 }

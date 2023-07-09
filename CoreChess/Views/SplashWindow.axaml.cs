@@ -5,7 +5,7 @@ using System.Reflection;
 
 namespace CoreChess.Views
 {
-    public class SplashWindow : Abstracts.BaseView
+    public partial class SplashWindow : Abstracts.BaseView
     {
         public SplashWindow()
         {

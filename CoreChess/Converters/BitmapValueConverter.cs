@@ -26,8 +26,7 @@ namespace CoreChess.Converters
                         return new Bitmap(strValue);
 
                     default:
-                        var assets = AvaloniaLocator.Current.GetService<IAssetLoader>();
-                        return new Bitmap(assets.Open(uri));
+                        return new Bitmap(AssetLoader.Open(uri));
                 }
             }
 

@@ -1,13 +1,15 @@
 ﻿using Avalonia;
 using Avalonia.Markup.Xaml;
-using Avalonia.Platform;
 using Avalonia.Threading;
 using System;
 using System.IO;
 using System.Threading;
 using System.Collections.Generic;
 using Avalonia.Controls;
+using Avalonia.Markup.Xaml.Styling;
 using Avalonia.Media;
+using Avalonia.Styling;
+using Avalonia.Themes.Fluent;
 using CoreChess.Utils;
 using CoreChess.Views;
 
@@ -33,44 +35,23 @@ namespace CoreChess
 
         public static void SetStyle(Settings.Styles style, string accentColor, string highlightColor, string fontFamily)
         {
-            Avalonia.Styling.Styles styles = null;
-
             if (style != CurrentStyle) {
+                StyleInclude include = null;
                 if (style == Settings.Styles.Dark) {
-                    styles = new Avalonia.Styling.Styles() {
-                        new Avalonia.Markup.Xaml.Styling.StyleInclude(new Uri("resm:Styles?assembly=CoreChess"))
-                        {
-                            Source = new Uri("avares://Avalonia.Themes.Default/Accents/BaseDark.xaml")
-                        },
-                        new Avalonia.Markup.Xaml.Styling.StyleInclude(new Uri("resm:Styles?assembly=CoreChess"))
-                        {
-                            Source = new Uri("avares://Avalonia.Themes.Fluent/FluentDark.xaml")
-                        },
-                        new Avalonia.Markup.Xaml.Styling.StyleInclude(new Uri("resm:Styles?assembly=CoreChess"))
-                        {
-                            Source = new Uri("avares://CoreChess/Assets/Styles/PaletteDark.axaml")
-                        },
+                    Application.Current!.RequestedThemeVariant = ThemeVariant.Dark;
+                    include = new Avalonia.Markup.Xaml.Styling.StyleInclude(new Uri("resm:Styles?assembly=CoreChess"))
+                    {
+                        Source = new Uri("avares://CoreChess/Assets/Styles/PaletteDark.axaml")
                     };
                 } else {
-                    styles = new Avalonia.Styling.Styles() {
-                        new Avalonia.Markup.Xaml.Styling.StyleInclude(new Uri("resm:Styles?assembly=CoreChess"))
-                        {
-                            Source = new Uri("avares://Avalonia.Themes.Default/Accents/BaseLight.xaml")
-                        },
-                        new Avalonia.Markup.Xaml.Styling.StyleInclude(new Uri("resm:Styles?assembly=CoreChess"))
-                        {
-                            Source = new Uri("avares://Avalonia.Themes.Fluent/FluentLight.xaml")
-                        },
-                        new Avalonia.Markup.Xaml.Styling.StyleInclude(new Uri("resm:Styles?assembly=CoreChess"))
-                        {
-                            Source = new Uri("avares://CoreChess/Assets/Styles/PaletteLight.axaml")
-                        },
+                    Application.Current!.RequestedThemeVariant = ThemeVariant.Light;
+                    include = new Avalonia.Markup.Xaml.Styling.StyleInclude(new Uri("resm:Styles?assembly=CoreChess"))
+                    {
+                        Source = new Uri("avares://CoreChess/Assets/Styles/PaletteLight.axaml")
                     };
                 }
 
-                for (int i=0; i < styles.Count; i++) {
-                    Application.Current.Styles[i] = styles[i];
-                }
+                Application.Current.Styles[2] = include;
             }
 
             if (string.IsNullOrEmpty(fontFamily))

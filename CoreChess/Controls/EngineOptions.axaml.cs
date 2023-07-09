@@ -1,15 +1,16 @@
 ﻿using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
-using ChessLib;
 using ChessLib.Engines;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using Avalonia.Platform.Storage;
+using CoreChess.Views;
 
 namespace CoreChess.Controls
 {
-    public class EngineOptions : UserControl
+    public partial class EngineOptions : UserControl
     {
         private EngineBase m_Engine = null;
 
@@ -103,7 +104,7 @@ namespace CoreChess.Controls
                                 if (ctrl is ToggleSwitch)
                                     value = ((ToggleSwitch)ctrl).IsChecked.Value ? "true" : "false";
                                 else if (ctrl is NumericUpDown)
-                                    value = ((NumericUpDown)ctrl).Value.ToString(CultureInfo.InvariantCulture);
+                                    value = ((double)((NumericUpDown)ctrl).Value).ToString(CultureInfo.InvariantCulture);
                                 else if (ctrl is ComboBox)
                                     value = ((ComboBox)ctrl).SelectedItem?.ToString();
                                 else if (ctrl is TextBox)
@@ -122,7 +123,7 @@ namespace CoreChess.Controls
             }
         } // ApplyOptions
 
-        public void SetIsEnabled(bool enabled) 
+        public void SetIsEnabled(bool enabled)
         {
             var grid = this.FindControl<Grid>("m_Container");
             foreach (var c in grid.Children) {
@@ -135,11 +136,6 @@ namespace CoreChess.Controls
                 }
             }
         } // SetIsEnabled
-
-        private void InitializeComponent()
-        {
-            AvaloniaXamlLoader.Load(this);
-        }
 
         #region private operations
         private void SetControlValue(Control ctrl, string value)
@@ -168,7 +164,7 @@ namespace CoreChess.Controls
             };
             grid.Children.Add(lbl);
 
-            var ctrl = new ToggleSwitch() 
+            var ctrl = new ToggleSwitch()
             {
                 Tag = opt.Name,
                 IsChecked = opt.Value == "true",
@@ -232,9 +228,9 @@ namespace CoreChess.Controls
             var ctrl = new ComboBox()
             {
                 Tag = opt.Name,
-                Items = opt.ValidValues,
+                ItemsSource = opt.ValidValues,
             };
-            ctrl.SelectedItem = opt.ValidValues.Where(v => v == opt.Value).FirstOrDefault();
+            ctrl.SelectedItem = opt.ValidValues.FirstOrDefault(v => v == opt.Value);
 
             grid.Children.Add(ctrl);
 
@@ -306,10 +302,13 @@ namespace CoreChess.Controls
             grid.Children.Add(btn);
             btn.Click += async (s, args) =>
             {
-                var dlg = new OpenFolderDialog();
-                string path = await dlg.ShowAsync((Window)this.VisualRoot);
-                if (!string.IsNullOrEmpty(path))
-                    ctrl.Text = path;
+                var folders = await ((Window)this.VisualRoot).StorageProvider.OpenFolderPickerAsync(
+                    new FolderPickerOpenOptions()
+                    {
+                        AllowMultiple = false
+                    });
+                if (folders.Count > 0)
+                    ctrl.Text = folders[0].Path.ToString();
             };
 
             Grid.SetColumn(lbl, 0);

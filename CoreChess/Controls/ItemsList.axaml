@@ -13,8 +13,8 @@
           <DataTemplate>
             <ContentControl Content="{Binding}" ContentTemplate="{Binding #m_ScrollViewer.DataContext.ItemTemplate}"
                             Tapped="OnItemTapped"
-                            PointerEnter="OnMouseEnter"
-                            PointerLeave="OnMouseLeave">
+                            PointerEntered="OnMouseEnter"
+                            PointerExited="OnMouseLeave">
             </ContentControl>
           </DataTemplate>
       </ItemsRepeater.ItemTemplate>

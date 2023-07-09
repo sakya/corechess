@@ -7,7 +7,6 @@ using Avalonia.Markup.Xaml;
 using Avalonia.Media.Imaging;
 using ChessLib;
 using ChessLib.Engines;
-using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,7 +14,7 @@ using CoreChess.Abstracts;
 
 namespace CoreChess.Dialogs
 {
-    public class NewGameDialog : BaseDialog
+    public partial class NewGameDialog : BaseDialog
     {
         public class Result
         {
@@ -34,11 +33,6 @@ namespace CoreChess.Dialogs
         public NewGameDialog()
         {
             this.InitializeComponent();
-        }
-
-        private void InitializeComponent()
-        {
-            AvaloniaXamlLoader.Load(this);
 
             var white = this.FindControl<Image>("m_White");
             white.Source = new Bitmap(System.IO.Path.Combine(App.GetPiecesPath(App.Settings.PiecesSet), "wKnight.png"));
@@ -49,7 +43,7 @@ namespace CoreChess.Dialogs
             maxTime.Value = 15;
 
             var engine = this.FindControl<ComboBox>("m_Engines");
-            engine.Items = App.Settings.Engines.OrderBy(e => e.Name);
+            engine.ItemsSource = App.Settings.Engines.OrderBy(e => e.Name);
             engine.SelectedIndex = 0;
 
             var gType = this.FindControl<ComboBox>("m_GameType");
@@ -80,19 +74,19 @@ namespace CoreChess.Dialogs
                     gType.SelectedIndex = 1;
 
                 if (App.Settings.NewGame.MaxTime.HasValue) {
-                    maxTime.Value = App.Settings.NewGame.MaxTime.Value.TotalMinutes;
+                    maxTime.Value = (decimal)App.Settings.NewGame.MaxTime.Value.TotalMinutes;
                 }
 
                 if (App.Settings.NewGame.TheKingPersonality != null && selectedEngine is TheKing) {
                     var cmb = this.FindControl<ComboBox>("m_TheKingPersonality");
-                    cmb.SelectedItem = (cmb.Items as IEnumerable<TheKing.Personality>).Where(p => p.Name == App.Settings.NewGame.TheKingPersonality.Name).FirstOrDefault();
+                    cmb.SelectedItem = (cmb.Items as IEnumerable<TheKing.Personality>).FirstOrDefault(p => p.Name == App.Settings.NewGame.TheKingPersonality.Name);
                 } else if (!string.IsNullOrEmpty(App.Settings.NewGame.Personality)) {
                     var cmb = this.FindControl<ComboBox>("m_Personality");
                     cmb.SelectedItem = App.Settings.NewGame.Personality;
                 }
 
                 var num = this.FindControl<NumericUpDown>("m_TimeIncrement");
-                num.Value = App.Settings.NewGame.TimeIncrement.TotalSeconds;
+                num.Value = (decimal)App.Settings.NewGame.TimeIncrement.TotalSeconds;
             }
         }
 
@@ -145,7 +139,7 @@ namespace CoreChess.Dialogs
                 var cmb = this.FindControl<ComboBox>("m_TheKingPersonality");
                 var opt = engine.GetOption(TheKing.PersonalitiesFolderOptionName);
                 if (opt != null && !string.IsNullOrEmpty(opt.Value))
-                    cmb.Items = TheKing.Personality.GetFromFolder(opt.Value).OrderByDescending(p => p.Elo);
+                    cmb.ItemsSource = TheKing.Personality.GetFromFolder(opt.Value).OrderByDescending(p => p.Elo);
             } else {
                 this.FindControl<StackPanel>("m_TheKingPersonalityStack").IsVisible = false;
 
@@ -155,7 +149,7 @@ namespace CoreChess.Dialogs
                     if (pOpt != null && pOpt.Type == "combo") {
                         this.FindControl<StackPanel>("m_PersonalityStack").IsVisible = true;
                         var cmb = this.FindControl<ComboBox>("m_Personality");
-                        cmb.Items = pOpt.ValidValues;
+                        cmb.ItemsSource = pOpt.ValidValues;
                         cmb.SelectedItem = pOpt.Default;
                     } else {
                         this.FindControl<StackPanel>("m_PersonalityStack").IsVisible = false;
@@ -175,7 +169,7 @@ namespace CoreChess.Dialogs
             var theKingPers = this.FindControl<ComboBox>("m_TheKingPersonality");
             var pers = this.FindControl<ComboBox>("m_Personality");
             var training = this.FindControl<ToggleSwitch>("m_TrainingMode");
-            TimeSpan? maxTime = (TimeSpan?)TimeSpan.FromMinutes(maxTimeControl.Value);
+            TimeSpan? maxTime = (TimeSpan?)TimeSpan.FromMinutes((double)maxTimeControl.Value);
 
             var num = this.FindControl<NumericUpDown>("m_TimeIncrement");
 
@@ -189,7 +183,7 @@ namespace CoreChess.Dialogs
                 PlayerColor = random.IsChecked.Value ? null : white.IsChecked.Value ? Game.Colors.White : Game.Colors.Black,
                 MaxTime = maxTime,
                 TrainingMode = training.IsChecked == true,
-                TimeIncrement = TimeSpan.FromSeconds(num.Value),
+                TimeIncrement = TimeSpan.FromSeconds((double)num.Value),
                 Chess960 = gameTypeCombo.SelectedIndex == 1,
                 Personality = pers.SelectedItem as string,
                 TheKingPersonality = theKingPers.SelectedItem as TheKing.Personality
@@ -203,7 +197,7 @@ namespace CoreChess.Dialogs
                     EngineElo = engineElo.IsVisible ? (int)engineElo.Value : null,
                     Color = random.IsChecked.Value ? null : white.IsChecked.Value ? Game.Colors.White : Game.Colors.Black,
                     MaximumTime = maxTime,
-                    TimeIncrement = TimeSpan.FromSeconds(num.Value),
+                    TimeIncrement = TimeSpan.FromSeconds((double)num.Value),
                     TrainingMode = training.IsChecked == true,
                     Chess960 = gameTypeCombo.SelectedIndex == 1,
                     InitialPosition = initialPos.Text?.Trim(),
