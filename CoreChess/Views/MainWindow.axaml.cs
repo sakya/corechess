@@ -93,6 +93,14 @@ public partial class MainWindow : BaseView
     protected override async void OnOpened(EventArgs e)
     {
         base.OnOpened(e);
+
+        m_NotificationManager = new WindowNotificationManager(this)
+        {
+            Position = NotificationPosition.TopRight,
+            MaxItems = 3,
+            Margin = OperatingSystem.IsWindows() ? new Thickness(0, 30, 0, 0) : new Thickness(0)
+        };
+
         await Task.Delay(10);
         var mp = new MainPage(m_Args);
         await NavigateTo(mp);
@@ -113,18 +121,6 @@ public partial class MainWindow : BaseView
         KeyDown += OnKeyDown;
 
         base.InitializeComponent();
-    }
-
-    protected override void OnApplyTemplate(TemplateAppliedEventArgs e)
-    {
-        base.OnApplyTemplate(e);
-
-        m_NotificationManager = new WindowNotificationManager(this)
-        {
-            Position = NotificationPosition.TopRight,
-            MaxItems = 3,
-            Margin = OperatingSystem.IsWindows() ? new Thickness(0, 30, 0, 0) : new Thickness(0)
-        };
     }
 
     private void HandleWindowStateChanged(WindowState state)
