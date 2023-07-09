@@ -5,6 +5,8 @@ using ChessLib.Engines;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using Avalonia.Platform.Storage;
+using CoreChess.Views;
 
 namespace CoreChess.Controls
 {
@@ -300,10 +302,13 @@ namespace CoreChess.Controls
             grid.Children.Add(btn);
             btn.Click += async (s, args) =>
             {
-                var dlg = new OpenFolderDialog();
-                string path = await dlg.ShowAsync((Window)this.VisualRoot);
-                if (!string.IsNullOrEmpty(path))
-                    ctrl.Text = path;
+                var folders = await ((Window)this.VisualRoot).StorageProvider.OpenFolderPickerAsync(
+                    new FolderPickerOpenOptions()
+                    {
+                        AllowMultiple = false
+                    });
+                if (folders.Count > 0)
+                    ctrl.Text = folders[0].Path.ToString();
             };
 
             Grid.SetColumn(lbl, 0);

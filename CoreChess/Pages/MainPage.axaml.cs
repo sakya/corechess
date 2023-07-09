@@ -18,6 +18,7 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using Avalonia.Platform.Storage;
 using CoreChess.Abstracts;
 using CoreChess.Dialogs;
 
@@ -602,15 +603,24 @@ namespace CoreChess.Pages
 
         private async void OnSaveGameClick(object sender, RoutedEventArgs e)
         {
-            var dlg = new SaveFileDialog();
-            dlg.DefaultExtension = "ccsf";
-            dlg.Filters = new List<FileDialogFilter>()
+            var files = await MainWindow.StorageProvider.OpenFilePickerAsync(new FilePickerOpenOptions()
             {
-                new FileDialogFilter(){ Extensions = new List<string>() {"ccsf" }, Name = "CoreChess save file (*.ccsf)"},
-                new FileDialogFilter(){ Extensions = new List<string>() {"pgn" }, Name = "Portable Game Notation (*.pgn)"},
-            };
-            string file = await dlg.ShowAsync(App.MainWindow);
-            if (!string.IsNullOrEmpty(file)) {
+                AllowMultiple = false,
+                FileTypeFilter = new []
+                {
+                    new FilePickerFileType("CoreChess save file (*.ccsf)")
+                    {
+                        Patterns = new []{ "*.ccsf" }
+                    },
+                    new FilePickerFileType("Portable Game Notation (*.pgn)")
+                    {
+                        Patterns = new []{ "*.pgn" }
+                    }
+                }
+
+            });
+            if (files.Count > 0) {
+                var file = files[0].Path.ToString();
                 try {
                     if (Path.GetExtension(file) == ".pgn")
                         await m_Game.SaveToPgn(file);
@@ -625,16 +635,23 @@ namespace CoreChess.Pages
 
         private async void OnLoadGameClick(object sender, RoutedEventArgs e)
         {
-            var dlg = new OpenFileDialog();
-            dlg.AllowMultiple = false;
-            dlg.Filters = new List<FileDialogFilter>()
+            var files = await MainWindow.StorageProvider.OpenFilePickerAsync(new FilePickerOpenOptions()
             {
-                new FileDialogFilter(){ Extensions = new List<string>() {"ccsf" }, Name = "CoreChess save file"},
-                new FileDialogFilter(){ Extensions = new List<string>() {"pgn" }, Name = "Portable Game Notation (*.pgn)"},
-            };
-            string[] files = await dlg.ShowAsync(App.MainWindow);
-            if (files?.Length > 0) {
-                await LoadGame(files[0]);
+                AllowMultiple = false,
+                FileTypeFilter = new []
+                {
+                    new FilePickerFileType("CoreChess save file")
+                    {
+                        Patterns = new []{ "*.ccsf" }
+                    },
+                    new FilePickerFileType("Portable Game Notation (*.pgn)")
+                    {
+                        Patterns = new []{ "*.pgn" }
+                    }
+                }
+            });
+            if (files?.Count > 0) {
+                await LoadGame(files[0].Path.ToString());
             }
         } // OnLoadGameClick
 
@@ -681,14 +698,20 @@ namespace CoreChess.Pages
 
         private async void OnSaveToPngClick(object sender, RoutedEventArgs e)
         {
-            var dlg = new SaveFileDialog();
-            dlg.Filters = new List<FileDialogFilter>()
+            var files = await MainWindow.StorageProvider.OpenFilePickerAsync(new FilePickerOpenOptions()
             {
-                new FileDialogFilter(){ Extensions = new List<string>() {"png" }, Name = "PNG image"}
-            };
-            string file = await dlg.ShowAsync(App.MainWindow);
-            if (!string.IsNullOrEmpty(file)) {
-                m_Chessboard.SaveToPng(file);
+                AllowMultiple = false,
+                FileTypeFilter = new []
+                {
+                    new FilePickerFileType("PNG image")
+                    {
+                        Patterns = new []{ "*.png" }
+                    }
+                }
+
+            });
+            if (files.Count > 0) {
+                m_Chessboard.SaveToPng(files[0].Path.ToString());
             }
         } // OnSaveToPngClick
 

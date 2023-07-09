@@ -4,6 +4,7 @@ using Avalonia.Interactivity;
 using ChessLib.Engines;
 using System.Collections.Generic;
 using System.Linq;
+using Avalonia.Platform.Storage;
 using CoreChess.Abstracts;
 
 namespace CoreChess.Pages
@@ -280,18 +281,28 @@ namespace CoreChess.Pages
 
         private async void OnOpeningBookClick(object sender, RoutedEventArgs e)
         {
-            var dlg = new OpenFileDialog();
-            dlg.AllowMultiple = false;
-            dlg.Filters = new List<FileDialogFilter>()
+            var files = await MainWindow.StorageProvider.OpenFilePickerAsync(new FilePickerOpenOptions()
             {
-                new FileDialogFilter(){ Extensions = new List<string>() {"bin" }, Name = "Polyglot opening book"},
-                new FileDialogFilter(){ Extensions = new List<string>() {"abk" }, Name = "Arena opening book"},
-                new FileDialogFilter(){ Extensions = new List<string>() {"obk" }, Name = "Chessmaster opening book"},
-            };
-            string[] files = await dlg.ShowAsync(App.MainWindow);
-            if (files?.Length > 0) {
+                AllowMultiple = false,
+                FileTypeFilter = new []
+                {
+                    new FilePickerFileType("Polyglot opening book")
+                    {
+                        Patterns = new []{ "*.bin" }
+                    },
+                    new FilePickerFileType("Arena opening book")
+                    {
+                        Patterns = new []{ "*.abk" }
+                    },
+                    new FilePickerFileType("Chessmaster opening book")
+                    {
+                        Patterns = new []{ "*.obk" }
+                    },
+                }
+            });
+            if (files?.Count > 0) {
                 var txt = this.FindControl<TextBox>("m_OpeningBook");
-                txt.Text = files[0];
+                txt.Text = files[0].Path.ToString();
             }
         } // OnOpeningBookClick
 

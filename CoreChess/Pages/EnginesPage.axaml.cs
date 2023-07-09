@@ -6,8 +6,10 @@ using ChessLib.Engines;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Avalonia.Platform.Storage;
 using CoreChess.Abstracts;
 using CoreChess.Dialogs;
+using Microsoft.CodeAnalysis.Operations;
 
 namespace CoreChess.Pages
 {
@@ -151,28 +153,36 @@ namespace CoreChess.Pages
 
         private async void OnCommandClick(object sender, RoutedEventArgs e)
         {
-            var dlg = new OpenFileDialog();
-            dlg.AllowMultiple = false;
+            var opts = new FilePickerOpenOptions()
+            {
+                AllowMultiple = false
+            };
             if (OperatingSystem.IsWindows()) {
-                dlg.Filters = new List<FileDialogFilter>()
+                opts.FileTypeFilter = new[]
                 {
-                    new FileDialogFilter(){ Extensions = new List<string>() {"exe" }, Name = "Executables"},
+                    new FilePickerFileType("Executables")
+                    {
+                        Patterns = new []{ "*.exe" }
+                    },
                 };
             }
-            string[] files = await dlg.ShowAsync(App.MainWindow);
-            if (files?.Length > 0) {
+
+            var files = await MainWindow.StorageProvider.OpenFilePickerAsync(opts);
+            if (files.Count > 0) {
                 var txt = this.FindControl<TextBox>("m_EngineExePath");
-                txt.Text = files[0];
+                txt.Text = files[0].Path.ToString();
             }
         } // OnCommandClick
 
         private async void OnWorkingDirClick(object sender, RoutedEventArgs e)
         {
-            var dlg = new OpenFolderDialog();
-            string path = await dlg.ShowAsync(App.MainWindow);
-            if (!string.IsNullOrEmpty(path)) {
+            var folders = await MainWindow.StorageProvider.OpenFolderPickerAsync(new FolderPickerOpenOptions()
+            {
+                AllowMultiple = false
+            });
+            if (folders.Count > 0) {
                 var txt = this.FindControl<TextBox>("m_EngineWorkingDir");
-                txt.Text = path;
+                txt.Text = folders[0].Path.ToString();
             }
         } // OnWorkingDirClick
 
