@@ -399,7 +399,7 @@ namespace CoreChess.Controls
             piece.DataContext = args.Move.Piece.Type;
 
             var bitmap = new Bitmap(GetPieceImagePath(args.Move.Piece));
-            piece.Background = Background = new ImageBrush(bitmap);
+            piece.Background = new ImageBrush(bitmap);
 
             return true;
         } // OnPromoted
@@ -492,7 +492,7 @@ namespace CoreChess.Controls
                     piece.DataContext = movedPieces[0].Piece.Type;
 
                     var bitmap = new Bitmap(GetPieceImagePath(movedPieces[0].Piece));
-                    piece.Background = Background = new ImageBrush(bitmap);
+                    piece.Background = new ImageBrush(bitmap);
                 }
             }
             this.IsHitTestVisible = true;
