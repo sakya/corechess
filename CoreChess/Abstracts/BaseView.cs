@@ -44,7 +44,7 @@ namespace CoreChess.Abstracts
                 return;
             }
 
-            /*Screen screen = Screens.ScreenFromPoint(PlatformImpl.Position);
+            Screen screen = Screens.ScreenFromPoint(this.Position);
             if (ws.State == WindowState.Maximized ||
                 screen != null && ws.Width <= screen.Bounds.Width && ws.Height <= screen.Bounds.Height && ws.X <= screen.Bounds.Width && ws.Y <= screen.Bounds.Height) {
                 this.WindowStartupLocation = WindowStartupLocation.Manual;
@@ -55,7 +55,7 @@ namespace CoreChess.Abstracts
 
                     this.Position = new PixelPoint(ws.X, ws.Y);
                 }
-            }*/
+            }
         } // RestoreWindowSizeAndPosition
     }
 }
