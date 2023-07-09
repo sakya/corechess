@@ -8,6 +8,7 @@ using Avalonia;
 using Avalonia.Animation;
 using Avalonia.Controls;
 using Avalonia.Controls.Notifications;
+using Avalonia.Controls.Primitives;
 using Avalonia.Input;
 using Avalonia.Media;
 using Avalonia.Styling;
@@ -102,13 +103,6 @@ public partial class MainWindow : BaseView
         if (App.Settings.RestoreWindowSizeAndPosition)
             RestoreWindowSizeAndPosition();
 
-        m_NotificationManager = new WindowNotificationManager(this)
-        {
-            Position = NotificationPosition.TopRight,
-            MaxItems = 3,
-            Margin = OperatingSystem.IsWindows() ? new Thickness(0, 30, 0, 0) : new Thickness(0)
-        };
-
         Transition = new TransitionSettings(TransitionSettings.EnterTransitions.SlideLeft, TimeSpan.FromMilliseconds(250));
         BackKey = Key.Escape;
 
@@ -119,6 +113,18 @@ public partial class MainWindow : BaseView
         KeyDown += OnKeyDown;
 
         base.InitializeComponent();
+    }
+
+    protected override void OnApplyTemplate(TemplateAppliedEventArgs e)
+    {
+        base.OnApplyTemplate(e);
+
+        m_NotificationManager = new WindowNotificationManager(this)
+        {
+            Position = NotificationPosition.TopRight,
+            MaxItems = 3,
+            Margin = OperatingSystem.IsWindows() ? new Thickness(0, 30, 0, 0) : new Thickness(0)
+        };
     }
 
     private void HandleWindowStateChanged(WindowState state)
