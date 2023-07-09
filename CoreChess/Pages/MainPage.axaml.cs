@@ -617,8 +617,8 @@ namespace CoreChess.Pages
                         Patterns = new []{ "*.pgn" }
                     }
                 }
-
             });
+
             if (files.Count > 0) {
                 var file = files[0].Path.ToString();
                 try {
@@ -708,8 +708,8 @@ namespace CoreChess.Pages
                         Patterns = new []{ "*.png" }
                     }
                 }
-
             });
+
             if (files.Count > 0) {
                 m_Chessboard.SaveToPng(files[0].Path.ToString());
             }
