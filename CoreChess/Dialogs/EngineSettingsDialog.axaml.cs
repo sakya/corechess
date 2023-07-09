@@ -8,7 +8,7 @@ using CoreChess.Abstracts;
 
 namespace CoreChess.Dialogs
 {
-    public class EngineSettingsWindow : BaseDialog
+    public partial class EngineSettingsWindow : BaseDialog
     {
         public EngineSettingsWindow()
         {
@@ -29,11 +29,6 @@ namespace CoreChess.Dialogs
                 ctrl.SetEngine(enginePlayer.Engine);
                 ctrl.SetIsEnabled(false);
             }
-        }
-
-        private void InitializeComponent()
-        {
-            AvaloniaXamlLoader.Load(this);
         }
 
         private void OnOkClick(object sender, RoutedEventArgs e)

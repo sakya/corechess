@@ -9,7 +9,7 @@
     <Color x:Key="WarningColor">#f0ad4e</Color>
     <Color x:Key="DangerColor">#d9534f</Color>
 
-    <Color x:Key="SystemControlBackgroundAltHighBrush">#1e1e1e</Color>
+    <Color x:Key="SystemRegionBrush">#1e1e1e</Color>
     <Color x:Key="TextControlBackground">#1e1e1e</Color>
     <Color x:Key="TextControlBackgroundPointerOver">#1e1e1e</Color>
     <Color x:Key="TextControlBackgroundFocused">#1e1e1e</Color>

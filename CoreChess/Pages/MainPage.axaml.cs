@@ -23,7 +23,7 @@ using CoreChess.Dialogs;
 
 namespace CoreChess.Pages
 {
-    public class MainPage : BasePage
+    public partial class MainPage : BasePage
     {
         #region classes
         class Context : INotifyPropertyChanged
@@ -149,7 +149,7 @@ namespace CoreChess.Pages
                             m_Owner.ContentAlignment = "Center";
                         else {
                             m_Owner.ContentAlignment = "Stretch";
-                            App.MainWindow.LayoutManager.ExecuteLayoutPass();
+                            App.MainWindow.UpdateLayout();
                             var cb = m_Owner.Page.FindControl<Controls.Chessboard>("m_Chessboard");
                             var content = m_Owner.Page.FindControl<Grid>("m_Content");
                             App.MainWindow.Width = cb.Width + content.Margin.Left + content.Margin.Right;
@@ -327,9 +327,6 @@ namespace CoreChess.Pages
         bool m_Initialized = false;
         Context m_Context = null;
         Game m_Game = null;
-        Grid m_Wait = null;
-        Chessboard m_Chessboard = null;
-        TextBlock m_EngineMessage = null;
         List<string> m_EngineMessagesRows = new List<string>();
         Utils.EcoDatabase m_EcoDatabase = null;
         int? m_CurrentMoveIndex = null;
@@ -345,11 +342,6 @@ namespace CoreChess.Pages
         {
             m_Args = args;
             InitializeComponent();
-        }
-
-        private void InitializeComponent()
-        {
-            AvaloniaXamlLoader.Load(this);
 
             m_EcoDatabase = App.EcoDatabase;
 
@@ -513,9 +505,9 @@ namespace CoreChess.Pages
                 if ((e.Reason == Game.Results.Timeout || e.Reason == Game.Results.Resignation) && m_Game.Moves.Count > 0) {
                     var move = m_Game.Moves.Last();
                     var moves = this.FindControl<WrapPanel>("m_Moves");
-                    var stack = moves.Children.Where(s => s.Name == $"move_{move.Index}").FirstOrDefault() as StackPanel;
+                    var stack = moves.Children.FirstOrDefault(s => s.Name == $"move_{move.Index}") as StackPanel;
 
-                    IControl toRemove = stack?.Children.Last();
+                    Control toRemove = stack?.Children.Last();
                     if (toRemove != null) {
                         stack.Children.Remove(toRemove);
                         AddMove(m_Chessboard, move);
@@ -670,7 +662,7 @@ namespace CoreChess.Pages
                     using (StreamReader sr = new StreamReader(tempFile)) {
                         string pgn = await sr.ReadToEndAsync();
                         try {
-                            await Application.Current.Clipboard.SetTextAsync(pgn);
+                            await MainWindow!.Clipboard!.SetTextAsync(pgn);
                             App.MainWindow.ShowNotification(Localizer.Localizer.Instance["Message"], Localizer.Localizer.Instance["PgnCopied"]);
                         } catch (Exception ex) {
                             await MessageDialog.ShowMessage(App.MainWindow, Localizer.Localizer.Instance["Error"], string.Format(Localizer.Localizer.Instance["ErrorCopyingString"], ex.Message), MessageDialog.Icons.Error);
@@ -703,7 +695,7 @@ namespace CoreChess.Pages
         private async void OnCopyFenClick(object sender, RoutedEventArgs e)
         {
             try {
-                await Application.Current.Clipboard.SetTextAsync(m_Game.GetFenString());
+                await MainWindow!.Clipboard!.SetTextAsync(m_Game.GetFenString());
                 App.MainWindow.ShowNotification(Localizer.Localizer.Instance["Message"], Localizer.Localizer.Instance["FenStringCopied"]);
             } catch (Exception ex) {
                 await MessageDialog.ShowMessage(App.MainWindow, Localizer.Localizer.Instance["Error"], string.Format(Localizer.Localizer.Instance["ErrorCopyingString"], ex.Message), MessageDialog.Icons.Error);
@@ -744,7 +736,7 @@ namespace CoreChess.Pages
 
         private async void OnEnginesClick(object sender, RoutedEventArgs e)
         {
-            var dlg = new EnginesWindow();
+            var dlg = new EnginesPage();
             await NavigateTo(dlg);
         } // OnEnginesClick
 
@@ -1184,7 +1176,7 @@ namespace CoreChess.Pages
 
                 for (int i = 0; i < wPieces.Count; i++) {
                     var wp = wPieces[i];
-                    var bp = bPieces.Where(p => p.Type == wp.Type).FirstOrDefault();
+                    var bp = bPieces.FirstOrDefault(p => p.Type == wp.Type);
                     if (bp == null)
                         tempWhite.Add(wp);
                     else {
@@ -1195,7 +1187,7 @@ namespace CoreChess.Pages
 
                 for (int i = 0; i < bPieces.Count; i++) {
                     var bp = bPieces[i];
-                    var wp = wPieces.Where(p => p.Type == bp.Type).FirstOrDefault();
+                    var wp = wPieces.FirstOrDefault(p => p.Type == bp.Type);
                     if (wp == null)
                         tempBlack.Add(bp);
                     else {
@@ -1312,7 +1304,7 @@ namespace CoreChess.Pages
         private StackPanel AddMove(Chessboard chessboard, Game.MoveNotation move, bool disposeGame = false)
         {
             var moves = this.FindControl<WrapPanel>("m_Moves");
-            var stack = moves.Children.Where(s => s.Name == $"move_{move.Index}").FirstOrDefault() as StackPanel;
+            var stack = moves.Children.FirstOrDefault(s => s.Name == $"move_{move.Index}") as StackPanel;
             if (stack == null) {
                 stack = new StackPanel() { Name = $"move_{move.Index}", Orientation = Avalonia.Layout.Orientation.Horizontal, Margin = new Thickness(0, 0, 5, 0) };
                 moves.Children.Add(stack);
@@ -1356,11 +1348,14 @@ namespace CoreChess.Pages
             }
 
             if (isWhite) {
-                var numberTxt = new TextBlock() { Text = $"{move.Index}.", Classes = new Classes(isFigurine ? "Figurine" : string.Empty), Margin = new Thickness(0, 2, 0, 2), MinWidth = 25, FontWeight = FontWeight.Regular };
+                var numberTxt = new TextBlock() { Text = $"{move.Index}.", Margin = new Thickness(0, 2, 0, 2), MinWidth = 25, FontWeight = FontWeight.Regular };
+                if (isFigurine)
+                    numberTxt.Classes.Add("Figurine");
                 stack.Children.Add(numberTxt);
             }
 
-            TextBlock moveTxt = new TextBlock() { DataContext = move, Classes = new Classes(classes), Text = $"{notation}{move.Annotation}", Margin = new Thickness(0, 2, 5, 2), MinWidth = 50, FontWeight = FontWeight.Light };
+            TextBlock moveTxt = new TextBlock() { DataContext = move, Text = $"{notation}{move.Annotation}", Margin = new Thickness(0, 2, 5, 2), MinWidth = 50, FontWeight = FontWeight.Light };
+            moveTxt.Classes.AddRange(classes);
             moveTxt.Tapped += OnMoveTapped;
             moveTxt.DoubleTapped += OnMoveDoubleTapped;
             stack.Children.Add(moveTxt);
@@ -1668,7 +1663,7 @@ namespace CoreChess.Pages
                 }
             }
 
-            menu.Items = items;
+            menu.ItemsSource = items;
             menu.IsVisible = items.Count > 0;
         }
         #endregion

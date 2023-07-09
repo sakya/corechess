@@ -1,25 +1,15 @@
 ﻿using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
-using Avalonia.Markup.Xaml;
 using ChessLib.Engines;
 using System.Collections.Generic;
 using System.Linq;
-using System.ComponentModel;
-using AvaloniaColorPicker;
 using CoreChess.Abstracts;
 
 namespace CoreChess.Pages
 {
-    public class SettingsPage : BasePage
+    public partial class SettingsPage : BasePage
     {
-        private ColorButton<Views.ColorPickerWindow> m_AccentButton;
-        private ColorButton<Views.ColorPickerWindow> m_HighlightButton;
-        private ColorButton<Views.ColorPickerWindow> m_WhiteButton;
-        private ColorButton<Views.ColorPickerWindow> m_WhiteSelectedButton;
-        private ColorButton<Views.ColorPickerWindow> m_BlackButton;
-        private ColorButton<Views.ColorPickerWindow> m_BlackSelectedButton;
-
         public class PiecesSet
         {
             public string Name { get; set; }
@@ -68,7 +58,7 @@ namespace CoreChess.Pages
             public string BlackSelectedColor { get; set; }
         } // ColorTheme
 
-        public List<Style> m_Styles = new List<Style>()
+        public List<Style> m_StylesList = new List<Style>()
         {
             new Style(Settings.Styles.Light, Localizer.Localizer.Instance["StyleLight"]),
             new Style(Settings.Styles.Dark, Localizer.Localizer.Instance["StyleDark"])
@@ -93,103 +83,53 @@ namespace CoreChess.Pages
 
         public SettingsPage()
         {
-            this.InitializeComponent();
+            InitializeComponent();
+            Init();
         }
 
         public bool? Result { get; private set; }
 
-        private void InitializeComponent()
+        private void Init()
         {
-            AvaloniaXamlLoader.Load(this);
-
             PageTitle = Localizer.Localizer.Instance["WT_SettingsWindow"];
             var cb = this.FindControl<ComboBox>("m_Fonts");
             var fonts = SkiaSharp.SKFontManager.Default.FontFamilies.OrderBy(f => f).ToList();
             fonts.Insert(0, "Default (Roboto)");
-            cb.Items = fonts;
-            cb.SelectedItem = fonts.Where(f => f == App.Settings.FontFamily).FirstOrDefault() ?? fonts[0];
+            cb.ItemsSource = fonts;
+            cb.SelectedItem = fonts.FirstOrDefault(f => f == App.Settings.FontFamily) ?? fonts[0];
 
-            var grid = this.FindControl<Grid>("m_AppearenceGrid");
-            m_AccentButton = new ColorButton<Views.ColorPickerWindow>()
-            {
-                Margin = new Thickness(5, 5, 5, 5),
-                HorizontalAlignment = Avalonia.Layout.HorizontalAlignment.Right,
-                Color = Utils.ColorConverter.ParseHexColor(App.Settings.AccentColor)
-            };
+            m_AccentButton.Color = Utils.ColorConverter.ParseHexColor(App.Settings.AccentColor);
             m_AccentButton.PropertyChanged += (s, e) =>
             {
-                if (e.Property.Name == ColorButton.ColorProperty.Name)
+                if (e.Property.Name == ColorPicker.ColorProperty.Name)
                     Application.Current.Resources["SystemAccentColor"] = m_AccentButton.Color;
             };
-            Grid.SetColumn(m_AccentButton, 1);
-            Grid.SetRow(m_AccentButton, 2);
-            grid.Children.Add(m_AccentButton);
 
-            m_HighlightButton = new ColorButton<Views.ColorPickerWindow>()
-            {
-                Margin = new Thickness(5, 5, 5, 5),
-                HorizontalAlignment = Avalonia.Layout.HorizontalAlignment.Right,
-                Color = Utils.ColorConverter.ParseHexColor(App.Settings.HighlightColor)
-            };
+            m_HighlightButton.Color = Utils.ColorConverter.ParseHexColor(App.Settings.HighlightColor);
             m_HighlightButton.PropertyChanged += (s, e) =>
             {
-                if (e.Property.Name == ColorButton.ColorProperty.Name)
+                if (e.Property.Name == ColorPicker.ColorProperty.Name)
                     Application.Current.Resources["HighlightColor"] = m_HighlightButton.Color;
             };
-            Grid.SetColumn(m_HighlightButton, 1);
-            Grid.SetRow(m_HighlightButton, 3);
-            grid.Children.Add(m_HighlightButton);
 
             var chk = this.FindControl<ToggleSwitch>("m_RestoreWindowSizeAndPosition");
             chk.IsChecked = App.Settings.RestoreWindowSizeAndPosition;
 
-            grid = this.FindControl<Grid>("m_ChessboardGrid");
-            m_WhiteButton = new ColorButton<Views.ColorPickerWindow>()
-            {
-                Margin = new Thickness(5, 5, 5, 5),
-                HorizontalAlignment = Avalonia.Layout.HorizontalAlignment.Right,
-            };
-            Grid.SetColumn(m_WhiteButton, 1);
-            Grid.SetRow(m_WhiteButton, 5);
-            grid.Children.Add(m_WhiteButton);
-
-            m_WhiteSelectedButton = new ColorButton<Views.ColorPickerWindow>()
-            {
-                Margin = new Thickness(5, 5, 5, 5),
-                HorizontalAlignment = Avalonia.Layout.HorizontalAlignment.Right,
-            };
-            Grid.SetColumn(m_WhiteSelectedButton, 1);
-            Grid.SetRow(m_WhiteSelectedButton, 6);
-            grid.Children.Add(m_WhiteSelectedButton);
-
-            m_BlackButton = new ColorButton<Views.ColorPickerWindow>()
-            {
-                Margin = new Thickness(5, 5, 5, 5),
-                HorizontalAlignment = Avalonia.Layout.HorizontalAlignment.Right,
-            };
-            Grid.SetColumn(m_BlackButton, 1);
-            Grid.SetRow(m_BlackButton, 7);
-            grid.Children.Add(m_BlackButton);
-
-            m_BlackSelectedButton = new ColorButton<Views.ColorPickerWindow>()
-            {
-                Margin = new Thickness(5, 5, 5, 5),
-                HorizontalAlignment = Avalonia.Layout.HorizontalAlignment.Right,
-            };
-            Grid.SetColumn(m_BlackSelectedButton, 1);
-            Grid.SetRow(m_BlackSelectedButton, 8);
-            grid.Children.Add(m_BlackSelectedButton);
+            m_WhiteButton.Color = Utils.ColorConverter.ParseHexColor(App.Settings.WhiteColor);
+            m_WhiteSelectedButton.Color = Utils.ColorConverter.ParseHexColor(App.Settings.WhiteSelectedColor);
+            m_BlackButton.Color = Utils.ColorConverter.ParseHexColor(App.Settings.BlackColor);
+            m_BlackSelectedButton.Color = Utils.ColorConverter.ParseHexColor(App.Settings.BlackSelectedColor);
 
             var txt = this.FindControl<TextBox>("m_PlayerName");
             txt.Text = App.Settings.PlayerName;
 
             cb = this.FindControl<ComboBox>("m_Styles");
-            cb.Items = m_Styles;
-            cb.SelectedItem = m_Styles.Where(l => l.Value == App.Settings.Style).FirstOrDefault();
+            cb.ItemsSource = m_StylesList;
+            cb.SelectedItem = m_StylesList.FirstOrDefault(l => l.Value == App.Settings.Style);
 
             cb = this.FindControl<ComboBox>("m_Languages");
-            cb.Items = m_SupportedLanguages;
-            cb.SelectedItem = m_SupportedLanguages.Where(l => l.Code == Localizer.Localizer.Instance.Language).FirstOrDefault();
+            cb.ItemsSource = m_SupportedLanguages;
+            cb.SelectedItem = m_SupportedLanguages.FirstOrDefault(l => l.Code == Localizer.Localizer.Instance.Language);
 
             chk = this.FindControl<ToggleSwitch>("m_EnableDragAndDrop");
             chk.IsChecked = App.Settings.EnableDragAndDrop;
@@ -211,7 +151,7 @@ namespace CoreChess.Pages
             chk.IsChecked = App.Settings.AutoPauseWhenMinimized;
 
             cb = this.FindControl<ComboBox>("m_AnalysisEngines");
-            cb.Items = App.Settings.Engines.OrderBy(e => e.Name);
+            cb.ItemsSource = App.Settings.Engines.OrderBy(e => e.Name);
             if (!string.IsNullOrEmpty(App.Settings.GameAnalysisEngineId))
                 cb.SelectedItem = App.Settings.GetEngine(App.Settings.GameAnalysisEngineId);
 
@@ -234,12 +174,12 @@ namespace CoreChess.Pages
 
             // Color theme
             cb = this.FindControl<ComboBox>("m_ColorTheme");
-            cb.Items = m_ColorThemes;
-            cb.SelectedItem = m_ColorThemes.Where(ct => ct.WhiteColor == App.Settings.WhiteColor &&
-                ct.WhiteSelectedColor == App.Settings.WhiteSelectedColor &&
-                ct.BlackColor == App.Settings.BlackColor &&
-                ct.BlackSelectedColor == App.Settings.BlackSelectedColor)
-                .FirstOrDefault();
+            cb.ItemsSource = m_ColorThemes;
+            cb.SelectedItem = m_ColorThemes
+                .FirstOrDefault(ct => ct.WhiteColor == App.Settings.WhiteColor &&
+                                      ct.WhiteSelectedColor == App.Settings.WhiteSelectedColor &&
+                                      ct.BlackColor == App.Settings.BlackColor &&
+                                      ct.BlackSelectedColor == App.Settings.BlackSelectedColor);
             if (cb.SelectedItem == null) {
                 // Custom color theme
                 cb.SelectedIndex = 0;
@@ -269,7 +209,7 @@ namespace CoreChess.Pages
                             Name = d.Remove(0, pp.Length + 1),
                             SamplePath = System.IO.Path.Join(d, "wKnight.png")
                         };
-                        if (sets.Where(s => s.Name == ps.Name).FirstOrDefault() == null) {
+                        if (sets.FirstOrDefault(s => s.Name == ps.Name) == null) {
                             sets.Add(ps);
 
                             if (ps.Name == App.Settings.PiecesSet)
@@ -281,7 +221,7 @@ namespace CoreChess.Pages
 
             sets = sets.OrderBy(s => s.Name).ToList();
             var cmb = this.FindControl<ComboBox>("m_PiecesSet");
-            cmb.Items = sets;
+            cmb.ItemsSource = sets;
             cmb.SelectedItem = sel;
         }
 

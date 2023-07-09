@@ -10,10 +10,9 @@ using CoreChess.Abstracts;
 
 namespace CoreChess.Dialogs
 {
-    public class GameEndedDialog : BaseDialog
+    public partial class GameEndedDialog : BaseDialog
     {
         private Game m_Game = null;
-        private Controls.GameAnalyzeGraph m_Graph = null;
 
         public GameEndedDialog()
         {
@@ -65,11 +64,6 @@ namespace CoreChess.Dialogs
                     }
                 };
             }
-        }
-
-        private void InitializeComponent()
-        {
-            AvaloniaXamlLoader.Load(this);
         }
 
         private async void OnRematchClick(object sender, RoutedEventArgs e)

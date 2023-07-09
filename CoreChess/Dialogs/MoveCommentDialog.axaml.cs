@@ -7,7 +7,7 @@ using CoreChess.Abstracts;
 
 namespace CoreChess.Dialogs
 {
-    public class MoveCommentDialog : BaseDialog
+    public partial class MoveCommentDialog : BaseDialog
     {
         private Game.MoveNotation m_Move = null;
 
@@ -24,11 +24,6 @@ namespace CoreChess.Dialogs
             var txt = this.FindControl<TextBox>("m_Comment");
             txt.Text = m_Move.Comment;
             txt.AttachedToVisualTree += (s, e) => txt.Focus();
-        }
-
-        private void InitializeComponent()
-        {
-            AvaloniaXamlLoader.Load(this);
         }
 
         private void OnOkClick(object sender, RoutedEventArgs e)

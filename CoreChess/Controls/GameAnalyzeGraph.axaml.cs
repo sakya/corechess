@@ -18,12 +18,8 @@ using System.Threading.Tasks;
 
 namespace CoreChess.Controls
 {
-    public class GameAnalyzeGraph : UserControl
+    public partial class GameAnalyzeGraph : UserControl
     {
-        Button m_Analyze = null;
-        ProgressBar m_Progress = null;
-        TextBlock m_ProgressMessage = null;
-        Canvas m_Canvas = null;
         Canvas m_GraphCanvas = null;
         Border m_Line = null;
         Border m_Marker = null;
@@ -52,6 +48,14 @@ namespace CoreChess.Controls
         public GameAnalyzeGraph()
         {
             this.InitializeComponent();
+
+            m_Analyze = this.FindControl<Button>("m_Analyze");
+            m_Progress = this.FindControl<ProgressBar>("m_Progress");
+            m_ProgressMessage = this.FindControl<TextBlock>("m_ProgressMessage");
+            m_Canvas = this.FindControl<Canvas>("m_Canvas");
+            m_ProgressMessage.Text = $"{0.ToString("0.0", App.Settings.Culture)}%";
+
+            this.PropertyChanged += OnControlPropertyChanged;
         }
 
         public Game Game { get; set; }
@@ -139,19 +143,6 @@ namespace CoreChess.Controls
                 m_SelectedResultIndex = resultIndex;
             }
         } // AddMarker
-
-        private void InitializeComponent()
-        {
-            AvaloniaXamlLoader.Load(this);
-
-            m_Analyze = this.FindControl<Button>("m_Analyze");
-            m_Progress = this.FindControl<ProgressBar>("m_Progress");
-            m_ProgressMessage = this.FindControl<TextBlock>("m_ProgressMessage");
-            m_Canvas = this.FindControl<Canvas>("m_Canvas");
-            m_ProgressMessage.Text = $"{0.ToString("0.0", App.Settings.Culture)}%";
-
-            this.PropertyChanged += OnControlPropertyChanged;
-        }
 
         private void OnControlPropertyChanged(object sender, AvaloniaPropertyChangedEventArgs e)
         {
@@ -288,7 +279,7 @@ namespace CoreChess.Controls
             {
                 Width = m_Canvas.Bounds.Width,
                 Height = m_Canvas.Bounds.Width / m_ImageRatio,
-                Background = new ImageBrush(bitmap) { BitmapInterpolationMode = Avalonia.Visuals.Media.Imaging.BitmapInterpolationMode.HighQuality },
+                Background = new ImageBrush(bitmap),
                 ZIndex = 1
             };
 
@@ -301,23 +292,23 @@ namespace CoreChess.Controls
                 m_Line = new Border()
                 {
                     BorderThickness = new Thickness(1),
-                    Classes = new Classes(new string[] { "MoveOver" }),
                     Height = m_GraphCanvas.Height,
                     Width = 2,
                     ZIndex = 2,
                     IsVisible = false,
                 };
+                m_Line.Classes.Add("MoveOver");
                 m_Canvas.Children.Add(m_Line);
 
                 m_Marker = new Border()
                 {
                     BorderThickness = new Thickness(1),
-                    Classes = new Classes(new string[] { "MoveMarker" }),
                     Height = m_GraphCanvas.Height,
                     Width = 2,
                     ZIndex = 3,
                     IsVisible = false,
                 };
+                m_Marker.Classes.Add("MoveMarker");
                 m_Canvas.Children.Add(m_Marker);
             }
 

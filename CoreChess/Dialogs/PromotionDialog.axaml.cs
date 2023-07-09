@@ -8,7 +8,7 @@ using CoreChess.Abstracts;
 
 namespace CoreChess.Dialogs
 {
-    public class PromotionDialog : BaseDialog
+    public partial class PromotionDialog : BaseDialog
     {
         public PromotionDialog()
         {
@@ -56,14 +56,9 @@ namespace CoreChess.Dialogs
             set;
         }
 
-        private void InitializeComponent()
-        {
-            AvaloniaXamlLoader.Load(this);
-        }
-
         private void OnButtonClick(object sender, RoutedEventArgs e)
         {
-            IControl btn = sender as Button;
+            Control btn = sender as Button;
             if (btn.Name == "m_Knight")
                 Result = Piece.Pieces.Knight;
             else if (btn.Name == "m_Bishop")

@@ -11,7 +11,7 @@ using CoreChess.Abstracts;
 
 namespace CoreChess.Pages
 {
-    public class PgnGamesPage : BasePage
+    public partial class PgnGamesPage : BasePage
     {
         List<PGN> m_Games = null;
 
@@ -24,6 +24,7 @@ namespace CoreChess.Pages
         {
             this.InitializeComponent();
 
+            PageTitle = Localizer.Localizer.Instance["WT_PgnGamesWindow"];
             m_Games = games;
             var list = this.FindControl<Controls.ItemsList>("m_List");
             list.Items = new List<PGN>(m_Games);
@@ -32,12 +33,6 @@ namespace CoreChess.Pages
         }
 
         public PGN SelectedGame { get; set; }
-
-        private void InitializeComponent()
-        {
-            AvaloniaXamlLoader.Load(this);
-            PageTitle = Localizer.Localizer.Instance["WT_PgnGamesWindow"];
-        }
 
         private async void OnOkClick(object sender, RoutedEventArgs e)
         {
@@ -73,7 +68,7 @@ namespace CoreChess.Pages
             FilterGames();
         }
 
-        private async void OnListDoubleTapped(object sender, RoutedEventArgs e)
+        private async void OnListDoubleTapped(object sender, TappedEventArgs e)
         {
             SelectedGame = (sender as Controls.ItemsList).SelectedItem as PGN;
             if (SelectedGame != null)

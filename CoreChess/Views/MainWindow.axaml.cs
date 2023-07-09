@@ -2,13 +2,13 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Avalonia;
 using Avalonia.Animation;
 using Avalonia.Controls;
 using Avalonia.Controls.Notifications;
 using Avalonia.Input;
-using Avalonia.Markup.Xaml;
 using Avalonia.Media;
 using Avalonia.Styling;
 using CoreChess.Abstracts;
@@ -16,11 +16,9 @@ using CoreChess.Pages;
 
 namespace CoreChess.Views;
 
-public class MainWindow : BaseView
+public partial class MainWindow : BaseView
 {
-    private string[] m_Args;
-    private Grid m_Container;
-    private Controls.TitleBar m_TitleBar;
+    private readonly string[] m_Args;
     readonly List<BasePage> m_PageHistory = new();
     private readonly Dictionary<string, BasePage.PageState> m_PageStates = new();
     private bool m_ChangingPage;
@@ -58,14 +56,12 @@ public class MainWindow : BaseView
     public MainWindow(string[] args)
     {
         InitializeComponent();
+        Init();
 
         m_Args = args;
         WindowTitle = Title;
         Transition = new TransitionSettings(TransitionSettings.EnterTransitions.SlideLeft, TimeSpan.FromMilliseconds(250));
         BackKey = Key.Escape;
-
-        m_Container = this.FindControl<Grid>("Container");
-        m_TitleBar = this.FindControl<Controls.TitleBar>("TitleBar");
 
         Closing += OnWindowClosing;
         KeyDown += OnKeyDown;
@@ -82,7 +78,7 @@ public class MainWindow : BaseView
     {
         get
         {
-            return m_Container?.Children.FirstOrDefault(c => c is BasePage) as BasePage;
+            return Container?.Children.FirstOrDefault(c => c is BasePage) as BasePage;
         }
     }
 
@@ -98,10 +94,8 @@ public class MainWindow : BaseView
         await NavigateTo(mp);
     }
 
-    protected sealed override void InitializeComponent()
+    private void Init()
     {
-        AvaloniaXamlLoader.Load(this);
-
         if (App.Settings.RestoreWindowSizeAndPosition)
             RestoreWindowSizeAndPosition();
 
@@ -115,8 +109,8 @@ public class MainWindow : BaseView
         Transition = new TransitionSettings(TransitionSettings.EnterTransitions.SlideLeft, TimeSpan.FromMilliseconds(250));
         BackKey = Key.Escape;
 
-        m_Container = this.FindControl<Grid>("Container");
-        m_TitleBar = this.FindControl<Controls.TitleBar>("TitleBar");
+        Container = this.FindControl<Grid>("Container");
+        TitleBar = this.FindControl<Controls.TitleBar>("TitleBar");
 
         Closing += OnWindowClosing;
         KeyDown += OnKeyDown;
@@ -124,10 +118,10 @@ public class MainWindow : BaseView
         base.InitializeComponent();
     }
 
-    protected override void HandleWindowStateChanged(WindowState state)
+    /*protected override void HandleWindowStateChanged(WindowState state)
     {
         CurrentPage?.HandleWindowStateChanged(state);
-    }
+    }*/
 
     #region public operations
     /// <summary>
@@ -210,7 +204,7 @@ public class MainWindow : BaseView
 
         m_ChangingPage = true;
         entering.Opacity = 0;
-        m_Container!.Children.Add(entering);
+        Container!.Children.Add(entering);
         if (exiting == null) {
             entering.Opacity = 1;
             m_ChangingPage = false;
@@ -218,7 +212,7 @@ public class MainWindow : BaseView
         }
 
         if (Transition == null || Transition.Type == TransitionSettings.EnterTransitions.None) {
-            m_Container.Children.Remove(exiting);
+            Container.Children.Remove(exiting);
             entering.Opacity = 1;
             m_ChangingPage = false;
             return;
@@ -262,7 +256,8 @@ public class MainWindow : BaseView
         var exitAnim = new Animation()
         {
             Duration = Transition.Duration,
-            Easing = Transition.Easing
+            Easing = Transition.Easing,
+            FillMode = FillMode.Forward
         };
 
         var kf = new KeyFrame()
@@ -291,7 +286,8 @@ public class MainWindow : BaseView
         var enterAnim = new Animation()
         {
             Duration = Transition.Duration,
-            Easing = Transition.Easing
+            Easing = Transition.Easing,
+            FillMode = FillMode.Forward
         };
 
         kf = new KeyFrame()
@@ -317,14 +313,14 @@ public class MainWindow : BaseView
         enterAnim.Children.Add(kf);
 
         if (Transition.Type == TransitionSettings.EnterTransitions.FadeIn) {
-            await exitAnim.RunAsync(exiting, null);
+            await exitAnim.RunAsync(exiting, CancellationToken.None);
             exiting.Opacity = 0;
-            await enterAnim.RunAsync(entering, null);
+            await enterAnim.RunAsync(entering, CancellationToken.None);
             entering.Opacity = 1.0;
         } else {
             var tasks = new List<Task>();
-            tasks.Add(exitAnim.RunAsync(exiting, null));
-            tasks.Add(enterAnim.RunAsync(entering, null));
+            tasks.Add(exitAnim.RunAsync(exiting, CancellationToken.None));
+            tasks.Add(enterAnim.RunAsync(entering, CancellationToken.None));
             entering.Opacity = 1;
             await Task.WhenAll(tasks);
         }
@@ -333,10 +329,10 @@ public class MainWindow : BaseView
         exiting.RenderTransform = null;
 
         entering.IsHitTestVisible = true;
-        m_Container.Children.Remove(exiting);
+        Container.Children.Remove(exiting);
         entering.Focus();
 
-        m_TitleBar!.CanGoBack = CanNavigateBack;
+        TitleBar!.CanGoBack = CanNavigateBack;
         m_ChangingPage = false;
     } // ChangePage
 

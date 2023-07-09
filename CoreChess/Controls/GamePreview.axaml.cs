@@ -8,7 +8,7 @@ using ChessLib;
 
 namespace CoreChess.Controls
 {
-    public class GamePreview : UserControl
+    public partial class GamePreview : UserControl
     {
         private static System.Threading.Semaphore m_Semaphore = new System.Threading.Semaphore(1, 3);
         private PGN m_PgnGame = null;
@@ -50,11 +50,6 @@ namespace CoreChess.Controls
                 if (m_Game != null)
                     DispatcherTimer.RunOnce(this.UpdateImage, TimeSpan.FromMilliseconds(100), DispatcherPriority.Background);
             }
-        }
-
-        private void InitializeComponent()
-        {
-            AvaloniaXamlLoader.Load(this);
         }
 
         private async void UpdateImage()

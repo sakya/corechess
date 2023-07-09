@@ -478,11 +478,11 @@ namespace ChessLib.Engines
             if (Options.Count == 0) {
                 Options.Add(new Option() { Name = PonderOptionName, Type = "check", Default = "true", Value = "true" });
 
-                var tempFeature = Features.Where(f => f.Name == "memory").FirstOrDefault();
+                var tempFeature = Features.FirstOrDefault(f => f.Name == "memory");
                 if (tempFeature?.Value == "1")
                     Options.Add(new Option() { Name = "Memory", Type = "spin", Min = "0", Max = "1024", Default = "1", Value = "1" });
 
-                tempFeature = Features.Where(f => f.Name == "smp").FirstOrDefault();
+                tempFeature = Features.FirstOrDefault(f => f.Name == "smp");
                 if (tempFeature?.Value == "1")
                     Options.Add(new Option() { Name = "Cores", Type = "spin", Min = "1", Max = "16", Default = "1", Value = "1" });
             }

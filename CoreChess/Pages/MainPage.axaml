@@ -324,7 +324,7 @@
 
       <Grid Grid.Row="0" Grid.RowSpan="2" Grid.ColumnSpan="2"
             IsVisible="{Binding IsPaused}"
-            Background="{DynamicResource SystemControlBackgroundAltHighBrush}">
+            Background="{DynamicResource SystemRegionBrush}">
         <StackPanel Orientation="Vertical" VerticalAlignment="Center">
           <Button Grid.Column="1" Click="OnResumeClick" HorizontalAlignment="Center" ToolTip.Tip="Ctrl-P">
             <StackPanel Orientation="Horizontal">

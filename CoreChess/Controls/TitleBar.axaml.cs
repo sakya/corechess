@@ -7,7 +7,7 @@ using CoreChess.Views;
 
 namespace CoreChess.Controls
 {
-    public class TitleBar : UserControl
+    public partial class TitleBar : UserControl
     {
         bool m_CanGoBack;
 
@@ -15,6 +15,7 @@ namespace CoreChess.Controls
         {
             InitializeComponent();
 
+            IsVisible = OperatingSystem.IsWindows();
             CanMinimize = true;
             CanMaximize = true;
         }
@@ -27,19 +28,9 @@ namespace CoreChess.Controls
             set
             {
                 m_CanGoBack = value;
-                var btn = this.FindControl<Button>("BackBtn");
-                btn.IsVisible = m_CanGoBack;
-
-                var icon = this.FindControl<Image>("Icon");
-                icon.IsVisible = !m_CanGoBack;
+                BackBtn.IsVisible = m_CanGoBack;
+                Icon.IsVisible = !m_CanGoBack;
             }
-        }
-
-        private void InitializeComponent()
-        {
-            AvaloniaXamlLoader.Load(this);
-
-            IsVisible = OperatingSystem.IsWindows();
         }
 
         protected override void OnApplyTemplate(TemplateAppliedEventArgs e)
@@ -54,46 +45,41 @@ namespace CoreChess.Controls
                 var canResize = pw.GetObservable(Window.CanResizeProperty);
                 canResize.Subscribe(value =>
                 {
-                    this.FindControl<Button>("MaximizeBtn").IsEnabled = CanMaximize && value;
+                    MaximizeBtn.IsEnabled = CanMaximize && value;
                 });
 
                 var wState = pw.GetObservable(Window.WindowStateProperty);
                 wState.Subscribe(s =>
                 {
-                    var btn = this.FindControl<Button>("MaximizeBtn");
                     if (s == WindowState.Maximized) {
                         pw.Padding = new Thickness(5);
-                        btn.Content = new Projektanker.Icons.Avalonia.Icon() { Value = "fas fa-window-restore" };
+                        MaximizeBtn.Content = new Projektanker.Icons.Avalonia.Icon() { Value = "fas fa-window-restore" };
                     } else {
                         pw.Padding = new Thickness(0);
-                        btn.Content = new Projektanker.Icons.Avalonia.Icon() { Value = "fas fa-window-maximize" };
+                        MaximizeBtn.Content = new Projektanker.Icons.Avalonia.Icon() { Value = "fas fa-window-maximize" };
                     }
                 });
 
-                var btn = this.FindControl<Button>("MinimizeBtn");
-                btn.Click += (s, a) =>
+                MinimizeBtn.Click += (s, a) =>
                 {
                     pw.WindowState = WindowState.Minimized;
                 };
-                btn.IsVisible = CanMinimize;
+                MinimizeBtn.IsVisible = CanMinimize;
 
-                btn = this.FindControl<Button>("MaximizeBtn");
-                btn.Click += (s, a) =>
+                MaximizeBtn.Click += (s, a) =>
                 {
                     if (VisualRoot is Window parentWindow) {
                         parentWindow.WindowState = parentWindow.WindowState == WindowState.Maximized ? WindowState.Normal : WindowState.Maximized;
                     }
                 };
-                btn.IsVisible = CanMinimize;
+                MaximizeBtn.IsVisible = CanMinimize;
 
-                btn = this.FindControl<Button>("CloseBtn");
-                btn.Click += (s, a) =>
+                CloseBtn.Click += (s, a) =>
                 {
                     pw.Close();
                 };
 
-                btn = this.FindControl<Button>("BackBtn");
-                btn.Click += async (s, a) =>
+                BackBtn.Click += async (s, a) =>
                 {
                     await (pw as MainWindow)!.NavigateBack();
                 };
@@ -102,8 +88,7 @@ namespace CoreChess.Controls
 
         private void SetTitle(string title)
         {
-            var txt = this.FindControl<TextBlock>("Title");
-            txt.Text = title;
+            Title.Text = title;
         }
     }
 }

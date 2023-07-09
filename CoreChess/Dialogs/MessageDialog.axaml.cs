@@ -8,7 +8,7 @@ using CoreChess.Abstracts;
 
 namespace CoreChess.Dialogs
 {
-    public class MessageDialog : BaseDialog
+    public partial class MessageDialog : BaseDialog
     {
         private static MessageDialog _openedMessageDialog = null;
 
@@ -85,11 +85,6 @@ namespace CoreChess.Dialogs
                     i.Foreground = new SolidColorBrush((Color)App.MainWindow.FindResource("InfoColor"));
                     break;
             }
-        }
-
-        private void InitializeComponent()
-        {
-            AvaloniaXamlLoader.Load(this);
         }
 
         public override void OnKeyDown(object sender, KeyEventArgs e)

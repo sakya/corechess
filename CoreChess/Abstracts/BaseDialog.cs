@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel;
+using System.Threading;
 using System.Threading.Tasks;
 using Avalonia;
 using Avalonia.Animation;
@@ -20,18 +21,20 @@ public abstract class BaseDialog : UserControl, IDisposable
 
     protected BaseDialog()
     {
+        Focusable = true;
         Animated = true;
         CloseOnBackdropClick = true;
         Margin = new Thickness(5);
         VerticalAlignment = VerticalAlignment.Center;
         HorizontalAlignment = HorizontalAlignment.Center;
 
-        var c = App.GetStyleColor("SystemAltHighColor");
+        UseLayoutRounding = false;
+        var c = App.GetStyleColor("SystemRegionBrush");
         if (c != null)
             Background = new SolidColorBrush(c.Value);
         CornerRadius = new CornerRadius(10);
         BorderThickness = new Thickness(0.5);
-        c = App.GetStyleColor("SystemBaseHighColor");
+        c = App.GetStyleColor("SystemAltHighColor");
         if (c != null)
             BorderBrush = new SolidColorBrush(c.Value);
     }
@@ -137,7 +140,8 @@ public abstract class BaseDialog : UserControl, IDisposable
         var animation = new Animation()
         {
             Duration = TimeSpan.FromMilliseconds(250),
-            Easing = new LinearEasing()
+            Easing = new LinearEasing(),
+            FillMode = FillMode.Forward
         };
 
         var kf = new KeyFrame()
@@ -162,7 +166,7 @@ public abstract class BaseDialog : UserControl, IDisposable
         });
         animation.Children.Add(kf);
 
-        await animation.RunAsync(this, null);
+        await animation.RunAsync(this, CancellationToken.None);
         RenderTransform = new TranslateTransform() {
             Y = to
         };
@@ -175,7 +179,8 @@ public abstract class BaseDialog : UserControl, IDisposable
         var animation = new Animation()
         {
             Duration = TimeSpan.FromMilliseconds(250),
-            Easing = new LinearEasing()
+            Easing = new LinearEasing(),
+            FillMode = FillMode.Forward
         };
 
         var kf = new KeyFrame()
@@ -200,7 +205,7 @@ public abstract class BaseDialog : UserControl, IDisposable
         });
         animation.Children.Add(kf);
 
-        await animation.RunAsync(backdrop, null);
+        await animation.RunAsync(backdrop, CancellationToken.None);
         backdrop.Opacity = to;
     }
     #endregion

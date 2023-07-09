@@ -7,7 +7,7 @@ using CoreChess.Abstracts;
 
 namespace CoreChess.Dialogs
 {
-    public class AboutDialog : BaseDialog
+    public partial class AboutDialog : BaseDialog
     {
         public AboutDialog()
         {

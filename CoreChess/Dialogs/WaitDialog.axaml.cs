@@ -5,7 +5,7 @@ using CoreChess.Abstracts;
 
 namespace CoreChess.Dialogs
 {
-    public class WaitDialog : BaseDialog
+    public partial class WaitDialog : BaseDialog
     {
         public WaitDialog()
         {
@@ -20,13 +20,7 @@ namespace CoreChess.Dialogs
 
             Animated = false;
             CloseOnBackdropClick = false;
-            var txt = this.FindControl<TextBlock>("m_Message");
-            txt.Text = message;
-        }
-
-        private void InitializeComponent()
-        {
-            AvaloniaXamlLoader.Load(this);
+            m_Message.Text = message;
         }
 
         public static async Task<bool> ShowWaitWindow(Window owner, string message)

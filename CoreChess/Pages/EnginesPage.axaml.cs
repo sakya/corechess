@@ -11,28 +11,20 @@ using CoreChess.Dialogs;
 
 namespace CoreChess.Pages
 {
-    public class EnginesWindow : BasePage
+    public partial class EnginesPage : BasePage
     {
-        Controls.ItemsList m_List = null;
-        Grid m_EngineProperties = null;
-        Grid m_EngineOptions = null;
         List<EngineBase> m_Engines = null;
         bool m_IgnoreChanges = false;
 
-        public EnginesWindow()
+        public EnginesPage()
         {
             this.InitializeComponent();
-        }
-
-        private void InitializeComponent()
-        {
-            AvaloniaXamlLoader.Load(this);
 
             NavigateBackWithKeyboard = false;
             PageTitle = Localizer.Localizer.Instance["WT_EnginesWindow"];
             if (!OperatingSystem.IsWindows()) {
                 var cb = this.FindControl<ComboBox>("m_EngineType");
-                var items = cb.Items as Avalonia.Collections.AvaloniaList<object>;
+                var items = cb.Items;
                 items.RemoveAt(3);
             }
 

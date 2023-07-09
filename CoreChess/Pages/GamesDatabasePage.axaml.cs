@@ -13,7 +13,7 @@ using CoreChess.Dialogs;
 
 namespace CoreChess.Pages
 {
-    public class GamesDatabaseWindow : BasePage
+    public partial class GamesDatabaseWindow : BasePage
     {
         List<Game> m_Games = null;
 
@@ -32,11 +32,6 @@ namespace CoreChess.Pages
         }
 
         public Game SelectedGame { get; set; }
-
-        private void InitializeComponent()
-        {
-            AvaloniaXamlLoader.Load(this);
-        }
 
         private void OnSearchKeyDown(object sender, KeyEventArgs e)
         {
@@ -58,7 +53,7 @@ namespace CoreChess.Pages
             FilterGames();
         }
 
-        private async void OnListDoubleTapped(object sender, RoutedEventArgs e)
+        private async void OnListDoubleTapped(object sender, TappedEventArgs e)
         {
             SelectedGame = (sender as Controls.ItemsList).SelectedItem as Game;
             if (SelectedGame != null)

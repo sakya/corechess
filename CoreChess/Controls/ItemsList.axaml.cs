@@ -11,7 +11,7 @@ using Avalonia.Remote.Protocol;
 
 namespace CoreChess.Controls
 {
-    public class ItemsList : UserControl
+    public partial class ItemsList : UserControl
     {
         private IEnumerable<object> m_Items;
         private bool m_Selectable = false;
@@ -19,7 +19,6 @@ namespace CoreChess.Controls
         private object m_SelectedItem;
 
         private IDataTemplate m_ItemTemplate;
-        private ItemsRepeater m_ItemsRepeater;
 
         public static readonly DirectProperty<ItemsList, IEnumerable<object>> ItemsProperty =
                 AvaloniaProperty.RegisterDirect<ItemsList, IEnumerable<object>>(
@@ -49,6 +48,7 @@ namespace CoreChess.Controls
         {
             InitializeComponent();
 
+            m_ItemsRepeater = this.FindControl<ItemsRepeater>("m_ItemsRepeater");
             this.FindControl<ScrollViewer>("m_ScrollViewer").DataContext = this;
             this.Focusable = true;
             this.KeyDown += OnKeyDown;
@@ -67,7 +67,7 @@ namespace CoreChess.Controls
             set
             {
                 if (SetAndRaise(ItemsProperty, ref m_Items, value)) {
-                    m_ItemsRepeater.Items = m_Items;
+                    m_ItemsRepeater.ItemsSource = m_Items;
                     if (Selectable && m_Items.Count() > 0)
                         m_SelectedItem = m_Items.ElementAt(0);
                 }
@@ -149,13 +149,13 @@ namespace CoreChess.Controls
             }
         } // OnKeyDown
 
-        private IControl GetItemControl(int index)
+        private Control GetItemControl(int index)
         {
             var ctrl = m_ItemsRepeater.TryGetElement(index);
             if (ctrl == null)
                 ctrl = m_ItemsRepeater.GetOrCreateElement(index);
             if (VisualRoot is TopLevel top)
-                top.LayoutManager.ExecuteLayoutPass();
+                top.UpdateLayout();
             return ctrl;
         } // GetItemControl
 
@@ -185,7 +185,7 @@ namespace CoreChess.Controls
                 ctrl.Background = new SolidColorBrush(Colors.Transparent);
         }
 
-        private void OnItemTapped(object sender, RoutedEventArgs e)
+        private void OnItemTapped(object sender, TappedEventArgs e)
         {
             if (!Selectable)
                 return;
@@ -215,13 +215,6 @@ namespace CoreChess.Controls
             } else {
                 ctrl.Background = new SolidColorBrush(Colors.Transparent);
             }
-        }
-
-        private void InitializeComponent()
-        {
-            AvaloniaXamlLoader.Load(this);
-
-            m_ItemsRepeater = this.FindControl<ItemsRepeater>("m_ItemsRepeater");
         }
     }
 }

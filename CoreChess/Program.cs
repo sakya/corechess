@@ -32,13 +32,15 @@ namespace CoreChess
         // Avalonia configuration, don't remove; also used by visual designer.
         public static AppBuilder BuildAvaloniaApp()
         {
+            IconProvider.Current
+                .Register<FontAwesomeIconProvider>();
+
             return AppBuilder.Configure<App>()
                 .UsePlatformDetect()
-                .With(new X11PlatformOptions { UseGpu = false })
-                .With(new Win32PlatformOptions { AllowEglInitialization = false })
+                .With(new X11PlatformOptions())
+                .With(new Win32PlatformOptions())
                 .LogToTrace()
-                .UseSkia()
-                .WithIcons(container => container.Register<FontAwesomeIconProvider>());
+                .UseSkia();
         }
 
         private static void AppMain(Application app, string[] args)
@@ -105,9 +107,8 @@ namespace CoreChess
 
             // Load ECO database
             App.EcoDatabase = new Utils.EcoDatabase();
-            var assets = AvaloniaLocator.Current.GetService<IAssetLoader>();
             Uri uri = new Uri($"avares://CoreChess/Assets/eco.pgn");
-            using (Stream s = assets.Open(uri)) {
+            using (Stream s = AssetLoader.Open(uri)) {
                 await App.EcoDatabase.Load(s);
             }
 
@@ -145,7 +146,7 @@ namespace CoreChess
 
             // Fix for gnuchess in flatpak
             if (App.Settings.Version == "0.10.5.0" && App.Version == "0.10.5.1") {
-                var gnuchess = engines.Where(e => e.Command == "/app/bin/Engines/gnuchess/gnuchess").FirstOrDefault();
+                var gnuchess = engines.FirstOrDefault(e => e.Command == "/app/bin/Engines/gnuchess/gnuchess");
                 if (gnuchess != null)
                     engines.Remove(gnuchess);
             }
@@ -153,7 +154,7 @@ namespace CoreChess
             List<EngineBase> defaultEngines = new List<EngineBase>();
             if (Environment.OSVersion.Platform == PlatformID.Unix) {
                 // Check nnue
-                var sf = engines.Where(e => e.Command == "/app/bin/Engines/stockfish/stockfish").FirstOrDefault();
+                var sf = engines.FirstOrDefault(e => e.Command == "/app/bin/Engines/stockfish/stockfish");
                 if (sf != null) {
                     var efo = sf.GetOption("EvalFile");
                     if (efo != null) {
@@ -205,7 +206,7 @@ namespace CoreChess
 
             // Check missing default engines
             foreach (var dEngine in defaultEngines) {
-                var existingEngine = engines.Where(e => e.Command == dEngine.Command).FirstOrDefault();
+                var existingEngine = engines.FirstOrDefault(e => e.Command == dEngine.Command);
                 if (existingEngine == null) {
                     // Initialize engine (get options list)
                     try {
