@@ -1,7 +1,5 @@
-﻿using Avalonia;
-using Avalonia.Controls;
+﻿using Avalonia.Controls;
 using Avalonia.Interactivity;
-using Avalonia.Markup.Xaml;
 using ChessLib.Engines;
 using System;
 using System.Collections.Generic;
@@ -9,7 +7,6 @@ using System.Linq;
 using Avalonia.Platform.Storage;
 using CoreChess.Abstracts;
 using CoreChess.Dialogs;
-using Microsoft.CodeAnalysis.Operations;
 
 namespace CoreChess.Pages
 {
