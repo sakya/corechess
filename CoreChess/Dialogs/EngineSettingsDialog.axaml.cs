@@ -22,12 +22,10 @@ namespace CoreChess.Dialogs
             var enginePlayers = game.Settings.Players.Where(p => p is EnginePlayer).ToList();
             if (enginePlayers.Count == 1) {
                 var enginePlayer = enginePlayers[0] as EnginePlayer;
-                var txt = this.FindControl<TextBlock>("m_Name");
-                txt.Text = enginePlayer.Engine.Name;
+                m_Name.Text = enginePlayer.Engine.Name;
 
-                var ctrl = this.FindControl<Controls.EngineOptions>("m_EngineOptions");
-                ctrl.SetEngine(enginePlayer.Engine);
-                ctrl.SetIsEnabled(false);
+                m_EngineOptions.SetEngine(enginePlayer.Engine);
+                m_EngineOptions.SetIsEnabled(false);
             }
         }
 

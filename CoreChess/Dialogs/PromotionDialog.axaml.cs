@@ -27,21 +27,17 @@ namespace CoreChess.Dialogs
             if (color == Game.Colors.Black)
                 col = "b";
 
-            var btn = this.FindControl<Button>("m_Knight");
             var bitmap = new Bitmap($"{imageFolder}{System.IO.Path.DirectorySeparatorChar}{col}{Piece.Pieces.Knight.ToString()}.png");
-            btn.Content = new Image() { Source = bitmap, Height = 75 };
+            m_Knight.Content = new Image() { Source = bitmap, Height = 75 };
 
-            btn = this.FindControl<Button>("m_Bishop");
             bitmap = new Bitmap($"{imageFolder}{System.IO.Path.DirectorySeparatorChar}{col}{Piece.Pieces.Bishop.ToString()}.png");
-            btn.Content = new Image() { Source = bitmap, Height = 75 };
+            m_Bishop.Content = new Image() { Source = bitmap, Height = 75 };
 
-            btn = this.FindControl<Button>("m_Rook");
             bitmap = new Bitmap($"{imageFolder}{System.IO.Path.DirectorySeparatorChar}{col}{Piece.Pieces.Rook.ToString()}.png");
-            btn.Content = new Image() { Source = bitmap, Height = 75 };
+            m_Rook.Content = new Image() { Source = bitmap, Height = 75 };
 
-            btn = this.FindControl<Button>("m_Queen");
             bitmap = new Bitmap($"{imageFolder}{System.IO.Path.DirectorySeparatorChar}{col}{Piece.Pieces.Queen.ToString()}.png");
-            btn.Content = new Image() { Source = bitmap, Height = 75 };
+            m_Queen.Content = new Image() { Source = bitmap, Height = 75 };
         }
 
         public ChessLib.Game.Colors Color

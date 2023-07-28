@@ -48,8 +48,7 @@ namespace CoreChess.Controls
         {
             InitializeComponent();
 
-            m_ItemsRepeater = this.FindControl<ItemsRepeater>("m_ItemsRepeater");
-            this.FindControl<ScrollViewer>("m_ScrollViewer").DataContext = this;
+            m_ScrollViewer.DataContext = this;
             this.Focusable = true;
             this.KeyDown += OnKeyDown;
 

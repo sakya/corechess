@@ -2,7 +2,6 @@
 using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Interactivity;
-using Avalonia.Markup.Xaml;
 using Avalonia.Media;
 using Avalonia.Media.Imaging;
 using Avalonia.Threading;
@@ -353,10 +352,6 @@ namespace CoreChess.Pages
             m_Context.CapturedPieces = App.Settings.CapturedPieces;
             this.DataContext = m_Context;
 
-            m_Wait = this.FindControl<Grid>("m_Wait");
-            m_Chessboard = this.FindControl<Chessboard>("m_Chessboard");
-            m_EngineMessage = this.FindControl<TextBlock>("m_EngineMessage");
-
             m_Wait.AttachedToVisualTree += InitializeWindow;
 
             App.MainWindow.Closing += OnWindowClosing;
@@ -505,8 +500,7 @@ namespace CoreChess.Pages
                 // Update the last move
                 if ((e.Reason == Game.Results.Timeout || e.Reason == Game.Results.Resignation) && m_Game.Moves.Count > 0) {
                     var move = m_Game.Moves.Last();
-                    var moves = this.FindControl<WrapPanel>("m_Moves");
-                    var stack = moves.Children.FirstOrDefault(s => s.Name == $"move_{move.Index}") as StackPanel;
+                    var stack = m_Moves.Children.FirstOrDefault(s => s.Name == $"move_{move.Index}") as StackPanel;
 
                     Control toRemove = stack?.Children.Last();
                     if (toRemove != null) {
@@ -827,7 +821,6 @@ namespace CoreChess.Pages
             if (m_Context.IsPaused || e.Handled)
                 return;
 
-            var moveNav = this.FindControl<StackPanel>("m_MoveNavigator");
             if (e.KeyModifiers == KeyModifiers.Control && e.Key == Key.N) {
                 e.Handled = true;
                 OnNewGameClick(null, new RoutedEventArgs());
@@ -858,37 +851,32 @@ namespace CoreChess.Pages
             } else if (e.KeyModifiers == KeyModifiers.Alt && e.Key == Key.F4) {
                 e.Handled = true;
                 App.MainWindow.Close();
-            } else if (moveNav.IsVisible && e.KeyModifiers == KeyModifiers.None && e.Key == Key.Left) {
-                var btn = this.FindControl<Button>("m_MovePrevious");
-                if (btn.IsEnabled) {
-                    OnMoveNavigationClick(btn, new RoutedEventArgs());
+            } else if (m_MoveNavigator.IsVisible && e.KeyModifiers == KeyModifiers.None && e.Key == Key.Left) {
+                if (m_MovePrevious.IsEnabled) {
+                    OnMoveNavigationClick(m_MovePrevious, new RoutedEventArgs());
                     e.Handled = true;
                 }
-            } else if (moveNav.IsVisible && e.KeyModifiers == KeyModifiers.None && e.Key == Key.Home) {
-                var btn = this.FindControl<Button>("m_MoveFirst");
-                if (btn.IsEnabled) {
-                    OnMoveNavigationClick(btn, new RoutedEventArgs());
+            } else if (m_MoveNavigator.IsVisible && e.KeyModifiers == KeyModifiers.None && e.Key == Key.Home) {
+                if (m_MoveFirst.IsEnabled) {
+                    OnMoveNavigationClick(m_MoveFirst, new RoutedEventArgs());
                     e.Handled = true;
                 }
-            } else if (moveNav.IsVisible && e.KeyModifiers == KeyModifiers.None && e.Key == Key.Right) {
-                var btn = this.FindControl<Button>("m_MoveNext");
-                if (btn.IsEnabled) {
-                    OnMoveNavigationClick(btn, new RoutedEventArgs());
+            } else if (m_MoveNavigator.IsVisible && e.KeyModifiers == KeyModifiers.None && e.Key == Key.Right) {
+                if (m_MoveNext.IsEnabled) {
+                    OnMoveNavigationClick(m_MoveNext, new RoutedEventArgs());
                     e.Handled = true;
                 }
-            } else if (moveNav.IsVisible && e.KeyModifiers == KeyModifiers.None && e.Key == Key.End) {
-                var btn = this.FindControl<Button>("m_MoveLast");
-                if (btn.IsEnabled) {
-                    OnMoveNavigationClick(btn, new RoutedEventArgs());
+            } else if (m_MoveNavigator.IsVisible && e.KeyModifiers == KeyModifiers.None && e.Key == Key.End) {
+                if (m_MoveLast.IsEnabled) {
+                    OnMoveNavigationClick(m_MoveLast, new RoutedEventArgs());
                     e.Handled = true;
                 }
             } else if (e.KeyModifiers == KeyModifiers.None && e.Key == Key.Z) {
                 OnZenModeClick(null, new RoutedEventArgs());
                 e.Handled = true;
             } else if (e.KeyModifiers == KeyModifiers.Control && e.Key == Key.A) {
-                var btn = this.FindControl<Button>("m_ViewCommentBtn");
-                if (btn.IsEnabled) {
-                    OnViewCommentBtnClick(btn, new RoutedEventArgs());
+                if (m_ViewCommentBtn.IsEnabled) {
+                    OnViewCommentBtnClick(m_ViewCommentBtn, new RoutedEventArgs());
                     e.Handled = true;
                 }
             }
@@ -937,11 +925,11 @@ namespace CoreChess.Pages
             m_Chessboard.Game.Resume();
             m_Context.IsPaused = false;
             if (m_Context.ZenMode) {
-                this.FindControl<Grid>("m_SidePanel").IsVisible = false;
-                this.FindControl<Menu>("m_Menu").IsVisible = false;
+                m_SidePanel.IsVisible = false;
+                m_Menu.IsVisible = false;
             } else {
-                this.FindControl<Grid>("m_SidePanel").IsVisible = true;
-                this.FindControl<Menu>("m_Menu").IsVisible = true;
+                m_SidePanel.IsVisible = true;
+                m_Menu.IsVisible = true;
             }
         } // OnResumeClick
 
@@ -982,8 +970,7 @@ namespace CoreChess.Pages
             var move = args.Index.HasValue ? m_Game.Moves[args.Index.Value - 1] : null;
 
             // Highlight the move
-            var moves = this.FindControl<WrapPanel>("m_Moves");
-            foreach (var child in moves.Children) {
+            foreach (var child in m_Moves.Children) {
                 var stack = child as StackPanel;
                 foreach (var t in stack.Children) {
                     if (move != null && t.DataContext == move) {
@@ -1153,25 +1140,21 @@ namespace CoreChess.Pages
 
         private void SetPlayerToMove()
         {
-            var wBorder = this.FindControl<Border>("m_WhiteBorder");
-            var bBorder = this.FindControl<Border>("m_BlackBorder");
-            var wName = this.FindControl<TextBlock>("m_WhiteName");
-            var bName = this.FindControl<TextBlock>("m_BlackName");
             if (m_Game.Ended) {
-                wBorder.Classes.Remove("Selected");
-                wName.Classes.Remove("HighlightColor");
-                bBorder.Classes.Remove("Selected");
-                bName.Classes.Remove("HighlightColor");
+                m_WhiteBorder.Classes.Remove("Selected");
+                m_WhiteName.Classes.Remove("HighlightColor");
+                m_BlackBorder.Classes.Remove("Selected");
+                m_BlackName.Classes.Remove("HighlightColor");
             } else if (m_Game.ToMove == Game.Colors.White) {
-                wBorder.Classes.Add("Selected");
-                wName.Classes.Add("HighlightColor");
-                bBorder.Classes.Remove("Selected");
-                bName.Classes.Remove("HighlightColor");
+                m_WhiteBorder.Classes.Add("Selected");
+                m_WhiteName.Classes.Add("HighlightColor");
+                m_BlackBorder.Classes.Remove("Selected");
+                m_BlackName.Classes.Remove("HighlightColor");
             } else {
-                wBorder.Classes.Remove("Selected");
-                wName.Classes.Remove("HighlightColor");
-                bBorder.Classes.Add("Selected");
-                bName.Classes.Add("HighlightColor");
+                m_WhiteBorder.Classes.Remove("Selected");
+                m_WhiteName.Classes.Remove("HighlightColor");
+                m_BlackBorder.Classes.Add("Selected");
+                m_BlackName.Classes.Add("HighlightColor");
             }
         } // SetPlayerToMove
 
@@ -1223,8 +1206,7 @@ namespace CoreChess.Pages
                 bPieces = tempBlack;
             }
 
-            var white = this.FindControl<WrapPanel>("m_WhiteCapturedPieces");
-            white.Children.Clear();
+            m_WhiteCapturedPieces.Children.Clear();
             Piece lastPiece = null;
             foreach (var cp in bPieces) {
                 string fileName = $"{m_Chessboard.PiecesFolder}{Path.DirectorySeparatorChar}b{cp.Type.ToString()}.png";
@@ -1233,12 +1215,11 @@ namespace CoreChess.Pages
                 Thickness margin = new Thickness(0);
                 if (lastPiece?.Type == cp.Type)
                     margin = new Thickness(-10, 0, 0, 0);
-                white.Children.Add(new Image() { Source = bitmap, Height = 35, Margin = margin });
+                m_WhiteCapturedPieces.Children.Add(new Image() { Source = bitmap, Height = 35, Margin = margin });
                 lastPiece = cp;
             }
 
-            var black = this.FindControl<WrapPanel>("m_BlackCapturedPieces");
-            black.Children.Clear();
+            m_BlackCapturedPieces.Children.Clear();
             lastPiece = null;
             foreach (var cp in wPieces) {
                 string fileName = $"{m_Chessboard.PiecesFolder}{Path.DirectorySeparatorChar}w{cp.Type.ToString()}.png";
@@ -1247,12 +1228,12 @@ namespace CoreChess.Pages
                 Thickness margin = new Thickness(0);
                 if (lastPiece?.Type == cp.Type)
                     margin = new Thickness(-10, 0, 0, 0);
-                black.Children.Add(new Image() { Source = bitmap, Height = 35, Margin = margin });
+                m_BlackCapturedPieces.Children.Add(new Image() { Source = bitmap, Height = 35, Margin = margin });
                 lastPiece = cp;
             }
 
             if (bValue > wValue) {
-                black.Children.Add(new TextBlock()
+                m_BlackCapturedPieces.Children.Add(new TextBlock()
                 {
                     Text = $"+{bValue - wValue}",
                     Margin = new Thickness(5),
@@ -1261,7 +1242,7 @@ namespace CoreChess.Pages
                     VerticalAlignment = Avalonia.Layout.VerticalAlignment.Center
                 });
             } else if (wValue > bValue) {
-                white.Children.Add(new TextBlock()
+                m_WhiteCapturedPieces.Children.Add(new TextBlock()
                 {
                     Text = $"+{wValue - bValue}",
                     Margin = new Thickness(5),
@@ -1274,8 +1255,7 @@ namespace CoreChess.Pages
 
         private async Task<bool> UpdateMoves()
         {
-            var moves = this.FindControl<WrapPanel>("m_Moves");
-            moves.Children.Clear();
+            m_Moves.Children.Clear();
 
             using (var game = new Game()) {
                 var settings = new Game.GameSettings();
@@ -1326,11 +1306,10 @@ namespace CoreChess.Pages
         /// <returns>The StackPanel containing the move text</returns>
         private StackPanel AddMove(Chessboard chessboard, Game.MoveNotation move, bool disposeGame = false)
         {
-            var moves = this.FindControl<WrapPanel>("m_Moves");
-            var stack = moves.Children.FirstOrDefault(s => s.Name == $"move_{move.Index}") as StackPanel;
+            var stack = m_Moves.Children.FirstOrDefault(s => s.Name == $"move_{move.Index}") as StackPanel;
             if (stack == null) {
                 stack = new StackPanel() { Name = $"move_{move.Index}", Orientation = Avalonia.Layout.Orientation.Horizontal, Margin = new Thickness(0, 0, 5, 0) };
-                moves.Children.Add(stack);
+                m_Moves.Children.Add(stack);
             }
 
             bool isWhite = move.Color == Game.Colors.White;
@@ -1443,9 +1422,8 @@ namespace CoreChess.Pages
 
         private async Task<bool> SetGame(Game game)
         {
-            var gameAnalysis = this.FindControl<GameAnalyzeGraph>("m_GameGraph");
-            await gameAnalysis.Abort();
-            gameAnalysis.Clear();
+            await m_GameGraph.Abort();
+            m_GameGraph.Clear();
 
             if (App.Settings.Engines == null || App.Settings.Engines.Count == 0) {
                 m_Chessboard.SetEmpty();
@@ -1467,12 +1445,9 @@ namespace CoreChess.Pages
             m_LastBlackCapturedPieces = new List<Piece.Pieces>();
 
             // Clear GUI:
-            var wrap = this.FindControl<WrapPanel>("m_WhiteCapturedPieces");
-            wrap.Children.Clear();
-            wrap = this.FindControl<WrapPanel>("m_BlackCapturedPieces");
-            wrap.Children.Clear();
-            wrap = this.FindControl<WrapPanel>("m_Moves");
-            wrap.Children.Clear();
+            m_WhiteCapturedPieces.Children.Clear();
+            m_BlackCapturedPieces.Children.Clear();
+            m_Moves.Children.Clear();
             m_EngineMessagesRows.Clear();
             m_EngineMessage.Text = string.Empty;
 
@@ -1490,19 +1465,19 @@ namespace CoreChess.Pages
             m_Context.BlackName = m_Game.Settings.BlackPlayerName;
             m_Context.BlackElo = m_Game.Settings.BlackPlayer?.Elo;
 
-            this.FindControl<Button>("m_ViewCommentBtn").Classes.Remove("Selected");
+            m_ViewCommentBtn.Classes.Remove("Selected");
             if (m_Game.Ended) {
                 SetAnalyzeMode();
             } else {
                 m_Context.IsResignEnabled = true;
                 m_CurrentMoveIndex = null;
-                this.FindControl<StackPanel>("m_MoveNavigator").IsVisible = false;
-                this.FindControl<Border>("m_GameAnalyzeSection").IsVisible = false;
-                this.FindControl<Border>("m_EngineMessageSection").IsVisible = App.Settings.ShowEngineOutput;
-                this.FindControl<TextBlock>("m_WhiteTimeLeft").IsVisible = true;
-                this.FindControl<TextBlock>("m_BlackTimeLeft").IsVisible = true;
-                this.FindControl<Button>("m_PauseBtn").IsVisible = true;
-                this.FindControl<Button>("m_ViewCommentBtn").IsVisible = false;
+                m_MoveNavigator.IsVisible = false;
+                m_GameAnalyzeSection.IsVisible = false;
+                m_EngineMessageSection.IsVisible = App.Settings.ShowEngineOutput;
+                m_WhiteTimeLeft.IsVisible = true;
+                m_BlackTimeLeft.IsVisible = true;
+                m_PauseBtn.IsVisible = true;
+                m_ViewCommentBtn.IsVisible = false;
             }
 
             m_Context.CanPause = !m_Game.Ended;
@@ -1542,44 +1517,39 @@ namespace CoreChess.Pages
             m_Chessboard.SquareBlackColor = Utils.ColorConverter.ParseHexColor(App.Settings.BlackColor);
             m_Chessboard.SquareBlackSelectedColor = Utils.ColorConverter.ParseHexColor(App.Settings.BlackSelectedColor);
 
-            var border = this.FindControl<Border>("m_WhiteBorder");
-            border.Background = new SolidColorBrush(Utils.ColorConverter.ParseHexColor(App.Settings.BlackColor));
-            var image = this.FindControl<Image>("m_White");
-            image.Source = new Bitmap(Path.Join(m_Chessboard.PiecesFolder, "wKing.png"));
+            m_WhiteBorder.Background = new SolidColorBrush(Utils.ColorConverter.ParseHexColor(App.Settings.BlackColor));
+            m_White.Source = new Bitmap(Path.Join(m_Chessboard.PiecesFolder, "wKing.png"));
 
-            border = this.FindControl<Border>("m_BlackBorder");
-            border.Background = new SolidColorBrush(Utils.ColorConverter.ParseHexColor(App.Settings.WhiteColor));
-            image = this.FindControl<Image>("m_Black");
-            image.Source = new Bitmap(Path.Join(m_Chessboard.PiecesFolder, "bKing.png"));
+            m_BlackBorder.Background = new SolidColorBrush(Utils.ColorConverter.ParseHexColor(App.Settings.WhiteColor));
+            m_Black.Source = new Bitmap(Path.Join(m_Chessboard.PiecesFolder, "bKing.png"));
         } // SetChessboardOptions
 
         private void SetAnalyzeMode()
         {
             m_Context.IsResignEnabled = false;
-            this.FindControl<Button>("m_PauseBtn").IsVisible = false;
-            this.FindControl<TextBlock>("m_WhiteTimeLeft").IsVisible = false;
-            this.FindControl<TextBlock>("m_BlackTimeLeft").IsVisible = false;
-            this.FindControl<StackPanel>("m_MoveNavigator").IsVisible = true;
-            this.FindControl<Button>("m_ViewCommentBtn").IsVisible = true;
+            m_PauseBtn.IsVisible = false;
+            m_WhiteTimeLeft.IsVisible = false;
+            m_BlackTimeLeft.IsVisible = false;
+            m_MoveNavigator.IsVisible = true;
+            m_ViewCommentBtn.IsVisible = true;
 
-            this.FindControl<Button>("m_MoveFirst").IsEnabled = true;
-            this.FindControl<Button>("m_MovePrevious").IsEnabled = true;
-            this.FindControl<Button>("m_MoveNext").IsEnabled = false;
-            this.FindControl<Button>("m_MoveLast").IsEnabled = false;
+            m_MoveFirst.IsEnabled = true;
+            m_MovePrevious.IsEnabled = true;
+            m_MoveNext.IsEnabled = false;
+            m_MoveLast.IsEnabled = false;
 
             m_CurrentMoveIndex = -1;
-            this.FindControl<Border>("m_GameAnalyzeSection").IsVisible = true;
-            this.FindControl<Border>("m_EngineMessageSection").IsVisible = false;
+            m_GameAnalyzeSection.IsVisible = true;
+            m_EngineMessageSection.IsVisible = false;
 
-            var gameAnalysis = this.FindControl<GameAnalyzeGraph>("m_GameGraph");
-            gameAnalysis.Clear();
-            gameAnalysis.Game = m_Game;
-            gameAnalysis.AnalyzeCompleted += async (s, args) =>
+            m_GameGraph.Clear();
+            m_GameGraph.Game = m_Game;
+            m_GameGraph.AnalyzeCompleted += async (s, args) =>
             {
                 // Save the analysis data
-                if (!string.IsNullOrEmpty(gameAnalysis.Game.FileName)) {
+                if (!string.IsNullOrEmpty(m_GameGraph.Game.FileName)) {
                     try {
-                        await gameAnalysis.Game.Save(gameAnalysis.Game.FileName);
+                        await m_GameGraph.Game.Save(m_GameGraph.Game.FileName);
                         DisplayMove(m_Game.Moves.Count - 1);
                     } catch {
                     }
@@ -1594,11 +1564,11 @@ namespace CoreChess.Pages
 
             if (m_Game.AnalyzeResults == null) {
                 if (App.Settings.GameAnalysisEngine == null)
-                    gameAnalysis.IsVisible = false;
+                    m_GameGraph.IsVisible = false;
                 else if (App.Settings.AutoAnalyzeGames)
-                    gameAnalysis.Analyze(App.Settings.GameAnalysisEngine.GetDefaultAnalyzeDepth());
+                    m_GameGraph.Analyze(App.Settings.GameAnalysisEngine.GetDefaultAnalyzeDepth());
             } else {
-                gameAnalysis.SetResults(m_Game.AnalyzeResults);
+                m_GameGraph.SetResults(m_Game.AnalyzeResults);
                 DisplayMove(m_Game.Moves.Count - 1);
             }
         } // SetAnalyzeMode
@@ -1611,7 +1581,7 @@ namespace CoreChess.Pages
         {
             if (m_Game != null && m_Game.Ended && moveIndex < m_Game.Moves.Count) {
                 m_CurrentMoveIndex = moveIndex;
-                this.FindControl<Button>("m_ViewCommentBtn").Classes.Remove("Selected");
+                m_ViewCommentBtn.Classes.Remove("Selected");
                 Game.MoveNotation move = null;
                 if (moveIndex == -1) {
                     m_Game.Board.InitFromFenString(m_Game.InitialFenPosition);
@@ -1621,14 +1591,12 @@ namespace CoreChess.Pages
                 }
                 m_Chessboard.Redraw(move);
 
-                var gameAnalysis = this.FindControl<GameAnalyzeGraph>("m_GameGraph");
                 if (moveIndex == -1)
-                    gameAnalysis.RemoveMarker();
+                    m_GameGraph.RemoveMarker();
                 else
-                    gameAnalysis.AddMarker(moveIndex + 1);
+                    m_GameGraph.AddMarker(moveIndex + 1);
 
-                var moves = this.FindControl<WrapPanel>("m_Moves");
-                foreach (var child in moves.Children) {
+                foreach (var child in m_Moves.Children) {
                     var stack = child as StackPanel;
                     foreach (var t in stack.Children) {
                         if (move != null && t.DataContext == move) {
@@ -1636,7 +1604,7 @@ namespace CoreChess.Pages
                             stack.BringIntoView();
                             string moveTxt = move.Comment;
                             if (!string.IsNullOrEmpty(moveTxt))
-                                this.FindControl<Button>("m_ViewCommentBtn").Classes.Add("Selected");
+                                m_ViewCommentBtn.Classes.Add("Selected");
                         } else
                             t.Classes.Remove("CurrentMove");
                     }
@@ -1644,10 +1612,10 @@ namespace CoreChess.Pages
 
                 UpdateCapturedPieces();
 
-                this.FindControl<Button>("m_MoveFirst").IsEnabled = moveIndex >= 0;
-                this.FindControl<Button>("m_MovePrevious").IsEnabled = moveIndex >= 0;
-                this.FindControl<Button>("m_MoveNext").IsEnabled = moveIndex < m_Game.Moves.Count - 1;
-                this.FindControl<Button>("m_MoveLast").IsEnabled = moveIndex < m_Game.Moves.Count - 1;
+                m_MoveFirst.IsEnabled = moveIndex >= 0;
+                m_MovePrevious.IsEnabled = moveIndex >= 0;
+                m_MoveNext.IsEnabled = moveIndex < m_Game.Moves.Count - 1;
+                m_MoveLast.IsEnabled = moveIndex < m_Game.Moves.Count - 1;
 
                 return true;
             }
@@ -1658,17 +1626,14 @@ namespace CoreChess.Pages
         private void SetWaitAnimation(bool visible)
         {
             m_Wait.IsVisible = visible;
-            var stack = this.FindControl<StackPanel>("m_WaitSpinner");
             if (visible)
-                stack.Classes.Add("spinner");
+                m_WaitSpinner.Classes.Add("spinner");
             else
-                stack.Classes.Remove("spinner");
+                m_WaitSpinner.Classes.Remove("spinner");
         } // SetWaitAnimation
 
         private void SetMru()
         {
-            var menu = this.FindControl<MenuItem>("m_Mru");
-
             var items = new List<MenuItem>();
             if (App.Settings.RecentlyLoadedFiles != null) {
                 for (int i = App.Settings.RecentlyLoadedFiles.Count - 1; i >= 0; i--) {
@@ -1686,8 +1651,8 @@ namespace CoreChess.Pages
                 }
             }
 
-            menu.ItemsSource = items;
-            menu.IsVisible = items.Count > 0;
+            m_Mru.ItemsSource = items;
+            m_Mru.IsVisible = items.Count > 0;
         }
         #endregion
     }

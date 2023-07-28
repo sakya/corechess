@@ -1,7 +1,5 @@
-﻿using System;
-using Avalonia;
+﻿using Avalonia;
 using Avalonia.Controls;
-using Avalonia.Markup.Xaml;
 using Avalonia.Reactive;
 using CoreChess.Controls.Models;
 
@@ -26,11 +24,10 @@ public partial class Spinner : UserControl
         var iv = this.GetObservable(UserControl.IsVisibleProperty);
         iv.Subscribe(new AnonymousObserver<bool>(value =>
         {
-            var stack = this.FindControl<StackPanel>("WaitSpinner");
             if (value)
-                stack.Classes.Add("spinner");
+                WaitSpinner.Classes.Add("spinner");
             else
-                stack.Classes.Remove("spinner");
+                WaitSpinner.Classes.Remove("spinner");
         }));
     }
 

@@ -1,7 +1,4 @@
-﻿using Avalonia;
-using Avalonia.Controls;
-using Avalonia.Interactivity;
-using Avalonia.Markup.Xaml;
+﻿using Avalonia.Interactivity;
 using ChessLib;
 using CoreChess.Abstracts;
 
@@ -9,7 +6,7 @@ namespace CoreChess.Dialogs
 {
     public partial class MoveCommentDialog : BaseDialog
     {
-        private Game.MoveNotation m_Move = null;
+        private readonly Game.MoveNotation m_Move;
 
         public MoveCommentDialog()
         {
@@ -21,15 +18,13 @@ namespace CoreChess.Dialogs
             this.InitializeComponent();
 
             m_Move = move;
-            var txt = this.FindControl<TextBox>("m_Comment");
-            txt.Text = m_Move.Comment;
-            txt.AttachedToVisualTree += (s, e) => txt.Focus();
+            m_Comment.Text = m_Move.Comment;
+            m_Comment.AttachedToVisualTree += (s, e) => m_Comment.Focus();
         }
 
         private void OnOkClick(object sender, RoutedEventArgs e)
         {
-            var txt = this.FindControl<TextBox>("m_Comment");
-            m_Move.Comment = txt.Text;
+            m_Move.Comment = m_Comment.Text;
             this.Close(true);
         } // OnOkClick
 
