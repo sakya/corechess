@@ -12,8 +12,8 @@ namespace CoreChess.Pages
 {
     public partial class EnginesPage : BasePage
     {
-        List<EngineBase> m_Engines = null;
-        bool m_IgnoreChanges = false;
+        private readonly List<EngineBase> m_Engines;
+        private bool m_IgnoreChanges;
 
         public EnginesPage()
         {
@@ -22,17 +22,12 @@ namespace CoreChess.Pages
             NavigateBackWithKeyboard = false;
             PageTitle = Localizer.Localizer.Instance["WT_EnginesWindow"];
             if (!OperatingSystem.IsWindows()) {
-                var cb = this.FindControl<ComboBox>("m_EngineType");
-                var items = cb.Items;
+                var items = m_EngineType.Items;
                 items.RemoveAt(3);
             }
 
             m_Engines = new List<EngineBase>(App.Settings.Engines);
-            m_List = this.FindControl<Controls.ItemsList>("m_List");
             m_List.Items = m_Engines.OrderBy(e => e.Name);
-
-            m_EngineProperties = this.FindControl<Grid>("m_EngineProperties");
-            m_EngineOptions = this.FindControl<Grid>("m_EngineOptions");
         }
 
         private void OnEngineOptionsClick(object sender, RoutedEventArgs e)
@@ -49,54 +44,45 @@ namespace CoreChess.Pages
 
         private void ShowEngineProperties(EngineBase engine, bool newEngine = false)
         {
-            var btn = this.FindControl<Button>("m_BtnEngineExePath");
-            btn.IsEnabled = !newEngine;
-            btn = this.FindControl<Button>("m_BtnEngineWorkingDir");
-            btn.IsEnabled = !newEngine;
+            m_BtnEngineExePath.IsEnabled = !newEngine;
+            m_BtnEngineWorkingDir.IsEnabled = !newEngine;
 
-            var txt = this.FindControl<TextBox>("m_EngineName");
-            txt.Text = engine.Name;
-            txt.IsEnabled = !newEngine;
+            m_EngineName.Text = engine.Name;
+            m_EngineName.IsEnabled = !newEngine;
 
             m_IgnoreChanges = true;
-            var cmb = this.FindControl<ComboBox>("m_EngineType");
             if (newEngine)
-                cmb.SelectedIndex = 0;
+                m_EngineType.SelectedIndex = 0;
             else if (engine is TheKing)
-                cmb.SelectedIndex = 3;
+                m_EngineType.SelectedIndex = 3;
             else if (engine is Uci)
-                cmb.SelectedIndex = 1;
+                m_EngineType.SelectedIndex = 1;
             else if (engine is Cecp)
-                cmb.SelectedIndex = 2;
-            cmb.IsEnabled = newEngine;
+                m_EngineType.SelectedIndex = 2;
+            m_EngineType.IsEnabled = newEngine;
             m_IgnoreChanges = false;
 
-            txt = this.FindControl<TextBox>("m_EngineExePath");
-            txt.Text = engine.Command;
-            txt.IsEnabled = !newEngine;
-            txt = this.FindControl<TextBox>("m_EngineWorkingDir");
-            txt.Text = engine.WorkingDir;
-            txt.IsEnabled = !newEngine;
-            txt = this.FindControl<TextBox>("m_EngineArguments");
-            txt.Text = engine.Arguments;
-            txt.IsEnabled = !newEngine;
+            m_EngineExePath.Text = engine.Command;
+            m_EngineExePath.IsEnabled = !newEngine;
+            m_EngineWorkingDir.Text = engine.WorkingDir;
+            m_EngineWorkingDir.IsEnabled = !newEngine;
+            m_EngineArguments.Text = engine.Arguments;
+            m_EngineArguments.IsEnabled = !newEngine;
 
             if (engine is Uci) {
-                txt = this.FindControl<TextBox>("m_EngineRegisterName");
-                txt.Text = ((Uci)engine).RegisterName;
-                txt.IsEnabled = !newEngine;
-                txt = this.FindControl<TextBox>("m_EngineRegisterCode");
-                txt.Text = ((Uci)engine).RegisterCode;
+                m_EngineRegisterName.Text = ((Uci)engine).RegisterName;
+                m_EngineRegisterName.IsEnabled = !newEngine;
+                m_EngineRegisterCode.Text = ((Uci)engine).RegisterCode;
             } else {
-                this.FindControl<TextBox>("m_EngineRegisterName").IsEnabled = false;
-                this.FindControl<TextBox>("m_EngineRegisterCode").IsEnabled = false;
+                m_EngineRegisterName.IsEnabled = false;
+                m_EngineRegisterCode.IsEnabled = false;
             }
 
             m_EngineProperties.DataContext = engine;
             m_List.IsVisible = false;
             m_EngineProperties.IsVisible = true;
 
-            this.FindControl<ScrollViewer>("m_PropertiesScrollViewer").ScrollToHome();
+            m_PropertiesScrollViewer.ScrollToHome();
         } // ShowEngineProperties
 
         private void OnEngineTypeChanged(object sender, SelectionChangedEventArgs args)
@@ -115,7 +101,7 @@ namespace CoreChess.Pages
 
             if (engine != null) {
                 ShowEngineProperties(engine, false);
-                this.FindControl<TextBox>("m_EngineName").Focus();
+                m_EngineName.Focus();
             }
         }
 
@@ -124,14 +110,13 @@ namespace CoreChess.Pages
             m_List.IsVisible = false;
             m_EngineOptions.IsVisible = true;
 
-            this.FindControl<Controls.EngineOptions>("m_EngineOptionsControl").SetEngine(engine);
-            this.FindControl<ScrollViewer>("m_OptionsScrollViewer").ScrollToHome();
+            m_EngineOptionsControl.SetEngine(engine);
+            m_OptionsScrollViewer.ScrollToHome();
         } // ShowEngineOptions
 
         private void OnResetEngineOptionsClick(object sender, RoutedEventArgs e)
         {
-            var opt = this.FindControl<Controls.EngineOptions>("m_EngineOptionsControl");
-            opt.ResetOptions();
+            m_EngineOptionsControl.ResetOptions();
         } // OnResetEngineClick
 
         private async void OnRemoveEngineClick(object sender, RoutedEventArgs e)
@@ -166,8 +151,7 @@ namespace CoreChess.Pages
 
             var files = await MainWindow.StorageProvider.OpenFilePickerAsync(opts);
             if (files.Count > 0) {
-                var txt = this.FindControl<TextBox>("m_EngineExePath");
-                txt.Text = files[0].Path.AbsolutePath;
+                m_EngineExePath.Text = files[0].Path.AbsolutePath;
             }
         } // OnCommandClick
 
@@ -178,8 +162,7 @@ namespace CoreChess.Pages
                 AllowMultiple = false
             });
             if (folders.Count > 0) {
-                var txt = this.FindControl<TextBox>("m_EngineWorkingDir");
-                txt.Text = folders[0].Path.AbsolutePath;
+                m_EngineWorkingDir.Text = folders[0].Path.AbsolutePath;
             }
         } // OnWorkingDirClick
 
@@ -187,16 +170,10 @@ namespace CoreChess.Pages
         {
             if (m_EngineProperties.IsVisible) {
                 EngineBase engine = m_EngineProperties.DataContext as EngineBase;
-                var txt = this.FindControl<TextBox>("m_EngineName");
-                engine.Name = txt.Text;
-                txt = this.FindControl<TextBox>("m_EngineExePath");
-                engine.Command = txt.Text;
-
-                txt = this.FindControl<TextBox>("m_EngineWorkingDir");
-                engine.WorkingDir = txt.Text;
-
-                txt = this.FindControl<TextBox>("m_EngineArguments");
-                engine.Arguments = txt.Text;
+                engine.Name = m_EngineName.Text;
+                engine.Command = m_EngineExePath.Text;
+                engine.WorkingDir = m_EngineWorkingDir.Text;
+                engine.Arguments = m_EngineArguments.Text;
 
                 if (string.IsNullOrEmpty(engine.Command)) {
                     await MessageDialog.ShowMessage(App.MainWindow, Localizer.Localizer.Instance["Error"], Localizer.Localizer.Instance["MissingEngineCommand"], MessageDialog.Icons.Error);
@@ -227,7 +204,7 @@ namespace CoreChess.Pages
                 m_List.Items = m_Engines.OrderBy(e => e.Name);
                 m_List.IsVisible = true;
             } else if (m_EngineOptions.IsVisible) {
-                this.FindControl<Controls.EngineOptions>("m_EngineOptionsControl").ApplyOptions();
+                m_EngineOptionsControl.ApplyOptions();
                 m_EngineOptions.IsVisible = false;
                 m_List.IsVisible = true;
             } else {

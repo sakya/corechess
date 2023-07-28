@@ -1,9 +1,7 @@
-﻿using Avalonia;
-using Avalonia.Controls;
+﻿using Avalonia.Controls;
 using Avalonia.Controls.Primitives;
 using Avalonia.Input;
 using Avalonia.Interactivity;
-using Avalonia.Markup.Xaml;
 using Avalonia.Media.Imaging;
 using ChessLib;
 using ChessLib.Engines;
@@ -34,81 +32,67 @@ namespace CoreChess.Dialogs
         {
             this.InitializeComponent();
 
-            var white = this.FindControl<Image>("m_White");
-            white.Source = new Bitmap(System.IO.Path.Combine(App.GetPiecesPath(App.Settings.PiecesSet), "wKnight.png"));
-            var black = this.FindControl<Image>("m_Black");
-            black.Source = new Bitmap(System.IO.Path.Combine(App.GetPiecesPath(App.Settings.PiecesSet), "bKnight.png"));
+            m_White.Source = new Bitmap(System.IO.Path.Combine(App.GetPiecesPath(App.Settings.PiecesSet), "wKnight.png"));
+            m_Black.Source = new Bitmap(System.IO.Path.Combine(App.GetPiecesPath(App.Settings.PiecesSet), "bKnight.png"));
 
-            var maxTime = this.FindControl<NumericUpDown>("m_MaxTime");
-            maxTime.Value = 15;
+            m_MaxTime.Value = 15;
+            m_Engines.ItemsSource = App.Settings.Engines.OrderBy(e => e.Name);
+            m_Engines.SelectedIndex = 0;
 
-            var engine = this.FindControl<ComboBox>("m_Engines");
-            engine.ItemsSource = App.Settings.Engines.OrderBy(e => e.Name);
-            engine.SelectedIndex = 0;
-
-            var gType = this.FindControl<ComboBox>("m_GameType");
-            gType.SelectedIndex = 0;
+            m_GameType.SelectedIndex = 0;
 
             // Restore last new game settings
             if (App.Settings.NewGame != null) {
-                var whiteBtn = this.FindControl<ToggleButton>("m_WhiteBtn");
-                var blackBtn = this.FindControl<ToggleButton>("m_BlackBtn");
-                var randomBtn = this.FindControl<ToggleButton>("m_RandomBtn");
-                var trainingMode = this.FindControl<ToggleSwitch>("m_TrainingMode");
-                whiteBtn.IsChecked = App.Settings.NewGame.PlayerColor == Game.Colors.White;
-                blackBtn.IsChecked = App.Settings.NewGame.PlayerColor == Game.Colors.Black;
-                randomBtn.IsChecked = App.Settings.NewGame.PlayerColor == null;
-                trainingMode.IsChecked = App.Settings.NewGame.TrainingMode == true;
+                m_WhiteBtn.IsChecked = App.Settings.NewGame.PlayerColor == Game.Colors.White;
+                m_BlackBtn.IsChecked = App.Settings.NewGame.PlayerColor == Game.Colors.Black;
+                m_RandomBtn.IsChecked = App.Settings.NewGame.PlayerColor == null;
+                m_TrainingMode.IsChecked = App.Settings.NewGame.TrainingMode == true;
 
                 var selectedEngine = App.Settings.GetEngine(App.Settings.NewGame.EngineId);
-                engine.SelectedItem = selectedEngine;
-                if (engine.SelectedItem == null)
-                    engine.SelectedIndex = 0;
+                m_Engines.SelectedItem = selectedEngine;
+                if (m_Engines.SelectedItem == null)
+                    m_Engines.SelectedIndex = 0;
 
                 if (App.Settings.NewGame.EngineElo.HasValue) {
-                    var elo = this.FindControl<NumericUpDown>("m_EngineElo");
-                    elo.Value = App.Settings.NewGame.EngineElo.Value;
+                    m_EngineElo.Value = App.Settings.NewGame.EngineElo.Value;
                 }
 
                 if (App.Settings.NewGame.Chess960)
-                    gType.SelectedIndex = 1;
+                    m_GameType.SelectedIndex = 1;
 
                 if (App.Settings.NewGame.MaxTime.HasValue) {
-                    maxTime.Value = (decimal)App.Settings.NewGame.MaxTime.Value.TotalMinutes;
+                    m_MaxTime.Value = (decimal)App.Settings.NewGame.MaxTime.Value.TotalMinutes;
                 }
 
                 if (App.Settings.NewGame.TheKingPersonality != null && selectedEngine is TheKing) {
-                    var cmb = this.FindControl<ComboBox>("m_TheKingPersonality");
-                    cmb.SelectedItem = (cmb.Items as IEnumerable<TheKing.Personality>).FirstOrDefault(p => p.Name == App.Settings.NewGame.TheKingPersonality.Name);
+                    m_TheKingPersonality.SelectedItem = (m_TheKingPersonality.Items as IEnumerable<TheKing.Personality>).FirstOrDefault(p => p.Name == App.Settings.NewGame.TheKingPersonality.Name);
                 } else if (!string.IsNullOrEmpty(App.Settings.NewGame.Personality)) {
-                    var cmb = this.FindControl<ComboBox>("m_Personality");
-                    cmb.SelectedItem = App.Settings.NewGame.Personality;
+                    m_Personality.SelectedItem = App.Settings.NewGame.Personality;
                 }
 
-                var num = this.FindControl<NumericUpDown>("m_TimeIncrement");
-                num.Value = (decimal)App.Settings.NewGame.TimeIncrement.TotalSeconds;
+                m_TimeIncrement.Value = (decimal)App.Settings.NewGame.TimeIncrement.TotalSeconds;
             }
         }
 
         private void OnWhiteClick(object sender, RoutedEventArgs e)
         {
             (sender as ToggleButton).IsChecked = true;
-            this.FindControl<ToggleButton>("m_BlackBtn").IsChecked = false;
-            this.FindControl<ToggleButton>("m_RandomBtn").IsChecked = false;
+            m_BlackBtn.IsChecked = false;
+            m_RandomBtn.IsChecked = false;
         }
 
         private void OnBlackClick(object sender, RoutedEventArgs e)
         {
             (sender as ToggleButton).IsChecked = true;
-            this.FindControl<ToggleButton>("m_WhiteBtn").IsChecked = false;
-            this.FindControl<ToggleButton>("m_RandomBtn").IsChecked = false;
+            m_WhiteBtn.IsChecked = false;
+            m_RandomBtn.IsChecked = false;
         }
 
         private void OnRandomClick(object sender, RoutedEventArgs e)
         {
             (sender as ToggleButton).IsChecked = true;
-            this.FindControl<ToggleButton>("m_WhiteBtn").IsChecked = false;
-            this.FindControl<ToggleButton>("m_BlackBtn").IsChecked = false;
+            m_WhiteBtn.IsChecked = false;
+            m_BlackBtn.IsChecked = false;
         }
 
         private void OnEngineChanged(object sender, SelectionChangedEventArgs args)
@@ -117,42 +101,37 @@ namespace CoreChess.Dialogs
             if (engine == null)
                 return;
 
-            var gType = this.FindControl<ComboBox>("m_GameType");
             if (!engine.SupportChess960()) {
-                gType.SelectedIndex = 0;
-                this.FindControl<StackPanel>("m_GameTypeStack").IsVisible = false;
+                m_GameType.SelectedIndex = 0;
+                m_GameTypeStack.IsVisible = false;
             } else {
-                this.FindControl<StackPanel>("m_GameTypeStack").IsVisible = true;
+                m_GameTypeStack.IsVisible = true;
             }
 
-            var eloStack = this.FindControl<StackPanel>("m_EngineEloStack");
-            eloStack.IsVisible = engine.CanSetElo();
+            m_EngineEloStack.IsVisible = engine.CanSetElo();
 
-            var elo = this.FindControl<NumericUpDown>("m_EngineElo");
-            elo.Maximum = engine.GetMaxElo();
-            elo.Minimum = engine.GetMinElo();
-            elo.Value = elo.Maximum;
+            m_EngineElo.Maximum = engine.GetMaxElo();
+            m_EngineElo.Minimum = engine.GetMinElo();
+            m_EngineElo.Value = m_EngineElo.Maximum;
 
             // TheKing personalities
             if (engine is TheKing) {
-                this.FindControl<StackPanel>("m_TheKingPersonalityStack").IsVisible = true;
-                var cmb = this.FindControl<ComboBox>("m_TheKingPersonality");
+                m_TheKingPersonalityStack.IsVisible = true;
                 var opt = engine.GetOption(TheKing.PersonalitiesFolderOptionName);
                 if (opt != null && !string.IsNullOrEmpty(opt.Value))
-                    cmb.ItemsSource = TheKing.Personality.GetFromFolder(opt.Value).OrderByDescending(p => p.Elo);
+                    m_TheKingPersonality.ItemsSource = TheKing.Personality.GetFromFolder(opt.Value).OrderByDescending(p => p.Elo);
             } else {
-                this.FindControl<StackPanel>("m_TheKingPersonalityStack").IsVisible = false;
+                m_TheKingPersonalityStack.IsVisible = false;
 
                 if (engine is Uci) {
                     // Dragon 2.6 personality
                     var pOpt = engine.GetOption(Uci.PersonalityOptionNames);
                     if (pOpt != null && pOpt.Type == "combo") {
-                        this.FindControl<StackPanel>("m_PersonalityStack").IsVisible = true;
-                        var cmb = this.FindControl<ComboBox>("m_Personality");
-                        cmb.ItemsSource = pOpt.ValidValues;
-                        cmb.SelectedItem = pOpt.Default;
+                        m_PersonalityStack.IsVisible = true;
+                        m_Personality.ItemsSource = pOpt.ValidValues;
+                        m_Personality.SelectedItem = pOpt.Default;
                     } else {
-                        this.FindControl<StackPanel>("m_PersonalityStack").IsVisible = false;
+                        m_PersonalityStack.IsVisible = false;
                     }
                 }
             }
@@ -160,49 +139,36 @@ namespace CoreChess.Dialogs
 
         private void OnOkClick(object sender, RoutedEventArgs e)
         {
-            var engine = this.FindControl<ComboBox>("m_Engines");
-            var engineElo = this.FindControl<NumericUpDown>("m_EngineElo");
-            var initialPos = this.FindControl<TextBox>("m_FenString");
-            var random = this.FindControl<ToggleButton>("m_RandomBtn");
-            var white = this.FindControl<ToggleButton>("m_WhiteBtn");
-            var maxTimeControl = this.FindControl<NumericUpDown>("m_MaxTime");
-            var theKingPers = this.FindControl<ComboBox>("m_TheKingPersonality");
-            var pers = this.FindControl<ComboBox>("m_Personality");
-            var training = this.FindControl<ToggleSwitch>("m_TrainingMode");
-            TimeSpan? maxTime = (TimeSpan?)TimeSpan.FromMinutes((double)maxTimeControl.Value);
-
-            var num = this.FindControl<NumericUpDown>("m_TimeIncrement");
-
-            var gameTypeCombo = this.FindControl<ComboBox>("m_GameType");
+            TimeSpan? maxTime = (TimeSpan?)TimeSpan.FromMinutes((double)m_MaxTime.Value);
 
             // Save new game settings
             App.Settings.NewGame = new Settings.NewGameSettings()
             {
-                EngineId = (engine.SelectedItem as EngineBase)?.Id,
-                EngineElo = engineElo.IsVisible ? (int)engineElo.Value : null,
-                PlayerColor = random.IsChecked.Value ? null : white.IsChecked.Value ? Game.Colors.White : Game.Colors.Black,
+                EngineId = (m_Engines.SelectedItem as EngineBase)?.Id,
+                EngineElo = m_EngineElo.IsVisible ? (int)m_EngineElo.Value : null,
+                PlayerColor = m_RandomBtn.IsChecked.Value ? null : m_WhiteBtn.IsChecked.Value ? Game.Colors.White : Game.Colors.Black,
                 MaxTime = maxTime,
-                TrainingMode = training.IsChecked == true,
-                TimeIncrement = TimeSpan.FromSeconds((double)num.Value),
-                Chess960 = gameTypeCombo.SelectedIndex == 1,
-                Personality = pers.SelectedItem as string,
-                TheKingPersonality = theKingPers.SelectedItem as TheKing.Personality
+                TrainingMode = m_TrainingMode.IsChecked == true,
+                TimeIncrement = TimeSpan.FromSeconds((double)m_TimeIncrement.Value),
+                Chess960 = m_GameType.SelectedIndex == 1,
+                Personality = m_Personality.SelectedItem as string,
+                TheKingPersonality = m_TheKingPersonality.SelectedItem as TheKing.Personality
             };
             App.Settings.Save(App.SettingsPath);
 
             this.Close(
                 new Result()
                 {
-                    EngineId = (engine.SelectedItem as EngineBase)?.Id,
-                    EngineElo = engineElo.IsVisible ? (int)engineElo.Value : null,
-                    Color = random.IsChecked.Value ? null : white.IsChecked.Value ? Game.Colors.White : Game.Colors.Black,
+                    EngineId = (m_Engines.SelectedItem as EngineBase)?.Id,
+                    EngineElo = m_EngineElo.IsVisible ? (int)m_EngineElo.Value : null,
+                    Color = m_RandomBtn.IsChecked.Value ? null : m_WhiteBtn.IsChecked.Value ? Game.Colors.White : Game.Colors.Black,
                     MaximumTime = maxTime,
-                    TimeIncrement = TimeSpan.FromSeconds((double)num.Value),
-                    TrainingMode = training.IsChecked == true,
-                    Chess960 = gameTypeCombo.SelectedIndex == 1,
-                    InitialPosition = initialPos.Text?.Trim(),
-                    Personality = pers.SelectedItem as string,
-                    TheKingPersonality = theKingPers.SelectedItem as TheKing.Personality
+                    TimeIncrement = TimeSpan.FromSeconds((double)m_TimeIncrement.Value),
+                    TrainingMode = m_TrainingMode.IsChecked == true,
+                    Chess960 = m_GameType.SelectedIndex == 1,
+                    InitialPosition = m_FenString.Text?.Trim(),
+                    Personality = m_Personality.SelectedItem as string,
+                    TheKingPersonality = m_TheKingPersonality.SelectedItem as TheKing.Personality
                 }
             );
         } // OnOkClick
