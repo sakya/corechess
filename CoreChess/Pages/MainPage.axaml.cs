@@ -620,7 +620,7 @@ namespace CoreChess.Pages
             });
 
             if (files.Count > 0) {
-                var file = files[0].Path.ToString();
+                var file = files[0].Path.AbsolutePath;
                 try {
                     if (Path.GetExtension(file) == ".pgn")
                         await m_Game.SaveToPgn(file);
@@ -651,7 +651,7 @@ namespace CoreChess.Pages
                 }
             });
             if (files?.Count > 0) {
-                await LoadGame(files[0].Path.ToString());
+                await LoadGame(files[0].Path.AbsolutePath);
             }
         } // OnLoadGameClick
 
@@ -711,7 +711,7 @@ namespace CoreChess.Pages
             });
 
             if (files.Count > 0) {
-                m_Chessboard.SaveToPng(files[0].Path.ToString());
+                m_Chessboard.SaveToPng(files[0].Path.AbsolutePath);
             }
         } // OnSaveToPngClick
 

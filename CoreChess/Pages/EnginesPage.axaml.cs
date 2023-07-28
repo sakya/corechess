@@ -167,7 +167,7 @@ namespace CoreChess.Pages
             var files = await MainWindow.StorageProvider.OpenFilePickerAsync(opts);
             if (files.Count > 0) {
                 var txt = this.FindControl<TextBox>("m_EngineExePath");
-                txt.Text = files[0].Path.ToString();
+                txt.Text = files[0].Path.AbsolutePath;
             }
         } // OnCommandClick
 
@@ -179,7 +179,7 @@ namespace CoreChess.Pages
             });
             if (folders.Count > 0) {
                 var txt = this.FindControl<TextBox>("m_EngineWorkingDir");
-                txt.Text = folders[0].Path.ToString();
+                txt.Text = folders[0].Path.AbsolutePath;
             }
         } // OnWorkingDirClick
 

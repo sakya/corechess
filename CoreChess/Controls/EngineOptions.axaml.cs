@@ -308,7 +308,7 @@ namespace CoreChess.Controls
                         AllowMultiple = false
                     });
                 if (folders.Count > 0)
-                    ctrl.Text = folders[0].Path.ToString();
+                    ctrl.Text = folders[0].Path.AbsolutePath;
             };
 
             Grid.SetColumn(lbl, 0);

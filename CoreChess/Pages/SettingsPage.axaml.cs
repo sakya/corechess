@@ -302,7 +302,7 @@ namespace CoreChess.Pages
             });
             if (files?.Count > 0) {
                 var txt = this.FindControl<TextBox>("m_OpeningBook");
-                txt.Text = files[0].Path.ToString();
+                txt.Text = files[0].Path.AbsolutePath;
             }
         } // OnOpeningBookClick
 
