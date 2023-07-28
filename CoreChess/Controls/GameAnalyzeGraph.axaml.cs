@@ -49,10 +49,6 @@ namespace CoreChess.Controls
         {
             this.InitializeComponent();
 
-            m_Analyze = this.FindControl<Button>("m_Analyze");
-            m_Progress = this.FindControl<ProgressBar>("m_Progress");
-            m_ProgressMessage = this.FindControl<TextBlock>("m_ProgressMessage");
-            m_Canvas = this.FindControl<Canvas>("m_Canvas");
             m_ProgressMessage.Text = $"{0.ToString("0.0", App.Settings.Culture)}%";
 
             this.PropertyChanged += OnControlPropertyChanged;
@@ -68,7 +64,7 @@ namespace CoreChess.Controls
             m_Canvas.Height = double.NaN;
             m_Progress.Value = 0;
             m_ProgressMessage.Text = $"{0.ToString("0.0", App.Settings.Culture)}%";
-            this.FindControl<Grid>("m_ProgressGrid").IsVisible = false;
+            m_ProgressGrid.IsVisible = false;
             m_Analyze.IsVisible = true;
             m_Line = null;
         } // Clear
@@ -77,13 +73,13 @@ namespace CoreChess.Controls
         {
             m_Analyze.IsVisible = false;
             Draw(results);
-            this.FindControl<Grid>("m_ProgressGrid").IsVisible = false;
+            m_ProgressGrid.IsVisible = false;
         } // SetResults
 
         public async void Analyze(int depth)
         {
             m_Analyze.IsVisible = false;
-            this.FindControl<Grid>("m_ProgressGrid").IsVisible = true;
+            m_ProgressGrid.IsVisible = true;
 
             m_SelectedResultIndex = null;
             bool completed = false;
@@ -103,7 +99,7 @@ namespace CoreChess.Controls
                 if (!m_CancellationTokenSource.Token.IsCancellationRequested) {
                     completed = true;
                     Draw(results);
-                    this.FindControl<Grid>("m_ProgressGrid").IsVisible = false;
+                    m_ProgressGrid.IsVisible = false;
                 }
 
                 m_CancellationTokenSource.Dispose();

@@ -49,10 +49,10 @@ namespace CoreChess.Controls
             CancelVisible = true;
             DataContext = this;
 
-            this.FindControl<Button>("m_Ok").Click += (s, args) => {
+            m_Ok.Click += (s, args) => {
                 OkClick?.Invoke(this, new RoutedEventArgs());
             };
-            this.FindControl<Button>("m_Cancel").Click += (s, args) => {
+            m_Cancel.Click += (s, args) => {
                 CancelClick?.Invoke(this, new RoutedEventArgs());
             };
         }
@@ -90,11 +90,10 @@ namespace CoreChess.Controls
             set
             {
                 if (SetAndRaise(CancelVisibleProperty, ref m_CancelVisible, value)) {
-                    var btn = this.FindControl<Button>("m_Ok");
-                    btn.IsCancel = !value;
-                    Grid.SetColumn(btn, value ? 1 : 0);
-                    Grid.SetColumnSpan(btn, value ? 1 : 2);
-                    btn.Margin = value ? new Thickness(5,0,0,0) : new Thickness(0, 0, 0, 0);
+                    m_Ok.IsCancel = !value;
+                    Grid.SetColumn(m_Ok, value ? 1 : 0);
+                    Grid.SetColumnSpan(m_Ok, value ? 1 : 2);
+                    m_Ok.Margin = value ? new Thickness(5,0,0,0) : new Thickness(0, 0, 0, 0);
                 }
             }
         }

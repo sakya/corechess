@@ -1,12 +1,10 @@
 ﻿using Avalonia;
 using Avalonia.Controls;
-using Avalonia.Markup.Xaml;
 using ChessLib.Engines;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using Avalonia.Platform.Storage;
-using CoreChess.Views;
 
 namespace CoreChess.Controls
 {
@@ -28,9 +26,8 @@ namespace CoreChess.Controls
         {
             m_Engine = engine;
 
-            var grid = this.FindControl<Grid>("m_Container");
-            grid.Children.Clear();
-            grid.RowDefinitions.Clear();
+            m_Container.Children.Clear();
+            m_Container.RowDefinitions.Clear();
 
             HashSet<string> hiddenOptions = new HashSet<string>()
             {
@@ -42,16 +39,16 @@ namespace CoreChess.Controls
             foreach (var o in engine.Options.OrderBy(opt => opt.Name)) {
                 if (!hiddenOptions.Contains(o.Name)) {
                     if (o.Type == "check") {
-                        AddCheck(grid, o);
+                        AddCheck(m_Container, o);
                     } else if (o.Type == "spin") {
-                        AddSpin(grid, o);
+                        AddSpin(m_Container, o);
                     } else if (o.Type == "combo") {
-                        AddCombo(grid, o);
+                        AddCombo(m_Container, o);
                     } else if (o.Type == "button") {
                     } else if (o.Type == "string") {
-                        AddString(grid, o);
+                        AddString(m_Container, o);
                     } else if (o.Type == "path") {
-                        AddPath(grid, o);
+                        AddPath(m_Container, o);
                     }
                 }
             }
@@ -67,8 +64,7 @@ namespace CoreChess.Controls
         public void ResetOptions()
         {
             if (m_Engine != null) {
-                var grid = this.FindControl<Grid>("m_Container");
-                foreach (var c in grid.Children) {
+                foreach (var c in m_Container.Children) {
                     var subGrid = c as Grid;
                     if (subGrid != null) {
                         foreach (var sc in subGrid.Children) {
@@ -93,8 +89,7 @@ namespace CoreChess.Controls
         public void ApplyOptions()
         {
             if (m_Engine != null) {
-                var grid = this.FindControl<Grid>("m_Container");
-                foreach (var c in grid.Children) {
+                foreach (var c in m_Container.Children) {
                     var subGrid = c as Grid;
                     if (subGrid != null) {
                         foreach (var sc in subGrid.Children) {
@@ -125,8 +120,7 @@ namespace CoreChess.Controls
 
         public void SetIsEnabled(bool enabled)
         {
-            var grid = this.FindControl<Grid>("m_Container");
-            foreach (var c in grid.Children) {
+            foreach (var c in m_Container.Children) {
                 var subGrid = c as Grid;
                 if (subGrid != null) {
                     foreach (var sc in subGrid.Children) {
