@@ -8,7 +8,6 @@ using Avalonia;
 using Avalonia.Animation;
 using Avalonia.Controls;
 using Avalonia.Controls.Notifications;
-using Avalonia.Controls.Primitives;
 using Avalonia.Input;
 using Avalonia.Media;
 using Avalonia.Reactive;
@@ -114,9 +113,6 @@ public partial class MainWindow : BaseView
 
         Transition = new TransitionSettings(TransitionSettings.EnterTransitions.SlideLeft, TimeSpan.FromMilliseconds(250));
         BackKey = Key.Escape;
-
-        Container = this.FindControl<Grid>("Container");
-        TitleBar = this.FindControl<Controls.TitleBar>("TitleBar");
 
         Closing += OnWindowClosing;
         KeyDown += OnKeyDown;

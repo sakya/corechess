@@ -32,10 +32,8 @@ namespace CoreChess.Dialogs
 
             this.InitializeComponent();
 
-            var tb = this.FindControl<TextBlock>("m_Version");
-            tb.Text = m_Release.TagName;
-            tb = this.FindControl<TextBlock>("m_Description");
-            tb.Text = m_Changelog;
+            m_Version.Text = m_Release.TagName;
+            m_Description.Text = m_Changelog;
         }
 
         private void OnOkClick(object sender, RoutedEventArgs e)
@@ -54,20 +52,17 @@ namespace CoreChess.Dialogs
             try {
                 await DownloadAndInstallPrimitive(token);
             } catch (Exception ex) {
-                var tb = this.FindControl<TextBlock>("m_Message");
-                tb.Text = $"{Localizer.Localizer.Instance["UpdateError"]} {ex.Message}";
+                m_Message.Text = $"{Localizer.Localizer.Instance["UpdateError"]} {ex.Message}";
             }
         } // DownloadAndInstall
 
         private async Task<bool> DownloadAndInstallPrimitive(CancellationToken token)
         {
-            var progress = this.FindControl<ProgressBar>("m_Progress");
-            var progressMessage = this.FindControl<TextBlock>("m_ProgressMessage");
-            progressMessage.Text = $"{0.ToString("0", App.Settings.Culture)}%";
+            m_ProgressMessage.Text = $"{0.ToString("0", App.Settings.Culture)}%";
 
-            this.FindControl<ScrollViewer>("m_VersionInfo").IsVisible = false;
-            this.FindControl<Controls.OkCancelButtons>("m_OkCancel").IsVisible = false;
-            this.FindControl<StackPanel>("m_Download").IsVisible = true;
+            m_VersionInfo.IsVisible = false;
+            m_OkCancel.IsVisible = false;
+            m_Download.IsVisible = true;
 
             var asset = m_Release.Assets.FirstOrDefault(a => a.Name.EndsWith(".exe"));
             if (asset == null)
@@ -90,8 +85,8 @@ namespace CoreChess.Dialogs
 
                             done += chunk;
                             var perc = done / (double)asset.Size * 100.0;
-                            progress.Value = perc;
-                            progressMessage.Text = $"{perc.ToString("0", App.Settings.Culture)}%";
+                            m_Progress.Value = perc;
+                            m_ProgressMessage.Text = $"{perc.ToString("0", App.Settings.Culture)}%";
                         }
                     }
                 }

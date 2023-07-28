@@ -36,53 +36,49 @@ namespace CoreChess.Dialogs
             this.InitializeComponent();
 
             KeyDown += OnKeyDown;
-            var txt = this.FindControl<TextBlock>("m_Message");
-            txt.Text = message;
+            m_Message.Text = message;
 
-            var btn1 = this.FindControl<Button>("m_Button1");
-            var btn2 = this.FindControl<Button>("m_Button2");
-            btn1.IsCancel = false;
-            btn1.IsDefault = false;
-            btn2.IsCancel = false;
-            btn2.IsDefault = false;
+            m_Button1.IsCancel = false;
+            m_Button1.IsDefault = false;
+            m_Button2.IsCancel = false;
+            m_Button2.IsDefault = false;
 
             switch (buttons) {
                 case Buttons.Ok:
-                    btn2.IsVisible = false;
-                    btn1.Content = Localizer.Localizer.Instance["Ok"];
-                    btn1.IsCancel = true;
-                    btn1.IsDefault = true;
+                    m_Button2.IsVisible = false;
+                    m_Button1.Content = Localizer.Localizer.Instance["Ok"];
+                    m_Button1.IsCancel = true;
+                    m_Button1.IsDefault = true;
                     break;
                 case Buttons.OkCancel:
-                    btn1.Content = Localizer.Localizer.Instance["Ok"];
-                    btn1.IsDefault = true;
-                    btn2.Content = Localizer.Localizer.Instance["Cancel"];
-                    btn2.IsCancel = true;
+                    m_Button1.Content = Localizer.Localizer.Instance["Ok"];
+                    m_Button1.IsDefault = true;
+                    m_Button2.Content = Localizer.Localizer.Instance["Cancel"];
+                    m_Button2.IsCancel = true;
                     break;
                 case Buttons.YesNo:
-                    btn1.Content = Localizer.Localizer.Instance["Yes"];
-                    btn1.IsDefault = true;
-                    btn2.Content = Localizer.Localizer.Instance["No"];
-                    btn2.IsCancel = true;
+                    m_Button1.Content = Localizer.Localizer.Instance["Yes"];
+                    m_Button1.IsDefault = true;
+                    m_Button2.Content = Localizer.Localizer.Instance["No"];
+                    m_Button2.IsCancel = true;
                     break;
             }
 
-            var i = this.FindControl<Projektanker.Icons.Avalonia.Icon>("m_Icon");
             switch (icon) {
                 case Icons.None:
-                    i.IsVisible = false;
+                    m_Icon.IsVisible = false;
                     break;
                 case Icons.Error:
-                    i.Value = "fas fa-exclamation-triangle";
-                    i.Foreground = new SolidColorBrush((Color)App.MainWindow.FindResource("DangerColor"));
+                    m_Icon.Value = "fas fa-exclamation-triangle";
+                    m_Icon.Foreground = new SolidColorBrush((Color)App.MainWindow.FindResource("DangerColor"));
                     break;
                 case Icons.Info:
-                    i.Value = "fas fa-info-circle";
-                    i.Foreground = new SolidColorBrush((Color)App.MainWindow.FindResource("InfoColor"));
+                    m_Icon.Value = "fas fa-info-circle";
+                    m_Icon.Foreground = new SolidColorBrush((Color)App.MainWindow.FindResource("InfoColor"));
                     break;
                 case Icons.Question:
-                    i.Value = "fas fa-question-circle";
-                    i.Foreground = new SolidColorBrush((Color)App.MainWindow.FindResource("InfoColor"));
+                    m_Icon.Value = "fas fa-question-circle";
+                    m_Icon.Foreground = new SolidColorBrush((Color)App.MainWindow.FindResource("InfoColor"));
                     break;
             }
         }
@@ -91,11 +87,8 @@ namespace CoreChess.Dialogs
         {
             base.OnKeyDown(e);
 
-            var btn1 = this.FindControl<Button>("m_Button1");
-            var btn2 = this.FindControl<Button>("m_Button2");
-
-            var cancelBtn = btn1.IsCancel  || btn2.IsCancel;
-            var defaultBtn = btn1.IsDefault  || btn2.IsDefault;
+            var cancelBtn = m_Button1.IsCancel  || m_Button2.IsCancel;
+            var defaultBtn = m_Button1.IsDefault  || m_Button2.IsDefault;
 
             if (e.Key == Key.Enter && defaultBtn) {
                 e.Handled = true;

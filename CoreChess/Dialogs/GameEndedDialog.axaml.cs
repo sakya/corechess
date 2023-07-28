@@ -1,7 +1,3 @@
-using Avalonia;
-using Avalonia.Controls;
-using Avalonia.Markup.Xaml;
-using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Media.Imaging;
 using ChessLib;
@@ -12,7 +8,7 @@ namespace CoreChess.Dialogs
 {
     public partial class GameEndedDialog : BaseDialog
     {
-        private Game m_Game = null;
+        private readonly Game m_Game;
 
         public GameEndedDialog()
         {
@@ -24,11 +20,10 @@ namespace CoreChess.Dialogs
             this.InitializeComponent();
 
             m_Game = game;
-            var img = this.FindControl<Image>("m_Image");
             if (m_Game.Winner != null)
-                img.Source = new Bitmap($"Images/Pieces/Default/{(m_Game.Winner == Game.Colors.White ? "w" : "b")}Knight.png");
+                m_Image.Source = new Bitmap($"Images/Pieces/Default/{(m_Game.Winner == Game.Colors.White ? "w" : "b")}Knight.png");
             else
-                img.IsVisible = false;
+                m_Image.IsVisible = false;
 
             string message = string.Empty;
             if (m_Game.Result == Game.Results.Checkmate)
@@ -42,10 +37,8 @@ namespace CoreChess.Dialogs
             else if (m_Game.Result == Game.Results.Resignation)
                 message = string.Format(Localizer.Localizer.Instance["ResignationMessage"], Localizer.Localizer.Instance[m_Game.Winner.ToString().ToLower()]);
 
-            var txt = this.FindControl<TextBlock>("m_Message");
-            txt.Text = message;
+            m_Message.Text = message;
 
-            m_Graph = this.FindControl<Controls.GameAnalyzeGraph>("m_Graph");
             if (App.Settings.GameAnalysisEngine == null) {
                 m_Graph.IsVisible = false;
             } else {

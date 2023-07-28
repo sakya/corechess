@@ -93,11 +93,10 @@ namespace CoreChess.Pages
         private void Init()
         {
             PageTitle = Localizer.Localizer.Instance["WT_SettingsWindow"];
-            var cb = this.FindControl<ComboBox>("m_Fonts");
             var fonts = SkiaSharp.SKFontManager.Default.FontFamilies.OrderBy(f => f).ToList();
             fonts.Insert(0, "Default (Roboto)");
-            cb.ItemsSource = fonts;
-            cb.SelectedItem = fonts.FirstOrDefault(f => f == App.Settings.FontFamily) ?? fonts[0];
+            m_Fonts.ItemsSource = fonts;
+            m_Fonts.SelectedItem = fonts.FirstOrDefault(f => f == App.Settings.FontFamily) ?? fonts[0];
 
             m_AccentButton.Color = Utils.ColorConverter.ParseHexColor(App.Settings.AccentColor);
             m_AccentButton.PropertyChanged += (s, e) =>
@@ -113,77 +112,57 @@ namespace CoreChess.Pages
                     Application.Current.Resources["HighlightColor"] = m_HighlightButton.Color;
             };
 
-            var chk = this.FindControl<ToggleSwitch>("m_RestoreWindowSizeAndPosition");
-            chk.IsChecked = App.Settings.RestoreWindowSizeAndPosition;
+            m_RestoreWindowSizeAndPosition.IsChecked = App.Settings.RestoreWindowSizeAndPosition;
 
             m_WhiteButton.Color = Utils.ColorConverter.ParseHexColor(App.Settings.WhiteColor);
             m_WhiteSelectedButton.Color = Utils.ColorConverter.ParseHexColor(App.Settings.WhiteSelectedColor);
             m_BlackButton.Color = Utils.ColorConverter.ParseHexColor(App.Settings.BlackColor);
             m_BlackSelectedButton.Color = Utils.ColorConverter.ParseHexColor(App.Settings.BlackSelectedColor);
 
-            var txt = this.FindControl<TextBox>("m_PlayerName");
-            txt.Text = App.Settings.PlayerName;
+            m_PlayerName.Text = App.Settings.PlayerName;
 
-            cb = this.FindControl<ComboBox>("m_Styles");
-            cb.ItemsSource = m_StylesList;
-            cb.SelectedItem = m_StylesList.FirstOrDefault(l => l.Value == App.Settings.Style);
+            m_Styles.ItemsSource = m_StylesList;
+            m_Styles.SelectedItem = m_StylesList.FirstOrDefault(l => l.Value == App.Settings.Style);
 
-            cb = this.FindControl<ComboBox>("m_Languages");
-            cb.ItemsSource = m_SupportedLanguages;
-            cb.SelectedItem = m_SupportedLanguages.FirstOrDefault(l => l.Code == Localizer.Localizer.Instance.Language);
+            m_Languages.ItemsSource = m_SupportedLanguages;
+            m_Languages.SelectedItem = m_SupportedLanguages.FirstOrDefault(l => l.Code == Localizer.Localizer.Instance.Language);
 
-            chk = this.FindControl<ToggleSwitch>("m_EnableDragAndDrop");
-            chk.IsChecked = App.Settings.EnableDragAndDrop;
-            chk = this.FindControl<ToggleSwitch>("m_ShowValidMoves");
-            chk.IsChecked = App.Settings.ShowValidMoves;
-            cb = this.FindControl<ComboBox>("m_ShowFileRankNotation");
-            cb.SelectedIndex = (int)App.Settings.ShowFileRankNotation;
+            m_EnableDragAndDrop.IsChecked = App.Settings.EnableDragAndDrop;
+            m_ShowValidMoves.IsChecked = App.Settings.ShowValidMoves;
+            m_ShowFileRankNotation.SelectedIndex = (int)App.Settings.ShowFileRankNotation;
 
-            chk = this.FindControl<ToggleSwitch>("m_Topmost");
-            chk.IsChecked = App.Settings.Topmost;
+            m_Topmost.IsChecked = App.Settings.Topmost;
+            m_EnableAudio.IsChecked = App.Settings.EnableAudio;
+            m_SaveOnExit.IsChecked = App.Settings.AutoSaveGameOnExit;
+            m_AutoAnalyzeGames.IsChecked = App.Settings.AutoAnalyzeGames;
+            m_AutoPauseWhenMinimized.IsChecked = App.Settings.AutoPauseWhenMinimized;
 
-            chk = this.FindControl<ToggleSwitch>("m_EnableAudio");
-            chk.IsChecked = App.Settings.EnableAudio;
-            chk = this.FindControl<ToggleSwitch>("m_SaveOnExit");
-            chk.IsChecked = App.Settings.AutoSaveGameOnExit;
-            chk = this.FindControl<ToggleSwitch>("m_AutoAnalyzeGames");
-            chk.IsChecked = App.Settings.AutoAnalyzeGames;
-            chk = this.FindControl<ToggleSwitch>("m_AutoPauseWhenMinimized");
-            chk.IsChecked = App.Settings.AutoPauseWhenMinimized;
-
-            cb = this.FindControl<ComboBox>("m_AnalysisEngines");
-            cb.ItemsSource = App.Settings.Engines.OrderBy(e => e.Name);
+            m_AnalysisEngines.ItemsSource = App.Settings.Engines.OrderBy(e => e.Name);
             if (!string.IsNullOrEmpty(App.Settings.GameAnalysisEngineId))
-                cb.SelectedItem = App.Settings.GetEngine(App.Settings.GameAnalysisEngineId);
+                m_AnalysisEngines.SelectedItem = App.Settings.GetEngine(App.Settings.GameAnalysisEngineId);
 
-            var nud = this.FindControl<NumericUpDown>("m_MaxEngineThinkingTimeSecs");
-            nud.Value = App.Settings.MaxEngineThinkingTimeSecs;
+            m_MaxEngineThinkingTimeSecs.Value = App.Settings.MaxEngineThinkingTimeSecs;
+            m_MaxEngineDepth.Value = App.Settings.MaxEngineDepth ?? 0;
 
-            nud = this.FindControl<NumericUpDown>("m_MaxEngineDepth");
-            nud.Value = App.Settings.MaxEngineDepth ?? 0;
-
-            cb = this.FindControl<ComboBox>("m_OpeningBookType");
             if (string.IsNullOrEmpty(App.Settings.OpeningBook))
-                cb.SelectedIndex = 0;
+                m_OpeningBookType.SelectedIndex = 0;
             else if (App.Settings.OpeningBook == Settings.InternalOpeningBook)
-                cb.SelectedIndex = 1;
+                m_OpeningBookType.SelectedIndex = 1;
             else
-                cb.SelectedIndex = 2;
+                m_OpeningBookType.SelectedIndex = 2;
 
-            txt = this.FindControl<TextBox>("m_OpeningBook");
-            txt.Text = App.Settings.OpeningBook;
+            m_OpeningBook.Text = App.Settings.OpeningBook;
 
             // Color theme
-            cb = this.FindControl<ComboBox>("m_ColorTheme");
-            cb.ItemsSource = m_ColorThemes;
-            cb.SelectedItem = m_ColorThemes
+            m_ColorTheme.ItemsSource = m_ColorThemes;
+            m_ColorTheme.SelectedItem = m_ColorThemes
                 .FirstOrDefault(ct => ct.WhiteColor == App.Settings.WhiteColor &&
                                       ct.WhiteSelectedColor == App.Settings.WhiteSelectedColor &&
                                       ct.BlackColor == App.Settings.BlackColor &&
                                       ct.BlackSelectedColor == App.Settings.BlackSelectedColor);
-            if (cb.SelectedItem == null) {
+            if (m_ColorTheme.SelectedItem == null) {
                 // Custom color theme
-                cb.SelectedIndex = 0;
+                m_ColorTheme.SelectedIndex = 0;
 
                 m_WhiteButton.Color = Utils.ColorConverter.ParseHexColor(App.Settings.WhiteColor);
                 m_WhiteSelectedButton.Color = Utils.ColorConverter.ParseHexColor(App.Settings.WhiteSelectedColor);
@@ -221,9 +200,8 @@ namespace CoreChess.Pages
             }
 
             sets = sets.OrderBy(s => s.Name).ToList();
-            var cmb = this.FindControl<ComboBox>("m_PiecesSet");
-            cmb.ItemsSource = sets;
-            cmb.SelectedItem = sel;
+            m_PiecesSet.ItemsSource = sets;
+            m_PiecesSet.SelectedItem = sel;
         }
 
         private void OnStyleChanged(object sender, SelectionChangedEventArgs args)
@@ -268,15 +246,14 @@ namespace CoreChess.Pages
         private void OnOpeningBookTypeChanged(object sender, SelectionChangedEventArgs args)
         {
             var cb = sender as ComboBox;
-            var grid = this.FindControl<Grid>("m_OpeningBookCustom");
-            var txt = this.FindControl<TextBox>("m_OpeningBook");
-            if (cb.SelectedIndex == 0)
-                txt.Text = string.Empty;
-            else if (cb.SelectedIndex == 1)
-                txt.Text = Settings.InternalOpeningBook;
-            else if (cb.SelectedIndex == 2 && txt.Text == Settings.InternalOpeningBook)
-                txt.Text = string.Empty;
-            grid.IsVisible = cb.SelectedIndex == 2;
+            m_OpeningBook.Text = cb.SelectedIndex switch
+            {
+                0 => string.Empty,
+                1 => Settings.InternalOpeningBook,
+                2 when m_OpeningBook.Text == Settings.InternalOpeningBook => string.Empty,
+                _ => m_OpeningBook.Text
+            };
+            m_OpeningBookCustom.IsVisible = cb.SelectedIndex == 2;
         } // OnOpeningBookTypeChanged
 
         private async void OnOpeningBookClick(object sender, RoutedEventArgs e)
@@ -301,78 +278,54 @@ namespace CoreChess.Pages
                 }
             });
             if (files?.Count > 0) {
-                var txt = this.FindControl<TextBox>("m_OpeningBook");
-                txt.Text = files[0].Path.AbsolutePath;
+                m_OpeningBook.Text = files[0].Path.AbsolutePath;
             }
         } // OnOpeningBookClick
 
         private async void OnOkClick(object sender, RoutedEventArgs e)
         {
-            var txt = this.FindControl<TextBox>("m_PlayerName");
-            App.Settings.PlayerName = txt.Text;
+            App.Settings.PlayerName = m_PlayerName.Text;
 
-            var cb = this.FindControl<ComboBox>("m_Styles");
-            var style = (Style)cb.SelectedItem;
+            var style = (Style)m_Styles.SelectedItem;
             App.Settings.Style = style.Value;
 
-            cb = this.FindControl<ComboBox>("m_Fonts");
-            App.Settings.FontFamily = cb.SelectedIndex == 0 ? string.Empty : (string)cb.SelectedItem;
+            App.Settings.FontFamily = m_Fonts.SelectedIndex == 0 ? string.Empty : (string)m_Fonts.SelectedItem;
 
-            cb = this.FindControl<ComboBox>("m_Languages");
-            var language = (Language)cb.SelectedItem;
+            var language = (Language)m_Languages.SelectedItem;
             App.Settings.Language = language.Code;
 
-            var chk = this.FindControl<ToggleSwitch>("m_EnableDragAndDrop");
-            App.Settings.EnableDragAndDrop = chk.IsChecked.Value;
+            App.Settings.EnableDragAndDrop = m_EnableDragAndDrop.IsChecked ?? false;
+            App.Settings.ShowValidMoves = m_ShowValidMoves.IsChecked ?? true;
 
-            chk = this.FindControl<ToggleSwitch>("m_ShowValidMoves");
-            App.Settings.ShowValidMoves = chk.IsChecked.Value;
+            App.Settings.ShowFileRankNotation = (Settings.FileRankNotations)m_ShowFileRankNotation.SelectedIndex;
 
-            cb = this.FindControl<ComboBox>("m_ShowFileRankNotation");
-            App.Settings.ShowFileRankNotation = (Settings.FileRankNotations)cb.SelectedIndex;
+            App.Settings.Topmost = m_Topmost.IsChecked ?? false;
+            App.Settings.EnableAudio = m_EnableAudio.IsChecked ?? true;
+            App.Settings.AutoSaveGameOnExit = m_SaveOnExit.IsChecked ?? true;
+            App.Settings.AutoAnalyzeGames = m_AutoAnalyzeGames.IsChecked ?? false;
+            App.Settings.AutoPauseWhenMinimized = m_AutoPauseWhenMinimized.IsChecked ?? true;
 
-            chk = this.FindControl<ToggleSwitch>("m_Topmost");
-            App.Settings.Topmost = chk.IsChecked.Value;
+            App.Settings.MaxEngineThinkingTimeSecs = (int)m_MaxEngineThinkingTimeSecs.Value;
 
-            chk = this.FindControl<ToggleSwitch>("m_EnableAudio");
-            App.Settings.EnableAudio = chk.IsChecked.Value;
-
-            chk = this.FindControl<ToggleSwitch>("m_SaveOnExit");
-            App.Settings.AutoSaveGameOnExit = chk.IsChecked.Value;
-
-            chk = this.FindControl<ToggleSwitch>("m_AutoAnalyzeGames");
-            App.Settings.AutoAnalyzeGames = chk.IsChecked.Value;
-
-            chk = this.FindControl<ToggleSwitch>("m_AutoPauseWhenMinimized");
-            App.Settings.AutoPauseWhenMinimized = chk.IsChecked.Value;
-
-            var nud = this.FindControl<NumericUpDown>("m_MaxEngineThinkingTimeSecs");
-            App.Settings.MaxEngineThinkingTimeSecs = (int)nud.Value;
-
-            nud = this.FindControl<NumericUpDown>("m_MaxEngineDepth");
-            if (nud.Value > 0)
-                App.Settings.MaxEngineDepth = (int)nud.Value;
+            if (m_MaxEngineDepth.Value > 0)
+                App.Settings.MaxEngineDepth = (int)m_MaxEngineDepth.Value;
             else
                 App.Settings.MaxEngineDepth = null;
 
-            txt = this.FindControl<TextBox>("m_OpeningBook");
-            App.Settings.OpeningBook = txt.Text;
+            App.Settings.OpeningBook = m_OpeningBook.Text;
 
-            var cmb = this.FindControl<ComboBox>("m_PiecesSet");
-            App.Settings.PiecesSet = ((PiecesSet)cmb.SelectedItem).Name;
+            App.Settings.PiecesSet = ((PiecesSet)m_PiecesSet.SelectedItem).Name;
 
             App.Settings.AccentColor = Utils.ColorConverter.ToHex(m_AccentButton.Color);
             App.Settings.HighlightColor = Utils.ColorConverter.ToHex(m_HighlightButton.Color);
-            chk = this.FindControl<ToggleSwitch>("m_RestoreWindowSizeAndPosition");
-            App.Settings.RestoreWindowSizeAndPosition = chk.IsChecked.Value;
+            App.Settings.RestoreWindowSizeAndPosition = m_RestoreWindowSizeAndPosition.IsChecked ?? false;
 
             App.Settings.WhiteColor = Utils.ColorConverter.ToHex(m_WhiteButton.Color);
             App.Settings.WhiteSelectedColor = Utils.ColorConverter.ToHex(m_WhiteSelectedButton.Color);
             App.Settings.BlackColor = Utils.ColorConverter.ToHex(m_BlackButton.Color);
             App.Settings.BlackSelectedColor = Utils.ColorConverter.ToHex(m_BlackSelectedButton.Color);
 
-            cmb = this.FindControl<ComboBox>("m_AnalysisEngines");
-            App.Settings.GameAnalysisEngineId = (cmb.SelectedItem as EngineBase)?.Id;
+            App.Settings.GameAnalysisEngineId = (m_AnalysisEngines.SelectedItem as EngineBase)?.Id;
 
             App.Settings.Save(App.SettingsPath);
             Result = true;

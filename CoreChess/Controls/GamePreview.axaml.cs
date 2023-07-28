@@ -2,7 +2,6 @@ using System;
 using System.Threading.Tasks;
 using Avalonia;
 using Avalonia.Controls;
-using Avalonia.Markup.Xaml;
 using Avalonia.Threading;
 using ChessLib;
 
@@ -35,7 +34,7 @@ namespace CoreChess.Controls
             set {
                 SetAndRaise(PgnGameProperty, ref m_PgnGame, value);
 
-                this.FindControl<Image>("m_Image").Source = null;
+                m_Image.Source = null;
                 if (m_PgnGame != null)
                     DispatcherTimer.RunOnce(this.UpdateImage, TimeSpan.FromMilliseconds(100), DispatcherPriority.Background);
             }
@@ -46,7 +45,7 @@ namespace CoreChess.Controls
             set {
                 SetAndRaise(GameProperty, ref m_Game, value);
 
-                this.FindControl<Image>("m_Image").Source = null;
+                m_Image.Source = null;
                 if (m_Game != null)
                     DispatcherTimer.RunOnce(this.UpdateImage, TimeSpan.FromMilliseconds(100), DispatcherPriority.Background);
             }
@@ -55,19 +54,18 @@ namespace CoreChess.Controls
         private async void UpdateImage()
         {
             m_Semaphore.WaitOne();
-            var img = this.FindControl<Image>("m_Image");
 
             if (Game != null) {
                 await UpdateImageFromGame(Game);
             } else if (PgnGame == null) {
-                img.Source = null;
+                m_Image.Source = null;
             } else {
                 try {
                     using (var game =  await Game.LoadFromPgn(PgnGame)) {
                         await UpdateImageFromGame(game);
                     }
                 } catch {
-                    img.Source = null;
+                    m_Image.Source = null;
                 }
             }
             m_Semaphore.Release();

@@ -89,8 +89,6 @@ namespace CoreChess.Controls
         {
             this.InitializeComponent();
 
-            m_Canvas = this.FindControl<Canvas>("m_Canvas");
-
             // Subscribe to bounds changed
             var bounds = m_Canvas.GetObservable(Canvas.BoundsProperty);
             bounds.Subscribe(new AnonymousObserver<Rect>(value =>

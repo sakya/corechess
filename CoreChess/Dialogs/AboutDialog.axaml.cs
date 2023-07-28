@@ -1,7 +1,4 @@
-﻿using Avalonia;
-using Avalonia.Controls;
-using Avalonia.Markup.Xaml;
-using Avalonia.Input;
+﻿using Avalonia.Input;
 using System.Reflection;
 using CoreChess.Abstracts;
 
@@ -13,16 +10,8 @@ namespace CoreChess.Dialogs
         {
             this.InitializeComponent();
 
-            var txt = this.FindControl<TextBlock>("m_Title");
-            txt.Text = $"CoreChess{System.Environment.NewLine}v.{Assembly.GetEntryAssembly().GetName().Version}";
-
-            txt = this.FindControl<TextBlock>("m_Copyright");
-            txt.Text = ((AssemblyCopyrightAttribute)System.Attribute.GetCustomAttribute(Assembly.GetExecutingAssembly(), typeof(AssemblyCopyrightAttribute), false)).Copyright;
-        }
-
-        protected void InitializeComponent()
-        {
-            AvaloniaXamlLoader.Load(this);
+            m_Title.Text = $"CoreChess{System.Environment.NewLine}v.{Assembly.GetEntryAssembly()?.GetName().Version}";
+            m_Copyright.Text = ((AssemblyCopyrightAttribute)System.Attribute.GetCustomAttribute(Assembly.GetExecutingAssembly(), typeof(AssemblyCopyrightAttribute), false))?.Copyright;
         }
 
         public override void OnKeyDown(object sender, KeyEventArgs e)

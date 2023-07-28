@@ -45,7 +45,7 @@ namespace CoreChess.Abstracts
                 return;
             }
 
-            Screen screen = Screens.ScreenFromPoint(Position);
+            var screen = Screens.ScreenFromPoint(Position);
             if (ws.State == WindowState.Maximized ||
                 screen != null && ws.Width <= screen.Bounds.Width && ws.Height <= screen.Bounds.Height && ws.X <= screen.Bounds.Width && ws.Y <= screen.Bounds.Height) {
                 WindowStartupLocation = WindowStartupLocation.Manual;
