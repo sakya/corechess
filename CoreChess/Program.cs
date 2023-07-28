@@ -19,6 +19,7 @@ namespace CoreChess
         // Initialization code. Don't use any Avalonia, third-party APIs or any
         // SynchronizationContext-reliant code before AppMain is called: things aren't initialized
         // yet and stuff might break.
+        [STAThread]
         public static void Main(string[] args)
         {
             // Set current directory to the one containing the executable
