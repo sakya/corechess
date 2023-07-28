@@ -11,6 +11,7 @@ using Avalonia.Controls.Notifications;
 using Avalonia.Controls.Primitives;
 using Avalonia.Input;
 using Avalonia.Media;
+using Avalonia.Reactive;
 using Avalonia.Styling;
 using CoreChess.Abstracts;
 using CoreChess.Pages;
@@ -68,7 +69,7 @@ public partial class MainWindow : BaseView
         KeyDown += OnKeyDown;
 
         var title = this.GetObservable(Window.WindowStateProperty);
-        title.Subscribe(HandleWindowStateChanged);
+        title.Subscribe(new AnonymousObserver<WindowState>(HandleWindowStateChanged));
     }
 
 

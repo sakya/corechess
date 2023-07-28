@@ -2,6 +2,7 @@
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
+using Avalonia.Reactive;
 using CoreChess.Controls.Models;
 
 namespace CoreChess.Controls;
@@ -23,14 +24,14 @@ public partial class Spinner : UserControl
         InitializeComponent();
 
         var iv = this.GetObservable(UserControl.IsVisibleProperty);
-        iv.Subscribe(value =>
+        iv.Subscribe(new AnonymousObserver<bool>(value =>
         {
             var stack = this.FindControl<StackPanel>("WaitSpinner");
             if (value)
                 stack.Classes.Add("spinner");
             else
                 stack.Classes.Remove("spinner");
-        });
+        }));
     }
 
     public string Message

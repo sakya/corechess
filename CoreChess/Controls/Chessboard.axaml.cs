@@ -14,6 +14,7 @@ using System.Diagnostics;
 using Avalonia.Threading;
 using Un4seen.Bass;
 using System.Threading;
+using Avalonia.Reactive;
 using CoreChess.Dialogs;
 
 namespace CoreChess.Controls
@@ -92,11 +93,11 @@ namespace CoreChess.Controls
 
             // Subscribe to bounds changed
             var bounds = m_Canvas.GetObservable(Canvas.BoundsProperty);
-            bounds.Subscribe(value =>
+            bounds.Subscribe(new AnonymousObserver<Rect>(value =>
             {
                 if (m_Game != null)
                     DrawBoard(m_Canvas);
-            });
+            }));
 
             // Default settings
             BorderColor = Colors.Transparent;
@@ -397,9 +398,7 @@ namespace CoreChess.Controls
         {
             var piece = GetPieceGraphicElement(args.Move.Piece);
             piece.DataContext = args.Move.Piece.Type;
-
-            var bitmap = new Bitmap(GetPieceImagePath(args.Move.Piece));
-            piece.Background = new ImageBrush(bitmap);
+            piece.Background = GetBrush(GetPieceImagePath(args.Move.Piece));
 
             return true;
         } // OnPromoted
@@ -490,9 +489,7 @@ namespace CoreChess.Controls
                 var piece = GetPieceGraphicElement(movedPieces[0].Piece);
                 if (piece != null && (Piece.Pieces)piece.DataContext != movedPieces[0].Piece.Type) {
                     piece.DataContext = movedPieces[0].Piece.Type;
-
-                    var bitmap = new Bitmap(GetPieceImagePath(movedPieces[0].Piece));
-                    piece.Background = new ImageBrush(bitmap);
+                    piece.Background = GetBrush(GetPieceImagePath(movedPieces[0].Piece));
                 }
             }
             this.IsHitTestVisible = true;
@@ -659,13 +656,12 @@ namespace CoreChess.Controls
 
                 // Draw the piece
                 if (square.Piece != null) {
-                    var bitmap = new Bitmap(GetPieceImagePath(square.Piece));
                     var pCanvas = new Canvas()
                     {
                         Name = $"Piece_{square.Piece.Id}",
                         Width = squareWidth,
                         Height = squareHeight,
-                        Background = new ImageBrush(bitmap),
+                        Background = GetBrush(GetPieceImagePath(square.Piece)),
                         DataContext = square.Piece.Type,
                         ZIndex = 1
                     };
@@ -700,6 +696,17 @@ namespace CoreChess.Controls
             }
             HighlightMove(lastMove);
         } // DrawBoard
+
+        private IBrush GetBrush(string path)
+        {
+            var bitmap = new Bitmap(path);
+            var image = new ImageDrawing
+            {
+                ImageSource = bitmap,
+                Rect = new Rect(bitmap.Size)
+            };
+            return new DrawingBrush(image);
+        }
 
         private void HighlightDragAndDropSquare(Board.Square square)
         {

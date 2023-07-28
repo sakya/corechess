@@ -30,9 +30,9 @@
     <PackageReference Include="Avalonia.Controls.ItemsRepeater" Version="11.0.1" />
     <PackageReference Include="Avalonia.Controls.ColorPicker" Version="11.0.1" />
 
-    <PackageReference Include="Projektanker.Icons.Avalonia" Version="6.6.0-rc1.1" />
-    <PackageReference Include="Projektanker.Icons.Avalonia.FontAwesome" Version="6.6.0-rc1.1" />
-    <PackageReference Include="Octokit" Version="7.0.1" />
+    <PackageReference Include="Projektanker.Icons.Avalonia" Version="8.1.0" />
+    <PackageReference Include="Projektanker.Icons.Avalonia.FontAwesome" Version="8.1.0" />
+    <PackageReference Include="Octokit" Version="7.1.0" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\ChessLib\ChessLib.csproj" />

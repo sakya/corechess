@@ -3,6 +3,7 @@ using Avalonia.Controls;
 using Avalonia.Controls.Primitives;
 using Avalonia.Markup.Xaml;
 using System;
+using Avalonia.Reactive;
 using CoreChess.Views;
 
 namespace CoreChess.Controls
@@ -40,16 +41,16 @@ namespace CoreChess.Controls
             if (this.VisualRoot is Window pw) {
                 SetTitle(pw.Title);
                 var title = pw.GetObservable(Window.TitleProperty);
-                title.Subscribe(SetTitle);
+                title.Subscribe(new AnonymousObserver<string>(SetTitle));
 
                 var canResize = pw.GetObservable(Window.CanResizeProperty);
-                canResize.Subscribe(value =>
+                canResize.Subscribe(new AnonymousObserver<bool>(value =>
                 {
                     MaximizeBtn.IsEnabled = CanMaximize && value;
-                });
+                }));
 
                 var wState = pw.GetObservable(Window.WindowStateProperty);
-                wState.Subscribe(s =>
+                wState.Subscribe(new AnonymousObserver<WindowState>(s =>
                 {
                     if (s == WindowState.Maximized) {
                         pw.Padding = new Thickness(5);
@@ -58,7 +59,7 @@ namespace CoreChess.Controls
                         pw.Padding = new Thickness(0);
                         MaximizeBtn.Content = new Projektanker.Icons.Avalonia.Icon() { Value = "fas fa-window-maximize" };
                     }
-                });
+                }));
 
                 MinimizeBtn.Click += (s, a) =>
                 {
