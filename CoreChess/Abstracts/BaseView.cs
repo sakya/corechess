@@ -15,6 +15,7 @@ namespace CoreChess.Abstracts
                 ExtendClientAreaTitleBarHeightHint = -1;
                 ExtendClientAreaChromeHints = ExtendClientAreaChromeHints.NoChrome;
             }
+            RestoreWindowSizeAndPosition();
         }
 
         public void SaveWindowSizeAndPosition()
