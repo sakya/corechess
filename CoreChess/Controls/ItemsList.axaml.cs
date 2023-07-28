@@ -2,12 +2,9 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.Templates;
 using Avalonia.Input;
-using Avalonia.Interactivity;
-using Avalonia.Markup.Xaml;
 using Avalonia.Media;
 using System.Collections.Generic;
 using System.Linq;
-using Avalonia.Remote.Protocol;
 
 namespace CoreChess.Controls
 {
