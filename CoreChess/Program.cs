@@ -191,9 +191,24 @@ namespace CoreChess
                     }
                 );
             } else if (OperatingSystem.IsWindows()) {
+                // Check nnue
+                var sf = engines.FirstOrDefault(e => e.WorkingDir == Path.Combine(App.BinaryPath, @"Engines\stockfish"));
+                if (sf != null) {
+                    var efo = sf.GetOption("EvalFile");
+                    if (efo != null) {
+                        if (string.IsNullOrEmpty(efo.Value) || !File.Exists($"{Path.Combine(App.BinaryPath, @"Engines\stockfish\")}{efo.Value}")) {
+                            var evalFile = Directory.GetFiles(Path.Combine(App.BinaryPath, @"Engines\stockfish"), "*.nnue").FirstOrDefault();
+                            if (!string.IsNullOrEmpty(evalFile))
+                                efo.Value = Path.GetFileName(evalFile);
+                            else
+                                efo.Value = string.Empty;
+                        }
+                    }
+                }
+
                 // Add default engines (Inno Setup)
                 defaultEngines.Add(
-                    new Uci("Stockfish", Path.Combine(App.BinaryPath, @"Engines\stockfish\stockfish-windows-2022-x86-64.exe"))
+                    new Uci("Stockfish", Path.Combine(App.BinaryPath, @"Engines\stockfish\stockfish-windows-x86-64.exe"))
                     {
                         WorkingDir = Path.Combine(App.BinaryPath, @"Engines\stockfish")
                     }
