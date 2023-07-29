@@ -49,6 +49,7 @@
           <ul>
             <li>Upgraded Avalonia to v11.0.1</li>
             <li>Updated default opening book to Perfect2023</li>
+            <li>Upgraded Stockfish to version 16</li>
           </ul>
         </description>
       </release>
