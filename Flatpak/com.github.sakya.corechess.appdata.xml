@@ -44,6 +44,14 @@
       </screenshot>
     </screenshots>
     <releases>
+      <release version="0.17.0.0" date="2023-07-29">
+        <description>
+          <ul>
+            <li>Upgraded Avalonia to v11.0.1</li>
+            <li>Updated default opening book to Perfect2023</li>
+          </ul>
+        </description>
+      </release>
       <release version="0.16.0.0" date="2023-05-14">
         <description>
           <ul>

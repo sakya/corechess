@@ -23,7 +23,7 @@ namespace CoreChess
         public static void Main(string[] args)
         {
             // Set current directory to the one containing the executable
-            string exeDir = Path.GetDirectoryName(System.Reflection.Assembly.GetEntryAssembly().Location);
+            var exeDir = Path.GetDirectoryName(System.Reflection.Assembly.GetEntryAssembly().Location);
             Directory.SetCurrentDirectory(exeDir);
 
             BuildAvaloniaApp()
@@ -68,8 +68,8 @@ namespace CoreChess
 
         private static async Task<Views.MainWindow> InitializeApp(string[] args)
         {
-            App.Version = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString();
-            App.BinaryPath = Path.GetDirectoryName(System.Reflection.Assembly.GetEntryAssembly().Location);
+            App.Version = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version?.ToString();
+            App.BinaryPath = Path.GetDirectoryName(System.Reflection.Assembly.GetEntryAssembly()?.Location);
             App.LocalPath = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "CoreChess");
             if (!Directory.Exists(App.LocalPath))
                 Directory.CreateDirectory(App.LocalPath);
@@ -220,6 +220,7 @@ namespace CoreChess
 
                         engines.Add(dEngine);
                     } catch {
+                        // ignored
                     }
                 }
             }
