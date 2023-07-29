@@ -17,6 +17,9 @@
     <None Remove="Assets\i18n\it-IT.json" />
     <None Remove="Assets\eco.pgn" />
     <None Remove="icon.ico" />
+    <None Update="OpeningBooks\Perfect2023.bin">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <AvaloniaResource Include="icon.ico" />
@@ -38,9 +41,6 @@
     <ProjectReference Include="..\ChessLib\ChessLib.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <None Update="OpeningBooks\Perfect2021.bin">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
     <None Update="FlatpakFiles\com.github.sakya.CoreChess.desktop">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

@@ -81,6 +81,9 @@ namespace CoreChess
             if (File.Exists(App.SettingsPath)) {
                 try {
                     App.Settings = Settings.Load(App.SettingsPath);
+                    if (!File.Exists(App.Settings.OpeningBook)) {
+                        App.Settings.OpeningBook = Settings.InternalOpeningBook;
+                    }
                 } catch {
                     SetDefaultSettings();
                 }

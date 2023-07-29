@@ -1552,13 +1552,14 @@ namespace CoreChess.Pages
                         await m_GameGraph.Game.Save(m_GameGraph.Game.FileName);
                         DisplayMove(m_Game.Moves.Count - 1);
                     } catch {
+                        // ignored
                     }
                 }
             };
 
             // Get ECO
             m_Context.EcoName = string.Empty;
-            Utils.EcoDatabase.Eco eco = m_EcoDatabase.GetByMoves(m_Game.Moves);
+            var eco = m_EcoDatabase.GetByMoves(m_Game.Moves);
             if (eco != null)
                 m_Context.EcoName = eco.FullName;
 
@@ -1636,7 +1637,7 @@ namespace CoreChess.Pages
         {
             var items = new List<MenuItem>();
             if (App.Settings.RecentlyLoadedFiles != null) {
-                for (int i = App.Settings.RecentlyLoadedFiles.Count - 1; i >= 0; i--) {
+                for (var i = App.Settings.RecentlyLoadedFiles.Count - 1; i >= 0; i--) {
                     var mrue = App.Settings.RecentlyLoadedFiles[i];
                     var item = new MenuItem()
                     {
@@ -1644,8 +1645,8 @@ namespace CoreChess.Pages
                     };
                     item.Click += async (s, a) =>
                     {
-                        var i = s as MenuItem;
-                        await LoadGame((string)i.Header);
+                        var menuItem = s as MenuItem;
+                        await LoadGame((string)menuItem.Header);
                     };
                     items.Add(item);
                 }

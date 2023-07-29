@@ -5,14 +5,13 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
-using System.Text;
 
 namespace CoreChess
 {
     public class Settings
     {
         public const string DefaultFontFamily = "avares://CoreChess/Assets/fonts#Roboto";
-        public const string InternalOpeningBook = "./OpeningBooks/Perfect2021.bin";
+        public const string InternalOpeningBook = "./OpeningBooks/Perfect2023.bin";
 
         #region classes
         public class NewGameSettings

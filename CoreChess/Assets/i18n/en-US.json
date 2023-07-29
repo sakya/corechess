@@ -101,7 +101,7 @@
   "Info": "Info",
   "InitialPositionFen": "Initial position (FEN)",
   "Inside": "Inside",
-  "Internal": "Default (Perfect 2021)",
+  "Internal": "Default (Perfect 2023)",
   "InvalidFenString": "The FEN string is invalid",
   "Language": "Language",
   "LoadGameError": "Error loading game",
