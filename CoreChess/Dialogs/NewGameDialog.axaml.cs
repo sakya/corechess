@@ -36,6 +36,7 @@ namespace CoreChess.Dialogs
             m_Black.Source = new Bitmap(System.IO.Path.Combine(App.GetPiecesPath(App.Settings.PiecesSet), "bKnight.png"));
 
             m_MaxTime.Value = 15;
+            m_TimeIncrement.Value = 0;
             m_Engines.ItemsSource = App.Settings.Engines.OrderBy(e => e.Name);
             m_Engines.SelectedIndex = 0;
 
