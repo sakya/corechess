@@ -9,7 +9,6 @@ using Avalonia.Controls;
 using Avalonia.Markup.Xaml.Styling;
 using Avalonia.Media;
 using Avalonia.Styling;
-using Avalonia.Themes.Fluent;
 using CoreChess.Utils;
 using CoreChess.Views;
 
@@ -82,8 +81,8 @@ namespace CoreChess
 
             var paths = new List<string>()
             {
-                System.IO.Path.Combine(App.LocalPiecesPath, setName),
-                System.IO.Path.Combine(App.PiecesPath, setName)
+                Path.Combine(App.LocalPiecesPath, setName),
+                Path.Combine(App.PiecesPath, setName)
             };
 
             foreach (var p in paths) {
@@ -114,7 +113,7 @@ namespace CoreChess
                 Dispatcher.UIThread.MainLoop(ct);
             } catch (Exception ex) {
                 // Log the exception
-                using (var sw = new StreamWriter(System.IO.Path.Combine(LocalPath, "crash.log"))) {
+                using (var sw = new StreamWriter(Path.Combine(LocalPath, "crash.log"))) {
                     Exception lex = ex;
                     while (lex != null) {
                         sw.WriteLine($"[{DateTime.Now.ToString("yyyyMMdd_HHmmss")}] {lex.Message}");

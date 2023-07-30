@@ -66,7 +66,7 @@
 
         <StackPanel Name="m_EngineEloStack" Grid.Row="2" Grid.ColumnSpan="3" Orientation="Vertical">
           <TextBlock Text="{i18n:Localize Elo}"/>
-          <NumericUpDown Name="m_EngineElo" Margin="0,5,0,5" />
+          <NumericUpDown Name="m_EngineElo" FormatString="0" Margin="0,5,0,5" />
         </StackPanel>
 
         <StackPanel Name="m_GameTypeStack" Grid.Row="3" Grid.ColumnSpan="3" Orientation="Vertical">
@@ -104,12 +104,12 @@
 
         <StackPanel Grid.Row="5" Grid.ColumnSpan="3" Orientation="Vertical">
           <TextBlock Text="{i18n:Localize MaximumTime}"/>
-          <NumericUpDown Name="m_MaxTime" Minimum="1" Margin="0,5,0,5" />
+          <NumericUpDown Name="m_MaxTime" FormatString="0" Minimum="1" Margin="0,5,0,5" />
         </StackPanel>
 
         <StackPanel Grid.Row="6" Grid.ColumnSpan="3" Orientation="Vertical">
           <TextBlock Text="{i18n:Localize TimeIncrement}"/>
-          <NumericUpDown Name="m_TimeIncrement" Minimum="0" Margin="0,5,0,5" />
+          <NumericUpDown Name="m_TimeIncrement" FormatString="0" Minimum="0" Margin="0,5,0,5" />
         </StackPanel>
 
         <Grid Grid.Row="7" Grid.ColumnSpan="3" Margin="0,0,0,5">
