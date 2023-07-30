@@ -44,6 +44,13 @@
       </screenshot>
     </screenshots>
     <releases>
+      <release version="0.17.1.0" date="2023-07-30">
+        <description>
+          <ul>
+            <li>Fixed crash on new game</li>
+          </ul>
+        </description>
+      </release>
       <release version="0.17.0.0" date="2023-07-29">
         <description>
           <ul>
