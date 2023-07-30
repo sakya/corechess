@@ -1,0 +1,95 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:i18n="clr-namespace:CoreChess.Localizer"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="CoreChess.Controls.PlayerControl">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+
+            <ToggleButton Name="m_WhiteBtn" IsThreeState="False" IsChecked="True" Click="OnWhiteClick" Grid.Column="0" HorizontalAlignment="Stretch"
+                          Classes="Left">
+                <Image Name="m_White" Height="100"></Image>
+            </ToggleButton>
+            <ToggleButton Name="m_RandomBtn" IsThreeState="False" Click="OnRandomClick" Grid.Column="1" HorizontalAlignment="Stretch"
+                          Height="{Binding #m_WhiteBtn.Bounds.Height}" Width="{Binding #m_WhiteBtn.Bounds.Width}" Classes="Middle">
+                <TextBlock Text="?" FontSize="36" VerticalAlignment="Center" HorizontalAlignment="Center" />
+            </ToggleButton>
+            <ToggleButton Name="m_BlackBtn" IsThreeState="False" Click="OnBlackClick" Grid.Column="2" HorizontalAlignment="Stretch"
+                          Classes="Right">
+                <Image Name="m_Black" Height="100"></Image>
+            </ToggleButton>
+        </Grid>
+
+        <StackPanel Grid.Row="1" Orientation="Vertical">
+            <TextBlock Text="{i18n:Localize PlayerType}"/>
+            <ComboBox Name="m_PlayerType" Margin="0,5,0,5"
+                      SelectionChanged="OnPlayerTypeChanged">
+                <ComboBoxItem Content="{i18n:Localize HumanPlayer}" />
+                <ComboBoxItem Content="{i18n:Localize EnginePlayer}" />
+            </ComboBox>
+        </StackPanel>
+
+        <StackPanel Name="m_PlayerNameStack" Grid.Row="2" Orientation="Vertical">
+            <TextBlock Text="{i18n:Localize PlayerName}"/>
+            <TextBox Name="m_PlayerName" Margin="0,5,0,5" />
+        </StackPanel>
+
+        <StackPanel Name="m_EngineStack" Grid.Row="2" Orientation="Vertical">
+            <TextBlock Text="{i18n:Localize Engine}"/>
+            <ComboBox Name="m_Engines" Margin="0,5,0,5"
+                      SelectionChanged="OnEngineChanged">
+                <ComboBox.ItemTemplate>
+                    <DataTemplate>
+                        <TextBlock Text="{Binding Name}" />
+                    </DataTemplate>
+                </ComboBox.ItemTemplate>
+            </ComboBox>
+        </StackPanel>
+
+        <StackPanel Name="m_EngineEloStack" Grid.Row="3" Orientation="Vertical">
+            <TextBlock Text="{i18n:Localize Elo}"/>
+            <NumericUpDown Name="m_EngineElo" FormatString="0" Margin="0,5,0,5" />
+        </StackPanel>
+
+        <StackPanel Name="m_PersonalityStack" Grid.Row="4" Orientation="Vertical">
+            <TextBlock Text="{i18n:Localize Personality}"/>
+            <ComboBox Name="m_Personality" Margin="0,5,0,5" />
+        </StackPanel>
+
+        <StackPanel Name="m_TheKingPersonalityStack" Grid.Row="4" Grid.ColumnSpan="3" Orientation="Vertical">
+            <TextBlock Text="{i18n:Localize Personality}"/>
+            <ComboBox Name="m_TheKingPersonality" Margin="0,5,0,5">
+                <ComboBox.ItemTemplate>
+                    <DataTemplate>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <Image Grid.Column="0" Height="30" Source="{Binding ImageFullPath, Converter={StaticResource BitmapConverter}}"
+                                   IsVisible="{Binding ImageFullPath, Converter={StaticResource ObjectToBoolConverter}}"
+                                   Margin="0,0,5,0"/>
+                            <TextBlock Grid.Column="1" Text="{Binding DisplayName}" TextTrimming="CharacterEllipsis" VerticalAlignment="Center" />
+                        </Grid>
+                    </DataTemplate>
+                </ComboBox.ItemTemplate>
+            </ComboBox>
+        </StackPanel>
+
+    </Grid>
+</UserControl>

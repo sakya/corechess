@@ -35,6 +35,14 @@ namespace CoreChess.Dialogs
             this.InitializeComponent();
 
             PageTitle = Localizer.Localizer.Instance["WT_NewGameWindow"];
+
+            m_Player1.Color = Game.Colors.White;
+            m_Player1.IsHuman = true;
+            m_Player1.PlayerName = App.Settings.PlayerName;
+
+            m_Player2.IsHuman = false;
+            m_Player2.PlayerName = App.Settings.PlayerName;
+
             m_White.Source = new Bitmap(System.IO.Path.Combine(App.GetPiecesPath(App.Settings.PiecesSet), "wKnight.png"));
             m_Black.Source = new Bitmap(System.IO.Path.Combine(App.GetPiecesPath(App.Settings.PiecesSet), "bKnight.png"));
 
@@ -191,5 +199,26 @@ namespace CoreChess.Dialogs
                 OnCancelClick(null, null);
             }
         }
+
+        private void OnPlayer1ColorChanged(Game.Colors? color)
+        {
+            m_Player2.Color = color switch
+            {
+                Game.Colors.White => Game.Colors.Black,
+                Game.Colors.Black => Game.Colors.White,
+                _ => null
+            };
+        }
+
+        private void OnPlayer2ColorChanged(Game.Colors? color)
+        {
+            m_Player1.Color = color switch
+            {
+                Game.Colors.White => Game.Colors.Black,
+                Game.Colors.Black => Game.Colors.White,
+                _ => null
+            };
+        }
+
     }
 }

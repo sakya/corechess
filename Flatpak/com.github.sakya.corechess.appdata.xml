@@ -20,7 +20,7 @@
 
       <p>Supported chess engines:</p>
       <ul>
-          <li>UCI (Universal Chess Interface) like Stockfish, Komodo and Leela Chess Zero</li>
+          <li>UCI (Universal Chess Interface) like Stockfish, Komodo/Dragon and Leela Chess Zero</li>
           <li>CECP (Chess Engine Communication Protocol) like Crafty</li>
       </ul>
 
