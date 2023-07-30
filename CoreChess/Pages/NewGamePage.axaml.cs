@@ -12,9 +12,9 @@ using CoreChess.Abstracts;
 
 namespace CoreChess.Dialogs
 {
-    public partial class NewGameDialog : BaseDialog
+    public partial class NewGamePage : BasePage
     {
-        public class Result
+        public class NewGameResult
         {
             public string EngineId { get; set; }
             public int? EngineElo { get; set; }
@@ -28,10 +28,13 @@ namespace CoreChess.Dialogs
             public TheKing.Personality TheKingPersonality { get; set; }
         }
 
-        public NewGameDialog()
+        public NewGameResult Result { get; private set; }
+
+        public NewGamePage()
         {
             this.InitializeComponent();
 
+            PageTitle = Localizer.Localizer.Instance["WT_NewGameWindow"];
             m_White.Source = new Bitmap(System.IO.Path.Combine(App.GetPiecesPath(App.Settings.PiecesSet), "wKnight.png"));
             m_Black.Source = new Bitmap(System.IO.Path.Combine(App.GetPiecesPath(App.Settings.PiecesSet), "bKnight.png"));
 
@@ -137,7 +140,7 @@ namespace CoreChess.Dialogs
             }
         } // OnEngineChanged
 
-        private void OnOkClick(object sender, RoutedEventArgs e)
+        private async void OnOkClick(object sender, RoutedEventArgs e)
         {
             TimeSpan? maxTime = (TimeSpan?)TimeSpan.FromMinutes((double)m_MaxTime.Value);
 
@@ -156,26 +159,28 @@ namespace CoreChess.Dialogs
             };
             App.Settings.Save(App.SettingsPath);
 
-            this.Close(
-                new Result()
-                {
-                    EngineId = (m_Engines.SelectedItem as EngineBase)?.Id,
-                    EngineElo = m_EngineElo.IsVisible ? (int)m_EngineElo.Value : null,
-                    Color = m_RandomBtn.IsChecked.Value ? null : m_WhiteBtn.IsChecked.Value ? Game.Colors.White : Game.Colors.Black,
-                    MaximumTime = maxTime,
-                    TimeIncrement = TimeSpan.FromSeconds((double)m_TimeIncrement.Value),
-                    TrainingMode = m_TrainingMode.IsChecked == true,
-                    Chess960 = m_GameType.SelectedIndex == 1,
-                    InitialPosition = m_FenString.Text?.Trim(),
-                    Personality = m_Personality.SelectedItem as string,
-                    TheKingPersonality = m_TheKingPersonality.SelectedItem as TheKing.Personality
-                }
-            );
+            Result = new NewGameResult()
+            {
+                EngineId = (m_Engines.SelectedItem as EngineBase)?.Id,
+                EngineElo = m_EngineElo.IsVisible ? (int)m_EngineElo.Value : null,
+                Color = m_RandomBtn.IsChecked.Value ? null :
+                    m_WhiteBtn.IsChecked.Value ? Game.Colors.White : Game.Colors.Black,
+                MaximumTime = maxTime,
+                TimeIncrement = TimeSpan.FromSeconds((double)m_TimeIncrement.Value),
+                TrainingMode = m_TrainingMode.IsChecked == true,
+                Chess960 = m_GameType.SelectedIndex == 1,
+                InitialPosition = m_FenString.Text?.Trim(),
+                Personality = m_Personality.SelectedItem as string,
+                TheKingPersonality = m_TheKingPersonality.SelectedItem as TheKing.Personality
+            };
+
+            await NavigateBack();
         } // OnOkClick
 
-        private void OnCancelClick(object sender, RoutedEventArgs e)
+        private async void OnCancelClick(object sender, RoutedEventArgs e)
         {
-            this.Close();
+            Result = null;
+            await NavigateBack();
         } // OnCancelClick
 
         public override void OnKeyDown(object sender, KeyEventArgs e)

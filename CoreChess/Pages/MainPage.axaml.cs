@@ -536,63 +536,66 @@ namespace CoreChess.Pages
                 return;
             }
 
-            var ngw = new NewGameDialog();
-            var newGame = await ngw.Show<NewGameDialog.Result>(App.MainWindow);
+            var ngw = new NewGamePage();
+            ngw.Navigating += async (s) =>
+            {
+                var newGame = ngw.Result;
+                if (newGame != null) {
+                    if (newGame.Color == null) {
+                        var rnd = new Random().Next(2);
+                        newGame.Color = rnd == 0 ? Game.Colors.White : Game.Colors.Black;
+                    }
 
-            if (newGame != null) {
-                if (newGame.Color == null) {
-                    var rnd = new Random().Next(2);
-                    newGame.Color = rnd == 0 ? Game.Colors.White : Game.Colors.Black;
+                    var game = new Game();
+                    var settings = new Game.GameSettings()
+                    {
+                        IsChess960 = newGame.Chess960,
+                        MaximumTime = newGame.MaximumTime,
+                        TimeIncrement = newGame.TimeIncrement,
+                        TrainingMode = newGame.TrainingMode,
+                        MaxEngineThinkingTime = TimeSpan.FromSeconds(App.Settings.MaxEngineThinkingTimeSecs),
+                        EngineDepth = App.Settings.MaxEngineDepth,
+                        InitialFenPosition = newGame.InitialPosition,
+                    };
+
+                    settings.Players.Add(new HumanPlayer(newGame.Color.Value, App.Settings.PlayerName, null));
+                    /*var engine1 = App.Settings.GetEngine(newGame.EngineId)?.Copy();
+                    if (newGame.EngineElo.HasValue)
+                        engine1.SetElo(newGame.EngineElo.Value);
+                    var enginePlayer1 = new EnginePlayer(newGame.Color == Game.Colors.White ? Game.Colors.White : Game.Colors.Black,
+                        newGame.TheKingPersonality?.DisplayName ?? engine1.Name,
+                        engine1.GetElo());
+                    enginePlayer1.Engine = engine1;
+                    enginePlayer1.Personality = newGame.Personality;
+                    enginePlayer1.TheKingPersonality = newGame.TheKingPersonality;
+                    enginePlayer1.OpeningBookFileName = App.Settings.OpeningBook;
+                    settings.Players.Add(enginePlayer1);*/
+
+                    //settings.Players.Add(new HumanPlayer(newGame.Color == Game.Colors.White ? Game.Colors.Black : Game.Colors.White, App.Settings.PlayerName, null));
+                    var engine = App.Settings.GetEngine(newGame.EngineId)?.Copy();
+                    if (newGame.EngineElo.HasValue)
+                        engine.SetElo(newGame.EngineElo.Value);
+                    var enginePlayer = new EnginePlayer(newGame.Color == Game.Colors.White ? Game.Colors.Black : Game.Colors.White,
+                        newGame.TheKingPersonality?.DisplayName ?? engine.Name,
+                        engine.GetElo());
+                    enginePlayer.Engine = engine;
+                    enginePlayer.Personality = newGame.Personality;
+                    enginePlayer.TheKingPersonality = newGame.TheKingPersonality;
+                    enginePlayer.OpeningBookFileName = App.Settings.OpeningBook;
+                    settings.Players.Add(enginePlayer);
+
+                    try {
+                        game.Init(settings);
+                    } catch (Exception) {
+                        await MessageDialog.ShowMessage(App.MainWindow, Localizer.Localizer.Instance["Error"], Localizer.Localizer.Instance["InvalidFenString"], MessageDialog.Icons.Error);
+
+                        settings.InitialFenPosition = string.Empty;
+                        game.Init(settings);
+                    }
+                    await SetGame(game);
                 }
-
-                var game = new Game();
-                var settings = new Game.GameSettings()
-                {
-                    IsChess960 = newGame.Chess960,
-                    MaximumTime = newGame.MaximumTime,
-                    TimeIncrement = newGame.TimeIncrement,
-                    TrainingMode = newGame.TrainingMode,
-                    MaxEngineThinkingTime = TimeSpan.FromSeconds(App.Settings.MaxEngineThinkingTimeSecs),
-                    EngineDepth = App.Settings.MaxEngineDepth,
-                    InitialFenPosition = newGame.InitialPosition,
-                };
-
-                settings.Players.Add(new HumanPlayer(newGame.Color.Value, App.Settings.PlayerName, null));
-                /*var engine1 = App.Settings.GetEngine(newGame.EngineId)?.Copy();
-                if (newGame.EngineElo.HasValue)
-                    engine1.SetElo(newGame.EngineElo.Value);
-                var enginePlayer1 = new EnginePlayer(newGame.Color == Game.Colors.White ? Game.Colors.White : Game.Colors.Black,
-                    newGame.TheKingPersonality?.DisplayName ?? engine1.Name,
-                    engine1.GetElo());
-                enginePlayer1.Engine = engine1;
-                enginePlayer1.Personality = newGame.Personality;
-                enginePlayer1.TheKingPersonality = newGame.TheKingPersonality;
-                enginePlayer1.OpeningBookFileName = App.Settings.OpeningBook;
-                settings.Players.Add(enginePlayer1);*/
-
-                //settings.Players.Add(new HumanPlayer(newGame.Color == Game.Colors.White ? Game.Colors.Black : Game.Colors.White, App.Settings.PlayerName, null));
-                var engine = App.Settings.GetEngine(newGame.EngineId)?.Copy();
-                if (newGame.EngineElo.HasValue)
-                    engine.SetElo(newGame.EngineElo.Value);
-                var enginePlayer = new EnginePlayer(newGame.Color == Game.Colors.White ? Game.Colors.Black : Game.Colors.White,
-                    newGame.TheKingPersonality?.DisplayName ?? engine.Name,
-                    engine.GetElo());
-                enginePlayer.Engine = engine;
-                enginePlayer.Personality = newGame.Personality;
-                enginePlayer.TheKingPersonality = newGame.TheKingPersonality;
-                enginePlayer.OpeningBookFileName = App.Settings.OpeningBook;
-                settings.Players.Add(enginePlayer);
-
-                try {
-                    game.Init(settings);
-                } catch (Exception) {
-                    await MessageDialog.ShowMessage(App.MainWindow, Localizer.Localizer.Instance["Error"], Localizer.Localizer.Instance["InvalidFenString"], MessageDialog.Icons.Error);
-
-                    settings.InitialFenPosition = string.Empty;
-                    game.Init(settings);
-                }
-                await SetGame(game);
-            }
+            };
+            await NavigateTo(ngw);
         } // OnNewGameClick
 
         private async void OnSaveGameClick(object sender, RoutedEventArgs e)

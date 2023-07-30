@@ -59,19 +59,19 @@ namespace CoreChess.Pages
             public string BlackSelectedColor { get; set; }
         } // ColorTheme
 
-        public List<Style> m_StylesList = new List<Style>()
+        private List<Style> m_StylesList = new List<Style>()
         {
             new Style(Settings.Styles.Light, Localizer.Localizer.Instance["StyleLight"]),
             new Style(Settings.Styles.Dark, Localizer.Localizer.Instance["StyleDark"])
         };
 
-        public List<Language> m_SupportedLanguages = new List<Language>()
+        private List<Language> m_SupportedLanguages = new List<Language>()
         {
             new Language("en-US", "English"),
             new Language("it-IT", "Italian"),
         };
 
-        public List<ColorTheme> m_ColorThemes = new List<ColorTheme>()
+        private List<ColorTheme> m_ColorThemes = new List<ColorTheme>()
         {
             new ColorTheme("Custom", string.Empty, string.Empty, string.Empty, string.Empty),
             new ColorTheme("Default", "#ffeeeed2", "#fff7f783", "#ff769656", "#ffbbcb44"),
@@ -101,14 +101,14 @@ namespace CoreChess.Pages
             m_AccentButton.Color = Utils.ColorConverter.ParseHexColor(App.Settings.AccentColor);
             m_AccentButton.PropertyChanged += (s, e) =>
             {
-                if (e.Property.Name == ColorPicker.ColorProperty.Name)
+                if (e.Property.Name == ColorView.ColorProperty.Name)
                     Application.Current.Resources["SystemAccentColor"] = m_AccentButton.Color;
             };
 
             m_HighlightButton.Color = Utils.ColorConverter.ParseHexColor(App.Settings.HighlightColor);
             m_HighlightButton.PropertyChanged += (s, e) =>
             {
-                if (e.Property.Name == ColorPicker.ColorProperty.Name)
+                if (e.Property.Name == ColorView.ColorProperty.Name)
                     Application.Current.Resources["HighlightColor"] = m_HighlightButton.Color;
             };
 
@@ -277,7 +277,7 @@ namespace CoreChess.Pages
                     },
                 }
             });
-            if (files?.Count > 0) {
+            if (files.Count > 0) {
                 m_OpeningBook.Text = files[0].Path.AbsolutePath;
             }
         } // OnOpeningBookClick

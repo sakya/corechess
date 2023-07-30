@@ -6,8 +6,7 @@
              xmlns:i18n="clr-namespace:CoreChess.Localizer"
              xmlns:converters="clr-namespace:CoreChess.Converters"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-             Width="400"
-             x:Class="CoreChess.Dialogs.NewGameDialog">
+             x:Class="CoreChess.Dialogs.NewGamePage">
 
   <UserControl.Resources>
     <converters:BitmapValueConverter x:Key="BitmapConverter"/>
