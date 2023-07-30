@@ -31,7 +31,7 @@ namespace CoreChess.Pages
             #region commands
             class MoveNotationCommand : ICommand
             {
-                Context m_Owner = null;
+                Context m_Owner;
                 public event EventHandler CanExecuteChanged
                 {
                     add { }
@@ -50,7 +50,7 @@ namespace CoreChess.Pages
                 public async void Execute(object parameter)
                 {
                     Settings.Notations notation;
-                    if (Enum.TryParse<Settings.Notations>((string)parameter, out notation)) {
+                    if (Enum.TryParse((string)parameter, out notation)) {
                         App.Settings.MoveNotation = notation;
                         App.Settings.Save(App.SettingsPath);
                         m_Owner.MoveNotation = notation;
@@ -61,7 +61,7 @@ namespace CoreChess.Pages
 
             class CapturedPiecesCommand : ICommand
             {
-                Context m_Owner = null;
+                Context m_Owner;
                 public event EventHandler CanExecuteChanged
                 {
                     add { }
@@ -80,7 +80,7 @@ namespace CoreChess.Pages
                 public void Execute(object parameter)
                 {
                     Settings.CapturedPiecesDisplay setting;
-                    if (Enum.TryParse<Settings.CapturedPiecesDisplay>((string)parameter, out setting)) {
+                    if (Enum.TryParse((string)parameter, out setting)) {
                         App.Settings.CapturedPieces = setting;
                         App.Settings.Save(App.SettingsPath);
                         m_Owner.CapturedPieces = setting;
@@ -91,7 +91,7 @@ namespace CoreChess.Pages
 
             class ShowEngineOutputCommand : ICommand
             {
-                Context m_Owner = null;
+                Context m_Owner;
                 public event EventHandler CanExecuteChanged
                 {
                     add { }
@@ -120,7 +120,7 @@ namespace CoreChess.Pages
 
             class ZenModeCommand : ICommand
             {
-                Context m_Owner = null;
+                Context m_Owner;
                 public event EventHandler CanExecuteChanged
                 {
                     add { }
@@ -150,7 +150,7 @@ namespace CoreChess.Pages
                         else {
                             m_Owner.ContentAlignment = "Stretch";
                             App.MainWindow.UpdateLayout();
-                            var cb = m_Owner.Page.FindControl<Controls.Chessboard>("m_Chessboard");
+                            var cb = m_Owner.Page.FindControl<Chessboard>("m_Chessboard");
                             var content = m_Owner.Page.FindControl<Grid>("m_Content");
                             App.MainWindow.Width = cb.Width + content.Margin.Left + content.Margin.Right;
                             App.MainWindow.MaxWidth = App.MainWindow.Width;
@@ -172,13 +172,13 @@ namespace CoreChess.Pages
 
             bool m_IsResignEnabled = true;
             bool m_CanPause = true;
-            bool m_IsPaused = false;
-            bool m_IsWindows = false;
-            bool m_CheckingForUpdates = false;
-            Settings.Notations? m_MoveNotation = null;
-            Settings.CapturedPiecesDisplay? m_CapturedPieces = null;
-            bool m_ShowEngineOutput = false;
-            bool m_ZenMode = false;
+            bool m_IsPaused;
+            bool m_IsWindows;
+            bool m_CheckingForUpdates;
+            Settings.Notations? m_MoveNotation;
+            Settings.CapturedPiecesDisplay? m_CapturedPieces;
+            bool m_ShowEngineOutput;
+            bool m_ZenMode;
             string m_ContentAlignment = "Stretch";
             string m_WhiteName = string.Empty;
             int? m_WhiteElo;
@@ -323,15 +323,15 @@ namespace CoreChess.Pages
         } // Context
         #endregion
 
-        string[] m_Args = null;
-        bool m_Initialized = false;
-        Context m_Context = null;
-        Game m_Game = null;
-        List<string> m_EngineMessagesRows = new List<string>();
-        Utils.EcoDatabase m_EcoDatabase = null;
-        int? m_CurrentMoveIndex = null;
-        private List<Piece.Pieces> m_LastWhiteCapturedPieces = new List<Piece.Pieces>();
-        private List<Piece.Pieces> m_LastBlackCapturedPieces = new List<Piece.Pieces>();
+        string[] m_Args;
+        bool m_Initialized;
+        Context m_Context;
+        Game m_Game;
+        List<string> m_EngineMessagesRows = new();
+        Utils.EcoDatabase m_EcoDatabase;
+        int? m_CurrentMoveIndex;
+        private List<Piece.Pieces> m_LastWhiteCapturedPieces = new();
+        private List<Piece.Pieces> m_LastBlackCapturedPieces = new();
 
         public MainPage()
         {
@@ -644,7 +644,7 @@ namespace CoreChess.Pages
                     }
                 }
             });
-            if (files?.Count > 0) {
+            if (files.Count > 0) {
                 await LoadGame(files[0].Path.AbsolutePath);
             }
         } // OnLoadGameClick
@@ -950,6 +950,7 @@ namespace CoreChess.Pages
                     try {
                         await m_Game.Save(m_Game.FileName);
                     } catch {
+                        // ignored
                     }
                 }
             }
@@ -1028,6 +1029,7 @@ namespace CoreChess.Pages
                     try {
                         game = await Game.Load(m_Args[0]);
                     } catch {
+                        // ignored
                     }
                 }
             } else {

@@ -2,12 +2,10 @@
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
-using System.Collections.Specialized;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
 using System.Text;
-using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using ChessLib.Extensions;
@@ -207,14 +205,14 @@ namespace ChessLib
         }
 
         public const string StandardInitialFenPosition = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
-        private static JsonSerializerSettings m_SerializerSettings = new JsonSerializerSettings() { TypeNameHandling = TypeNameHandling.Objects, NullValueHandling = NullValueHandling.Ignore };
-        private System.Timers.Timer m_WhiteTimer = new System.Timers.Timer(100);
-        private System.Timers.Timer m_BlackTimer = new System.Timers.Timer(100);
-        private Random m_Rnd = new Random();
+        private static readonly JsonSerializerSettings m_SerializerSettings = new JsonSerializerSettings() { TypeNameHandling = TypeNameHandling.Objects, NullValueHandling = NullValueHandling.Ignore };
+        private readonly System.Timers.Timer m_WhiteTimer = new System.Timers.Timer(100);
+        private readonly System.Timers.Timer m_BlackTimer = new System.Timers.Timer(100);
+        private readonly Random m_Rnd = new Random();
 
-        private List<PonderData> m_PonderData = new List<PonderData>();
-        private Semaphore m_PonderDataSema = new Semaphore(1, 1);
-        private CancellationTokenSource m_EngineMoveCts = null;
+        private readonly List<PonderData> m_PonderData = new List<PonderData>();
+        private readonly Semaphore m_PonderDataSema = new Semaphore(1, 1);
+        private CancellationTokenSource m_EngineMoveCts;
 
         #region events
         public event EventHandler WhiteTimer;
@@ -254,7 +252,6 @@ namespace ChessLib
         #endregion
 
         public Game()
-            : base()
         {
             Version = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString();
             Winner = null;
@@ -425,7 +422,7 @@ namespace ChessLib
         /// <summary>
         /// Initializes the game
         /// </summary>
-        /// <param name="fenString">Optional FEN string</param>
+        /// <param name="settings">The <see cref="GameSettings"/></param>
         public void Init(GameSettings settings)
         {
             if (settings == null)
@@ -442,7 +439,7 @@ namespace ChessLib
                 InitialFenPosition = GetFenString();
             } else {
                 string fenString = settings.InitialFenPosition;
-                while (fenString.IndexOf("  ") >= 0)
+                while (fenString.IndexOf("  ", StringComparison.Ordinal) >= 0)
                     fenString = fenString.Replace("  ", " ");
 
                 Board.InitFromFenString(fenString);
@@ -618,14 +615,14 @@ namespace ChessLib
                         bookMoves = enginePlayer.OpeningBook.GetMovesFromMoves(moves);
 
                     if (bookMoves != null && bookMoves.Count > 0) {
-                        string bookMove = string.Empty;
+                        string bookMove;
                         if (bookMoves.Count == 1) {
                             bookMove = bookMoves[0].GetMove();
                         } else {
                             int totPriority = bookMoves.Sum(bm => bm.GetPriotity());
                             List<int> probs = new List<int>();
                             foreach (var bm in bookMoves) {
-                                probs.Add((int)Math.Round((double)bm.GetPriotity() / (double)totPriority * 100.0, 0));
+                                probs.Add((int)Math.Round(bm.GetPriotity() / (double)totPriority * 100.0, 0));
                             }
                             bookMove = bookMoves[m_Rnd.GetAlias(probs)].GetMove();
                         }
@@ -688,7 +685,7 @@ namespace ChessLib
             if (string.IsNullOrEmpty(move))
                 throw new InvalidMoveException(move, "empty", GetFenString());
 
-            int moveIndex = 0;
+            int moveIndex;
             if (Moves.Count == 0)
                 moveIndex = 1;
             else {
@@ -698,13 +695,12 @@ namespace ChessLib
                     moveIndex = Moves.Last().Index;
             }
 
-            Piece captured = null;
             bool promoted = false;
             var res = new List<Move>();
             move = move.Trim().ToLower();
 
             // Remove "="
-            int idx = move.IndexOf("=");
+            int idx = move.IndexOf("=", StringComparison.Ordinal);
             if (idx >= 0)
                 move = move.Remove(idx, 1);
 
@@ -740,7 +736,6 @@ namespace ChessLib
             } else {
                 var moveRes = await DoMoveNormal(move, skipAvailableSquaresCheck);
                 move = moveRes.Move;
-                captured = moveRes.CapturedPiece;
                 promoted = moveRes.Promoted;
                 ambiguous = moveRes.Ambiguous;
                 res.AddRange(moveRes.Moves);
@@ -861,9 +856,9 @@ namespace ChessLib
             }
 
             var lastMove = Moves.Count() > 0 ? Moves.Last() : null;
-            ToMove = Game.Colors.White;
-            if (lastMove?.Color == Game.Colors.White)
-                ToMove = Game.Colors.Black;
+            ToMove = Colors.White;
+            if (lastMove?.Color == Colors.White)
+                ToMove = Colors.Black;
             HalfmoveClock = lastMove != null ? lastMove.HalfmoveClock : 0;
             Board.InitFromFenString(lastMove != null ? lastMove.Fen : InitialFenPosition);
             WhiteTimeLeftMilliSecs = LastWhiteTimeLeftMilliSecs;
@@ -1010,7 +1005,7 @@ namespace ChessLib
         /// <param name="square">The <see cref="Board.Square"/> to check</param>
         /// <param name="pieceColor">The color</param>
         /// <returns></returns>
-        public bool IsAttacked(Board.Square square, Game.Colors pieceColor)
+        public bool IsAttacked(Board.Square square, Colors pieceColor)
         {
             foreach (var f in Board.Squares) {
                 if (f.Piece != null && f.Piece.Color != pieceColor) {
@@ -1205,7 +1200,7 @@ namespace ChessLib
         /// <summary>
         /// Load a game from a file in PGN format
         /// </summary>
-        /// <param name="file">The file path</param>
+        /// <param name="pgn">The <see cref="PGN"/></param>
         /// <param name="starAsAborted">True if "*" must be interpreted as "aborted"</param>
         /// <returns></returns>
         public static async Task<Game> LoadFromPgn(PGN pgn, bool starAsAborted = true)
@@ -1215,7 +1210,7 @@ namespace ChessLib
                 ECO = pgn.ECO
             };
 
-            Game.GameSettings settings = new GameSettings()
+            GameSettings settings = new GameSettings()
             {
                 Event = pgn.Event,
                 Date = pgn.GetDate(),
@@ -1303,8 +1298,8 @@ namespace ChessLib
             List<Piece> movePieces = null;
 
             // Annotation
-            int qIdx = shortAlgebraicNotation.IndexOf("?");
-            int eIdx = shortAlgebraicNotation.IndexOf("!");
+            int qIdx = shortAlgebraicNotation.IndexOf("?", StringComparison.Ordinal);
+            int eIdx = shortAlgebraicNotation.IndexOf("!", StringComparison.Ordinal);
             if (qIdx >= 0 || eIdx >= 0) {
                 int idx = qIdx >= 0 && eIdx >= 0 ? Math.Min(qIdx, eIdx) : qIdx >= 0 ? qIdx : eIdx;
                 annotation = shortAlgebraicNotation.Substring(idx);
@@ -1321,7 +1316,7 @@ namespace ChessLib
             }
 
             // Remove the "x"
-            int xIdx = shortAlgebraicNotation.IndexOf("x");
+            int xIdx = shortAlgebraicNotation.IndexOf("x", StringComparison.Ordinal);
             if (xIdx >= 0)
                 shortAlgebraicNotation = shortAlgebraicNotation.Remove(xIdx, 1);
             // Remove the "+"
@@ -1331,7 +1326,7 @@ namespace ChessLib
             if (shortAlgebraicNotation.EndsWith("#"))
                 shortAlgebraicNotation = shortAlgebraicNotation.Remove(shortAlgebraicNotation.Length - 1, 1);
             // Remove the "="
-            xIdx = shortAlgebraicNotation.IndexOf("=");
+            xIdx = shortAlgebraicNotation.IndexOf("=", StringComparison.Ordinal);
             if (xIdx >= 0)
                 shortAlgebraicNotation = shortAlgebraicNotation.Remove(xIdx, 1);
 
@@ -1395,7 +1390,10 @@ namespace ChessLib
         /// <summary>
         /// Analyze the game
         /// </summary>
-        /// <param name="token"></param>
+        /// <param name="engine">The <see cref="Engines.EngineBase"/></param>
+        /// <param name="depth">The depth</param>
+        /// <param name="progress">The progress callback</param>
+        /// <param name="token">The <see cref="CancellationToken"/></param>
         /// <returns></returns>
         public async Task<List<Engines.EngineBase.AnalyzeResult>> Analyze(Engines.EngineBase engine, int? depth, Action<int, int> progress, CancellationToken token)
         {
@@ -1531,7 +1529,7 @@ namespace ChessLib
             return res;
         } // PonderMove
 
-        private async Task<bool> HasValidMoves(Game.Colors color)
+        private async Task<bool> HasValidMoves(Colors color)
         {
             // Copy the game to check moves
             var tempGame = JsonConvert.DeserializeObject<Game>(JsonConvert.SerializeObject(this, m_SerializerSettings), m_SerializerSettings);
@@ -1544,6 +1542,7 @@ namespace ChessLib
                             await tempGame.DoMove($"{square.Notation}{toSquare.Notation}", false);
                             return true;
                         } catch {
+                            // ignored
                         }
                     }
                 }
@@ -1721,7 +1720,7 @@ namespace ChessLib
         /// </summary>
         /// <param name="color"></param>
         /// <returns></returns>
-        private Board.Square GetKingRook(Game.Colors color)
+        private Board.Square GetKingRook(Colors color)
         {
             return Board.Squares.FirstOrDefault(s => s.Piece != null && !s.Piece.Moved && s.Piece.Type == Piece.Pieces.Rook
                                                      && s.Piece.Color == color && s.File > 'E');
@@ -1732,7 +1731,7 @@ namespace ChessLib
         /// </summary>
         /// <param name="color"></param>
         /// <returns></returns>
-        private Board.Square GetQueenRook(Game.Colors color)
+        private Board.Square GetQueenRook(Colors color)
         {
             return Board.Squares.FirstOrDefault(s => s.Piece != null && !s.Piece.Moved && s.Piece.Type == Piece.Pieces.Rook
                                                      && s.Piece.Color == color && s.File < 'E');
@@ -1952,7 +1951,7 @@ namespace ChessLib
                     if (lowerRank != null) {
                         lowerRank--;
                         nextSquare = lowerRank >= 1 ? Board.GetSquare($"{nextFile}{lowerRank}") : null;
-                        if (nextSquare != null && (nextSquare?.Piece == null || nextSquare?.Piece.Color != piece.Color)) {
+                        if (nextSquare != null && (nextSquare.Piece == null || nextSquare.Piece.Color != piece.Color)) {
                             res.Add(nextSquare);
                             if (nextSquare.Piece != null)
                                 lowerRank = null;
@@ -2167,14 +2166,12 @@ namespace ChessLib
             }
 
             // En passant capture
-            Board.Square enPassantPawnSquare = null;
-            Piece enPassantPawn = null;
+            Board.Square enPassantPawnSquare;
             if (toSquare.Notation == EnPassant && fromSquare.Piece.Type == Piece.Pieces.Pawn) {
                 if (ToMove == Colors.White)
                     enPassantPawnSquare = Board.GetSquare($"{toSquare.File}{toSquare.Rank - 1}");
                 else
                     enPassantPawnSquare = Board.GetSquare($"{toSquare.File}{toSquare.Rank + 1}");
-                enPassantPawn = enPassantPawnSquare.Piece;
                 captured = enPassantPawnSquare.Piece;
                 enPassantPawnSquare.Piece = null;
             } else if (toSquare.Piece != null) {
@@ -2267,8 +2264,8 @@ namespace ChessLib
                     moveNotation.ShortAlgebraic = "0-0-0";
             } else {
                 var move = moves[0];
-                string aMove = string.Empty;
-                string laMove = string.Empty;
+                string aMove;
+                string laMove;
 
                 if (move.Piece.Type == Piece.Pieces.Pawn || promoted) {
                     if (move.CapturedPiece != null) {
