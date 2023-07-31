@@ -2,9 +2,15 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:converters="clr-namespace:CoreChess.Converters"
              xmlns:i18n="clr-namespace:CoreChess.Localizer"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="CoreChess.Controls.PlayerControl">
+    <UserControl.Resources>
+        <converters:BitmapValueConverter x:Key="BitmapConverter"/>
+        <converters:ObjectToBoolConverter x:Key="ObjectToBoolConverter"/>
+    </UserControl.Resources>
+
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />

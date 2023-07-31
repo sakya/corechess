@@ -16,15 +16,23 @@ namespace CoreChess
         #region classes
         public class NewGameSettings
         {
-            public string EngineId { get; set; }
-            public int? EngineElo { get; set; }
-            public Game.Colors? PlayerColor { get; set; }
+            public class Player
+            {
+                public string Name { get; set; }
+                public Game.Colors? Color { get; set; }
+                public string EngineId { get; set; }
+                public int? EngineElo { get; set; }
+                public string Personality { get; set; }
+                public ChessLib.Engines.TheKing.Personality TheKingPersonality { get; set; }
+
+                public bool IsHuman => string.IsNullOrEmpty(EngineId);
+            }
+
             public bool Chess960 { get; set; }
             public TimeSpan? MaxTime { get; set; }
             public TimeSpan TimeIncrement { get; set; }
             public bool TrainingMode { get; set; }
-            public string Personality { get; set; }
-            public ChessLib.Engines.TheKing.Personality TheKingPersonality { get; set; }
+            public List<Player> Players { get; set; }
         } // NewGameSettings
 
         #endregion

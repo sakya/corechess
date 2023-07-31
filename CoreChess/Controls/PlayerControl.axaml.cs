@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Linq;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
@@ -11,9 +12,13 @@ public partial class PlayerControl : UserControl
 {
     private Game.Colors? m_Color;
     private bool m_IsHuman = true;
+    private bool m_SupportChess960 = true;
 
     public delegate void ColorChangeHandler(Game.Colors? color);
     public event ColorChangeHandler ColorChanged;
+
+    public delegate void SupportChess960ChangeHandler(bool supported);
+    public event SupportChess960ChangeHandler SupportChess960Changed;
 
     public PlayerControl()
     {
@@ -24,6 +29,14 @@ public partial class PlayerControl : UserControl
 
         m_Engines.ItemsSource = App.Settings.Engines.OrderBy(e => e.Name);
         m_Engines.SelectedIndex = 0;
+
+        m_PlayerType.SelectedIndex = 0;
+        m_PlayerNameStack.IsVisible = true;
+        m_EngineStack.IsVisible = false;
+        m_EngineEloStack.IsVisible = false;
+        m_PersonalityStack.IsVisible = false;
+        m_TheKingPersonalityStack.IsVisible = false;
+        m_EngineElo.Value = 0;
     }
 
     public Game.Colors? Color
@@ -52,6 +65,9 @@ public partial class PlayerControl : UserControl
         get => m_IsHuman;
         set
         {
+            if (value == m_IsHuman)
+                return;
+
             m_PlayerType.SelectedIndex = value ? 0 : 1;
             m_IsHuman = value;
 
@@ -61,11 +77,28 @@ public partial class PlayerControl : UserControl
                 m_EngineEloStack.IsVisible = false;
                 m_PersonalityStack.IsVisible = false;
                 m_TheKingPersonalityStack.IsVisible = false;
+
+                SupportChess960 = true;
             } else {
                 m_PlayerNameStack.IsVisible = false;
                 m_EngineStack.IsVisible = true;
+                if (m_Engines.SelectedItem == null)
+                    m_Engines.SelectedIndex = 0;
                 OnEngineChanged(null, null);
             }
+        }
+    }
+
+    public bool SupportChess960
+    {
+        get => m_SupportChess960;
+        private set
+        {
+            if (value == m_SupportChess960)
+                return;
+
+            m_SupportChess960 = value;
+            SupportChess960Changed?.Invoke(m_SupportChess960);
         }
     }
 
@@ -75,6 +108,48 @@ public partial class PlayerControl : UserControl
         set
         {
             m_PlayerName.Text = value;
+        }
+    }
+
+    public string EngineId
+    {
+        get => !IsHuman ? (m_Engines.SelectedItem as EngineBase)?.Id : null;
+        set
+        {
+            var selectedEngine = App.Settings.GetEngine(value);
+            m_Engines.SelectedItem = selectedEngine;
+        }
+    }
+
+    public int? EngineElo
+    {
+        get => !IsHuman ? (int)m_EngineElo.Value : null;
+        set
+        {
+            m_EngineElo.Value = value;
+        }
+    }
+
+    public string EnginePersonality
+    {
+        get => !IsHuman ? m_Personality.SelectedItem as string : null;
+        set
+        {
+            m_Personality.SelectedItem = value;
+        }
+    }
+
+    public TheKing.Personality TheKingPersonality
+    {
+        get => !IsHuman ? m_TheKingPersonality.SelectedItem as TheKing.Personality : null;
+        set
+        {
+            if (value == null) {
+                m_TheKingPersonality.SelectedItem = null;
+                return;
+            }
+
+            m_TheKingPersonality.SelectedItem = (m_TheKingPersonality.Items as IEnumerable<TheKing.Personality>).FirstOrDefault(p => p.Name == value.Name);
         }
     }
 
@@ -125,15 +200,7 @@ public partial class PlayerControl : UserControl
         if (engine == null || IsHuman)
             return;
 
-        /* TODO
-         if (!engine.SupportChess960()) {
-            m_GameType.SelectedIndex = 0;
-            m_GameTypeStack.IsVisible = false;
-        } else {
-            m_GameTypeStack.IsVisible = true;
-        }
-        */
-
+        SupportChess960 = engine.SupportChess960();
         m_EngineEloStack.IsVisible = engine.CanSetElo();
 
         m_EngineElo.Maximum = engine.GetMaxElo();

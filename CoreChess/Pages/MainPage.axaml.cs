@@ -541,16 +541,11 @@ namespace CoreChess.Pages
             {
                 var newGame = ngw.Result;
                 if (newGame != null) {
-                    if (newGame.Color == null) {
-                        var rnd = new Random().Next(2);
-                        newGame.Color = rnd == 0 ? Game.Colors.White : Game.Colors.Black;
-                    }
-
                     var game = new Game();
                     var settings = new Game.GameSettings()
                     {
                         IsChess960 = newGame.Chess960,
-                        MaximumTime = newGame.MaximumTime,
+                        MaximumTime = newGame.MaxTime,
                         TimeIncrement = newGame.TimeIncrement,
                         TrainingMode = newGame.TrainingMode,
                         MaxEngineThinkingTime = TimeSpan.FromSeconds(App.Settings.MaxEngineThinkingTimeSecs),
@@ -558,31 +553,26 @@ namespace CoreChess.Pages
                         InitialFenPosition = newGame.InitialPosition,
                     };
 
-                    settings.Players.Add(new HumanPlayer(newGame.Color.Value, App.Settings.PlayerName, null));
-                    /*var engine1 = App.Settings.GetEngine(newGame.EngineId)?.Copy();
-                    if (newGame.EngineElo.HasValue)
-                        engine1.SetElo(newGame.EngineElo.Value);
-                    var enginePlayer1 = new EnginePlayer(newGame.Color == Game.Colors.White ? Game.Colors.White : Game.Colors.Black,
-                        newGame.TheKingPersonality?.DisplayName ?? engine1.Name,
-                        engine1.GetElo());
-                    enginePlayer1.Engine = engine1;
-                    enginePlayer1.Personality = newGame.Personality;
-                    enginePlayer1.TheKingPersonality = newGame.TheKingPersonality;
-                    enginePlayer1.OpeningBookFileName = App.Settings.OpeningBook;
-                    settings.Players.Add(enginePlayer1);*/
+                    foreach (var player in newGame.Players) {
+                        Player p;
+                        if (player.IsHuman) {
+                            p = new HumanPlayer(player.Color!.Value, player.Name, null);
+                        } else {
+                            var engine = App.Settings.GetEngine(player.EngineId)?.Copy();
+                            if (player.EngineElo.HasValue)
+                                engine.SetElo(player.EngineElo.Value);
+                            var enginePlayer = new EnginePlayer(player.Color!.Value,
+                                player.TheKingPersonality?.DisplayName ?? engine.Name,
+                                engine.GetElo());
+                            enginePlayer.Engine = engine;
+                            enginePlayer.Personality = player.Personality;
+                            enginePlayer.TheKingPersonality = player.TheKingPersonality;
+                            enginePlayer.OpeningBookFileName = App.Settings.OpeningBook;
 
-                    //settings.Players.Add(new HumanPlayer(newGame.Color == Game.Colors.White ? Game.Colors.Black : Game.Colors.White, App.Settings.PlayerName, null));
-                    var engine = App.Settings.GetEngine(newGame.EngineId)?.Copy();
-                    if (newGame.EngineElo.HasValue)
-                        engine.SetElo(newGame.EngineElo.Value);
-                    var enginePlayer = new EnginePlayer(newGame.Color == Game.Colors.White ? Game.Colors.Black : Game.Colors.White,
-                        newGame.TheKingPersonality?.DisplayName ?? engine.Name,
-                        engine.GetElo());
-                    enginePlayer.Engine = engine;
-                    enginePlayer.Personality = newGame.Personality;
-                    enginePlayer.TheKingPersonality = newGame.TheKingPersonality;
-                    enginePlayer.OpeningBookFileName = App.Settings.OpeningBook;
-                    settings.Players.Add(enginePlayer);
+                            p = enginePlayer;
+                        }
+                        settings.Players.Add(p);
+                    }
 
                     try {
                         game.Init(settings);
@@ -1060,8 +1050,12 @@ namespace CoreChess.Pages
                 settings.Players.Add(new HumanPlayer(Game.Colors.White, App.Settings.PlayerName, null));
 
                 EngineBase lastUsedEngine = null;
-                if (App.Settings.NewGame != null)
-                    lastUsedEngine = App.Settings.GetEngine(App.Settings.NewGame.EngineId);
+                if (App.Settings.NewGame != null) {
+                    var ep = App.Settings.NewGame.Players?.FirstOrDefault(p => !p.IsHuman);
+                    if (ep != null)
+                        lastUsedEngine = App.Settings.GetEngine(ep.EngineId);
+                }
+
                 if (lastUsedEngine == null)
                     lastUsedEngine = App.Settings.Engines?.FirstOrDefault();
 
