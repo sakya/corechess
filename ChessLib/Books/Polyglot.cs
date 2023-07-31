@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Collections.Specialized;
 using System.IO;
 using System.Linq;
 
@@ -14,32 +13,32 @@ namespace ChessLib.Books
     {
         public class Entry : IBookEntry
         {
-            public UInt64 Key { get; set; }
-            public UInt16 Move { get; set; }
-            public UInt16 Weight { get; set; }
-            public UInt32 Learn { get; set; }
+            public ulong Key { get; set; }
+            public ushort Move { get; set; }
+            public ushort Weight { get; set; }
+            public uint Learn { get; set; }
 
             public string GetMove()
             {
-                char[] chars = new char[5];
-                string promotePieces = " nbrq";
+                var chars = new char[5];
+                const string promotePieces = " nbrq";
 
                 var bits = new System.Collections.BitArray(BitConverter.GetBytes(Move));
 
-                int toFile = GetIntValue(bits, 0, 3);
-                int toRank = GetIntValue(bits, 3, 3);
-                int fromFile = GetIntValue(bits, 6, 3);
-                int fromRank = GetIntValue(bits, 9, 3);
-                int promotion = GetIntValue(bits, 12, 3);
+                var toFile = GetIntValue(bits, 0, 3);
+                var toRank = GetIntValue(bits, 3, 3);
+                var fromFile = GetIntValue(bits, 6, 3);
+                var fromRank = GetIntValue(bits, 9, 3);
+                var promotion = GetIntValue(bits, 12, 3);
 
                 chars[0] = (char)(fromFile + 'a');
                 chars[1] = (char)(fromRank + '1');
                 chars[2] = (char)(toFile + 'a');
                 chars[3] = (char)(toRank + '1');
                 if (promotion != 0)
-                    chars[4] = promotePieces[(int)promotion];
+                    chars[4] = promotePieces[promotion];
 
-                string res = string.Empty;
+                var res = string.Empty;
                 foreach (var c in chars) {
                     if (c != '\0')
                         res = $"{res}{c}";
@@ -57,15 +56,15 @@ namespace ChessLib.Books
                 return res;
             } // GetMove
 
-            public int GetPriotity()
+            public int GetPriority()
             {
                 return Weight;
             }
 
             private int GetIntValue(System.Collections.BitArray bits, int start, int length)
             {
-                int value = 0;
-                for (int i = start; i < start + length; i++) {
+                var value = 0;
+                for (var i = start; i < start + length; i++) {
                     if (bits[i])
                         value += Convert.ToInt16(Math.Pow(2, i - start));
                 }
@@ -74,8 +73,7 @@ namespace ChessLib.Books
             } // GetIntValue
         } // Entry
 
-        private static UInt64[] m_Random64 = new UInt64[]
-        {
+        private static readonly ulong[] Random64 = {
             0x9D39247E33776D41, 0x2AF7398005AAA5C7, 0x44DB015024623547, 0x9C15F73E62A76AE2,
             0x75834465489C0C89, 0x3290AC3A203001BF, 0x0FBBAD1F61042279, 0xE83A908FF2FB60CA,
             0x0D7E765D58755C10, 0x1A083822CEAFE02D, 0x9605D5F0E25EC3B0, 0xD021FF5CD13A2ED5,
@@ -274,10 +272,6 @@ namespace ChessLib.Books
             0xF8D626AAAF278509
         };
 
-        public Polyglot()
-        {
-        }
-
         public string FileName { get; set; }
 
         /// <summary>
@@ -303,7 +297,7 @@ namespace ChessLib.Books
         /// <param name="fenString">The FEN string</param>
         public List<IBookEntry> GetMovesFromFen(string fenString)
         {
-            string hashKey = GetHashFromFen(fenString);
+            var hashKey = GetHashFromFen(fenString);
             return GetMoves(hashKey);
         } // GetMovesFromFen
 
@@ -333,17 +327,17 @@ namespace ChessLib.Books
             if (string.IsNullOrEmpty(fenString))
                 throw new ArgumentNullException(nameof(fenString));
 
-            string[] parts = fenString.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+            var parts = fenString.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
             if (parts.Length != 6)
                 throw new ArgumentException("Invalid FEN string", nameof(fenString));
 
-            UInt64 key = 0;
-            string piecesNames = "pPnNbBrRqQkK";
-            char[,] board = new char[8, 8];
-            int r = 7;
-            int f = 0;
-            for (int i = 0; i < parts[0].Length; i++) {
-                char c = parts[0][i];
+            ulong key = 0;
+            const string piecesNames = "pPnNbBrRqQkK";
+            var board = new char[8, 8];
+            var r = 7;
+            var f = 0;
+            for (var i = 0; i < parts[0].Length; i++) {
+                var c = parts[0][i];
                 if (c == '/') {
                     r--;
                     f = 0;
@@ -351,7 +345,7 @@ namespace ChessLib.Books
                 }
 
                 if (('1' <= c) && ('8' >= c)) {
-                    for (int j = 0; j <= c - '1'; j++) {
+                    for (var j = 0; j <= c - '1'; j++) {
                         board[f++, r] = '-';
                     }
                     continue;
@@ -359,56 +353,53 @@ namespace ChessLib.Books
                 board[f++, r] = c;
             }
 
-            int pEnc = 0;
             for (f = 0; f <= 7; f++) {
                 for (r = 0; r <= 7; r++) {
-                    char c = board[f, r];
+                    var c = board[f, r];
                     if (c != '-') {
-                        pEnc = piecesNames.IndexOf(c);
-                        key ^= m_Random64[64 * pEnc + 8 * r + f];
+                        var pEnc = piecesNames.IndexOf(c);
+                        key ^= Random64[64 * pEnc + 8 * r + f];
                     }
                 }
             }
 
-            for (int i = 0; i < parts[2].Length; i++) {
-                char c = parts[2][i];
+            for (var i = 0; i < parts[2].Length; i++) {
+                var c = parts[2][i];
                 switch (c) {
                     case '-':
                         break;
                     case 'K':
-                        key ^= m_Random64[768];
+                        key ^= Random64[768];
                         break;
                     case 'Q':
-                        key ^= m_Random64[769];
+                        key ^= Random64[769];
                         break;
                     case 'k':
-                        key ^= m_Random64[770];
+                        key ^= Random64[770];
                         break;
                     case 'q':
-                        key ^= m_Random64[771];
-                        break;
-                    default:
+                        key ^= Random64[771];
                         break;
                 }
             }
 
-            string enPassant = parts[3];
-            string toMove = parts[1];
+            var enPassant = parts[3];
+            var toMove = parts[1];
             if (enPassant != "-") {
                 f = enPassant[0] - 'a';
                 if (toMove == "b") {
                     if ((f > 0 && board[f - 1, 3] == 'p') || (f < 7 && board[f + 1, 3] == 'p')) {
-                        key ^= m_Random64[772 + f];
+                        key ^= Random64[772 + f];
                     }
                 } else {
                     if ((f > 0 && board[f - 1, 4] == 'P') || (f < 7 && board[f + 1, 4] == 'P')) {
-                        key ^= m_Random64[772 + f];
+                        key ^= Random64[772 + f];
                     }
                 }
             }
 
             if (toMove == "w")
-                key ^= m_Random64[780];
+                key ^= Random64[780];
 
             return key.ToString("X");
         } // GetHashFromFen
@@ -419,18 +410,18 @@ namespace ChessLib.Books
         /// <param name="hashKey"></param>
         private List<IBookEntry> GetMoves(string hashKey)
         {
-            List<Entry> res = null;
-            HashSet<ushort> resMoves = new HashSet<ushort>();
-            UInt64 key = UInt64.Parse(hashKey, System.Globalization.NumberStyles.HexNumber);
+            List<Entry> res;
+            var resMoves = new HashSet<ushort>();
+            var key = UInt64.Parse(hashKey, System.Globalization.NumberStyles.HexNumber);
             using (var fs = new FileStream(FileName, FileMode.Open, FileAccess.Read, FileShare.Read)) {
-                Entry entry = FindKey(fs, key);
+                var entry = FindKey(fs, key);
                 if (entry == null || entry.Key != key)
                     return null;
 
                 res = new List<Entry>() { entry };
                 resMoves.Add(entry.Move);
                 while (true) {
-                    Entry next = ReadEntry(fs);
+                    var next = ReadEntry(fs);
                     if (entry == null || next.Key != key)
                         break;
 
@@ -445,12 +436,9 @@ namespace ChessLib.Books
 
         private Entry FindKey(FileStream fs, UInt64 key)
         {
-            Entry firstEntry = null;
-            Entry middleEntry = null;
             Entry lastEntry = null;
             long first = 0;
-            long middle = 0;
-            long last = (fs.Length - 16) / 16;
+            var last = (fs.Length - 16) / 16;
             if (last <= 0)
                 return null;
 
@@ -458,15 +446,14 @@ namespace ChessLib.Books
                 if (last - first == 1)
                     return lastEntry;
 
-                middle = (first + last) / 2;
+                var middle = (first + last) / 2;
                 fs.Seek(16 * middle, SeekOrigin.Begin);
-                middleEntry = ReadEntry(fs);
+                var middleEntry = ReadEntry(fs);
                 if (key <= middleEntry.Key) {
                     last = middle;
                     lastEntry = middleEntry;
                 } else {
                     first = middle;
-                    firstEntry = middleEntry;
                 }
             }
         } // FindKey
@@ -477,16 +464,18 @@ namespace ChessLib.Books
             if (key == null)
                 return null;
 
-            Entry res = new Entry();
-            res.Key = key.Value;
-            res.Move = (UInt16)ReadIntValue(fs, 2, res.Key).Value;
-            res.Weight = (UInt16)ReadIntValue(fs, 2, res.Move).Value;
-            res.Learn = (UInt32)ReadIntValue(fs, 4, res.Weight).Value;
+            var res = new Entry
+            {
+                Key = key.Value
+            };
+            res.Move = (ushort)ReadIntValue(fs, 2, res.Key).Value;
+            res.Weight = (ushort)ReadIntValue(fs, 2, res.Move).Value;
+            res.Learn = (uint)ReadIntValue(fs, 4, res.Weight).Value;
 
             return res;
         } // ReadEntry
 
-        private UInt64? ReadIntValue(FileStream fs, int l, UInt64 r)
+        private static ulong? ReadIntValue(FileStream fs, int l, UInt64 r)
         {
             UInt64 res = r;
             for (int i = 0; i < l; i++) {

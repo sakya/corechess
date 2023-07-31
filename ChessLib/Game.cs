@@ -619,10 +619,10 @@ namespace ChessLib
                         if (bookMoves.Count == 1) {
                             bookMove = bookMoves[0].GetMove();
                         } else {
-                            int totPriority = bookMoves.Sum(bm => bm.GetPriotity());
+                            int totPriority = bookMoves.Sum(bm => bm.GetPriority());
                             List<int> probs = new List<int>();
                             foreach (var bm in bookMoves) {
-                                probs.Add((int)Math.Round(bm.GetPriotity() / (double)totPriority * 100.0, 0));
+                                probs.Add((int)Math.Round(bm.GetPriority() / (double)totPriority * 100.0, 0));
                             }
                             bookMove = bookMoves[m_Rnd.GetAlias(probs)].GetMove();
                         }
