@@ -146,7 +146,7 @@ namespace ChessLib
             public int HalfmoveClock { get; set; }
         } // MoveNotation
 
-        class MoveResult
+        private class MoveResult
         {
             public MoveResult()
             {
@@ -1063,13 +1063,13 @@ namespace ChessLib
                 return true;
 
             // King and Bishop vs King
-            if ((white.Count == 1 && black.Count == 2 && black.Where(p => p.Type == Piece.Pieces.Bishop).Count() == 1) ||
-                (black.Count == 1 && white.Count == 2 && white.Where(p => p.Type == Piece.Pieces.Bishop).Count() == 1))
+            if ((white.Count == 1 && black.Count == 2 && black.Count(p => p.Type == Piece.Pieces.Bishop) == 1) ||
+                (black.Count == 1 && white.Count == 2 && white.Count(p => p.Type == Piece.Pieces.Bishop) == 1))
                 return true;
 
             // King and Knight vs King
-            if ((white.Count == 1 && black.Count == 2 && black.Where(p => p.Type == Piece.Pieces.Knight).Count() == 1) ||
-                (black.Count == 1 && white.Count == 2 && white.Where(p => p.Type == Piece.Pieces.Knight).Count() == 1))
+            if ((white.Count == 1 && black.Count == 2 && black.Count(p => p.Type == Piece.Pieces.Knight) == 1) ||
+                (black.Count == 1 && white.Count == 2 && white.Count(p => p.Type == Piece.Pieces.Knight) == 1))
                 return true;
 
             // King and Bishop vs King and Bishop with bishops on the same color
@@ -1653,9 +1653,9 @@ namespace ChessLib
             fromFile = char.ToUpper(fromFile);
             toFile = char.ToUpper(toFile);
 
-            int rank = color == Colors.White ? 1 : 8;
-            int idxFrom = 0;
-            int idxTo = 0;
+            var rank = color == Colors.White ? 1 : 8;
+            int idxFrom;
+            int idxTo;
             char rookTargetFile;
 
             // If the king is in check it cannot castle
@@ -1743,8 +1743,8 @@ namespace ChessLib
             if (startSquare.Piece != null) {
                 var piece = startSquare.Piece;
                 Board.Square nextSquare = null;
-                char? nextFile = null;
-                char? prevFile = null;
+                char? nextFile;
+                char? prevFile;
 
                 // Normal moves
                 if (piece.Color == Colors.White && startSquare.Rank < 8)
@@ -1806,9 +1806,9 @@ namespace ChessLib
             var res = new List<Board.Square>();
             if (startSquare.Piece != null) {
                 var piece = startSquare.Piece;
-                Board.Square nextSquare = null;
-                char? nextFile = null;
-                char? prevFile = null;
+                Board.Square nextSquare;
+                char? nextFile;
+                char? prevFile;
 
                 nextFile = Board.GetNextFile(startSquare.File);
                 if (nextFile != null) {
@@ -1858,9 +1858,9 @@ namespace ChessLib
             var res = new List<Board.Square>();
             if (startSquare.Piece != null) {
                 var piece = startSquare.Piece;
-                Board.Square nextSquare = null;
-                char? nextFile = null;
-                char? prevFile = null;
+                Board.Square nextSquare;
+                char? nextFile;
+                char? prevFile;
 
                 // Normal moves
                 nextFile = Board.GetNextFile(startSquare.File);
@@ -1929,9 +1929,9 @@ namespace ChessLib
             var res = new List<Board.Square>();
             if (startSquare.Piece != null) {
                 var piece = startSquare.Piece;
-                Board.Square nextSquare = null;
-                char? nextFile = null;
-                char? prevFile = null;
+                Board.Square nextSquare;
+                char? nextFile;
+                char? prevFile;
 
                 nextFile = Board.GetNextFile(startSquare.File);
                 int? upperRank = startSquare.Rank;
@@ -2001,9 +2001,9 @@ namespace ChessLib
             var res = new List<Board.Square>();
             if (startSquare.Piece != null) {
                 var piece = startSquare.Piece;
-                Board.Square nextSquare = null;
-                char? nextFile = Board.GetNextFile(startSquare.File);
-                char? prevFile = Board.GetPreviousFile(startSquare.File);
+                Board.Square nextSquare;
+                var nextFile = Board.GetNextFile(startSquare.File);
+                var prevFile = Board.GetPreviousFile(startSquare.File);
 
                 while (nextFile != null) {
                     nextSquare = Board.GetSquare($"{nextFile}{startSquare.Rank}");
@@ -2166,8 +2166,8 @@ namespace ChessLib
             }
 
             // En passant capture
-            Board.Square enPassantPawnSquare;
             if (toSquare.Notation == EnPassant && fromSquare.Piece.Type == Piece.Pieces.Pawn) {
+                Board.Square enPassantPawnSquare;
                 if (ToMove == Colors.White)
                     enPassantPawnSquare = Board.GetSquare($"{toSquare.File}{toSquare.Rank - 1}");
                 else
@@ -2334,19 +2334,19 @@ namespace ChessLib
                 return res;
 
             var color = pieces[0].Color;
-            var tpc = pieces.Where(p => p.Type == Piece.Pieces.Pawn).Count();
+            var tpc = pieces.Count(p => p.Type == Piece.Pieces.Pawn);
             for (int i = 0; i < 8 - tpc; i++)
                 res.Add(new Piece(color, Piece.Pieces.Pawn));
-            tpc = pieces.Where(p => p.Type == Piece.Pieces.Knight).Count();
+            tpc = pieces.Count(p => p.Type == Piece.Pieces.Knight);
             for (int i = 0; i < 2 - tpc; i++)
                 res.Add(new Piece(color, Piece.Pieces.Knight));
-            tpc = pieces.Where(p => p.Type == Piece.Pieces.Bishop).Count();
+            tpc = pieces.Count(p => p.Type == Piece.Pieces.Bishop);
             for (int i = 0; i < 2 - tpc; i++)
                 res.Add(new Piece(color, Piece.Pieces.Bishop));
-            tpc = pieces.Where(p => p.Type == Piece.Pieces.Rook).Count();
+            tpc = pieces.Count(p => p.Type == Piece.Pieces.Rook);
             for (int i = 0; i < 2 - tpc; i++)
                 res.Add(new Piece(color, Piece.Pieces.Rook));
-            tpc = pieces.Where(p => p.Type == Piece.Pieces.Queen).Count();
+            tpc = pieces.Count(p => p.Type == Piece.Pieces.Queen);
             if (tpc == 0)
                 res.Add(new Piece(color, Piece.Pieces.Queen));
             return res;
