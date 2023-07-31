@@ -44,6 +44,12 @@ public partial class PlayerControl : UserControl
         get => m_Color;
         set
         {
+            if (value == m_Color)
+                return;
+
+            m_Color = value;
+            ColorChanged?.Invoke(m_Color);
+
             switch (value) {
                 case Game.Colors.White:
                     OnWhiteClick(null, null);
@@ -55,8 +61,6 @@ public partial class PlayerControl : UserControl
                     OnRandomClick(null, null);
                     break;
             }
-
-            m_Color = value;
         }
     }
 
@@ -118,6 +122,7 @@ public partial class PlayerControl : UserControl
         {
             var selectedEngine = App.Settings.GetEngine(value);
             m_Engines.SelectedItem = selectedEngine;
+            OnEngineChanged(null, null);
         }
     }
 
@@ -149,7 +154,7 @@ public partial class PlayerControl : UserControl
                 return;
             }
 
-            m_TheKingPersonality.SelectedItem = (m_TheKingPersonality.Items as IEnumerable<TheKing.Personality>).FirstOrDefault(p => p.Name == value.Name);
+            m_TheKingPersonality.SelectedItem = (m_TheKingPersonality.ItemsSource as IEnumerable<TheKing.Personality>)?.FirstOrDefault(p => p.Name == value.Name);
         }
     }
 
@@ -159,10 +164,7 @@ public partial class PlayerControl : UserControl
         m_BlackBtn.IsChecked = false;
         m_RandomBtn.IsChecked = false;
 
-        if (m_Color != Game.Colors.White) {
-            m_Color = Game.Colors.White;
-            ColorChanged?.Invoke(Game.Colors.White);
-        }
+        Color = Game.Colors.White;
     }
 
     private void OnBlackClick(object sender, RoutedEventArgs e)
@@ -171,10 +173,7 @@ public partial class PlayerControl : UserControl
         m_WhiteBtn.IsChecked = false;
         m_RandomBtn.IsChecked = false;
 
-        if (m_Color != Game.Colors.Black) {
-            m_Color = Game.Colors.Black;
-            ColorChanged?.Invoke(Game.Colors.Black);
-        }
+        Color = Game.Colors.Black;
     }
 
     private void OnRandomClick(object sender, RoutedEventArgs e)
@@ -182,10 +181,8 @@ public partial class PlayerControl : UserControl
         m_RandomBtn.IsChecked = true;
         m_WhiteBtn.IsChecked = false;
         m_BlackBtn.IsChecked = false;
-        if (m_Color != null) {
-            m_Color = null;
-            ColorChanged?.Invoke(null);
-        }
+
+        ColorChanged?.Invoke(null);
     }
 
     private void OnPlayerTypeChanged(object sender, SelectionChangedEventArgs args)
@@ -211,8 +208,10 @@ public partial class PlayerControl : UserControl
         if (engine is TheKing) {
             m_TheKingPersonalityStack.IsVisible = true;
             var opt = engine.GetOption(TheKing.PersonalitiesFolderOptionName);
-            if (opt != null && !string.IsNullOrEmpty(opt.Value))
+            if (opt != null && !string.IsNullOrEmpty(opt.Value)) {
                 m_TheKingPersonality.ItemsSource = TheKing.Personality.GetFromFolder(opt.Value).OrderByDescending(p => p.Elo);
+                m_TheKingPersonality.SelectedIndex = 0;
+            }
         } else {
             m_TheKingPersonalityStack.IsVisible = false;
 
