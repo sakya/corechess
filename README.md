@@ -5,7 +5,7 @@ CoreChess is an open source chess GUI for chess engines
 
 ## Supported engines
 
-- UCI (Universal Chess Interface) like [Stockfish](https://stockfishchess.org/), [Komodo](https://komodochess.com/) and [Leela Chess Zero](https://lczero.org/)
+- UCI (Universal Chess Interface) like [Stockfish](https://stockfishchess.org/), [Komodo/Dragon](https://komodochess.com/) and [Leela Chess Zero](https://lczero.org/)
 
 - CECP (Chess Engine Communication Protocol) like [Crafty](https://craftychess.com/)
 
