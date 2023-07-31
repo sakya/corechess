@@ -171,8 +171,7 @@ namespace CoreChess
 
         public void AddRecentlyLoadedFile(string filePath)
         {
-            if (RecentlyLoadedFiles == null)
-                RecentlyLoadedFiles = new List<string>();
+            RecentlyLoadedFiles ??= new List<string>();
 
             if (RecentlyLoadedFiles.Contains(filePath))
                 RecentlyLoadedFiles.Remove(filePath);
@@ -184,32 +183,31 @@ namespace CoreChess
 
         public static Settings Load(string path)
         {
-            using (StreamReader sr = new StreamReader(path)) {
-                var settings = new JsonSerializerSettings() { TypeNameHandling = TypeNameHandling.Objects };
-                var res =  JsonConvert.DeserializeObject<Settings>(sr.ReadToEnd(), settings);
-                if (res != null)
-                    res.CheckRecentlyLoadedFiles();
-                return res;
-            }
+            using var sr = new StreamReader(path);
+            var settings = new JsonSerializerSettings() { TypeNameHandling = TypeNameHandling.Objects };
+            var res =  JsonConvert.DeserializeObject<Settings>(sr.ReadToEnd(), settings);
+            if (res != null)
+                res.CheckRecentlyLoadedFiles();
+            return res;
         } // Load
 
         public void Save(string path)
         {
-            using (StreamWriter sw = new StreamWriter(path)) {
-                Version = App.Version;
+            using var sw = new StreamWriter(path);
+            Version = App.Version;
 
-                var settings = new JsonSerializerSettings() { TypeNameHandling = TypeNameHandling.Objects };
-                sw.Write(JsonConvert.SerializeObject(this, Formatting.Indented, settings));
-            }
+            var settings = new JsonSerializerSettings() { TypeNameHandling = TypeNameHandling.Objects };
+            sw.Write(JsonConvert.SerializeObject(this, Formatting.Indented, settings));
         } // Save
 
         private void CheckRecentlyLoadedFiles()
         {
-            if (RecentlyLoadedFiles != null) {
-                for (int i = 0; i < RecentlyLoadedFiles.Count; i++) {
-                    if (!File.Exists(RecentlyLoadedFiles[i])) {
-                        RecentlyLoadedFiles.RemoveAt(i--);
-                    }
+            if (RecentlyLoadedFiles == null)
+                return;
+
+            for (var i = 0; i < RecentlyLoadedFiles.Count; i++) {
+                if (!File.Exists(RecentlyLoadedFiles[i])) {
+                    RecentlyLoadedFiles.RemoveAt(i--);
                 }
             }
         } // CheckRecentlyLoadedFiles
