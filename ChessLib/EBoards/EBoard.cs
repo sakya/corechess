@@ -1,5 +1,4 @@
 using System;
-using System.Threading;
 using System.Threading.Tasks;
 
 namespace ChessLib.EBoards
@@ -12,7 +11,6 @@ namespace ChessLib.EBoards
         }
 
         public EBoard(EBoardSettings settings)
-            : base()
         {
             Settings = settings;
         }
