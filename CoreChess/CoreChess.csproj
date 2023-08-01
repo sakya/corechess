@@ -25,13 +25,13 @@
     <AvaloniaResource Include="icon.ico" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Avalonia" Version="11.0.1" />
+    <PackageReference Include="Avalonia" Version="11.0.2" />
     <PackageReference Include="Avalonia.Angle.Windows.Natives" Version="2.1.0.2023020321" />
-    <PackageReference Include="Avalonia.Desktop" Version="11.0.1" />
-    <PackageReference Condition="'$(Configuration)' == 'Debug'" Include="Avalonia.Diagnostics" Version="11.0.1" />
-    <PackageReference Include="Avalonia.Themes.Fluent" Version="11.0.1" />
-    <PackageReference Include="Avalonia.Controls.ItemsRepeater" Version="11.0.1" />
-    <PackageReference Include="Avalonia.Controls.ColorPicker" Version="11.0.1" />
+    <PackageReference Include="Avalonia.Desktop" Version="11.0.2" />
+    <PackageReference Condition="'$(Configuration)' == 'Debug'" Include="Avalonia.Diagnostics" Version="11.0.2" />
+    <PackageReference Include="Avalonia.Themes.Fluent" Version="11.0.2" />
+    <PackageReference Include="Avalonia.Controls.ItemsRepeater" Version="11.0.2" />
+    <PackageReference Include="Avalonia.Controls.ColorPicker" Version="11.0.2" />
 
     <PackageReference Include="Projektanker.Icons.Avalonia" Version="8.1.0" />
     <PackageReference Include="Projektanker.Icons.Avalonia.FontAwesome" Version="8.1.0" />
