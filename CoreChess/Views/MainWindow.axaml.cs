@@ -117,7 +117,7 @@ public partial class MainWindow : BaseView
         Closing += OnWindowClosing;
         KeyDown += OnKeyDown;
 
-        base.InitializeComponent();
+        Initialize();
     }
 
     private void HandleWindowStateChanged(WindowState state)

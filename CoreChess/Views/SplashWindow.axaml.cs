@@ -1,4 +1,3 @@
-using Avalonia.Markup.Xaml;
 using System.Reflection;
 
 namespace CoreChess.Views
@@ -10,12 +9,6 @@ namespace CoreChess.Views
             this.InitializeComponent();
             m_Title.Text = $"CoreChess v.{Assembly.GetEntryAssembly()?.GetName().Version}";
             m_Copyright.Text = ((AssemblyCopyrightAttribute)System.Attribute.GetCustomAttribute(Assembly.GetExecutingAssembly(), typeof(AssemblyCopyrightAttribute), false))?.Copyright;
-        }
-
-        protected override void InitializeComponent()
-        {
-            AvaloniaXamlLoader.Load(this);
-            base.InitializeComponent();
         }
     }
 }

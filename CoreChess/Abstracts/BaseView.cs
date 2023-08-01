@@ -8,7 +8,7 @@ namespace CoreChess.Abstracts
 {
     public abstract class BaseView : Window
     {
-        protected virtual void InitializeComponent()
+        protected void Initialize()
         {
             if (OperatingSystem.IsWindows()) {
                 ExtendClientAreaToDecorationsHint = true;

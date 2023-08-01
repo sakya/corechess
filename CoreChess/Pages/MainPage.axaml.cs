@@ -323,13 +323,13 @@ namespace CoreChess.Pages
         } // Context
         #endregion
 
-        string[] m_Args;
-        bool m_Initialized;
-        Context m_Context;
-        Game m_Game;
-        List<string> m_EngineMessagesRows = new();
-        Utils.EcoDatabase m_EcoDatabase;
-        int? m_CurrentMoveIndex;
+        private readonly string[] m_Args;
+        private bool m_Initialized;
+        private readonly Context m_Context;
+        private Game m_Game;
+        private readonly List<string> m_EngineMessagesRows = new();
+        private readonly Utils.EcoDatabase m_EcoDatabase;
+        private int? m_CurrentMoveIndex;
         private List<Piece.Pieces> m_LastWhiteCapturedPieces = new();
         private List<Piece.Pieces> m_LastBlackCapturedPieces = new();
 
