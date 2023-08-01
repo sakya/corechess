@@ -2,7 +2,9 @@
 
 CoreChess is an open source chess GUI for chess engines
 ![image](https://user-images.githubusercontent.com/289552/152684938-7231401d-e5ab-48bb-a445-06c139f64885.png)
-
+- Human vs Engine mode
+- Human vs Human  mode.
+- Engine vs Engine mode.
 ## Supported engines
 
 - UCI (Universal Chess Interface) like [Stockfish](https://stockfishchess.org/), [Komodo/Dragon](https://komodochess.com/) and [Leela Chess Zero](https://lczero.org/)
@@ -37,3 +39,25 @@ CoreChess is an open source chess GUI for chess engines
   <img width="100" src="https://user-images.githubusercontent.com/289552/156829426-1d0a50be-8adf-4c06-bfee-259378b974a3.png">
 </a>
 
+## Build from source
+### Prerequisites
+- [.NET 7.0 SDK](https://dotnet.microsoft.com/en-us/download/dotnet/7.0)
+- git
+### Build instructions
+Clone the source code with the command
+
+`git clone https://github.com/sakya/corechess.git`
+#### Linux
+In the corechess folder run the command
+
+`dotnet publish CoreChess.sln -c Release --runtime linux-x64 -p:PublishReadyToRun=true --self-contained --output ./dist/linux-x64`
+
+#### Windows
+In the corechess folder run the command
+
+`dotnet publish CoreChess.sln -c Release --runtime win-x64 -p:PublishReadyToRun=true --self-contained --output .\dist\win-x64`
+
+#### macOS
+In the corechess folder run the command
+
+`dotnet publish CoreChess.sln -c Release --runtime osx-x64 -p:PublishReadyToRun=true --self-contained --output .\dist\osx-x64`
