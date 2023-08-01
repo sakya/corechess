@@ -260,7 +260,7 @@ namespace ChessLib
             ToMove = Colors.White;
             KingCastling = new List<Colors>();
             QueenCastling = new List<Colors>();
-            FullmoveNumber = 0;
+            FullMoveNumber = 0;
 
             m_WhiteTimer.Elapsed += OnWhiteTimerElapsed;
             m_BlackTimer.Elapsed += OnBlackTimerElapsed;
@@ -370,8 +370,8 @@ namespace ChessLib
         /// </summary>
         public List<MoveNotation> Moves { get; set; }
 
-        public int HalfmoveClock { get; set; }
-        public int FullmoveNumber { get; set; }
+        public int HalfMoveClock { get; set; }
+        public int FullMoveNumber { get; set; }
 
         public int WhiteTimeMilliSecs { get; set; }
         public int? WhiteTimeLeftMilliSecs { get; set; }
@@ -464,9 +464,9 @@ namespace ChessLib
                     EnPassant = parts[3];
 
                 if (parts.Length > 4)
-                    HalfmoveClock = int.Parse(parts[4]);
+                    HalfMoveClock = int.Parse(parts[4]);
                 if (parts.Length > 5)
-                    FullmoveNumber = int.Parse(parts[5]);
+                    FullMoveNumber = int.Parse(parts[5]);
             }
 
             var kingSquare = Board.GetKingSquare(Colors.White);
@@ -500,7 +500,7 @@ namespace ChessLib
                 StartedTime = DateTime.UtcNow;
                 BlackTimer?.Invoke(this, EventArgs.Empty);
                 WhiteTimer?.Invoke(this, EventArgs.Empty);
-                if (FullmoveNumber > 0) {
+                if (FullMoveNumber > 0) {
                     if (ToMove == Colors.White) {
                         m_WhiteTimer.Start();
                         m_BlackTimer.Stop();
@@ -553,7 +553,7 @@ namespace ChessLib
             if (Status == Statuses.Paused) {
                 Status = Statuses.InProgress;
                 if (ToMovePlayer is HumanPlayer) {
-                    if (FullmoveNumber > 0) {
+                    if (FullMoveNumber > 0) {
                         if (ToMovePlayer.Color == Colors.White)
                             m_WhiteTimer.Start();
                         else
@@ -570,8 +570,8 @@ namespace ChessLib
             if (!(ToMovePlayer is HumanPlayer))
                 throw new Exception("Not a human player");
             var res = await DoMove(move);
-            if (ToMovePlayer is EnginePlayer)
-                await (ToMovePlayer as EnginePlayer).Engine.ForceMove(res[0].CoordinateNotation.ToLower());
+            if (ToMovePlayer is EnginePlayer ep)
+                await ep.Engine.ForceMove(res[0].CoordinateNotation.ToLower());
             return res;
         } // DoHumanPlayerMove
 
@@ -793,11 +793,11 @@ namespace ChessLib
             foreach (var m in res)
                 m.Timestamp = timeStamp;
 
-            FullmoveNumber++;
+            FullMoveNumber++;
             if (res.Count == 1 && (res[0].CapturedPiece != null || res[0].Piece.Type == Piece.Pieces.Pawn))
-                HalfmoveClock = 0;
+                HalfMoveClock = 0;
             else
-                HalfmoveClock++;
+                HalfMoveClock++;
 
             MoveNotation moveNotation = new MoveNotation()
             {
@@ -812,7 +812,7 @@ namespace ChessLib
             moveNotation.Fen = GetFenString();
             moveNotation.WhiteTimeLeftMilliSecs = WhiteTimeLeftMilliSecs;
             moveNotation.BlackTimeLeftMilliSecs = BlackTimeLeftMilliSecs;
-            moveNotation.HalfMoveClock = HalfmoveClock;
+            moveNotation.HalfMoveClock = HalfMoveClock;
 
             Moves.Add(moveNotation);
             return res;
@@ -849,7 +849,7 @@ namespace ChessLib
                     await cecp.Remove();
             }
 
-            FullmoveNumber -= toRemove;
+            FullMoveNumber -= toRemove;
             while (toRemove-- > 0) {
                 var trm = Moves.Last();
                 Moves.Remove(trm);
@@ -859,7 +859,7 @@ namespace ChessLib
             ToMove = Colors.White;
             if (lastMove?.Color == Colors.White)
                 ToMove = Colors.Black;
-            HalfmoveClock = lastMove != null ? lastMove.HalfMoveClock : 0;
+            HalfMoveClock = lastMove != null ? lastMove.HalfMoveClock : 0;
             Board.InitFromFenString(lastMove != null ? lastMove.Fen : InitialFenPosition);
             WhiteTimeLeftMilliSecs = LastWhiteTimeLeftMilliSecs;
             BlackTimeLeftMilliSecs = LastBlackTimeLeftMilliSecs;
@@ -941,11 +941,11 @@ namespace ChessLib
             else
                 sb.Append(EnPassant.ToLower());
 
-            // Halfmove clock
-            sb.Append($" {HalfmoveClock}");
+            // HalfMove clock
+            sb.Append($" {HalfMoveClock}");
 
-            // Fullmove number
-            sb.Append($" {(FullmoveNumber == 0 ? 1 : FullmoveNumber)}");
+            // FullMove number
+            sb.Append($" {(FullMoveNumber == 0 ? 1 : FullMoveNumber)}");
 
             return sb.ToString();
         } // GetFenString

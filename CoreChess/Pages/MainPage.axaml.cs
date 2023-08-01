@@ -448,7 +448,7 @@ namespace CoreChess.Pages
 
         public async void OnMoveMade(object sender, EventArgs e)
         {
-            m_Context.IsResignEnabled = m_Game.FullmoveNumber > 0;
+            m_Context.IsResignEnabled = m_Game.FullMoveNumber > 0;
             UpdateCapturedPieces();
 
             using (var game = new Game()) {
@@ -489,7 +489,7 @@ namespace CoreChess.Pages
         public async void OnGameEnded(object sender, Chessboard.GameEndedEventArgs e)
         {
             // Save the game in the database
-            if (m_Game.FullmoveNumber > 0)
+            if (m_Game.FullMoveNumber > 0)
                 await m_Game.Save(Path.Join(App.GamesDatabasePath, $"{Guid.NewGuid().ToString("N")}.ccsf"));
 
             await Dispatcher.UIThread.InvokeAsync(async () =>
@@ -646,7 +646,7 @@ namespace CoreChess.Pages
         {
             if (!m_Game.Ended) {
                 await m_Chessboard.UndoMove();
-                m_Context.IsResignEnabled = m_Game.FullmoveNumber > 0;
+                m_Context.IsResignEnabled = m_Game.FullMoveNumber > 0;
                 UpdateCapturedPieces();
                 await UpdateMoves();
             }
@@ -880,7 +880,7 @@ namespace CoreChess.Pages
             if (m_Game != null) {
                 args.Cancel = true;
                 string autoSave = Path.Join(App.LocalPath, "autosave.ccsf");
-                if (m_Game.Ended == false && m_Game.FullmoveNumber > 0 && App.Settings.AutoSaveGameOnExit) {
+                if (m_Game.Ended == false && m_Game.FullMoveNumber > 0 && App.Settings.AutoSaveGameOnExit) {
                     m_Game.WhiteTimeLeftMilliSecs = m_Game.LastWhiteTimeLeftMilliSecs;
                     m_Game.BlackTimeLeftMilliSecs = m_Game.LastBlackTimeLeftMilliSecs;
                     await m_Game.Save(autoSave);
@@ -1480,7 +1480,7 @@ namespace CoreChess.Pages
             }
 
             m_Context.CanPause = !m_Game.Ended;
-            m_Context.IsResignEnabled = m_Game.FullmoveNumber > 0 && !m_Game.Ended;
+            m_Context.IsResignEnabled = m_Game.FullMoveNumber > 0 && !m_Game.Ended;
             SetChessboardOptions();
 
             try {
