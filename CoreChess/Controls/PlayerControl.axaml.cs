@@ -109,10 +109,7 @@ public partial class PlayerControl : UserControl
     public string PlayerName
     {
         get => m_PlayerName.Text;
-        set
-        {
-            m_PlayerName.Text = value;
-        }
+        set => m_PlayerName.Text = value;
     }
 
     public string EngineId
@@ -128,20 +125,14 @@ public partial class PlayerControl : UserControl
 
     public int? EngineElo
     {
-        get => !IsHuman ? (int)m_EngineElo.Value : null;
-        set
-        {
-            m_EngineElo.Value = value;
-        }
+        get => !IsHuman && m_EngineElo.Value.HasValue ? (int)m_EngineElo.Value : null;
+        set => m_EngineElo.Value = value;
     }
 
     public string EnginePersonality
     {
         get => !IsHuman ? m_Personality.SelectedItem as string : null;
-        set
-        {
-            m_Personality.SelectedItem = value;
-        }
+        set => m_Personality.SelectedItem = value;
     }
 
     public TheKing.Personality TheKingPersonality
@@ -218,7 +209,7 @@ public partial class PlayerControl : UserControl
             if (engine is Uci) {
                 // Dragon 2.6 personality
                 var pOpt = engine.GetOption(Uci.PersonalityOptionNames);
-                if (pOpt != null && pOpt.Type == "combo") {
+                if (pOpt?.Type == "combo") {
                     m_PersonalityStack.IsVisible = true;
                     m_Personality.ItemsSource = pOpt.ValidValues;
                     m_Personality.SelectedItem = pOpt.Default;
