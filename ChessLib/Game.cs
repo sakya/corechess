@@ -143,7 +143,7 @@ namespace ChessLib
 
             public int? WhiteTimeLeftMilliSecs { get; set; }
             public int? BlackTimeLeftMilliSecs { get; set; }
-            public int HalfmoveClock { get; set; }
+            public int HalfMoveClock { get; set; }
         } // MoveNotation
 
         private class MoveResult
@@ -812,7 +812,7 @@ namespace ChessLib
             moveNotation.Fen = GetFenString();
             moveNotation.WhiteTimeLeftMilliSecs = WhiteTimeLeftMilliSecs;
             moveNotation.BlackTimeLeftMilliSecs = BlackTimeLeftMilliSecs;
-            moveNotation.HalfmoveClock = HalfmoveClock;
+            moveNotation.HalfMoveClock = HalfmoveClock;
 
             Moves.Add(moveNotation);
             return res;
@@ -859,7 +859,7 @@ namespace ChessLib
             ToMove = Colors.White;
             if (lastMove?.Color == Colors.White)
                 ToMove = Colors.Black;
-            HalfmoveClock = lastMove != null ? lastMove.HalfmoveClock : 0;
+            HalfmoveClock = lastMove != null ? lastMove.HalfMoveClock : 0;
             Board.InitFromFenString(lastMove != null ? lastMove.Fen : InitialFenPosition);
             WhiteTimeLeftMilliSecs = LastWhiteTimeLeftMilliSecs;
             BlackTimeLeftMilliSecs = LastBlackTimeLeftMilliSecs;
@@ -1493,8 +1493,7 @@ namespace ChessLib
                         Settings.TimeIncrement.HasValue ? (int)Settings.TimeIncrement.Value.TotalSeconds : 0);
 
                     // Set The King personality
-                    if (ep.Engine is Engines.TheKing && ep.TheKingPersonality != null) {
-                        var tk = ep.Engine as Engines.TheKing;
+                    if (ep.Engine is Engines.TheKing tk && ep.TheKingPersonality != null) {
                         await tk.ApplyPersonality(ep.TheKingPersonality);
                         var tkOpt = tk.GetOption(Engines.TheKing.OpeningBooksFolderOptionName)?.Value;
                         if (!string.IsNullOrEmpty(tkOpt) && !string.IsNullOrEmpty(ep.TheKingPersonality.OpeningBook))
