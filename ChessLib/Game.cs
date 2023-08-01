@@ -725,12 +725,12 @@ namespace ChessLib
 
             if (move == "0-0") {
                 // King castling
-                var moveRes = DoMoveKingCatling(move);
+                var moveRes = DoMoveKingCastling(move);
                 move = moveRes.Move;
                 res.AddRange(moveRes.Moves);
             } else if (move == "0-0-0") {
                 // Queen castling
-                var moveRes = DoMoveQueenCatling(move);
+                var moveRes = DoMoveQueenCastling(move);
                 move = moveRes.Move;
                 res.AddRange(moveRes.Moves);
             } else {
@@ -2049,7 +2049,7 @@ namespace ChessLib
             return res;
         } // GetAvailableSquaresRook
 
-        private MoveResult DoMoveKingCatling(string move)
+        private MoveResult DoMoveKingCastling(string move)
         {
             var res = new MoveResult();
 
@@ -2084,9 +2084,9 @@ namespace ChessLib
             res.Moves.Add(new Move(rookToSquare.Piece, rookSquare, rookToSquare) { CoordinateNotation = $"{rookSquare.Notation.ToLower()}{rookToSquare.Notation.ToLower()}" });
 
             return res;
-        } // DoMoveKingCatling
+        } // DoMoveKingCastling
 
-        private MoveResult DoMoveQueenCatling(string move)
+        private MoveResult DoMoveQueenCastling(string move)
         {
             var res = new MoveResult();
 
@@ -2121,7 +2121,7 @@ namespace ChessLib
             res.Moves.Add(new Move(rookToSquare.Piece, rookSquare, rookToSquare) { CoordinateNotation = $"{rookSquare.Notation.ToLower()}{rookToSquare.Notation.ToLower()}" });
 
             return res;
-        } // DoMoveQueenCatling
+        } // DoMoveQueenCastling
 
         private async Task<MoveResult> DoMoveNormal(string move, bool skipAvailableSquaresCheck)
         {
