@@ -429,7 +429,7 @@ namespace ChessLib
                 throw new ArgumentNullException(nameof(settings));
 
             // Check players
-            if (settings.Players == null || settings.Players.Count != 2 || settings.Players.Where(p => p.Color == Colors.White).Count() != 1)
+            if (settings.Players == null || settings.Players.Count != 2 || settings.Players.Count(p => p.Color == Colors.White) != 1)
                 throw new Exception("Invalid players");
 
             if (string.IsNullOrEmpty(settings.InitialFenPosition)) {
@@ -498,8 +498,8 @@ namespace ChessLib
                 await InitEnginePlayers();
 
                 StartedTime = DateTime.UtcNow;
-                BlackTimer?.Invoke(this, new EventArgs());
-                WhiteTimer?.Invoke(this, new EventArgs());
+                BlackTimer?.Invoke(this, EventArgs.Empty);
+                WhiteTimer?.Invoke(this, EventArgs.Empty);
                 if (FullmoveNumber > 0) {
                     if (ToMove == Colors.White) {
                         m_WhiteTimer.Start();
@@ -713,7 +713,7 @@ namespace ChessLib
 
                     if (Settings.IsChess960 && ToMovePlayer is HumanPlayer) {
                         if (CastlingConfirm != null)
-                            confirmed = await CastlingConfirm.Invoke(this, new EventArgs());
+                            confirmed = await CastlingConfirm.Invoke(this, EventArgs.Empty);
                     }
 
                     if ((confirmed && move == WhiteKingCastlingMove) || move == BlackKingCastlingMove)
@@ -777,7 +777,7 @@ namespace ChessLib
                     if (Status == Statuses.InProgress)
                         m_BlackTimer.Start();
                     WhiteTimeLeftMilliSecs += WhiteIncrementMillisecs;
-                    WhiteTimer?.Invoke(this, new EventArgs());
+                    WhiteTimer?.Invoke(this, EventArgs.Empty);
                 }
                 m_WhiteTimer.Stop();
             } else {
@@ -786,7 +786,7 @@ namespace ChessLib
                     if (Status == Statuses.InProgress)
                         m_WhiteTimer.Start();
                     BlackTimeLeftMilliSecs += BlackIncrementMillisecs;
-                    BlackTimer?.Invoke(this, new EventArgs());
+                    BlackTimer?.Invoke(this, EventArgs.Empty);
                 }
                 m_BlackTimer.Stop();
             }
@@ -870,8 +870,8 @@ namespace ChessLib
                 else
                     m_BlackTimer.Start();
             }
-            BlackTimer?.Invoke(this, new EventArgs());
-            WhiteTimer?.Invoke(this, new EventArgs());
+            BlackTimer?.Invoke(this, EventArgs.Empty);
+            WhiteTimer?.Invoke(this, EventArgs.Empty);
             return true;
         } // UndoLastHumanPlayerMove
 
@@ -1570,7 +1570,7 @@ namespace ChessLib
                     move.LongAlgebraic = $"{move.LongAlgebraic} 1-0";
                 }
             }
-            BlackTimer?.Invoke(this, new EventArgs());
+            BlackTimer?.Invoke(this, EventArgs.Empty);
         } // BlackTimerElapsed
 
         private async void OnWhiteTimerElapsed(object sender, System.Timers.ElapsedEventArgs e)
@@ -1594,7 +1594,7 @@ namespace ChessLib
                     move.LongAlgebraic = $"{move.LongAlgebraic} 0-1";
                 }
             }
-            WhiteTimer?.Invoke(this, new EventArgs());
+            WhiteTimer?.Invoke(this, EventArgs.Empty);
         } // WhiteTimerElapsed
 
         /// <summary>

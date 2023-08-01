@@ -103,7 +103,7 @@ namespace CoreChess.Controls
             }
 
             if (completed)
-                AnalyzeCompleted?.Invoke(this, new EventArgs());
+                AnalyzeCompleted?.Invoke(this, EventArgs.Empty);
         }
 
         public async Task<bool> Abort()
