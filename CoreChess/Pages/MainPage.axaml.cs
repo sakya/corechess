@@ -26,10 +26,10 @@ namespace CoreChess.Pages
     public partial class MainPage : BasePage
     {
         #region classes
-        class Context : INotifyPropertyChanged
+        private class Context : INotifyPropertyChanged
         {
             #region commands
-            class MoveNotationCommand : ICommand
+            private class MoveNotationCommand : ICommand
             {
                 Context m_Owner;
                 public event EventHandler CanExecuteChanged
@@ -59,7 +59,7 @@ namespace CoreChess.Pages
                 }
             }
 
-            class CapturedPiecesCommand : ICommand
+            private class CapturedPiecesCommand : ICommand
             {
                 Context m_Owner;
                 public event EventHandler CanExecuteChanged
@@ -89,7 +89,7 @@ namespace CoreChess.Pages
                 }
             }
 
-            class ShowEngineOutputCommand : ICommand
+            private class ShowEngineOutputCommand : ICommand
             {
                 Context m_Owner;
                 public event EventHandler CanExecuteChanged
@@ -118,7 +118,7 @@ namespace CoreChess.Pages
                 }
             }
 
-            class ZenModeCommand : ICommand
+            private class ZenModeCommand : ICommand
             {
                 Context m_Owner;
                 public event EventHandler CanExecuteChanged
@@ -165,7 +165,6 @@ namespace CoreChess.Pages
                     }
                 }
             }
-
             #endregion
 
             bool m_IsResignEnabled = true;
