@@ -113,8 +113,8 @@ namespace CoreChess.Pages
                     App.Settings.Save(App.SettingsPath);
                     m_Owner.ShowEngineOutput = App.Settings.ShowEngineOutput;
 
-                    if (!m_Owner.Page.FindControl<Border>("m_GameAnalyzeSection").IsVisible)
-                        m_Owner.Page.FindControl<Border>("m_EngineMessageSection").IsVisible = App.Settings.ShowEngineOutput;
+                    if (!m_Owner.Page.m_GameAnalyzeSection.IsVisible)
+                        m_Owner.Page.m_EngineMessageSection.IsVisible = App.Settings.ShowEngineOutput;
                 }
             }
 
@@ -143,24 +143,22 @@ namespace CoreChess.Pages
                     if (m_Owner.ZenMode) {
                         m_Owner.Page.MinWidth = 0;
                         App.MainWindow.SaveWindowSizeAndPosition();
-                        m_Owner.Page.FindControl<Grid>("m_SidePanel").IsVisible = false;
-                        m_Owner.Page.FindControl<Menu>("m_Menu").IsVisible = false;
+                        m_Owner.Page.m_SidePanel.IsVisible = false;
+                        m_Owner.Page.m_Menu.IsVisible = false;
                         if (App.MainWindow.WindowState == WindowState.Maximized)
                             m_Owner.ContentAlignment = "Center";
                         else {
                             m_Owner.ContentAlignment = "Stretch";
                             App.MainWindow.UpdateLayout();
-                            var cb = m_Owner.Page.FindControl<Chessboard>("m_Chessboard");
-                            var content = m_Owner.Page.FindControl<Grid>("m_Content");
-                            App.MainWindow.Width = cb.Width + content.Margin.Left + content.Margin.Right;
+                            App.MainWindow.Width = m_Owner.Page.m_Chessboard.Width + m_Owner.Page.m_Content.Margin.Left + m_Owner.Page.m_Content.Margin.Right;
                             App.MainWindow.MaxWidth = App.MainWindow.Width;
                         }
                         App.MainWindow.CanResize = false;
                     } else {
                         App.MainWindow.MinWidth = 600;
                         App.MainWindow.MaxWidth = double.PositiveInfinity;
-                        m_Owner.Page.FindControl<Grid>("m_SidePanel").IsVisible = true;
-                        m_Owner.Page.FindControl<Menu>("m_Menu").IsVisible = true;
+                        m_Owner.Page.m_SidePanel.IsVisible = true;
+                        m_Owner.Page.m_Menu.IsVisible = true;
                         App.MainWindow.RestoreWindowSizeAndPosition();
                         m_Owner.ContentAlignment = "Stretch";
                         App.MainWindow.CanResize = true;
