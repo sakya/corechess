@@ -1599,7 +1599,7 @@ namespace ChessLib
 
         /// <summary>
         /// Return all the available squares for a piece.
-        /// This mehtod does not check for king check.
+        /// This method does not check for king check.
         /// </summary>
         /// <param name="startSquare">The <see cref="Piece"/> <see cref="Board.Square"/></param>
         /// <param name="avoidCastling"></param>
@@ -1641,7 +1641,7 @@ namespace ChessLib
 
         /// <summary>
         /// Check if it is possible to castle from a square to another
-        /// Check that the squaress are empty and not under attack of other pieces
+        /// Check that the squares are empty and not under attack of other pieces
         /// </summary>
         /// <param name="color">The King color</param>
         /// <param name="fromFile">The file from</param>
