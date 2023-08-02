@@ -30,15 +30,6 @@ CoreChess is an open source chess GUI for chess engines
 
 ![image](https://user-images.githubusercontent.com/289552/154836456-ee2f555c-8756-431b-b7d0-4c27f939226b.png)
 
-## Download
-<a href="https://flathub.org/apps/details/com.github.sakya.corechess" align="center">
-  <img width="200" src="https://flathub.org/assets/badges/flathub-badge-en.png">
-</a>
-<br/>
-<a href="https://github.com/sakya/corechess/releases" align="center">
-  <img width="100" src="https://user-images.githubusercontent.com/289552/156829426-1d0a50be-8adf-4c06-bfee-259378b974a3.png">
-</a>
-
 ## Build from source
 ### Prerequisites
 - [.NET 7.0 SDK](https://dotnet.microsoft.com/en-us/download/dotnet/7.0)
@@ -57,3 +48,12 @@ CoreChess is an open source chess GUI for chess engines
 
 #### macOS
 `dotnet publish CoreChess.sln -c Release --runtime osx-x64 -p:PublishReadyToRun=true --self-contained --output .\dist\osx-x64`
+
+## Download
+<a href="https://flathub.org/apps/details/com.github.sakya.corechess" align="center">
+  <img width="200" src="https://flathub.org/assets/badges/flathub-badge-en.png">
+</a>
+<br/>
+<a href="https://github.com/sakya/corechess/releases" align="center">
+  <img width="100" src="https://user-images.githubusercontent.com/289552/156829426-1d0a50be-8adf-4c06-bfee-259378b974a3.png">
+</a>
