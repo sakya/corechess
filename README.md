@@ -42,22 +42,18 @@ CoreChess is an open source chess GUI for chess engines
 ## Build from source
 ### Prerequisites
 - [.NET 7.0 SDK](https://dotnet.microsoft.com/en-us/download/dotnet/7.0)
-- git
+- 
 ### Build instructions
-Clone the source code with the command
+- Download the source code of the latest [release](https://github.com/sakya/corechess/releases)
+- Unzip the source code
+- With a terminal/command prompt enter the directory corechess-x.x.x.x
+- Execute the build command for your OS
 
-`git clone https://github.com/sakya/corechess.git`
 #### Linux
-In the corechess folder run the command
-
 `dotnet publish CoreChess.sln -c Release --runtime linux-x64 -p:PublishReadyToRun=true --self-contained --output ./dist/linux-x64`
 
 #### Windows
-In the corechess folder run the command
-
 `dotnet publish CoreChess.sln -c Release --runtime win-x64 -p:PublishReadyToRun=true --self-contained --output .\dist\win-x64`
 
 #### macOS
-In the corechess folder run the command
-
 `dotnet publish CoreChess.sln -c Release --runtime osx-x64 -p:PublishReadyToRun=true --self-contained --output .\dist\osx-x64`
