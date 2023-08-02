@@ -308,7 +308,7 @@ namespace CoreChess.Controls
         public void StartGame()
         {
             this.IsHitTestVisible = true;
-            if (!m_Game.Ended && m_Game.ToMovePlayer is EnginePlayer && (m_Game.ToMovePlayer as EnginePlayer).Engine != null) {
+            if (!m_Game.Ended && m_Game.ToMovePlayer is EnginePlayer player && player.Engine != null) {
                 // Don't wait this move
                 _ = DoEngineMove();
             }
@@ -495,7 +495,7 @@ namespace CoreChess.Controls
             MoveMade?.Invoke(this, EventArgs.Empty);
             if (m_Game.Result != null)
                 InvokeGameEnded();
-            else if (m_Game.ToMovePlayer is EnginePlayer && (m_Game.ToMovePlayer as EnginePlayer).Engine != null) {
+            else if (m_Game.ToMovePlayer is EnginePlayer player && player.Engine != null) {
                 // Don't wait this move
                 _ = DoEngineMove();
             }
