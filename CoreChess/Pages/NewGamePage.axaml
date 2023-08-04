@@ -26,9 +26,11 @@
 
         <controls:PlayerControl Grid.Row="0" Grid.Column="0" Name="m_Player1"
                                 Margin="0,0,5,0"
+                                IsHumanChanged="OnIsHumanChanged"
                                 ColorChanged="OnPlayer1ColorChanged"
                                 SupportChess960Changed="OnPlayerSupportChess960Changed"/>
         <controls:PlayerControl Grid.Row="0" Grid.Column="1" Name="m_Player2"
+                                IsHumanChanged="OnIsHumanChanged"
                                 ColorChanged="OnPlayer2ColorChanged"
                                 SupportChess960Changed="OnPlayerSupportChess960Changed"
                                 Margin="5,0,5,0"/>
@@ -59,7 +61,7 @@
             <NumericUpDown Name="m_TimeIncrement" FormatString="0" Minimum="0" Margin="0,5,0,5" />
           </StackPanel>
 
-          <Grid Grid.Row="3" Margin="0,0,0,5">
+          <Grid Name="m_TrainingModeGrid" Grid.Row="3" Margin="0,0,0,5">
             <Grid.ColumnDefinitions>
               <ColumnDefinition Width="*" />
               <ColumnDefinition Width="Auto" />

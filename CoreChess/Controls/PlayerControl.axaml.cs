@@ -17,6 +17,9 @@ public partial class PlayerControl : UserControl
     public delegate void ColorChangeHandler(Game.Colors? color);
     public event ColorChangeHandler ColorChanged;
 
+    public delegate void IsHumanChangeHandler(bool isHuman);
+    public event IsHumanChangeHandler IsHumanChanged;
+
     public delegate void SupportChess960ChangeHandler(bool supported);
     public event SupportChess960ChangeHandler SupportChess960Changed;
 
@@ -90,6 +93,7 @@ public partial class PlayerControl : UserControl
                     m_Engines.SelectedIndex = 0;
                 OnEngineChanged(null, null);
             }
+            IsHumanChanged?.Invoke(m_IsHuman);
         }
     }
 

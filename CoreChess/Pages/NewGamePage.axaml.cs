@@ -87,7 +87,7 @@ namespace CoreChess.Dialogs
             App.Settings.NewGame = new Settings.NewGameSettings()
             {
                 MaxTime = maxTime,
-                TrainingMode = m_TrainingMode.IsChecked == true,
+                TrainingMode = m_TrainingModeGrid.IsVisible && m_TrainingMode.IsChecked == true,
                 TimeIncrement = TimeSpan.FromSeconds((double)m_TimeIncrement.Value),
                 Chess960 = m_GameType.SelectedIndex == 1,
                 Players = new List<Settings.NewGameSettings.Player>()
@@ -102,7 +102,7 @@ namespace CoreChess.Dialogs
             Result = new NewGameResult()
             {
                 MaxTime = maxTime,
-                TrainingMode = m_TrainingMode.IsChecked == true,
+                TrainingMode = m_TrainingModeGrid.IsVisible && m_TrainingMode.IsChecked == true,
                 TimeIncrement = TimeSpan.FromSeconds((double)m_TimeIncrement.Value),
                 Chess960 = m_GameType.SelectedIndex == 1,
                 Players = new List<Settings.NewGameSettings.Player>()
@@ -158,6 +158,11 @@ namespace CoreChess.Dialogs
             } else {
                 m_GameTypeStack.IsVisible = true;
             }
+        }
+
+        private void OnIsHumanChanged(bool isHuman)
+        {
+            m_TrainingModeGrid.IsVisible = m_Player1.IsHuman || m_Player2.IsHuman;
         }
     }
 }
