@@ -1,9 +1,6 @@
-using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
-using Avalonia.Markup.Xaml;
 using Avalonia.Platform.Storage;
-using CoreChess.Views;
 
 namespace CoreChess.Controls;
 
@@ -21,6 +18,9 @@ public partial class OpeningBookComboBox : UserControl
         get => m_OpeningBook.Text;
         set
         {
+            if (!System.IO.File.Exists(value))
+                value = Settings.InternalOpeningBook;
+
             m_OpeningBook.Text = value;
             if (string.IsNullOrEmpty(value))
                 m_OpeningBookType.SelectedIndex = 0;
@@ -42,7 +42,7 @@ public partial class OpeningBookComboBox : UserControl
             _ => m_OpeningBook.Text
         };
         m_OpeningBookCustom.IsVisible = cb.SelectedIndex == 2;
-    } // OnOpeningBookTypeChanged
+    }
 
     private async void OnOpeningBookClick(object sender, RoutedEventArgs e)
     {

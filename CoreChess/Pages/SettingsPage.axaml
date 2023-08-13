@@ -68,7 +68,7 @@
             <NumericUpDown Grid.Row="6" Grid.Column="1" Name="m_MaxEngineDepth" IsVisible="False"
                            FormatString="0" Minimum="0"/>
 
-            <TextBlock Grid.Row="7" Text="{i18n:Localize OpeningBook}" VerticalAlignment="Center" Margin="0,5,0,5" />
+            <TextBlock Grid.Row="7" Text="{i18n:Localize DefaultOpeningBook}" VerticalAlignment="Center" Margin="0,5,0,5" />
             <controls:OpeningBookComboBox Grid.Row="7" Grid.Column="1" Margin="0,5,0,5" Name="m_OpeningBook" />
           </Grid>
         </ScrollViewer>

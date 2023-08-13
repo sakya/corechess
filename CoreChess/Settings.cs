@@ -88,7 +88,7 @@ namespace CoreChess
             BlackColor = "#ff769656";
             BlackSelectedColor = "#ffbbcb44";
 
-            OpeningBook = InternalOpeningBook;
+            DefaultOpeningBook = InternalOpeningBook;
         }
 
         public string Version { get; set; }
@@ -127,7 +127,7 @@ namespace CoreChess
         public string WhiteSelectedColor { get; set; }
         public string BlackColor { get; set; }
         public string BlackSelectedColor { get; set; }
-        public string OpeningBook { get; set; }
+        public string DefaultOpeningBook { get; set; }
         public bool ShowEngineOutput { get; set; }
         public bool AutoAnalyzeGames { get; set; }
         public Notations MoveNotation { get; set; }

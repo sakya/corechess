@@ -1058,7 +1058,7 @@ namespace CoreChess.Pages
 
                 var enginePlayer = new EnginePlayer(Game.Colors.Black, lastUsedEngine?.Name, lastUsedEngine?.GetElo());
                 enginePlayer.Engine = lastUsedEngine?.Copy();
-                enginePlayer.OpeningBookFileName = App.Settings.OpeningBook;
+                enginePlayer.OpeningBookFileName = App.Settings.DefaultOpeningBook;
                 settings.Players.Add(enginePlayer);
 
                 game.Init(settings);

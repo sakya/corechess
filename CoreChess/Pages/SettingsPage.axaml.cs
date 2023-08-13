@@ -144,7 +144,7 @@ namespace CoreChess.Pages
             m_MaxEngineThinkingTimeSecs.Value = App.Settings.MaxEngineThinkingTimeSecs;
             m_MaxEngineDepth.Value = App.Settings.MaxEngineDepth ?? 0;
 
-            m_OpeningBook.Value = App.Settings.OpeningBook;
+            m_OpeningBook.Value = App.Settings.DefaultOpeningBook;
 
             // Color theme
             m_ColorTheme.ItemsSource = m_ColorThemes;
@@ -266,7 +266,7 @@ namespace CoreChess.Pages
             else
                 App.Settings.MaxEngineDepth = null;
 
-            App.Settings.OpeningBook = m_OpeningBook.Value;
+            App.Settings.DefaultOpeningBook = m_OpeningBook.Value;
 
             App.Settings.PiecesSet = ((PiecesSet)m_PiecesSet.SelectedItem).Name;
 
