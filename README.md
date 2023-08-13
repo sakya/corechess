@@ -26,7 +26,7 @@ CoreChess is an open source chess GUI for chess engines
 - Chessmaster (OBK)
 
 ## Screenshots
-![image](https://github.com/sakya/corechess/assets/289552/b2563f31-d8f4-4a0a-9fb1-77e4c7e5fe8d)
+![image](https://github.com/sakya/corechess/assets/289552/67f43b11-df2a-4716-af74-ca1ce1e584c3)
 
 ![image](https://github.com/sakya/corechess/assets/289552/6037c09b-0f77-4930-846c-aeb59c618af4)
 
