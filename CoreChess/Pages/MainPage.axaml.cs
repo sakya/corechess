@@ -445,7 +445,7 @@ namespace CoreChess.Pages
 
         public async void OnMoveMade(object sender, EventArgs e)
         {
-            m_Context.IsResignEnabled = m_Game.FullMoveNumber > 0;
+            m_Context.IsResignEnabled = CanResign();
             UpdateCapturedPieces();
 
             using (var game = new Game()) {
@@ -564,7 +564,7 @@ namespace CoreChess.Pages
                             enginePlayer.Engine = engine;
                             enginePlayer.Personality = player.Personality;
                             enginePlayer.TheKingPersonality = player.TheKingPersonality;
-                            enginePlayer.OpeningBookFileName = App.Settings.OpeningBook;
+                            enginePlayer.OpeningBookFileName = player.OpeningBook;
 
                             p = enginePlayer;
                         }
@@ -643,7 +643,7 @@ namespace CoreChess.Pages
         {
             if (!m_Game.Ended) {
                 await m_Chessboard.UndoMove();
-                m_Context.IsResignEnabled = m_Game.FullMoveNumber > 0;
+                m_Context.IsResignEnabled = CanResign();
                 UpdateCapturedPieces();
                 await UpdateMoves();
             }
@@ -1477,7 +1477,7 @@ namespace CoreChess.Pages
             }
 
             m_Context.CanPause = !m_Game.Ended;
-            m_Context.IsResignEnabled = m_Game.FullMoveNumber > 0 && !m_Game.Ended;
+            m_Context.IsResignEnabled = CanResign();
             SetChessboardOptions();
 
             try {
@@ -1650,6 +1650,14 @@ namespace CoreChess.Pages
 
             m_Mru.ItemsSource = items;
             m_Mru.IsVisible = items.Count > 0;
+        }
+
+        private bool CanResign()
+        {
+            if (m_Game == null)
+                return false;
+            return m_Game.Settings.Players.Any(p => p is HumanPlayer) &&
+                   m_Game.FullMoveNumber > 0 && !m_Game.Ended;
         }
         #endregion
     }
