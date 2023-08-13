@@ -56,6 +56,7 @@
   "AutoAnalyzeGames": "Analizza partite automaticamente",
   "AutoPauseWhenMinimized": "Pausa automatica quando minimizzato",
   "black": "il nero",
+  "Black": "Nero",
   "BlackFilesColor": "Coloro case nere",
   "BlackFilesSelectedColor": "Colore case nere selezionate",
   "Cancel": "Annulla",
@@ -160,6 +161,7 @@
   "Update": "Aggiorna",
   "UpdateError": "Si è verificato un errore:",
   "white": "il bianco",
+  "White": "Bianco",
   "WhiteFilesColor": "Colore case bianche",
   "WhiteFilesSelectedColor": "Colore case bianche selezionate",
   "Yes": "Sì"

@@ -167,31 +167,32 @@ namespace CoreChess.Pages
             }
             #endregion
 
-            bool m_IsResignEnabled = true;
-            bool m_CanPause = true;
-            bool m_IsPaused;
-            bool m_IsWindows;
-            bool m_CheckingForUpdates;
-            Settings.Notations? m_MoveNotation;
-            Settings.CapturedPiecesDisplay? m_CapturedPieces;
-            bool m_ShowEngineOutput;
-            bool m_ZenMode;
-            string m_ContentAlignment = "Stretch";
-            string m_WhiteName = string.Empty;
-            int? m_WhiteElo;
-            string m_BlackName = string.Empty;
-            int? m_BlackElo;
-            string m_WhiteTime = string.Empty;
-            string m_BlackTime = string.Empty;
-            string m_EcoName = string.Empty;
+            private bool m_IsResignEnabled;
+            private bool m_isEngineSettingsEnabled;
+            private bool m_CanPause;
+            private bool m_IsPaused;
+            private bool m_IsWindows;
+            private bool m_CheckingForUpdates;
+            private Settings.Notations? m_MoveNotation;
+            private Settings.CapturedPiecesDisplay? m_CapturedPieces;
+            private bool m_ShowEngineOutput;
+            private bool m_ZenMode;
+            private string m_ContentAlignment = "Stretch";
+            private string m_WhiteName = string.Empty;
+            private int? m_WhiteElo;
+            private string m_BlackName = string.Empty;
+            private int? m_BlackElo;
+            private string m_WhiteTime = string.Empty;
+            private string m_BlackTime = string.Empty;
+            private string m_EcoName = string.Empty;
 
             public event PropertyChangedEventHandler PropertyChanged;
 
             public Context(MainPage window)
             {
                 Page = window;
-                IsResignEnabled = true;
-                CanPause = true;
+                IsResignEnabled = false;
+                CanPause = false;
                 OnMoveNotationClick = new MoveNotationCommand(this);
                 OnCapturedPiecesClick = new CapturedPiecesCommand(this);
                 OnShowEngineOutputClick = new ShowEngineOutputCommand(this);
@@ -228,6 +229,12 @@ namespace CoreChess.Pages
             {
                 get { return m_IsResignEnabled; }
                 set { SetIfChanged(ref m_IsResignEnabled, value); }
+            }
+
+            public bool IsEngineSettingsEnabled
+            {
+                get { return m_isEngineSettingsEnabled; }
+                set { SetIfChanged(ref m_isEngineSettingsEnabled, value); }
             }
 
             public Settings.Notations? MoveNotation
@@ -646,6 +653,7 @@ namespace CoreChess.Pages
             if (!m_Game.Ended) {
                 await m_Chessboard.UndoMove();
                 m_Context.IsResignEnabled = CanResignOrPause();
+                m_Context.CanPause = CanResignOrPause();
                 UpdateCapturedPieces();
                 await UpdateMoves();
             }
@@ -1470,7 +1478,6 @@ namespace CoreChess.Pages
             if (m_Game.Ended) {
                 SetAnalyzeMode();
             } else {
-                m_Context.IsResignEnabled = true;
                 m_CurrentMoveIndex = null;
                 m_MoveNavigator.IsVisible = false;
                 m_GameAnalyzeSection.IsVisible = false;
@@ -1481,6 +1488,7 @@ namespace CoreChess.Pages
                 m_ViewCommentBtn.IsVisible = false;
             }
 
+            m_Context.IsEngineSettingsEnabled = m_Game.Settings.Players.Any(p => p is EnginePlayer);
             m_Context.CanPause = CanResignOrPause();
             m_Context.IsResignEnabled = CanResignOrPause();
             SetChessboardOptions();
@@ -1527,7 +1535,8 @@ namespace CoreChess.Pages
 
         private void SetAnalyzeMode()
         {
-            m_Context.IsResignEnabled = false;
+            m_Context.IsResignEnabled = CanResignOrPause();
+            m_Context.CanPause = CanResignOrPause();
             m_PauseBtn.IsVisible = false;
             m_WhiteTimeLeft.IsVisible = false;
             m_BlackTimeLeft.IsVisible = false;

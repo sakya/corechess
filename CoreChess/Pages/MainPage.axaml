@@ -68,7 +68,7 @@
             <i:Icon FontSize="14" Value="fas fa-copy" />
           </MenuItem.Icon>
         </MenuItem>
-        <MenuItem Header="{i18n:Localize _EngineSettings}" Click="OnEngineSettingsClick">
+        <MenuItem Header="{i18n:Localize _EngineSettings}" IsEnabled="{Binding IsEngineSettingsEnabled}" Click="OnEngineSettingsClick">
           <MenuItem.Icon>
             <i:Icon FontSize="14" Value="fas fa-cog" />
           </MenuItem.Icon>

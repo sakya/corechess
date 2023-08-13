@@ -56,6 +56,7 @@
   "AutoAnalyzeGames": "Auto analyze games",
   "AutoPauseWhenMinimized": "Auto pause when minimized",
   "black": "black",
+  "Black": "Black",
   "BlackFilesColor": "Black squares color",
   "BlackFilesSelectedColor": "Black squares selected color",
   "Cancel": "Cancel",
@@ -160,6 +161,7 @@
   "Update": "Update",
   "UpdateError": "An error occurred:",
   "white": "white",
+  "White": "White",
   "WhiteFilesColor": "White squares color",
   "WhiteFilesSelectedColor": "White squares selected color",
   "Yes": "Yes"
