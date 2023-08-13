@@ -27,9 +27,9 @@ namespace ChessLib.Engines
 
         private StringBuilder m_EngineError = new StringBuilder();
         private StringBuilder m_ProcessOutput = new StringBuilder();
-        private Semaphore m_ProcessOutputSema = null;
-        private Semaphore m_ProcessInputSema = null;
-        private Process m_Process = null;
+        private Semaphore m_ProcessOutputSema;
+        private Semaphore m_ProcessInputSema;
+        private Process m_Process;
         public Uci(string name, string command)
             : base(name, command)
         {
@@ -66,10 +66,10 @@ namespace ChessLib.Engines
                 m_Process.Start();
                 m_Process.BeginOutputReadLine();
                 m_Process.BeginErrorReadLine();
-            } catch (Exception ex) {
+            } catch (Exception) {
                 m_Process.Dispose();
                 m_Process = null;
-                throw ex;
+                throw;
             }
             string startOutput = await ReadOutput(string.Empty, TimeSpan.FromSeconds(1));
 
@@ -346,7 +346,7 @@ namespace ChessLib.Engines
 
         public override async Task<AnalyzeResult> Analyze(string fen, int? depth, TimeSpan? maxTimeSpan, CancellationToken token)
         {
-            string[] parts = fen?.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+            string[] parts = fen?.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
             if (parts != null) {
                 var res = new AnalyzeResult(parts[1] == "w" ? Game.Colors.White : Game.Colors.Black, new Info.ScoreValue());
                 await SetPosition(fen, new List<string>());
@@ -385,7 +385,7 @@ namespace ChessLib.Engines
             Info res = null;
             int value = 0;
 
-            List<string> parts = output.Replace("\t", string.Empty).ToLower().Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries).ToList();
+            List<string> parts = output.Replace("\t", string.Empty).ToLower().Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries).ToList();
             int idx = parts.IndexOf("score");
             if (idx >= 0) {
                 res = new Info();
@@ -494,16 +494,16 @@ namespace ChessLib.Engines
                         outputCallback.Invoke(line);
                 }
 
-                int idx = output.IndexOf("bestmove ");
+                int idx = output.IndexOf("bestmove ", StringComparison.Ordinal);
                 if (idx >= 0) {
                     string move = output.Substring(idx + 9);
                     string ponderMove = string.Empty;
-                    idx = move.IndexOf(" ");
+                    idx = move.IndexOf(" ", StringComparison.Ordinal);
                     if (idx >= 0)
                         move = move.Substring(0, idx);
 
                     // Check ponder
-                    idx = output.IndexOf("ponder ");
+                    idx = output.IndexOf("ponder ", StringComparison.Ordinal);
                     if (idx > 0)
                         ponderMove = output.Substring(idx + 7);
 
@@ -511,7 +511,7 @@ namespace ChessLib.Engines
                         return null;
                     return new BestMove(move.Trim(), ponderMove.Trim());
                 }
-                await Task.Delay(100);
+                await Task.Delay(100, token);
             }
         } // GetBestMovePrimitive
 
