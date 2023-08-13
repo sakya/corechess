@@ -39,6 +39,7 @@ public partial class PlayerControl : UserControl
         m_EngineEloStack.IsVisible = false;
         m_PersonalityStack.IsVisible = false;
         m_TheKingPersonalityStack.IsVisible = false;
+        m_OpeningBookStack.IsVisible = false;
         m_EngineElo.Value = 0;
     }
 
@@ -84,6 +85,7 @@ public partial class PlayerControl : UserControl
                 m_EngineEloStack.IsVisible = false;
                 m_PersonalityStack.IsVisible = false;
                 m_TheKingPersonalityStack.IsVisible = false;
+                m_OpeningBookStack.IsVisible = false;
 
                 SupportChess960 = true;
             } else {
@@ -153,6 +155,12 @@ public partial class PlayerControl : UserControl
         }
     }
 
+    public string OpeningBook
+    {
+        get => m_OpeningBook.Value;
+        set => m_OpeningBook.Value = value;
+    }
+
     private void OnWhiteClick(object sender, RoutedEventArgs e)
     {
         m_WhiteBtn.IsChecked = true;
@@ -194,6 +202,7 @@ public partial class PlayerControl : UserControl
 
         SupportChess960 = engine.SupportChess960();
         m_EngineEloStack.IsVisible = engine.CanSetElo();
+        m_OpeningBookStack.IsVisible = true;
 
         m_EngineElo.Maximum = engine.GetMaxElo();
         m_EngineElo.Minimum = engine.GetMinElo();

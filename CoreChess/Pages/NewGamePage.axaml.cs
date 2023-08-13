@@ -64,6 +64,7 @@ namespace CoreChess.Dialogs
             ctrl.EngineElo = player.EngineElo;
             ctrl.EnginePersonality = player.Personality;
             ctrl.TheKingPersonality = player.TheKingPersonality;
+            ctrl.OpeningBook = player.OpeningBook;
         }
 
         private Settings.NewGameSettings.Player GetPlayer(PlayerControl ctrl, Game.Colors? color = null)
@@ -75,7 +76,8 @@ namespace CoreChess.Dialogs
                 EngineId = ctrl.EngineId,
                 EngineElo = ctrl.EngineElo,
                 Personality = ctrl.EnginePersonality,
-                TheKingPersonality = ctrl.TheKingPersonality
+                TheKingPersonality = ctrl.TheKingPersonality,
+                OpeningBook = ctrl.OpeningBook
             };
         }
 

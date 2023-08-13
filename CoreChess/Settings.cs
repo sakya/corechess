@@ -24,6 +24,7 @@ namespace CoreChess
                 public int? EngineElo { get; set; }
                 public string Personality { get; set; }
                 public ChessLib.Engines.TheKing.Personality TheKingPersonality { get; set; }
+                public string OpeningBook { get; set; }
 
                 public bool IsHuman => string.IsNullOrEmpty(EngineId);
             }
