@@ -1,7 +1,7 @@
 # **CoreChess**
 
 CoreChess is an open source chess GUI for chess engines
-![image](https://user-images.githubusercontent.com/289552/152684938-7231401d-e5ab-48bb-a445-06c139f64885.png)
+![image](https://github.com/sakya/corechess/assets/289552/43725612-5c77-4be0-9adf-d5a8b1705f97)
 - Human vs Engine mode
 - Human vs Human  mode.
 - Engine vs Engine mode.
@@ -26,9 +26,9 @@ CoreChess is an open source chess GUI for chess engines
 - Chessmaster (OBK)
 
 ## Screenshots
-![image](https://user-images.githubusercontent.com/289552/154836433-9529064c-9621-477f-ad5f-425ff4badbed.png)
+![image](https://github.com/sakya/corechess/assets/289552/b2563f31-d8f4-4a0a-9fb1-77e4c7e5fe8d)
 
-![image](https://user-images.githubusercontent.com/289552/154836456-ee2f555c-8756-431b-b7d0-4c27f939226b.png)
+![image](https://github.com/sakya/corechess/assets/289552/6037c09b-0f77-4930-846c-aeb59c618af4)
 
 ## Build from source
 ### Prerequisites
