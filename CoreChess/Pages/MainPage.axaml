@@ -199,7 +199,9 @@
           </StackPanel>
         </Grid>
 
-        <Button Name="m_PauseBtn" Classes="Small Left" Grid.Column="1" Click="OnPauseClick" ToolTip.Tip="Pause (Ctrl-P)" Width="40" Height="40">
+        <Button Name="m_PauseBtn" Classes="Small Left" Grid.Column="1" Click="OnPauseClick"
+                IsEnabled="{Binding CanPause}"
+                ToolTip.Tip="Pause (Ctrl-P)" Width="40" Height="40">
           <StackPanel Orientation="Horizontal">
             <i:Icon Value="fas fa-pause" />
           </StackPanel>

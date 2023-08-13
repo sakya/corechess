@@ -445,7 +445,9 @@ namespace CoreChess.Pages
 
         public async void OnMoveMade(object sender, EventArgs e)
         {
-            m_Context.IsResignEnabled = CanResign();
+            m_Context.IsResignEnabled = CanResignOrPause();
+            m_Context.CanPause = CanResignOrPause();
+
             UpdateCapturedPieces();
 
             using (var game = new Game()) {
@@ -643,7 +645,7 @@ namespace CoreChess.Pages
         {
             if (!m_Game.Ended) {
                 await m_Chessboard.UndoMove();
-                m_Context.IsResignEnabled = CanResign();
+                m_Context.IsResignEnabled = CanResignOrPause();
                 UpdateCapturedPieces();
                 await UpdateMoves();
             }
@@ -802,10 +804,12 @@ namespace CoreChess.Pages
         {
             if (e.KeyModifiers == KeyModifiers.Control && e.Key == Key.P) {
                 e.Handled = true;
-                if (m_Game.Status == Game.Statuses.InProgress)
-                    OnPauseClick(null, new RoutedEventArgs());
-                else if (m_Game.Status == Game.Statuses.Paused)
-                    OnResumeClick(null, new RoutedEventArgs());
+                if (m_Context.CanPause) {
+                    if (m_Game.Status == Game.Statuses.InProgress)
+                        OnPauseClick(null, new RoutedEventArgs());
+                    else if (m_Game.Status == Game.Statuses.Paused)
+                        OnResumeClick(null, new RoutedEventArgs());
+                }
             }
 
             if (m_Context.IsPaused || e.Handled)
@@ -834,7 +838,8 @@ namespace CoreChess.Pages
                     OnUndoMoveClick(null, new RoutedEventArgs());
             } else if (e.KeyModifiers == KeyModifiers.Control && e.Key == Key.R) {
                 e.Handled = true;
-                OnResignClick(null, new RoutedEventArgs());
+                if (m_Context.IsResignEnabled)
+                    OnResignClick(null, new RoutedEventArgs());
             } else if (e.KeyModifiers == KeyModifiers.None && e.Key == Key.F1) {
                 e.Handled = true;
                 OnAboutClick(null, new RoutedEventArgs());
@@ -1476,8 +1481,8 @@ namespace CoreChess.Pages
                 m_ViewCommentBtn.IsVisible = false;
             }
 
-            m_Context.CanPause = !m_Game.Ended;
-            m_Context.IsResignEnabled = CanResign();
+            m_Context.CanPause = CanResignOrPause();
+            m_Context.IsResignEnabled = CanResignOrPause();
             SetChessboardOptions();
 
             try {
@@ -1652,7 +1657,7 @@ namespace CoreChess.Pages
             m_Mru.IsVisible = items.Count > 0;
         }
 
-        private bool CanResign()
+        private bool CanResignOrPause()
         {
             if (m_Game == null)
                 return false;
