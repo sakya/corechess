@@ -30,7 +30,6 @@ namespace CoreChess.Dialogs
             m_Player2.IsHuman = false;
             m_Player2.PlayerName = App.Settings.PlayerName;
 
-
             m_MaxTime.Value = 15;
             m_TimeIncrement.Value = 0;
             m_GameType.SelectedIndex = 0;
