@@ -26,7 +26,7 @@ namespace ChessLib.Books
                 return Move;
             } // GetMove
 
-            public int GetPriotity()
+            public int GetPriority()
             {
                 return Priority;
             }

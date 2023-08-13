@@ -59,19 +59,19 @@ namespace CoreChess.Pages
             public string BlackSelectedColor { get; set; }
         } // ColorTheme
 
-        public List<Style> m_StylesList = new List<Style>()
+        private List<Style> m_StylesList = new List<Style>()
         {
             new Style(Settings.Styles.Light, Localizer.Localizer.Instance["StyleLight"]),
             new Style(Settings.Styles.Dark, Localizer.Localizer.Instance["StyleDark"])
         };
 
-        public List<Language> m_SupportedLanguages = new List<Language>()
+        private List<Language> m_SupportedLanguages = new List<Language>()
         {
             new Language("en-US", "English"),
             new Language("it-IT", "Italian"),
         };
 
-        public List<ColorTheme> m_ColorThemes = new List<ColorTheme>()
+        private List<ColorTheme> m_ColorThemes = new List<ColorTheme>()
         {
             new ColorTheme("Custom", string.Empty, string.Empty, string.Empty, string.Empty),
             new ColorTheme("Default", "#ffeeeed2", "#fff7f783", "#ff769656", "#ffbbcb44"),
@@ -101,14 +101,14 @@ namespace CoreChess.Pages
             m_AccentButton.Color = Utils.ColorConverter.ParseHexColor(App.Settings.AccentColor);
             m_AccentButton.PropertyChanged += (s, e) =>
             {
-                if (e.Property.Name == ColorPicker.ColorProperty.Name)
+                if (e.Property.Name == ColorView.ColorProperty.Name)
                     Application.Current.Resources["SystemAccentColor"] = m_AccentButton.Color;
             };
 
             m_HighlightButton.Color = Utils.ColorConverter.ParseHexColor(App.Settings.HighlightColor);
             m_HighlightButton.PropertyChanged += (s, e) =>
             {
-                if (e.Property.Name == ColorPicker.ColorProperty.Name)
+                if (e.Property.Name == ColorView.ColorProperty.Name)
                     Application.Current.Resources["HighlightColor"] = m_HighlightButton.Color;
             };
 
@@ -144,14 +144,7 @@ namespace CoreChess.Pages
             m_MaxEngineThinkingTimeSecs.Value = App.Settings.MaxEngineThinkingTimeSecs;
             m_MaxEngineDepth.Value = App.Settings.MaxEngineDepth ?? 0;
 
-            if (string.IsNullOrEmpty(App.Settings.OpeningBook))
-                m_OpeningBookType.SelectedIndex = 0;
-            else if (App.Settings.OpeningBook == Settings.InternalOpeningBook)
-                m_OpeningBookType.SelectedIndex = 1;
-            else
-                m_OpeningBookType.SelectedIndex = 2;
-
-            m_OpeningBook.Text = App.Settings.OpeningBook;
+            m_OpeningBook.Value = App.Settings.DefaultOpeningBook;
 
             // Color theme
             m_ColorTheme.ItemsSource = m_ColorThemes;
@@ -243,45 +236,6 @@ namespace CoreChess.Pages
             m_BlackSelectedButton.IsEnabled = isCustom;
         } // OnColorThemeChanged
 
-        private void OnOpeningBookTypeChanged(object sender, SelectionChangedEventArgs args)
-        {
-            var cb = sender as ComboBox;
-            m_OpeningBook.Text = cb.SelectedIndex switch
-            {
-                0 => string.Empty,
-                1 => Settings.InternalOpeningBook,
-                2 when m_OpeningBook.Text == Settings.InternalOpeningBook => string.Empty,
-                _ => m_OpeningBook.Text
-            };
-            m_OpeningBookCustom.IsVisible = cb.SelectedIndex == 2;
-        } // OnOpeningBookTypeChanged
-
-        private async void OnOpeningBookClick(object sender, RoutedEventArgs e)
-        {
-            var files = await MainWindow.StorageProvider.OpenFilePickerAsync(new FilePickerOpenOptions()
-            {
-                AllowMultiple = false,
-                FileTypeFilter = new []
-                {
-                    new FilePickerFileType("Polyglot opening book")
-                    {
-                        Patterns = new []{ "*.bin" }
-                    },
-                    new FilePickerFileType("Arena opening book")
-                    {
-                        Patterns = new []{ "*.abk" }
-                    },
-                    new FilePickerFileType("Chessmaster opening book")
-                    {
-                        Patterns = new []{ "*.obk" }
-                    },
-                }
-            });
-            if (files?.Count > 0) {
-                m_OpeningBook.Text = files[0].Path.AbsolutePath;
-            }
-        } // OnOpeningBookClick
-
         private async void OnOkClick(object sender, RoutedEventArgs e)
         {
             App.Settings.PlayerName = m_PlayerName.Text;
@@ -312,7 +266,7 @@ namespace CoreChess.Pages
             else
                 App.Settings.MaxEngineDepth = null;
 
-            App.Settings.OpeningBook = m_OpeningBook.Text;
+            App.Settings.DefaultOpeningBook = m_OpeningBook.Value;
 
             App.Settings.PiecesSet = ((PiecesSet)m_PiecesSet.SelectedItem).Name;
 

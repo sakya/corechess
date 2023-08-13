@@ -143,10 +143,10 @@ namespace ChessLib
 
             public int? WhiteTimeLeftMilliSecs { get; set; }
             public int? BlackTimeLeftMilliSecs { get; set; }
-            public int HalfmoveClock { get; set; }
+            public int HalfMoveClock { get; set; }
         } // MoveNotation
 
-        class MoveResult
+        private class MoveResult
         {
             public MoveResult()
             {
@@ -260,7 +260,7 @@ namespace ChessLib
             ToMove = Colors.White;
             KingCastling = new List<Colors>();
             QueenCastling = new List<Colors>();
-            FullmoveNumber = 0;
+            FullMoveNumber = 0;
 
             m_WhiteTimer.Elapsed += OnWhiteTimerElapsed;
             m_BlackTimer.Elapsed += OnBlackTimerElapsed;
@@ -370,8 +370,8 @@ namespace ChessLib
         /// </summary>
         public List<MoveNotation> Moves { get; set; }
 
-        public int HalfmoveClock { get; set; }
-        public int FullmoveNumber { get; set; }
+        public int HalfMoveClock { get; set; }
+        public int FullMoveNumber { get; set; }
 
         public int WhiteTimeMilliSecs { get; set; }
         public int? WhiteTimeLeftMilliSecs { get; set; }
@@ -429,7 +429,7 @@ namespace ChessLib
                 throw new ArgumentNullException(nameof(settings));
 
             // Check players
-            if (settings.Players == null || settings.Players.Count != 2 || settings.Players.Where(p => p.Color == Colors.White).Count() != 1)
+            if (settings.Players == null || settings.Players.Count != 2 || settings.Players.Count(p => p.Color == Colors.White) != 1)
                 throw new Exception("Invalid players");
 
             if (string.IsNullOrEmpty(settings.InitialFenPosition)) {
@@ -464,9 +464,9 @@ namespace ChessLib
                     EnPassant = parts[3];
 
                 if (parts.Length > 4)
-                    HalfmoveClock = int.Parse(parts[4]);
+                    HalfMoveClock = int.Parse(parts[4]);
                 if (parts.Length > 5)
-                    FullmoveNumber = int.Parse(parts[5]);
+                    FullMoveNumber = int.Parse(parts[5]);
             }
 
             var kingSquare = Board.GetKingSquare(Colors.White);
@@ -498,9 +498,9 @@ namespace ChessLib
                 await InitEnginePlayers();
 
                 StartedTime = DateTime.UtcNow;
-                BlackTimer?.Invoke(this, new EventArgs());
-                WhiteTimer?.Invoke(this, new EventArgs());
-                if (FullmoveNumber > 0) {
+                BlackTimer?.Invoke(this, EventArgs.Empty);
+                WhiteTimer?.Invoke(this, EventArgs.Empty);
+                if (FullMoveNumber > 0) {
                     if (ToMove == Colors.White) {
                         m_WhiteTimer.Start();
                         m_BlackTimer.Stop();
@@ -553,7 +553,7 @@ namespace ChessLib
             if (Status == Statuses.Paused) {
                 Status = Statuses.InProgress;
                 if (ToMovePlayer is HumanPlayer) {
-                    if (FullmoveNumber > 0) {
+                    if (FullMoveNumber > 0) {
                         if (ToMovePlayer.Color == Colors.White)
                             m_WhiteTimer.Start();
                         else
@@ -570,8 +570,8 @@ namespace ChessLib
             if (!(ToMovePlayer is HumanPlayer))
                 throw new Exception("Not a human player");
             var res = await DoMove(move);
-            if (ToMovePlayer is EnginePlayer)
-                await (ToMovePlayer as EnginePlayer).Engine.ForceMove(res[0].CoordinateNotation.ToLower());
+            if (ToMovePlayer is EnginePlayer ep)
+                await ep.Engine.ForceMove(res[0].CoordinateNotation.ToLower());
             return res;
         } // DoHumanPlayerMove
 
@@ -619,10 +619,10 @@ namespace ChessLib
                         if (bookMoves.Count == 1) {
                             bookMove = bookMoves[0].GetMove();
                         } else {
-                            int totPriority = bookMoves.Sum(bm => bm.GetPriotity());
+                            int totPriority = bookMoves.Sum(bm => bm.GetPriority());
                             List<int> probs = new List<int>();
                             foreach (var bm in bookMoves) {
-                                probs.Add((int)Math.Round(bm.GetPriotity() / (double)totPriority * 100.0, 0));
+                                probs.Add((int)Math.Round(bm.GetPriority() / (double)totPriority * 100.0, 0));
                             }
                             bookMove = bookMoves[m_Rnd.GetAlias(probs)].GetMove();
                         }
@@ -713,7 +713,7 @@ namespace ChessLib
 
                     if (Settings.IsChess960 && ToMovePlayer is HumanPlayer) {
                         if (CastlingConfirm != null)
-                            confirmed = await CastlingConfirm.Invoke(this, new EventArgs());
+                            confirmed = await CastlingConfirm.Invoke(this, EventArgs.Empty);
                     }
 
                     if ((confirmed && move == WhiteKingCastlingMove) || move == BlackKingCastlingMove)
@@ -725,12 +725,12 @@ namespace ChessLib
 
             if (move == "0-0") {
                 // King castling
-                var moveRes = DoMoveKingCatling(move);
+                var moveRes = DoMoveKingCastling(move);
                 move = moveRes.Move;
                 res.AddRange(moveRes.Moves);
             } else if (move == "0-0-0") {
                 // Queen castling
-                var moveRes = DoMoveQueenCatling(move);
+                var moveRes = DoMoveQueenCastling(move);
                 move = moveRes.Move;
                 res.AddRange(moveRes.Moves);
             } else {
@@ -777,7 +777,7 @@ namespace ChessLib
                     if (Status == Statuses.InProgress)
                         m_BlackTimer.Start();
                     WhiteTimeLeftMilliSecs += WhiteIncrementMillisecs;
-                    WhiteTimer?.Invoke(this, new EventArgs());
+                    WhiteTimer?.Invoke(this, EventArgs.Empty);
                 }
                 m_WhiteTimer.Stop();
             } else {
@@ -786,18 +786,18 @@ namespace ChessLib
                     if (Status == Statuses.InProgress)
                         m_WhiteTimer.Start();
                     BlackTimeLeftMilliSecs += BlackIncrementMillisecs;
-                    BlackTimer?.Invoke(this, new EventArgs());
+                    BlackTimer?.Invoke(this, EventArgs.Empty);
                 }
                 m_BlackTimer.Stop();
             }
             foreach (var m in res)
                 m.Timestamp = timeStamp;
 
-            FullmoveNumber++;
+            FullMoveNumber++;
             if (res.Count == 1 && (res[0].CapturedPiece != null || res[0].Piece.Type == Piece.Pieces.Pawn))
-                HalfmoveClock = 0;
+                HalfMoveClock = 0;
             else
-                HalfmoveClock++;
+                HalfMoveClock++;
 
             MoveNotation moveNotation = new MoveNotation()
             {
@@ -812,7 +812,7 @@ namespace ChessLib
             moveNotation.Fen = GetFenString();
             moveNotation.WhiteTimeLeftMilliSecs = WhiteTimeLeftMilliSecs;
             moveNotation.BlackTimeLeftMilliSecs = BlackTimeLeftMilliSecs;
-            moveNotation.HalfmoveClock = HalfmoveClock;
+            moveNotation.HalfMoveClock = HalfMoveClock;
 
             Moves.Add(moveNotation);
             return res;
@@ -849,7 +849,7 @@ namespace ChessLib
                     await cecp.Remove();
             }
 
-            FullmoveNumber -= toRemove;
+            FullMoveNumber -= toRemove;
             while (toRemove-- > 0) {
                 var trm = Moves.Last();
                 Moves.Remove(trm);
@@ -859,7 +859,7 @@ namespace ChessLib
             ToMove = Colors.White;
             if (lastMove?.Color == Colors.White)
                 ToMove = Colors.Black;
-            HalfmoveClock = lastMove != null ? lastMove.HalfmoveClock : 0;
+            HalfMoveClock = lastMove != null ? lastMove.HalfMoveClock : 0;
             Board.InitFromFenString(lastMove != null ? lastMove.Fen : InitialFenPosition);
             WhiteTimeLeftMilliSecs = LastWhiteTimeLeftMilliSecs;
             BlackTimeLeftMilliSecs = LastBlackTimeLeftMilliSecs;
@@ -870,8 +870,8 @@ namespace ChessLib
                 else
                     m_BlackTimer.Start();
             }
-            BlackTimer?.Invoke(this, new EventArgs());
-            WhiteTimer?.Invoke(this, new EventArgs());
+            BlackTimer?.Invoke(this, EventArgs.Empty);
+            WhiteTimer?.Invoke(this, EventArgs.Empty);
             return true;
         } // UndoLastHumanPlayerMove
 
@@ -941,11 +941,11 @@ namespace ChessLib
             else
                 sb.Append(EnPassant.ToLower());
 
-            // Halfmove clock
-            sb.Append($" {HalfmoveClock}");
+            // HalfMove clock
+            sb.Append($" {HalfMoveClock}");
 
-            // Fullmove number
-            sb.Append($" {(FullmoveNumber == 0 ? 1 : FullmoveNumber)}");
+            // FullMove number
+            sb.Append($" {(FullMoveNumber == 0 ? 1 : FullMoveNumber)}");
 
             return sb.ToString();
         } // GetFenString
@@ -1063,13 +1063,13 @@ namespace ChessLib
                 return true;
 
             // King and Bishop vs King
-            if ((white.Count == 1 && black.Count == 2 && black.Where(p => p.Type == Piece.Pieces.Bishop).Count() == 1) ||
-                (black.Count == 1 && white.Count == 2 && white.Where(p => p.Type == Piece.Pieces.Bishop).Count() == 1))
+            if ((white.Count == 1 && black.Count == 2 && black.Count(p => p.Type == Piece.Pieces.Bishop) == 1) ||
+                (black.Count == 1 && white.Count == 2 && white.Count(p => p.Type == Piece.Pieces.Bishop) == 1))
                 return true;
 
             // King and Knight vs King
-            if ((white.Count == 1 && black.Count == 2 && black.Where(p => p.Type == Piece.Pieces.Knight).Count() == 1) ||
-                (black.Count == 1 && white.Count == 2 && white.Where(p => p.Type == Piece.Pieces.Knight).Count() == 1))
+            if ((white.Count == 1 && black.Count == 2 && black.Count(p => p.Type == Piece.Pieces.Knight) == 1) ||
+                (black.Count == 1 && white.Count == 2 && white.Count(p => p.Type == Piece.Pieces.Knight) == 1))
                 return true;
 
             // King and Bishop vs King and Bishop with bishops on the same color
@@ -1493,8 +1493,7 @@ namespace ChessLib
                         Settings.TimeIncrement.HasValue ? (int)Settings.TimeIncrement.Value.TotalSeconds : 0);
 
                     // Set The King personality
-                    if (ep.Engine is Engines.TheKing && ep.TheKingPersonality != null) {
-                        var tk = ep.Engine as Engines.TheKing;
+                    if (ep.Engine is Engines.TheKing tk && ep.TheKingPersonality != null) {
                         await tk.ApplyPersonality(ep.TheKingPersonality);
                         var tkOpt = tk.GetOption(Engines.TheKing.OpeningBooksFolderOptionName)?.Value;
                         if (!string.IsNullOrEmpty(tkOpt) && !string.IsNullOrEmpty(ep.TheKingPersonality.OpeningBook))
@@ -1571,7 +1570,7 @@ namespace ChessLib
                     move.LongAlgebraic = $"{move.LongAlgebraic} 1-0";
                 }
             }
-            BlackTimer?.Invoke(this, new EventArgs());
+            BlackTimer?.Invoke(this, EventArgs.Empty);
         } // BlackTimerElapsed
 
         private async void OnWhiteTimerElapsed(object sender, System.Timers.ElapsedEventArgs e)
@@ -1595,12 +1594,12 @@ namespace ChessLib
                     move.LongAlgebraic = $"{move.LongAlgebraic} 0-1";
                 }
             }
-            WhiteTimer?.Invoke(this, new EventArgs());
+            WhiteTimer?.Invoke(this, EventArgs.Empty);
         } // WhiteTimerElapsed
 
         /// <summary>
         /// Return all the available squares for a piece.
-        /// This mehtod does not check for king check.
+        /// This method does not check for king check.
         /// </summary>
         /// <param name="startSquare">The <see cref="Piece"/> <see cref="Board.Square"/></param>
         /// <param name="avoidCastling"></param>
@@ -1642,7 +1641,7 @@ namespace ChessLib
 
         /// <summary>
         /// Check if it is possible to castle from a square to another
-        /// Check that the squaress are empty and not under attack of other pieces
+        /// Check that the squares are empty and not under attack of other pieces
         /// </summary>
         /// <param name="color">The King color</param>
         /// <param name="fromFile">The file from</param>
@@ -1653,9 +1652,9 @@ namespace ChessLib
             fromFile = char.ToUpper(fromFile);
             toFile = char.ToUpper(toFile);
 
-            int rank = color == Colors.White ? 1 : 8;
-            int idxFrom = 0;
-            int idxTo = 0;
+            var rank = color == Colors.White ? 1 : 8;
+            int idxFrom;
+            int idxTo;
             char rookTargetFile;
 
             // If the king is in check it cannot castle
@@ -1743,8 +1742,8 @@ namespace ChessLib
             if (startSquare.Piece != null) {
                 var piece = startSquare.Piece;
                 Board.Square nextSquare = null;
-                char? nextFile = null;
-                char? prevFile = null;
+                char? nextFile;
+                char? prevFile;
 
                 // Normal moves
                 if (piece.Color == Colors.White && startSquare.Rank < 8)
@@ -1806,9 +1805,9 @@ namespace ChessLib
             var res = new List<Board.Square>();
             if (startSquare.Piece != null) {
                 var piece = startSquare.Piece;
-                Board.Square nextSquare = null;
-                char? nextFile = null;
-                char? prevFile = null;
+                Board.Square nextSquare;
+                char? nextFile;
+                char? prevFile;
 
                 nextFile = Board.GetNextFile(startSquare.File);
                 if (nextFile != null) {
@@ -1858,9 +1857,9 @@ namespace ChessLib
             var res = new List<Board.Square>();
             if (startSquare.Piece != null) {
                 var piece = startSquare.Piece;
-                Board.Square nextSquare = null;
-                char? nextFile = null;
-                char? prevFile = null;
+                Board.Square nextSquare;
+                char? nextFile;
+                char? prevFile;
 
                 // Normal moves
                 nextFile = Board.GetNextFile(startSquare.File);
@@ -1929,9 +1928,9 @@ namespace ChessLib
             var res = new List<Board.Square>();
             if (startSquare.Piece != null) {
                 var piece = startSquare.Piece;
-                Board.Square nextSquare = null;
-                char? nextFile = null;
-                char? prevFile = null;
+                Board.Square nextSquare;
+                char? nextFile;
+                char? prevFile;
 
                 nextFile = Board.GetNextFile(startSquare.File);
                 int? upperRank = startSquare.Rank;
@@ -2001,9 +2000,9 @@ namespace ChessLib
             var res = new List<Board.Square>();
             if (startSquare.Piece != null) {
                 var piece = startSquare.Piece;
-                Board.Square nextSquare = null;
-                char? nextFile = Board.GetNextFile(startSquare.File);
-                char? prevFile = Board.GetPreviousFile(startSquare.File);
+                Board.Square nextSquare;
+                var nextFile = Board.GetNextFile(startSquare.File);
+                var prevFile = Board.GetPreviousFile(startSquare.File);
 
                 while (nextFile != null) {
                     nextSquare = Board.GetSquare($"{nextFile}{startSquare.Rank}");
@@ -2050,7 +2049,7 @@ namespace ChessLib
             return res;
         } // GetAvailableSquaresRook
 
-        private MoveResult DoMoveKingCatling(string move)
+        private MoveResult DoMoveKingCastling(string move)
         {
             var res = new MoveResult();
 
@@ -2085,9 +2084,9 @@ namespace ChessLib
             res.Moves.Add(new Move(rookToSquare.Piece, rookSquare, rookToSquare) { CoordinateNotation = $"{rookSquare.Notation.ToLower()}{rookToSquare.Notation.ToLower()}" });
 
             return res;
-        } // DoMoveKingCatling
+        } // DoMoveKingCastling
 
-        private MoveResult DoMoveQueenCatling(string move)
+        private MoveResult DoMoveQueenCastling(string move)
         {
             var res = new MoveResult();
 
@@ -2122,7 +2121,7 @@ namespace ChessLib
             res.Moves.Add(new Move(rookToSquare.Piece, rookSquare, rookToSquare) { CoordinateNotation = $"{rookSquare.Notation.ToLower()}{rookToSquare.Notation.ToLower()}" });
 
             return res;
-        } // DoMoveQueenCatling
+        } // DoMoveQueenCastling
 
         private async Task<MoveResult> DoMoveNormal(string move, bool skipAvailableSquaresCheck)
         {
@@ -2166,8 +2165,8 @@ namespace ChessLib
             }
 
             // En passant capture
-            Board.Square enPassantPawnSquare;
             if (toSquare.Notation == EnPassant && fromSquare.Piece.Type == Piece.Pieces.Pawn) {
+                Board.Square enPassantPawnSquare;
                 if (ToMove == Colors.White)
                     enPassantPawnSquare = Board.GetSquare($"{toSquare.File}{toSquare.Rank - 1}");
                 else
@@ -2334,19 +2333,19 @@ namespace ChessLib
                 return res;
 
             var color = pieces[0].Color;
-            var tpc = pieces.Where(p => p.Type == Piece.Pieces.Pawn).Count();
+            var tpc = pieces.Count(p => p.Type == Piece.Pieces.Pawn);
             for (int i = 0; i < 8 - tpc; i++)
                 res.Add(new Piece(color, Piece.Pieces.Pawn));
-            tpc = pieces.Where(p => p.Type == Piece.Pieces.Knight).Count();
+            tpc = pieces.Count(p => p.Type == Piece.Pieces.Knight);
             for (int i = 0; i < 2 - tpc; i++)
                 res.Add(new Piece(color, Piece.Pieces.Knight));
-            tpc = pieces.Where(p => p.Type == Piece.Pieces.Bishop).Count();
+            tpc = pieces.Count(p => p.Type == Piece.Pieces.Bishop);
             for (int i = 0; i < 2 - tpc; i++)
                 res.Add(new Piece(color, Piece.Pieces.Bishop));
-            tpc = pieces.Where(p => p.Type == Piece.Pieces.Rook).Count();
+            tpc = pieces.Count(p => p.Type == Piece.Pieces.Rook);
             for (int i = 0; i < 2 - tpc; i++)
                 res.Add(new Piece(color, Piece.Pieces.Rook));
-            tpc = pieces.Where(p => p.Type == Piece.Pieces.Queen).Count();
+            tpc = pieces.Count(p => p.Type == Piece.Pieces.Queen);
             if (tpc == 0)
                 res.Add(new Piece(color, Piece.Pieces.Queen));
             return res;

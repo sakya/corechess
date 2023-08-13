@@ -26,10 +26,10 @@ namespace CoreChess.Pages
     public partial class MainPage : BasePage
     {
         #region classes
-        class Context : INotifyPropertyChanged
+        private class Context : INotifyPropertyChanged
         {
             #region commands
-            class MoveNotationCommand : ICommand
+            private class MoveNotationCommand : ICommand
             {
                 Context m_Owner;
                 public event EventHandler CanExecuteChanged
@@ -59,7 +59,7 @@ namespace CoreChess.Pages
                 }
             }
 
-            class CapturedPiecesCommand : ICommand
+            private class CapturedPiecesCommand : ICommand
             {
                 Context m_Owner;
                 public event EventHandler CanExecuteChanged
@@ -89,7 +89,7 @@ namespace CoreChess.Pages
                 }
             }
 
-            class ShowEngineOutputCommand : ICommand
+            private class ShowEngineOutputCommand : ICommand
             {
                 Context m_Owner;
                 public event EventHandler CanExecuteChanged
@@ -113,12 +113,12 @@ namespace CoreChess.Pages
                     App.Settings.Save(App.SettingsPath);
                     m_Owner.ShowEngineOutput = App.Settings.ShowEngineOutput;
 
-                    if (!m_Owner.Page.FindControl<Border>("m_GameAnalyzeSection").IsVisible)
-                        m_Owner.Page.FindControl<Border>("m_EngineMessageSection").IsVisible = App.Settings.ShowEngineOutput;
+                    if (!m_Owner.Page.m_GameAnalyzeSection.IsVisible)
+                        m_Owner.Page.m_EngineMessageSection.IsVisible = App.Settings.ShowEngineOutput;
                 }
             }
 
-            class ZenModeCommand : ICommand
+            private class ZenModeCommand : ICommand
             {
                 Context m_Owner;
                 public event EventHandler CanExecuteChanged
@@ -143,58 +143,56 @@ namespace CoreChess.Pages
                     if (m_Owner.ZenMode) {
                         m_Owner.Page.MinWidth = 0;
                         App.MainWindow.SaveWindowSizeAndPosition();
-                        m_Owner.Page.FindControl<Grid>("m_SidePanel").IsVisible = false;
-                        m_Owner.Page.FindControl<Menu>("m_Menu").IsVisible = false;
+                        m_Owner.Page.m_SidePanel.IsVisible = false;
+                        m_Owner.Page.m_Menu.IsVisible = false;
                         if (App.MainWindow.WindowState == WindowState.Maximized)
                             m_Owner.ContentAlignment = "Center";
                         else {
                             m_Owner.ContentAlignment = "Stretch";
                             App.MainWindow.UpdateLayout();
-                            var cb = m_Owner.Page.FindControl<Chessboard>("m_Chessboard");
-                            var content = m_Owner.Page.FindControl<Grid>("m_Content");
-                            App.MainWindow.Width = cb.Width + content.Margin.Left + content.Margin.Right;
+                            App.MainWindow.Width = m_Owner.Page.m_Chessboard.Width + m_Owner.Page.m_Content.Margin.Left + m_Owner.Page.m_Content.Margin.Right;
                             App.MainWindow.MaxWidth = App.MainWindow.Width;
                         }
                         App.MainWindow.CanResize = false;
                     } else {
                         App.MainWindow.MinWidth = 600;
                         App.MainWindow.MaxWidth = double.PositiveInfinity;
-                        m_Owner.Page.FindControl<Grid>("m_SidePanel").IsVisible = true;
-                        m_Owner.Page.FindControl<Menu>("m_Menu").IsVisible = true;
+                        m_Owner.Page.m_SidePanel.IsVisible = true;
+                        m_Owner.Page.m_Menu.IsVisible = true;
                         App.MainWindow.RestoreWindowSizeAndPosition();
                         m_Owner.ContentAlignment = "Stretch";
                         App.MainWindow.CanResize = true;
                     }
                 }
             }
-
             #endregion
 
-            bool m_IsResignEnabled = true;
-            bool m_CanPause = true;
-            bool m_IsPaused;
-            bool m_IsWindows;
-            bool m_CheckingForUpdates;
-            Settings.Notations? m_MoveNotation;
-            Settings.CapturedPiecesDisplay? m_CapturedPieces;
-            bool m_ShowEngineOutput;
-            bool m_ZenMode;
-            string m_ContentAlignment = "Stretch";
-            string m_WhiteName = string.Empty;
-            int? m_WhiteElo;
-            string m_BlackName = string.Empty;
-            int? m_BlackElo;
-            string m_WhiteTime = string.Empty;
-            string m_BlackTime = string.Empty;
-            string m_EcoName = string.Empty;
+            private bool m_IsResignEnabled;
+            private bool m_isEngineSettingsEnabled;
+            private bool m_CanPause;
+            private bool m_IsPaused;
+            private bool m_IsWindows;
+            private bool m_CheckingForUpdates;
+            private Settings.Notations? m_MoveNotation;
+            private Settings.CapturedPiecesDisplay? m_CapturedPieces;
+            private bool m_ShowEngineOutput;
+            private bool m_ZenMode;
+            private string m_ContentAlignment = "Stretch";
+            private string m_WhiteName = string.Empty;
+            private int? m_WhiteElo;
+            private string m_BlackName = string.Empty;
+            private int? m_BlackElo;
+            private string m_WhiteTime = string.Empty;
+            private string m_BlackTime = string.Empty;
+            private string m_EcoName = string.Empty;
 
             public event PropertyChangedEventHandler PropertyChanged;
 
             public Context(MainPage window)
             {
                 Page = window;
-                IsResignEnabled = true;
-                CanPause = true;
+                IsResignEnabled = false;
+                CanPause = false;
                 OnMoveNotationClick = new MoveNotationCommand(this);
                 OnCapturedPiecesClick = new CapturedPiecesCommand(this);
                 OnShowEngineOutputClick = new ShowEngineOutputCommand(this);
@@ -231,6 +229,12 @@ namespace CoreChess.Pages
             {
                 get { return m_IsResignEnabled; }
                 set { SetIfChanged(ref m_IsResignEnabled, value); }
+            }
+
+            public bool IsEngineSettingsEnabled
+            {
+                get { return m_isEngineSettingsEnabled; }
+                set { SetIfChanged(ref m_isEngineSettingsEnabled, value); }
             }
 
             public Settings.Notations? MoveNotation
@@ -323,13 +327,13 @@ namespace CoreChess.Pages
         } // Context
         #endregion
 
-        string[] m_Args;
-        bool m_Initialized;
-        Context m_Context;
-        Game m_Game;
-        List<string> m_EngineMessagesRows = new();
-        Utils.EcoDatabase m_EcoDatabase;
-        int? m_CurrentMoveIndex;
+        private readonly string[] m_Args;
+        private bool m_Initialized;
+        private readonly Context m_Context;
+        private Game m_Game;
+        private readonly List<string> m_EngineMessagesRows = new();
+        private readonly Utils.EcoDatabase m_EcoDatabase;
+        private int? m_CurrentMoveIndex;
         private List<Piece.Pieces> m_LastWhiteCapturedPieces = new();
         private List<Piece.Pieces> m_LastBlackCapturedPieces = new();
 
@@ -448,7 +452,9 @@ namespace CoreChess.Pages
 
         public async void OnMoveMade(object sender, EventArgs e)
         {
-            m_Context.IsResignEnabled = m_Game.FullmoveNumber > 0;
+            m_Context.IsResignEnabled = CanResignOrPause();
+            m_Context.CanPause = CanResignOrPause();
+
             UpdateCapturedPieces();
 
             using (var game = new Game()) {
@@ -489,7 +495,7 @@ namespace CoreChess.Pages
         public async void OnGameEnded(object sender, Chessboard.GameEndedEventArgs e)
         {
             // Save the game in the database
-            if (m_Game.FullmoveNumber > 0)
+            if (m_Game.FullMoveNumber > 0)
                 await m_Game.Save(Path.Join(App.GamesDatabasePath, $"{Guid.NewGuid().ToString("N")}.ccsf"));
 
             await Dispatcher.UIThread.InvokeAsync(async () =>
@@ -536,63 +542,56 @@ namespace CoreChess.Pages
                 return;
             }
 
-            var ngw = new NewGameDialog();
-            var newGame = await ngw.Show<NewGameDialog.Result>(App.MainWindow);
+            var ngw = new NewGamePage();
+            ngw.Navigating += async (s) =>
+            {
+                var newGame = ngw.Result;
+                if (newGame != null) {
+                    var game = new Game();
+                    var settings = new Game.GameSettings()
+                    {
+                        IsChess960 = newGame.Chess960,
+                        MaximumTime = newGame.MaxTime,
+                        TimeIncrement = newGame.TimeIncrement,
+                        TrainingMode = newGame.TrainingMode,
+                        MaxEngineThinkingTime = TimeSpan.FromSeconds(App.Settings.MaxEngineThinkingTimeSecs),
+                        EngineDepth = App.Settings.MaxEngineDepth,
+                        InitialFenPosition = newGame.InitialPosition,
+                    };
 
-            if (newGame != null) {
-                if (newGame.Color == null) {
-                    var rnd = new Random().Next(2);
-                    newGame.Color = rnd == 0 ? Game.Colors.White : Game.Colors.Black;
+                    foreach (var player in newGame.Players) {
+                        Player p;
+                        if (player.IsHuman) {
+                            p = new HumanPlayer(player.Color!.Value, player.Name, null);
+                        } else {
+                            var engine = App.Settings.GetEngine(player.EngineId)?.Copy();
+                            if (player.EngineElo.HasValue)
+                                engine.SetElo(player.EngineElo.Value);
+                            var enginePlayer = new EnginePlayer(player.Color!.Value,
+                                player.TheKingPersonality?.DisplayName ?? engine.Name,
+                                engine.GetElo());
+                            enginePlayer.Engine = engine;
+                            enginePlayer.Personality = player.Personality;
+                            enginePlayer.TheKingPersonality = player.TheKingPersonality;
+                            enginePlayer.OpeningBookFileName = player.OpeningBook;
+
+                            p = enginePlayer;
+                        }
+                        settings.Players.Add(p);
+                    }
+
+                    try {
+                        game.Init(settings);
+                    } catch (Exception) {
+                        await MessageDialog.ShowMessage(App.MainWindow, Localizer.Localizer.Instance["Error"], Localizer.Localizer.Instance["InvalidFenString"], MessageDialog.Icons.Error);
+
+                        settings.InitialFenPosition = string.Empty;
+                        game.Init(settings);
+                    }
+                    await SetGame(game);
                 }
-
-                var game = new Game();
-                var settings = new Game.GameSettings()
-                {
-                    IsChess960 = newGame.Chess960,
-                    MaximumTime = newGame.MaximumTime,
-                    TimeIncrement = newGame.TimeIncrement,
-                    TrainingMode = newGame.TrainingMode,
-                    MaxEngineThinkingTime = TimeSpan.FromSeconds(App.Settings.MaxEngineThinkingTimeSecs),
-                    EngineDepth = App.Settings.MaxEngineDepth,
-                    InitialFenPosition = newGame.InitialPosition,
-                };
-
-                settings.Players.Add(new HumanPlayer(newGame.Color.Value, App.Settings.PlayerName, null));
-                /*var engine1 = App.Settings.GetEngine(newGame.EngineId)?.Copy();
-                if (newGame.EngineElo.HasValue)
-                    engine1.SetElo(newGame.EngineElo.Value);
-                var enginePlayer1 = new EnginePlayer(newGame.Color == Game.Colors.White ? Game.Colors.White : Game.Colors.Black,
-                    newGame.TheKingPersonality?.DisplayName ?? engine1.Name,
-                    engine1.GetElo());
-                enginePlayer1.Engine = engine1;
-                enginePlayer1.Personality = newGame.Personality;
-                enginePlayer1.TheKingPersonality = newGame.TheKingPersonality;
-                enginePlayer1.OpeningBookFileName = App.Settings.OpeningBook;
-                settings.Players.Add(enginePlayer1);*/
-
-                //settings.Players.Add(new HumanPlayer(newGame.Color == Game.Colors.White ? Game.Colors.Black : Game.Colors.White, App.Settings.PlayerName, null));
-                var engine = App.Settings.GetEngine(newGame.EngineId)?.Copy();
-                if (newGame.EngineElo.HasValue)
-                    engine.SetElo(newGame.EngineElo.Value);
-                var enginePlayer = new EnginePlayer(newGame.Color == Game.Colors.White ? Game.Colors.Black : Game.Colors.White,
-                    newGame.TheKingPersonality?.DisplayName ?? engine.Name,
-                    engine.GetElo());
-                enginePlayer.Engine = engine;
-                enginePlayer.Personality = newGame.Personality;
-                enginePlayer.TheKingPersonality = newGame.TheKingPersonality;
-                enginePlayer.OpeningBookFileName = App.Settings.OpeningBook;
-                settings.Players.Add(enginePlayer);
-
-                try {
-                    game.Init(settings);
-                } catch (Exception) {
-                    await MessageDialog.ShowMessage(App.MainWindow, Localizer.Localizer.Instance["Error"], Localizer.Localizer.Instance["InvalidFenString"], MessageDialog.Icons.Error);
-
-                    settings.InitialFenPosition = string.Empty;
-                    game.Init(settings);
-                }
-                await SetGame(game);
-            }
+            };
+            await NavigateTo(ngw);
         } // OnNewGameClick
 
         private async void OnSaveGameClick(object sender, RoutedEventArgs e)
@@ -653,7 +652,8 @@ namespace CoreChess.Pages
         {
             if (!m_Game.Ended) {
                 await m_Chessboard.UndoMove();
-                m_Context.IsResignEnabled = m_Game.FullmoveNumber > 0;
+                m_Context.IsResignEnabled = CanResignOrPause();
+                m_Context.CanPause = CanResignOrPause();
                 UpdateCapturedPieces();
                 await UpdateMoves();
             }
@@ -812,10 +812,12 @@ namespace CoreChess.Pages
         {
             if (e.KeyModifiers == KeyModifiers.Control && e.Key == Key.P) {
                 e.Handled = true;
-                if (m_Game.Status == Game.Statuses.InProgress)
-                    OnPauseClick(null, new RoutedEventArgs());
-                else if (m_Game.Status == Game.Statuses.Paused)
-                    OnResumeClick(null, new RoutedEventArgs());
+                if (m_Context.CanPause) {
+                    if (m_Game.Status == Game.Statuses.InProgress)
+                        OnPauseClick(null, new RoutedEventArgs());
+                    else if (m_Game.Status == Game.Statuses.Paused)
+                        OnResumeClick(null, new RoutedEventArgs());
+                }
             }
 
             if (m_Context.IsPaused || e.Handled)
@@ -844,7 +846,8 @@ namespace CoreChess.Pages
                     OnUndoMoveClick(null, new RoutedEventArgs());
             } else if (e.KeyModifiers == KeyModifiers.Control && e.Key == Key.R) {
                 e.Handled = true;
-                OnResignClick(null, new RoutedEventArgs());
+                if (m_Context.IsResignEnabled)
+                    OnResignClick(null, new RoutedEventArgs());
             } else if (e.KeyModifiers == KeyModifiers.None && e.Key == Key.F1) {
                 e.Handled = true;
                 OnAboutClick(null, new RoutedEventArgs());
@@ -887,7 +890,7 @@ namespace CoreChess.Pages
             if (m_Game != null) {
                 args.Cancel = true;
                 string autoSave = Path.Join(App.LocalPath, "autosave.ccsf");
-                if (m_Game.Ended == false && m_Game.FullmoveNumber > 0 && App.Settings.AutoSaveGameOnExit) {
+                if (m_Game.Ended == false && m_Game.FullMoveNumber > 0 && App.Settings.AutoSaveGameOnExit) {
                     m_Game.WhiteTimeLeftMilliSecs = m_Game.LastWhiteTimeLeftMilliSecs;
                     m_Game.BlackTimeLeftMilliSecs = m_Game.LastBlackTimeLeftMilliSecs;
                     await m_Game.Save(autoSave);
@@ -1057,14 +1060,18 @@ namespace CoreChess.Pages
                 settings.Players.Add(new HumanPlayer(Game.Colors.White, App.Settings.PlayerName, null));
 
                 EngineBase lastUsedEngine = null;
-                if (App.Settings.NewGame != null)
-                    lastUsedEngine = App.Settings.GetEngine(App.Settings.NewGame.EngineId);
+                if (App.Settings.NewGame != null) {
+                    var ep = App.Settings.NewGame.Players?.FirstOrDefault(p => !p.IsHuman);
+                    if (ep != null)
+                        lastUsedEngine = App.Settings.GetEngine(ep.EngineId);
+                }
+
                 if (lastUsedEngine == null)
                     lastUsedEngine = App.Settings.Engines?.FirstOrDefault();
 
                 var enginePlayer = new EnginePlayer(Game.Colors.Black, lastUsedEngine?.Name, lastUsedEngine?.GetElo());
                 enginePlayer.Engine = lastUsedEngine?.Copy();
-                enginePlayer.OpeningBookFileName = App.Settings.OpeningBook;
+                enginePlayer.OpeningBookFileName = App.Settings.DefaultOpeningBook;
                 settings.Players.Add(enginePlayer);
 
                 game.Init(settings);
@@ -1471,7 +1478,6 @@ namespace CoreChess.Pages
             if (m_Game.Ended) {
                 SetAnalyzeMode();
             } else {
-                m_Context.IsResignEnabled = true;
                 m_CurrentMoveIndex = null;
                 m_MoveNavigator.IsVisible = false;
                 m_GameAnalyzeSection.IsVisible = false;
@@ -1482,8 +1488,9 @@ namespace CoreChess.Pages
                 m_ViewCommentBtn.IsVisible = false;
             }
 
-            m_Context.CanPause = !m_Game.Ended;
-            m_Context.IsResignEnabled = m_Game.FullmoveNumber > 0 && !m_Game.Ended;
+            m_Context.IsEngineSettingsEnabled = m_Game.Settings.Players.Any(p => p is EnginePlayer);
+            m_Context.CanPause = CanResignOrPause();
+            m_Context.IsResignEnabled = CanResignOrPause();
             SetChessboardOptions();
 
             try {
@@ -1528,7 +1535,8 @@ namespace CoreChess.Pages
 
         private void SetAnalyzeMode()
         {
-            m_Context.IsResignEnabled = false;
+            m_Context.IsResignEnabled = CanResignOrPause();
+            m_Context.CanPause = CanResignOrPause();
             m_PauseBtn.IsVisible = false;
             m_WhiteTimeLeft.IsVisible = false;
             m_BlackTimeLeft.IsVisible = false;
@@ -1656,6 +1664,14 @@ namespace CoreChess.Pages
 
             m_Mru.ItemsSource = items;
             m_Mru.IsVisible = items.Count > 0;
+        }
+
+        private bool CanResignOrPause()
+        {
+            if (m_Game == null)
+                return false;
+            return m_Game.Settings.Players.Any(p => p is HumanPlayer) &&
+                   m_Game.FullMoveNumber > 0 && !m_Game.Ended;
         }
         #endregion
     }

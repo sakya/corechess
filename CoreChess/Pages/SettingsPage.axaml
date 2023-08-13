@@ -33,7 +33,6 @@
               <RowDefinition Height="Auto"/>
               <RowDefinition Height="Auto"/>
               <RowDefinition Height="Auto"/>
-              <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
               <ColumnDefinition Width="Auto"/>
@@ -69,24 +68,8 @@
             <NumericUpDown Grid.Row="6" Grid.Column="1" Name="m_MaxEngineDepth" IsVisible="False"
                            FormatString="0" Minimum="0"/>
 
-            <TextBlock Grid.Row="7" Text="{i18n:Localize OpeningBook}" VerticalAlignment="Center" Margin="0,5,0,5" />
-            <ComboBox Name="m_OpeningBookType" Grid.Row="7" Grid.Column="1" Margin="0,5,0,5"
-                      SelectionChanged="OnOpeningBookTypeChanged">
-              <ComboBoxItem Content="{i18n:Localize None}" />
-              <ComboBoxItem Content="{i18n:Localize Internal}" />
-              <ComboBoxItem Content="{i18n:Localize Custom}" />
-            </ComboBox>
-
-            <Grid Name="m_OpeningBookCustom" Grid.Row="8" Grid.Column="1" >
-              <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*" />
-                <ColumnDefinition Width="Auto" />
-              </Grid.ColumnDefinitions>
-              <TextBox Name="m_OpeningBook" Margin="0,0,0,0" VerticalAlignment="Center" />
-              <Button Grid.Column="1" Margin="0" Padding="12" Click="OnOpeningBookClick">
-                <i:Icon Value="fas fa-folder-open" />
-              </Button>
-            </Grid>
+            <TextBlock Grid.Row="7" Text="{i18n:Localize DefaultOpeningBook}" VerticalAlignment="Center" Margin="0,5,0,5" />
+            <controls:OpeningBookComboBox Grid.Row="7" Grid.Column="1" Margin="0,5,0,5" Name="m_OpeningBook" />
           </Grid>
         </ScrollViewer>
       </TabItem>

@@ -44,7 +44,7 @@ namespace ChessLib.Books
                 return Move;
             }
 
-            public int GetPriotity()
+            public int GetPriority()
             {
                 return Weight;
             }

@@ -21,7 +21,7 @@ namespace CoreChess.Dialogs
 
             m_Game = game;
             if (m_Game.Winner != null)
-                m_Image.Source = new Bitmap($"Images/Pieces/Default/{(m_Game.Winner == Game.Colors.White ? "w" : "b")}Knight.png");
+                m_Image.Source = new Bitmap(System.IO.Path.Combine(App.GetPiecesPath(App.Settings.PiecesSet), $"{(m_Game.Winner == Game.Colors.White ? "w" : "b")}Knight.png"));
             else
                 m_Image.IsVisible = false;
 

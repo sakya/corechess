@@ -1,0 +1,31 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:i18n="clr-namespace:CoreChess.Localizer"
+             xmlns:i="clr-namespace:Projektanker.Icons.Avalonia;assembly=Projektanker.Icons.Avalonia"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="CoreChess.Controls.OpeningBookComboBox">
+    <Grid>
+        <Grid.RowDefinitions>Auto, Auto</Grid.RowDefinitions>
+
+        <ComboBox Name="m_OpeningBookType" Grid.Row="0"
+                  SelectionChanged="OnOpeningBookTypeChanged"
+                  Margin="0">
+            <ComboBoxItem Content="{i18n:Localize None}" />
+            <ComboBoxItem Content="{i18n:Localize Internal}" />
+            <ComboBoxItem Content="{i18n:Localize Custom}" />
+        </ComboBox>
+
+        <Grid Name="m_OpeningBookCustom" Grid.Row="1" Margin="0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+            <TextBox Name="m_OpeningBook" Margin="0,0,0,0" VerticalAlignment="Center" />
+            <Button Grid.Column="1" Margin="0" Padding="12" Click="OnOpeningBookClick">
+                <i:Icon Value="fas fa-folder-open" />
+            </Button>
+        </Grid>
+    </Grid>
+</UserControl>

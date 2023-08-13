@@ -6,7 +6,7 @@ namespace ChessLib.Books
 {
     public interface IBookEntry
     {
-        int GetPriotity();
+        int GetPriority();
         string GetMove();
     } // IBookEntry
 

@@ -16,15 +16,24 @@ namespace CoreChess
         #region classes
         public class NewGameSettings
         {
-            public string EngineId { get; set; }
-            public int? EngineElo { get; set; }
-            public Game.Colors? PlayerColor { get; set; }
+            public class Player
+            {
+                public string Name { get; set; }
+                public Game.Colors? Color { get; set; }
+                public string EngineId { get; set; }
+                public int? EngineElo { get; set; }
+                public string Personality { get; set; }
+                public ChessLib.Engines.TheKing.Personality TheKingPersonality { get; set; }
+                public string OpeningBook { get; set; }
+
+                public bool IsHuman => string.IsNullOrEmpty(EngineId);
+            }
+
             public bool Chess960 { get; set; }
             public TimeSpan? MaxTime { get; set; }
             public TimeSpan TimeIncrement { get; set; }
             public bool TrainingMode { get; set; }
-            public string Personality { get; set; }
-            public ChessLib.Engines.TheKing.Personality TheKingPersonality { get; set; }
+            public List<Player> Players { get; set; }
         } // NewGameSettings
 
         #endregion
@@ -79,7 +88,7 @@ namespace CoreChess
             BlackColor = "#ff769656";
             BlackSelectedColor = "#ffbbcb44";
 
-            OpeningBook = InternalOpeningBook;
+            DefaultOpeningBook = InternalOpeningBook;
         }
 
         public string Version { get; set; }
@@ -118,7 +127,7 @@ namespace CoreChess
         public string WhiteSelectedColor { get; set; }
         public string BlackColor { get; set; }
         public string BlackSelectedColor { get; set; }
-        public string OpeningBook { get; set; }
+        public string DefaultOpeningBook { get; set; }
         public bool ShowEngineOutput { get; set; }
         public bool AutoAnalyzeGames { get; set; }
         public Notations MoveNotation { get; set; }
@@ -163,8 +172,7 @@ namespace CoreChess
 
         public void AddRecentlyLoadedFile(string filePath)
         {
-            if (RecentlyLoadedFiles == null)
-                RecentlyLoadedFiles = new List<string>();
+            RecentlyLoadedFiles ??= new List<string>();
 
             if (RecentlyLoadedFiles.Contains(filePath))
                 RecentlyLoadedFiles.Remove(filePath);
@@ -176,32 +184,31 @@ namespace CoreChess
 
         public static Settings Load(string path)
         {
-            using (StreamReader sr = new StreamReader(path)) {
-                var settings = new JsonSerializerSettings() { TypeNameHandling = TypeNameHandling.Objects };
-                var res =  JsonConvert.DeserializeObject<Settings>(sr.ReadToEnd(), settings);
-                if (res != null)
-                    res.CheckRecentlyLoadedFiles();
-                return res;
-            }
+            using var sr = new StreamReader(path);
+            var settings = new JsonSerializerSettings() { TypeNameHandling = TypeNameHandling.Objects };
+            var res =  JsonConvert.DeserializeObject<Settings>(sr.ReadToEnd(), settings);
+            if (res != null)
+                res.CheckRecentlyLoadedFiles();
+            return res;
         } // Load
 
         public void Save(string path)
         {
-            using (StreamWriter sw = new StreamWriter(path)) {
-                Version = App.Version;
+            using var sw = new StreamWriter(path);
+            Version = App.Version;
 
-                var settings = new JsonSerializerSettings() { TypeNameHandling = TypeNameHandling.Objects };
-                sw.Write(JsonConvert.SerializeObject(this, Formatting.Indented, settings));
-            }
+            var settings = new JsonSerializerSettings() { TypeNameHandling = TypeNameHandling.Objects };
+            sw.Write(JsonConvert.SerializeObject(this, Formatting.Indented, settings));
         } // Save
 
         private void CheckRecentlyLoadedFiles()
         {
-            if (RecentlyLoadedFiles != null) {
-                for (int i = 0; i < RecentlyLoadedFiles.Count; i++) {
-                    if (!File.Exists(RecentlyLoadedFiles[i])) {
-                        RecentlyLoadedFiles.RemoveAt(i--);
-                    }
+            if (RecentlyLoadedFiles == null)
+                return;
+
+            for (var i = 0; i < RecentlyLoadedFiles.Count; i++) {
+                if (!File.Exists(RecentlyLoadedFiles[i])) {
+                    RecentlyLoadedFiles.RemoveAt(i--);
                 }
             }
         } // CheckRecentlyLoadedFiles

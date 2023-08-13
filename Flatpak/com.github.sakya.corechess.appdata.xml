@@ -20,7 +20,7 @@
 
       <p>Supported chess engines:</p>
       <ul>
-          <li>UCI (Universal Chess Interface) like Stockfish, Komodo and Leela Chess Zero</li>
+          <li>UCI (Universal Chess Interface) like Stockfish, Komodo/Dragon and Leela Chess Zero</li>
           <li>CECP (Chess Engine Communication Protocol) like Crafty</li>
       </ul>
 
@@ -34,16 +34,31 @@
     <launchable type="desktop-id">com.github.sakya.corechess.desktop</launchable>
     <screenshots>
       <screenshot type="default">
-          <image>https://user-images.githubusercontent.com/289552/152684938-7231401d-e5ab-48bb-a445-06c139f64885.png</image>
+          <image>https://user-images.githubusercontent.com/289552/260292640-43725612-5c77-4be0-9adf-d5a8b1705f97.png</image>
       </screenshot>
       <screenshot type="default">
-        <image>https://user-images.githubusercontent.com/289552/154836433-9529064c-9621-477f-ad5f-425ff4badbed.png</image>
+        <image>https://user-images.githubusercontent.com/289552/260292709-b2563f31-d8f4-4a0a-9fb1-77e4c7e5fe8d.png</image>
       </screenshot>
       <screenshot type="default">
-        <image>https://user-images.githubusercontent.com/289552/154836456-ee2f555c-8756-431b-b7d0-4c27f939226b.png</image>
+        <image>https://user-images.githubusercontent.com/289552/260292728-6037c09b-0f77-4930-846c-aeb59c618af4.png</image>
       </screenshot>
     </screenshots>
     <releases>
+      <release version="0.18.0.0" date="2023-08-13">
+        <description>
+          <ul>
+            <li>Two player game (engine vs engine, player vs player)</li>
+            <li>Upgraded Avalonia to v11.0.3</li>
+          </ul>
+        </description>
+      </release>
+      <release version="0.17.1.0" date="2023-07-30">
+        <description>
+          <ul>
+            <li>Fixed crash on new game</li>
+          </ul>
+        </description>
+      </release>
       <release version="0.17.0.0" date="2023-07-29">
         <description>
           <ul>

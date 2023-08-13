@@ -298,7 +298,7 @@ namespace CoreChess.Controls
             m_Game.EngineError += OnEngineError;
             Flipped = m_Game.GameType == Game.GameTypes.HumanVsEngine && m_Game.GetPlayer(Game.Colors.Black) is HumanPlayer;
             DrawBoard(m_Canvas, lastMove: m_Game.Moves?.LastOrDefault());
-            NewGame?.Invoke(this, new EventArgs());
+            NewGame?.Invoke(this, EventArgs.Empty);
             await m_Game.Start();
 
             m_GameEndedInvoked = false;
@@ -308,7 +308,7 @@ namespace CoreChess.Controls
         public void StartGame()
         {
             this.IsHitTestVisible = true;
-            if (!m_Game.Ended && m_Game.ToMovePlayer is EnginePlayer && (m_Game.ToMovePlayer as EnginePlayer).Engine != null) {
+            if (!m_Game.Ended && m_Game.ToMovePlayer is EnginePlayer player && player.Engine != null) {
                 // Don't wait this move
                 _ = DoEngineMove();
             }
@@ -444,7 +444,7 @@ namespace CoreChess.Controls
                     first = false;
                 }
 
-                MoveMade?.Invoke(this, new EventArgs());
+                MoveMade?.Invoke(this, EventArgs.Empty);
 
                 if (m_Game.Result != null) {
                     InvokeGameEnded();
@@ -492,10 +492,10 @@ namespace CoreChess.Controls
             }
             this.IsHitTestVisible = true;
 
-            MoveMade?.Invoke(this, new EventArgs());
+            MoveMade?.Invoke(this, EventArgs.Empty);
             if (m_Game.Result != null)
                 InvokeGameEnded();
-            else if (m_Game.ToMovePlayer is EnginePlayer && (m_Game.ToMovePlayer as EnginePlayer).Engine != null) {
+            else if (m_Game.ToMovePlayer is EnginePlayer player && player.Engine != null) {
                 // Don't wait this move
                 _ = DoEngineMove();
             }

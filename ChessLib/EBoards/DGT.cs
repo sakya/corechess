@@ -245,10 +245,6 @@ namespace ChessLib.EBoards
 
         public class ClockUpdateArgs : EventArgs
         {
-            public ClockUpdateArgs()
-            {
-            }
-
             public bool IsAck { get { return Ack != null; } }
             public ClockAck Ack { get; set; }
 
@@ -274,7 +270,7 @@ namespace ChessLib.EBoards
         public event ClockUpdateHandler ClockUpdate;
         #endregion
 
-        private SerialPort m_Port = null;
+        private SerialPort m_Port;
 
         private Semaphore m_MessagesSema = new Semaphore(1, 1);
         private List<BoardMessage> m_Messages = new List<BoardMessage>();
@@ -463,7 +459,7 @@ namespace ChessLib.EBoards
 
         public async Task<bool> ClockBeep(int time)
         {
-            if (await WriteClockCommand(PcToBoardCommands.DGT_CMD_CLOCK_BEEP, new byte[1] { (byte)time })) {
+            if (await WriteClockCommand(PcToBoardCommands.DGT_CMD_CLOCK_BEEP, new[] { (byte)time })) {
                 var res = await WaitMessage(BoardToPcMessages.DGT_MSG_SBI_CLOCK);
                 if (res != null) {
                     var ack = ReadClockAckMessage(res.Data);
@@ -611,69 +607,69 @@ namespace ChessLib.EBoards
 
         private string GetFen(byte[] bytes)
         {
-                if (bytes.Length != 64)
-                    throw new Exception("Invalid board data");
+            if (bytes.Length != 64)
+                throw new Exception("Invalid board data");
 
-                StringBuilder sb = new StringBuilder();
-                int n = 0;
-                for (int i = 0; i < 64; i++) {
-                    if (i % 8 == 0)
-                        sb.Append("/");
+            StringBuilder sb = new StringBuilder();
+            int n = 0;
+            for (int i = 0; i < 64; i++) {
+                if (i % 8 == 0)
+                    sb.Append("/");
 
-                    byte p = bytes[i];
-                    string piece = string.Empty;
-                    switch (p) {
-                        case (byte)Pieces.WhitePawn:
-                            piece = "P";
-                            break;
-                        case (byte)Pieces.WhiteKnight:
-                            piece = "N";
-                            break;
-                        case (byte)Pieces.WhiteBishop:
-                            piece = "B";
-                            break;
-                        case (byte)Pieces.WhiteRook:
-                            piece = "R";
-                            break;
-                        case (byte)Pieces.WhiteQueen:
-                            piece = "Q";
-                            break;
-                        case (byte)Pieces.WhiteKing:
-                            piece = "K";
-                            break;
+                byte p = bytes[i];
+                string piece = string.Empty;
+                switch (p) {
+                    case (byte)Pieces.WhitePawn:
+                        piece = "P";
+                        break;
+                    case (byte)Pieces.WhiteKnight:
+                        piece = "N";
+                        break;
+                    case (byte)Pieces.WhiteBishop:
+                        piece = "B";
+                        break;
+                    case (byte)Pieces.WhiteRook:
+                        piece = "R";
+                        break;
+                    case (byte)Pieces.WhiteQueen:
+                        piece = "Q";
+                        break;
+                    case (byte)Pieces.WhiteKing:
+                        piece = "K";
+                        break;
 
-                        case (byte)Pieces.BlackPawn:
-                            piece = "p";
-                            break;
-                        case (byte)Pieces.BlackKnight:
-                            piece = "n";
-                            break;
-                        case (byte)Pieces.BlackBishop:
-                            piece = "b";
-                            break;
-                        case (byte)Pieces.BlackRook:
-                            piece = "e";
-                            break;
-                        case (byte)Pieces.BlackQueen:
-                            piece = "q";
-                            break;
-                        case (byte)Pieces.BlackKing:
-                            piece = "k";
-                            break;
-                    }
-
-                    if (!string.IsNullOrEmpty(piece)) {
-                        if (n != 0)
-                            sb.Append(n);
-                        sb.Append(piece);
-                        n = 0;
-                    } else {
-                        n++;
-                    }
+                    case (byte)Pieces.BlackPawn:
+                        piece = "p";
+                        break;
+                    case (byte)Pieces.BlackKnight:
+                        piece = "n";
+                        break;
+                    case (byte)Pieces.BlackBishop:
+                        piece = "b";
+                        break;
+                    case (byte)Pieces.BlackRook:
+                        piece = "e";
+                        break;
+                    case (byte)Pieces.BlackQueen:
+                        piece = "q";
+                        break;
+                    case (byte)Pieces.BlackKing:
+                        piece = "k";
+                        break;
                 }
 
-                if (n > 0)
-                    sb.Append(n);
+                if (!string.IsNullOrEmpty(piece)) {
+                    if (n != 0)
+                        sb.Append(n);
+                    sb.Append(piece);
+                    n = 0;
+                } else {
+                    n++;
+                }
+            }
+
+            if (n > 0)
+                sb.Append(n);
 
             return sb.ToString();
         } // GetFen
@@ -706,7 +702,7 @@ namespace ChessLib.EBoards
                     // Check if this is an automatic message:
                     var ack = ReadClockAckMessage(msg.Data);
                     var bits = new System.Collections.BitArray((byte)ack.Ack1);
-                    if (bits[7] == true)
+                    if (bits[7])
                         ClockUpdate?.Invoke(this, new ClockUpdateArgs() { Ack = ack });
                     else
                         AddMessageToQueue(msg);
@@ -714,21 +710,21 @@ namespace ChessLib.EBoards
                     var clockArgs = new ClockUpdateArgs();
 
                     // Right player
-                    var bits = new System.Collections.BitArray((byte)msg.Data[3]);
+                    var bits = new System.Collections.BitArray(msg.Data[3]);
                     clockArgs.RightPlayerTime = new TimeSpan(GetIntValue(bits, 0, 3), msg.Data[4], msg.Data[5]);
                     clockArgs.RightPlayerFlag1 = bits[4];
                     clockArgs.RightPlayerTimePerMoveIndicatorOn = bits[5];
                     clockArgs.RightPlayerFlag2 = bits[6];
 
                     // Left player
-                    bits = new System.Collections.BitArray((byte)msg.Data[6]);
+                    bits = new System.Collections.BitArray(msg.Data[6]);
                     clockArgs.LeftPlayerTime = new TimeSpan(GetIntValue(bits, 0, 3), msg.Data[7], msg.Data[8]);
                     clockArgs.LeftPlayerFlag1 = bits[4];
                     clockArgs.LeftPlayerTimePerMoveIndicatorOn = bits[5];
                     clockArgs.LeftPlayerFlag2 = bits[6];
 
                     // Clock status
-                    bits = new System.Collections.BitArray((byte)msg.Data[9]);
+                    bits = new System.Collections.BitArray(msg.Data[9]);
                     clockArgs.Running = bits[0];
                     clockArgs.RightPlayerLeverHigh = bits[1];
                     clockArgs.BatteryLow = bits[2];

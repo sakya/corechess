@@ -1,0 +1,84 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:controls="clr-namespace:CoreChess.Controls"
+             xmlns:i18n="clr-namespace:CoreChess.Localizer"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="CoreChess.Dialogs.NewGamePage">
+
+  <Grid Margin="15,15,15,5">
+    <Grid.RowDefinitions>
+      <RowDefinition Height="*"/>
+      <RowDefinition Height="Auto"/>
+    </Grid.RowDefinitions>
+
+    <ScrollViewer>
+      <Grid>
+        <Grid.RowDefinitions>
+          <RowDefinition Height="Auto" />
+          <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+          <ColumnDefinition Width="*" />
+          <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+
+        <controls:PlayerControl Grid.Row="0" Grid.Column="0" Name="m_Player1"
+                                Margin="0,0,5,0"
+                                IsHumanChanged="OnIsHumanChanged"
+                                ColorChanged="OnPlayer1ColorChanged"
+                                SupportChess960Changed="OnPlayerSupportChess960Changed"/>
+        <controls:PlayerControl Grid.Row="0" Grid.Column="1" Name="m_Player2"
+                                IsHumanChanged="OnIsHumanChanged"
+                                ColorChanged="OnPlayer2ColorChanged"
+                                SupportChess960Changed="OnPlayerSupportChess960Changed"
+                                Margin="5,0,5,0"/>
+
+        <Grid Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2">
+          <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+          </Grid.RowDefinitions>
+          <StackPanel Name="m_GameTypeStack" Grid.Row="0" Orientation="Vertical">
+            <TextBlock Text="{i18n:Localize GameType}"/>
+            <ComboBox Name="m_GameType" Margin="0,5,0,5">
+              <ComboBoxItem Content="{i18n:Localize Classic}" />
+              <ComboBoxItem Content="{i18n:Localize Chess960}" />
+            </ComboBox>
+          </StackPanel>
+
+          <StackPanel Grid.Row="1" Orientation="Vertical">
+            <TextBlock Text="{i18n:Localize MaximumTime}"/>
+            <NumericUpDown Name="m_MaxTime" FormatString="0" Minimum="1" Margin="0,5,0,5" />
+          </StackPanel>
+
+          <StackPanel Grid.Row="2" Orientation="Vertical">
+            <TextBlock Text="{i18n:Localize TimeIncrement}"/>
+            <NumericUpDown Name="m_TimeIncrement" FormatString="0" Minimum="0" Margin="0,5,0,5" />
+          </StackPanel>
+
+          <Grid Name="m_TrainingModeGrid" Grid.Row="3" Margin="0,0,0,5">
+            <Grid.ColumnDefinitions>
+              <ColumnDefinition Width="*" />
+              <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+            <TextBlock Text="{i18n:Localize TrainingMode}" VerticalAlignment="Center" />
+            <ToggleSwitch Grid.Column="1" Name="m_TrainingMode" ToolTip.Tip="{i18n:Localize TrainingModeHelp}" />
+          </Grid>
+
+          <StackPanel Grid.Row="4" Orientation="Vertical">
+            <TextBlock Text="{i18n:Localize InitialPositionFen}"/>
+            <TextBox Name="m_FenString" Margin="0,5,0,5" />
+          </StackPanel>
+        </Grid>
+      </Grid>
+    </ScrollViewer>
+
+    <controls:OkCancelButtons Grid.Row="1" Grid.ColumnSpan="3" OkClick="OnOkClick" CancelClick="OnCancelClick" />
+  </Grid>
+
+</UserControl>
