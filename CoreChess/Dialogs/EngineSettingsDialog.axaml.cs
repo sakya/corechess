@@ -42,6 +42,9 @@ namespace CoreChess.Dialogs
                 m_BlackName.Text = white.Name;
                 m_BlackEngineOptions.IsVisible = false;
             }
+
+            if (white is HumanPlayer && black is EnginePlayer)
+                m_TabControl.SelectedIndex = 1;
         }
 
         private void OnOkClick(object sender, RoutedEventArgs e)

@@ -15,7 +15,7 @@
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
-        <TabControl>
+        <TabControl Name="m_TabControl">
             <TabItem>
                 <TabItem.Header>
                     <StackPanel Orientation="Horizontal">
