@@ -1,3 +1,4 @@
+using System.Web;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Avalonia.Platform.Storage;
@@ -66,7 +67,7 @@ public partial class OpeningBookComboBox : UserControl
             }
         });
         if (files.Count > 0) {
-            m_OpeningBook.Text = files[0].Path.AbsolutePath;
+            m_OpeningBook.Text = HttpUtility.UrlDecode(files[0].Path.AbsolutePath);
         }
     } // OnOpeningBookClick
 }

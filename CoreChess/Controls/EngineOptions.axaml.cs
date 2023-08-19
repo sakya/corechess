@@ -4,6 +4,7 @@ using ChessLib.Engines;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using System.Web;
 using Avalonia.Platform.Storage;
 
 namespace CoreChess.Controls
@@ -302,7 +303,7 @@ namespace CoreChess.Controls
                         AllowMultiple = false
                     });
                 if (folders.Count > 0)
-                    ctrl.Text = folders[0].Path.AbsolutePath;
+                    ctrl.Text = HttpUtility.UrlDecode(folders[0].Path.AbsolutePath);
             };
 
             Grid.SetColumn(lbl, 0);

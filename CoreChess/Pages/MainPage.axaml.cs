@@ -16,6 +16,7 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
+using System.Web;
 using System.Windows.Input;
 using Avalonia.Platform.Storage;
 using CoreChess.Abstracts;
@@ -613,7 +614,7 @@ namespace CoreChess.Pages
             });
 
             if (files.Count > 0) {
-                var file = files[0].Path.AbsolutePath;
+                var file = HttpUtility.UrlDecode(files[0].Path.AbsolutePath);
                 try {
                     if (Path.GetExtension(file) == ".pgn")
                         await m_Game.SaveToPgn(file);
@@ -644,7 +645,7 @@ namespace CoreChess.Pages
                 }
             });
             if (files.Count > 0) {
-                await LoadGame(files[0].Path.AbsolutePath);
+                await LoadGame(HttpUtility.UrlDecode(files[0].Path.AbsolutePath));
             }
         } // OnLoadGameClick
 
@@ -705,7 +706,7 @@ namespace CoreChess.Pages
             });
 
             if (files.Count > 0) {
-                m_Chessboard.SaveToPng(files[0].Path.AbsolutePath);
+                m_Chessboard.SaveToPng(HttpUtility.UrlDecode(files[0].Path.AbsolutePath));
             }
         } // OnSaveToPngClick
 

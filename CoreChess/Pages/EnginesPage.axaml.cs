@@ -4,6 +4,7 @@ using ChessLib.Engines;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Web;
 using Avalonia.Platform.Storage;
 using CoreChess.Abstracts;
 using CoreChess.Dialogs;
@@ -151,7 +152,7 @@ namespace CoreChess.Pages
 
             var files = await MainWindow.StorageProvider.OpenFilePickerAsync(opts);
             if (files.Count > 0) {
-                m_EngineExePath.Text = files[0].Path.AbsolutePath;
+                m_EngineExePath.Text = HttpUtility.UrlDecode(files[0].Path.AbsolutePath);
             }
         } // OnCommandClick
 
@@ -162,7 +163,7 @@ namespace CoreChess.Pages
                 AllowMultiple = false
             });
             if (folders.Count > 0) {
-                m_EngineWorkingDir.Text = folders[0].Path.AbsolutePath;
+                m_EngineWorkingDir.Text = HttpUtility.UrlDecode(folders[0].Path.AbsolutePath);
             }
         } // OnWorkingDirClick
 
