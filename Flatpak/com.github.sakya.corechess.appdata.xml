@@ -47,7 +47,7 @@
       <release version="0.18.2.0" date="2024-03-24">
         <description>
           <ul>
-            <li>Fixed player vs player undo pickers</li>
+            <li>Fixed player vs player undo move</li>
             <li>Upgraded to dotnet8</li>
           </ul>
         </description>

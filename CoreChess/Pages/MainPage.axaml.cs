@@ -1052,34 +1052,47 @@ namespace CoreChess.Pages
 
             if (game == null) {
                 game = new Game();
-                var settings = new Game.GameSettings()
-                {
-                    MaxEngineThinkingTime = TimeSpan.FromSeconds(App.Settings.MaxEngineThinkingTimeSecs),
-                    EngineDepth = App.Settings.MaxEngineDepth,
-                    MaximumTime = TimeSpan.FromMinutes(15)
-                };
-                settings.Players.Add(new HumanPlayer(Game.Colors.White, App.Settings.PlayerName, null));
-
-                EngineBase lastUsedEngine = null;
+                Game.GameSettings settings;
                 if (App.Settings.NewGame != null) {
-                    var ep = App.Settings.NewGame.Players?.FirstOrDefault(p => !p.IsHuman);
-                    if (ep != null) {
-                        lastUsedEngine = App.Settings.GetEngine(ep.EngineId) ?? App.Settings.Engines?.FirstOrDefault();
+                    // Reuse last new game settings
+                    settings = new Game.GameSettings()
+                    {
+                        MaxEngineThinkingTime = TimeSpan.FromSeconds(App.Settings.MaxEngineThinkingTimeSecs),
+                        EngineDepth = App.Settings.MaxEngineDepth,
+                        MaximumTime = App.Settings.NewGame.MaxTime
+                    };
+
+                    foreach (var p in App.Settings.NewGame.Players) {
+                        if (p.IsHuman) {
+                            settings.Players.Add(new HumanPlayer(p.Color!.Value, p.Name, null));
+                        } else {
+                            var engine = App.Settings.GetEngine(p.EngineId) ?? App.Settings.Engines?.FirstOrDefault();;
+                            var enginePlayer =
+                                new EnginePlayer(Game.Colors.Black, engine?.Name, engine?.GetElo())
+                                {
+                                    Engine = engine?.Copy(),
+                                    OpeningBookFileName = App.Settings.DefaultOpeningBook
+                                };
+                            settings.Players.Add(enginePlayer);
+                        }
                     }
                 } else {
-                    lastUsedEngine = App.Settings.Engines?.FirstOrDefault();
-                }
-
-                if (lastUsedEngine != null) {
+                    settings = new Game.GameSettings()
+                    {
+                        MaxEngineThinkingTime = TimeSpan.FromSeconds(App.Settings.MaxEngineThinkingTimeSecs),
+                        EngineDepth = App.Settings.MaxEngineDepth,
+                        MaximumTime = TimeSpan.FromMinutes(15)
+                    };
+                    settings.Players.Add(new HumanPlayer(Game.Colors.White, App.Settings.PlayerName, null));
+                    var engine = App.Settings.Engines?.FirstOrDefault();
                     var enginePlayer =
-                        new EnginePlayer(Game.Colors.Black, lastUsedEngine?.Name, lastUsedEngine?.GetElo());
-                    enginePlayer.Engine = lastUsedEngine?.Copy();
-                    enginePlayer.OpeningBookFileName = App.Settings.DefaultOpeningBook;
+                        new EnginePlayer(Game.Colors.Black, engine?.Name, engine?.GetElo())
+                        {
+                            Engine = engine?.Copy(),
+                            OpeningBookFileName = App.Settings.DefaultOpeningBook
+                        };
                     settings.Players.Add(enginePlayer);
-                } else {
-                    settings.Players.Add(new HumanPlayer(Game.Colors.Black, App.Settings.PlayerName, null));
                 }
-
                 game.Init(settings);
             }
 
