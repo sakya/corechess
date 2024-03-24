@@ -1053,7 +1053,7 @@ namespace CoreChess.Pages
             if (game == null) {
                 game = new Game();
                 Game.GameSettings settings;
-                if (App.Settings.NewGame != null) {
+                if (App.Settings.NewGame != null && App.Settings.NewGame.Players != null) {
                     // Reuse last new game settings
                     settings = new Game.GameSettings()
                     {
