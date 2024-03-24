@@ -1068,11 +1068,12 @@ namespace CoreChess.Pages
                         } else {
                             var engine = App.Settings.GetEngine(p.EngineId) ?? App.Settings.Engines?.FirstOrDefault();;
                             var enginePlayer =
-                                new EnginePlayer(Game.Colors.Black, engine?.Name, engine?.GetElo())
+                                new EnginePlayer(p.Color!.Value, engine?.Name, p.EngineElo)
                                 {
                                     Engine = engine?.Copy(),
                                     OpeningBookFileName = App.Settings.DefaultOpeningBook
                                 };
+                            enginePlayer.Engine.SetElo(p.EngineElo!.Value);
                             settings.Players.Add(enginePlayer);
                         }
                     }
