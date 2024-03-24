@@ -1063,17 +1063,22 @@ namespace CoreChess.Pages
                 EngineBase lastUsedEngine = null;
                 if (App.Settings.NewGame != null) {
                     var ep = App.Settings.NewGame.Players?.FirstOrDefault(p => !p.IsHuman);
-                    if (ep != null)
-                        lastUsedEngine = App.Settings.GetEngine(ep.EngineId);
+                    if (ep != null) {
+                        lastUsedEngine = App.Settings.GetEngine(ep.EngineId) ?? App.Settings.Engines?.FirstOrDefault();
+                    }
+                } else {
+                    lastUsedEngine = App.Settings.Engines?.FirstOrDefault();
                 }
 
-                if (lastUsedEngine == null)
-                    lastUsedEngine = App.Settings.Engines?.FirstOrDefault();
-
-                var enginePlayer = new EnginePlayer(Game.Colors.Black, lastUsedEngine?.Name, lastUsedEngine?.GetElo());
-                enginePlayer.Engine = lastUsedEngine?.Copy();
-                enginePlayer.OpeningBookFileName = App.Settings.DefaultOpeningBook;
-                settings.Players.Add(enginePlayer);
+                if (lastUsedEngine != null) {
+                    var enginePlayer =
+                        new EnginePlayer(Game.Colors.Black, lastUsedEngine?.Name, lastUsedEngine?.GetElo());
+                    enginePlayer.Engine = lastUsedEngine?.Copy();
+                    enginePlayer.OpeningBookFileName = App.Settings.DefaultOpeningBook;
+                    settings.Players.Add(enginePlayer);
+                } else {
+                    settings.Players.Add(new HumanPlayer(Game.Colors.Black, App.Settings.PlayerName, null));
+                }
 
                 game.Init(settings);
             }

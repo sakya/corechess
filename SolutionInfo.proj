@@ -1,7 +1,7 @@
 <Project>
   <PropertyGroup>
     <Authors>Paolo Iommarini</Authors>
-    <Copyright>Copyright © 2022-2023 Paolo Iommarini</Copyright>
+    <Copyright>Copyright © 2022-2024 Paolo Iommarini</Copyright>
     <Version>0.18.2.0</Version>
   </PropertyGroup>
 </Project>

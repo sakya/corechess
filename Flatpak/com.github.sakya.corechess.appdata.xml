@@ -44,6 +44,14 @@
       </screenshot>
     </screenshots>
     <releases>
+      <release version="0.18.2.0" date="2024-03-24">
+        <description>
+          <ul>
+            <li>Fixed player vs player undo pickers</li>
+            <li>Upgraded to dotnet8</li>
+          </ul>
+        </description>
+      </release>
       <release version="0.18.1.0" date="2023-08-19">
         <description>
           <ul>

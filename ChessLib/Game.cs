@@ -8,6 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using ChessLib.Engines;
 using ChessLib.Extensions;
 
 namespace ChessLib
@@ -103,6 +104,49 @@ namespace ChessLib
             public DateTime Timestamp { get; set; }
         } // Move
 
+        public class GameStatus
+        {
+            public int HalfMoveClock { get; set; }
+            public int FullMoveNumber { get; set; }
+
+            /// <summary>
+            /// King castling allowed by color
+            /// </summary>
+            public List<Colors> KingCastling { get; set; }
+            /// <summary>
+            /// Queen castling allowed by color
+            /// </summary>
+            public List<Colors> QueenCastling { get; set; }
+
+            /// <summary>
+            /// Milliseconds left for white
+            /// </summary>
+            public int? WhiteTimeLeftMilliSecs { get; set; }
+            /// <summary>
+            /// Milliseconds left for black
+            /// </summary>
+            public int? BlackTimeLeftMilliSecs { get; set; }
+
+            /// <summary>
+            /// Milliseconds passed for white
+            /// </summary>
+            public int WhiteTimeMilliSecs { get; set; }
+            /// <summary>
+            /// Milliseconds passed for black
+            /// </summary>
+            public int BlackTimeMilliSecs { get; set; }
+
+            /// <summary>
+            /// Last move valid for en passant
+            /// </summary>
+            public string EnPassant { get; set; }
+
+            /// <summary>
+            /// List of game positions (used for draw for repetition)
+            /// </summary>
+            public Dictionary<string, int> Positions = new Dictionary<string, int>();
+        }
+
         public class MoveNotation
         {
             /// <summary>
@@ -141,9 +185,7 @@ namespace ChessLib
             /// <value></value>
             public string Fen { get; set; }
 
-            public int? WhiteTimeLeftMilliSecs { get; set; }
-            public int? BlackTimeLeftMilliSecs { get; set; }
-            public int HalfMoveClock { get; set; }
+            public GameStatus GameStatus { get; set; }
         } // MoveNotation
 
         private class MoveResult
@@ -166,7 +208,7 @@ namespace ChessLib
         {
             public EnginePlayer Player { get; set; }
             public string PonderingMove { get; set; }
-            public Task<Engines.EngineBase.BestMove> PonderTask { get; set; }
+            public Task<EngineBase.BestMove> PonderTask { get; set; }
         } // PonderData
 
         #endregion
@@ -375,17 +417,17 @@ namespace ChessLib
 
         public int WhiteTimeMilliSecs { get; set; }
         public int? WhiteTimeLeftMilliSecs { get; set; }
-        public int WhiteIncrementMillisecs { get; set; }
+        public int WhiteIncrementMilliSecs { get; set; }
         public int BlackTimeMilliSecs { get; set; }
         public int? BlackTimeLeftMilliSecs { get; set; }
-        public int BlackIncrementMillisecs { get; set; }
-        public List<Engines.EngineBase.AnalyzeResult> AnalyzeResults { get; set; }
+        public int BlackIncrementMilliSecs { get; set; }
+        public List<EngineBase.AnalyzeResult> AnalyzeResults { get; set; }
 
         public int? LastWhiteTimeLeftMilliSecs
         {
             get {
                 if (Moves.Count > 0)
-                    return Moves.Last().WhiteTimeLeftMilliSecs;
+                    return Moves.Last().GameStatus.WhiteTimeLeftMilliSecs;
                 if (Settings.MaximumTime.HasValue)
                     return (int)Settings.MaximumTime.Value.TotalMilliseconds;
                 return null;
@@ -395,7 +437,7 @@ namespace ChessLib
         {
             get {
                 if (Moves.Count > 0)
-                    return Moves.Last().BlackTimeLeftMilliSecs;
+                    return Moves.Last().GameStatus.BlackTimeLeftMilliSecs;
                 if (Settings.MaximumTime.HasValue)
                     return (int)Settings.MaximumTime.Value.TotalMilliseconds;
                 return null;
@@ -486,8 +528,8 @@ namespace ChessLib
             }
 
             if (settings.TimeIncrement.HasValue) {
-                WhiteIncrementMillisecs = (int)settings.TimeIncrement.Value.TotalMilliseconds;
-                BlackIncrementMillisecs = (int)settings.TimeIncrement.Value.TotalMilliseconds;
+                WhiteIncrementMilliSecs = (int)settings.TimeIncrement.Value.TotalMilliseconds;
+                BlackIncrementMilliSecs = (int)settings.TimeIncrement.Value.TotalMilliseconds;
             }
             Settings = settings;
         } // Init
@@ -575,18 +617,19 @@ namespace ChessLib
             return res;
         } // DoHumanPlayerMove
 
-        public async Task<List<Move>> DoEnginePlayerMove(Action<Engines.EngineBase, string> outputCallback = null)
+        public async Task<List<Move>> DoEnginePlayerMove(Action<EngineBase, string> outputCallback = null)
         {
             if (!(ToMovePlayer is EnginePlayer))
                 throw new Exception("Not an engine player");
 
             List<Move> res = null;
-            Engines.EngineBase.BestMove engineMove = null;
+            EngineBase.BestMove engineMove = null;
             var enginePlayer = ToMovePlayer as EnginePlayer;
 
             List<string> moves = new List<string>();
-            foreach (var m in Moves)
+            foreach (var m in Moves) {
                 moves.Add(m.Coordinate);
+            }
 
             m_PonderDataSema.WaitOne();
             var ponderData = m_PonderData.FirstOrDefault(p => p.Player == ToMovePlayer);
@@ -637,17 +680,17 @@ namespace ChessLib
                 if (engineMove == null) {
                     m_EngineMoveCts = new CancellationTokenSource();
                     await enginePlayer.Engine.SetPosition(InitialFenPosition, moves);
-                    engineMove = await enginePlayer.Engine.GetBestMove(WhiteTimeLeftMilliSecs ?? 0, WhiteIncrementMillisecs, BlackTimeLeftMilliSecs ?? 0,
-                        BlackIncrementMillisecs, Settings.EngineDepth,
+                    engineMove = await enginePlayer.Engine.GetBestMove(WhiteTimeLeftMilliSecs ?? 0, WhiteIncrementMilliSecs, BlackTimeLeftMilliSecs ?? 0,
+                        BlackIncrementMilliSecs, Settings.EngineDepth,
                         Settings.MaxEngineThinkingTime > TimeSpan.Zero ? Settings.MaxEngineThinkingTime : null,
                         m_EngineMoveCts.Token, null,
-                        (output) => outputCallback(enginePlayer.Engine, output));
+                        (output) => outputCallback?.Invoke(enginePlayer.Engine, output));
                     m_EngineMoveCts.Dispose();
                     m_EngineMoveCts = null;
                     if (engineMove == null)
                         return null;
 
-                    if (enginePlayer.Engine is Engines.Cecp) {
+                    if (enginePlayer.Engine is Cecp) {
                         // CECP returns moves in short algebraic, convert it to coordinate
                         char promotion;
                         string saMove = GetCoordinateNotation(enginePlayer.Color, engineMove.Move, out promotion, out _);
@@ -665,7 +708,7 @@ namespace ChessLib
             }
 
             // Start pondering
-            if (engineMove != null && !string.IsNullOrEmpty(engineMove.Ponder) && engineMove.Ponder != "0000" && enginePlayer.Engine is Engines.Uci && enginePlayer.Engine.IsPonderingEnabled()) {
+            if (engineMove != null && !string.IsNullOrEmpty(engineMove.Ponder) && engineMove.Ponder != "0000" && enginePlayer.Engine is Uci && enginePlayer.Engine.IsPonderingEnabled()) {
                 m_PonderDataSema.WaitOne();
                 ponderData = new PonderData()
                 {
@@ -776,7 +819,7 @@ namespace ChessLib
                 if (Status == Statuses.InProgress || Status == Statuses.Paused) {
                     if (Status == Statuses.InProgress)
                         m_BlackTimer.Start();
-                    WhiteTimeLeftMilliSecs += WhiteIncrementMillisecs;
+                    WhiteTimeLeftMilliSecs += WhiteIncrementMilliSecs;
                     WhiteTimer?.Invoke(this, EventArgs.Empty);
                 }
                 m_WhiteTimer.Stop();
@@ -785,7 +828,7 @@ namespace ChessLib
                 if (Status == Statuses.InProgress || Status == Statuses.Paused) {
                     if (Status == Statuses.InProgress)
                         m_WhiteTimer.Start();
-                    BlackTimeLeftMilliSecs += BlackIncrementMillisecs;
+                    BlackTimeLeftMilliSecs += BlackIncrementMilliSecs;
                     BlackTimer?.Invoke(this, EventArgs.Empty);
                 }
                 m_BlackTimer.Stop();
@@ -810,10 +853,19 @@ namespace ChessLib
             SetAlgebraicNotation(moveNotation, move, res, promoted, ambiguous);
 
             moveNotation.Fen = GetFenString();
-            moveNotation.WhiteTimeLeftMilliSecs = WhiteTimeLeftMilliSecs;
-            moveNotation.BlackTimeLeftMilliSecs = BlackTimeLeftMilliSecs;
-            moveNotation.HalfMoveClock = HalfMoveClock;
-
+            moveNotation.GameStatus = new GameStatus()
+            {
+                KingCastling = KingCastling,
+                QueenCastling = QueenCastling,
+                WhiteTimeMilliSecs = WhiteTimeMilliSecs,
+                BlackTimeMilliSecs = BlackTimeMilliSecs,
+                WhiteTimeLeftMilliSecs = WhiteTimeLeftMilliSecs,
+                BlackTimeLeftMilliSecs = BlackTimeLeftMilliSecs,
+                HalfMoveClock = HalfMoveClock,
+                FullMoveNumber = FullMoveNumber,
+                EnPassant = EnPassant,
+                Positions = Positions
+            };
             Moves.Add(moveNotation);
             return res;
         } // DoMove
@@ -823,8 +875,9 @@ namespace ChessLib
             if (Ended || Moves.Count == 0)
                 return false;
 
+            var ep = Settings.Players.FirstOrDefault(p => p is EnginePlayer) as EnginePlayer;
             int toRemove = 1;
-            if (ToMovePlayer is HumanPlayer)
+            if (ToMovePlayer is HumanPlayer && ep != null)
                 toRemove = 2;
             if (toRemove > Moves.Count)
                 return false;
@@ -840,9 +893,7 @@ namespace ChessLib
             }
 
             // CECP
-            var ep = Settings.Players.FirstOrDefault(p => p is EnginePlayer) as EnginePlayer;
-            if (ep.Engine is Engines.Cecp) {
-                var cecp = ep.Engine as Engines.Cecp;
+            if (ep?.Engine is Cecp cecp) {
                 if (toRemove == 1)
                     await cecp.Undo();
                 else
@@ -855,14 +906,30 @@ namespace ChessLib
                 Moves.Remove(trm);
             }
 
-            var lastMove = Moves.Count() > 0 ? Moves.Last() : null;
+            var lastMove = Moves.Count > 0 ? Moves.Last() : null;
             ToMove = Colors.White;
             if (lastMove?.Color == Colors.White)
                 ToMove = Colors.Black;
-            HalfMoveClock = lastMove != null ? lastMove.HalfMoveClock : 0;
-            Board.InitFromFenString(lastMove != null ? lastMove.Fen : InitialFenPosition);
-            WhiteTimeLeftMilliSecs = LastWhiteTimeLeftMilliSecs;
-            BlackTimeLeftMilliSecs = LastBlackTimeLeftMilliSecs;
+
+            // Restore game status
+            HalfMoveClock = lastMove?.GameStatus.HalfMoveClock ?? 0;
+            FullMoveNumber = lastMove?.GameStatus.FullMoveNumber ?? 0;
+            WhiteTimeMilliSecs = lastMove?.GameStatus.WhiteTimeMilliSecs ?? 0;
+            BlackTimeMilliSecs = lastMove?.GameStatus.BlackTimeMilliSecs ?? 0;
+            WhiteTimeLeftMilliSecs = lastMove?.GameStatus.WhiteTimeLeftMilliSecs ??
+                                     (Settings.MaximumTime.HasValue
+                                         ? (int)Settings.MaximumTime.Value.TotalMilliseconds
+                                         : 0);
+            BlackTimeLeftMilliSecs = lastMove?.GameStatus.BlackTimeLeftMilliSecs ??
+                                     (Settings.MaximumTime.HasValue
+                                         ? (int)Settings.MaximumTime.Value.TotalMilliseconds
+                                         : 0);
+            KingCastling = lastMove?.GameStatus.KingCastling ?? new List<Colors>() { Colors.White, Colors.Black };
+            QueenCastling = lastMove?.GameStatus.QueenCastling ?? new List<Colors>() { Colors.White, Colors.Black };
+            EnPassant = lastMove?.GameStatus.EnPassant ?? string.Empty;
+            Positions = lastMove?.GameStatus.Positions ?? new Dictionary<string, int>();
+
+            Board.InitFromFenString(lastMove?.Fen ?? InitialFenPosition);
 
             if (Moves.Count > 0) {
                 if (ToMove == Colors.White)
@@ -968,7 +1035,7 @@ namespace ChessLib
 
                 var toSquare = Board.GetSquare(square.Notation);
 
-                bool wasMoved = startSquare.Piece.Moved;
+                var wasMoved = startSquare.Piece.Moved;
                 var toSquarePiece = toSquare.Piece;
 
                 toSquare.Piece = startSquare.Piece;
@@ -1232,7 +1299,7 @@ namespace ChessLib
             else if (pgn.WhitePlayerType == typeof(EnginePlayer).ToString()) {
                 var ep = new EnginePlayer(Colors.White, pgn.White, pgn.WhiteElo);
                 if (!string.IsNullOrEmpty(pgn.WhiteEngine))
-                    ep.Engine = JsonConvert.DeserializeObject(pgn.WhiteEngine, m_SerializerSettings) as Engines.EngineBase;
+                    ep.Engine = JsonConvert.DeserializeObject(pgn.WhiteEngine, m_SerializerSettings) as EngineBase;
                 settings.Players.Add(ep);
             }
             if (string.IsNullOrEmpty(pgn.BlackPlayerType) || pgn.BlackPlayerType == typeof(HumanPlayer).ToString())
@@ -1240,7 +1307,7 @@ namespace ChessLib
             else if (pgn.BlackPlayerType == typeof(EnginePlayer).ToString()) {
                 var ep = new EnginePlayer(Colors.Black, pgn.Black, pgn.BlackElo);
                 if (!string.IsNullOrEmpty(pgn.BlackEngine))
-                    ep.Engine = JsonConvert.DeserializeObject(pgn.BlackEngine, m_SerializerSettings) as Engines.EngineBase;
+                    ep.Engine = JsonConvert.DeserializeObject(pgn.BlackEngine, m_SerializerSettings) as EngineBase;
                 settings.Players.Add(ep);
             }
             res.Init(settings);
@@ -1390,18 +1457,18 @@ namespace ChessLib
         /// <summary>
         /// Analyze the game
         /// </summary>
-        /// <param name="engine">The <see cref="Engines.EngineBase"/></param>
+        /// <param name="engine">The <see cref="EngineBase"/></param>
         /// <param name="depth">The depth</param>
         /// <param name="progress">The progress callback</param>
         /// <param name="token">The <see cref="CancellationToken"/></param>
         /// <returns></returns>
-        public async Task<List<Engines.EngineBase.AnalyzeResult>> Analyze(Engines.EngineBase engine, int? depth, Action<int, int> progress, CancellationToken token)
+        public async Task<List<EngineBase.AnalyzeResult>> Analyze(EngineBase engine, int? depth, Action<int, int> progress, CancellationToken token)
         {
             if (engine == null)
                 throw new ArgumentNullException(nameof(engine));
 
-            var res = new List<Engines.EngineBase.AnalyzeResult>() {
-                new Engines.EngineBase.AnalyzeResult(Colors.White, new Engines.EngineBase.Info.ScoreValue())
+            var res = new List<EngineBase.AnalyzeResult>() {
+                new EngineBase.AnalyzeResult(Colors.White, new EngineBase.Info.ScoreValue())
             };
 
             if (engine.SupportAnalyze()) {
@@ -1481,8 +1548,8 @@ namespace ChessLib
                     if (chess960Option != null)
                         chess960Option.Value = Settings.IsChess960 ? "true" : "false";
 
-                    if (ep.Engine is Engines.Uci && !string.IsNullOrEmpty(ep.Personality)) {
-                        var pOpt = ep.Engine.GetOption(Engines.Uci.PersonalityOptionNames);
+                    if (ep.Engine is Uci && !string.IsNullOrEmpty(ep.Personality)) {
+                        var pOpt = ep.Engine.GetOption(Uci.PersonalityOptionNames);
                         if (pOpt != null) {
                             pOpt.Value = ep.Personality;
                         }
@@ -1493,15 +1560,15 @@ namespace ChessLib
                         Settings.TimeIncrement.HasValue ? (int)Settings.TimeIncrement.Value.TotalSeconds : 0);
 
                     // Set The King personality
-                    if (ep.Engine is Engines.TheKing tk && ep.TheKingPersonality != null) {
+                    if (ep.Engine is TheKing tk && ep.TheKingPersonality != null) {
                         await tk.ApplyPersonality(ep.TheKingPersonality);
-                        var tkOpt = tk.GetOption(Engines.TheKing.OpeningBooksFolderOptionName)?.Value;
+                        var tkOpt = tk.GetOption(TheKing.OpeningBooksFolderOptionName)?.Value;
                         if (!string.IsNullOrEmpty(tkOpt) && !string.IsNullOrEmpty(ep.TheKingPersonality.OpeningBook))
                             ep.OpeningBookFileName = Path.Combine(tkOpt, ep.TheKingPersonality.OpeningBook);
                     }
 
-                    if (ep.Engine is Engines.Cecp)
-                        await ((Engines.Cecp)ep.Engine).SetBoard(GetFenString());
+                    if (ep.Engine is Cecp)
+                        await ((Cecp)ep.Engine).SetBoard(GetFenString());
 
                     // Load opening book
                     if (!string.IsNullOrEmpty(ep.OpeningBookFileName))
@@ -1511,7 +1578,7 @@ namespace ChessLib
             return true;
         } // InitEnginePlayers
 
-        private async Task<Engines.EngineBase.BestMove> PonderMove(EnginePlayer enginePlayer, string move, Action<Engines.EngineBase, string> outputCallback = null)
+        private async Task<EngineBase.BestMove> PonderMove(EnginePlayer enginePlayer, string move, Action<EngineBase, string> outputCallback = null)
         {
             List<string> moves = new List<string>();
             foreach (var m in Moves)
@@ -1520,9 +1587,9 @@ namespace ChessLib
             await enginePlayer.Engine.SetPosition(InitialFenPosition, moves);
 
             CancellationTokenSource cts = new CancellationTokenSource();
-            var res = await enginePlayer.Engine.Ponder(WhiteTimeLeftMilliSecs ?? 0, WhiteIncrementMillisecs, BlackTimeLeftMilliSecs ?? 0,
-                BlackIncrementMillisecs, Settings.EngineDepth, cts.Token,
-                (output) => outputCallback(enginePlayer.Engine, output));
+            var res = await enginePlayer.Engine.Ponder(WhiteTimeLeftMilliSecs ?? 0, WhiteIncrementMilliSecs, BlackTimeLeftMilliSecs ?? 0,
+                BlackIncrementMilliSecs, Settings.EngineDepth, cts.Token,
+                (output) => outputCallback?.Invoke(enginePlayer.Engine, output));
             cts.Dispose();
 
             return res;
