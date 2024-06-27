@@ -1066,7 +1066,7 @@ namespace CoreChess.Pages
                         if (p.IsHuman) {
                             settings.Players.Add(new HumanPlayer(p.Color!.Value, p.Name, null));
                         } else {
-                            var engine = App.Settings.GetEngine(p.EngineId) ?? App.Settings.Engines?.FirstOrDefault();;
+                            var engine = App.Settings.GetEngine(p.EngineId) ?? App.Settings.Engines?.FirstOrDefault();
                             var enginePlayer =
                                 new EnginePlayer(p.Color!.Value, engine?.Name, p.EngineElo)
                                 {
