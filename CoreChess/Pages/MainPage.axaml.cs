@@ -1062,7 +1062,13 @@ namespace CoreChess.Pages
                         MaximumTime = App.Settings.NewGame.MaxTime
                     };
 
+                    var playerColor = new Random().Next(2) == 0 ? Game.Colors.White : Game.Colors.Black;
                     foreach (var p in App.Settings.NewGame.Players) {
+                        if (p.Color == null) {
+                            p.Color = playerColor;
+                            playerColor = playerColor == Game.Colors.White ? Game.Colors.Black : Game.Colors.White;
+                        }
+
                         if (p.IsHuman) {
                             settings.Players.Add(new HumanPlayer(p.Color!.Value, p.Name, null));
                         } else {

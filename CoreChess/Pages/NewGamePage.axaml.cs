@@ -40,7 +40,7 @@ namespace CoreChess.Dialogs
                     SetPlayer(m_Player1, App.Settings.NewGame.Players[0]);
                     SetPlayer(m_Player2, App.Settings.NewGame.Players[1]);
                 }
-                m_TrainingMode.IsChecked = App.Settings.NewGame.TrainingMode == true;
+                m_TrainingMode.IsChecked = App.Settings.NewGame.TrainingMode;
 
                 if (App.Settings.NewGame.Chess960)
                     m_GameType.SelectedIndex = 1;
