@@ -2324,10 +2324,13 @@ namespace ChessLib
         {
             if (moves.Count > 1) {
                 // Castling
-                if (moveStr == WhiteKingCastlingMove || moveStr == BlackKingCastlingMove)
+                if (moveStr == WhiteKingCastlingMove || moveStr == BlackKingCastlingMove) {
                     moveNotation.ShortAlgebraic = "0-0";
-                else
+                    moveNotation.LongAlgebraic = "0-0";
+                } else {
                     moveNotation.ShortAlgebraic = "0-0-0";
+                    moveNotation.LongAlgebraic = "0-0-0";
+                }
             } else {
                 var move = moves[0];
                 string aMove;
