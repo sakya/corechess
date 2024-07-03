@@ -32,7 +32,7 @@ CoreChess is an open source chess GUI for chess engines
 
 ## Build from source
 ### Prerequisites
-- [.NET 7.0 SDK](https://dotnet.microsoft.com/en-us/download/dotnet/7.0)
+- [.NET 8.0 SDK](https://dotnet.microsoft.com/en-us/download/dotnet/8.0)
 
 ### Build instructions
 - Download the source code of the latest [release](https://github.com/sakya/corechess/releases)
