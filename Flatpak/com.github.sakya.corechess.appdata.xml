@@ -44,6 +44,14 @@
       </screenshot>
     </screenshots>
     <releases>
+      <release version="0.18.3.0" date="2024-07-06">
+        <description>
+          <ul>
+            <li>Fixed crash on startup</li>
+            <li>Fixed castling move in moves list</li>
+          </ul>
+        </description>
+      </release>
       <release version="0.18.2.0" date="2024-03-24">
         <description>
           <ul>
