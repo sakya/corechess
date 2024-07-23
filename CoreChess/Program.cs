@@ -23,8 +23,9 @@ namespace CoreChess
         public static void Main(string[] args)
         {
             // Set current directory to the one containing the executable
-            var exeDir = Path.GetDirectoryName(System.Reflection.Assembly.GetEntryAssembly().Location);
-            Directory.SetCurrentDirectory(exeDir);
+            var exeDir = Path.GetDirectoryName(System.Reflection.Assembly.GetEntryAssembly()?.Location);
+            if (exeDir != null)
+                Directory.SetCurrentDirectory(exeDir);
 
             BuildAvaloniaApp()
             .Start(AppMain, args);
@@ -248,14 +249,19 @@ namespace CoreChess
 
         private static bool ExistsInPath(string fileName)
         {
+            if (string.IsNullOrEmpty(fileName))
+                return false;
             if (File.Exists(fileName))
                 return true;
 
             var pathEnv = Environment.GetEnvironmentVariable("PATH");
-            foreach (var path in pathEnv.Split(Path.PathSeparator)) {
-                if (File.Exists(Path.Combine(path, fileName)))
-                    return true;
+            if (pathEnv != null) {
+                foreach (var path in pathEnv.Split(Path.PathSeparator)) {
+                    if (File.Exists(Path.Combine(path, fileName)))
+                        return true;
+                }
             }
+
             return false;
         } // ExistsInPath
     }
