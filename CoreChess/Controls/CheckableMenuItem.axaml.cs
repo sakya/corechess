@@ -26,7 +26,7 @@ namespace CoreChess.Controls
             }
         } // CheckableMenuItem
 
-        public static readonly DirectProperty<CheckableMenuItem, bool> IsCheckedProperty =
+        public new static readonly DirectProperty<CheckableMenuItem, bool> IsCheckedProperty =
             AvaloniaProperty.RegisterDirect<CheckableMenuItem, bool>(
                 nameof(IsChecked),
                 o => o.IsChecked,
@@ -47,7 +47,7 @@ namespace CoreChess.Controls
             }
         }
 
-        public bool IsChecked
+        public new bool IsChecked
         {
             get { return m_IsChecked; }
             set {
