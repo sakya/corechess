@@ -91,6 +91,7 @@ namespace CoreChess.Controls
 
             // Subscribe to bounds changed
             var bounds = m_Canvas.GetObservable(Canvas.BoundsProperty);
+            RenderOptions.SetBitmapInterpolationMode(m_Canvas, BitmapInterpolationMode.HighQuality);
             bounds.Subscribe(new AnonymousObserver<Rect>(value =>
             {
                 if (m_Game != null)
@@ -338,6 +339,7 @@ namespace CoreChess.Controls
         public RenderTargetBitmap GetBitmap(Size size, Game.MoveNotation lastMove = null)
         {
             Canvas tCanvas = new Canvas();
+            RenderOptions.SetBitmapInterpolationMode(tCanvas, BitmapInterpolationMode.HighQuality);
             DrawBoard(tCanvas, size.Width, size.Height, lastMove);
             tCanvas.Arrange(new Rect(size));
 
@@ -663,6 +665,7 @@ namespace CoreChess.Controls
                         DataContext = square.Piece.Type,
                         ZIndex = 1
                     };
+                    RenderOptions.SetBitmapInterpolationMode(pCanvas, BitmapInterpolationMode.HighQuality);
 
                     Canvas.SetLeft(pCanvas, left);
                     Canvas.SetTop(pCanvas, top);
