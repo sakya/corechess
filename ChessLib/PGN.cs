@@ -64,7 +64,7 @@ namespace ChessLib
             DateTime? res = null;
 
             if (!string.IsNullOrEmpty(Date)) {
-                string[] parts = Date.Split(new char[] { '.' }, StringSplitOptions.RemoveEmptyEntries);
+                string[] parts = Date.Split(new[] { '.' }, StringSplitOptions.RemoveEmptyEntries);
                 if (parts.Length == 3) {
                     int year = 0;
                     int month = 1;
@@ -257,11 +257,11 @@ namespace ChessLib
                         sb.Append($" {result}");
 
                     if (sb.Length > 80) {
-                        string line = sb.ToString();
+                        var line = sb.ToString();
                         // Find the blank space near 80
-                        int nIdx = line.IndexOf(' ', 80);
-                        int pIdx = line.LastIndexOf(' ', 80);
-                        int idx = 0;
+                        var nIdx = line.IndexOf(' ', 80);
+                        var pIdx = line.LastIndexOf(' ', 80);
+                        int idx;
                         if (nIdx < 0)
                             idx = pIdx;
                         else
@@ -324,7 +324,7 @@ namespace ChessLib
         /// <summary>
         /// Load a game informations from a PGN file
         /// </summary>
-        /// <param name="file"></param>
+        /// <param name="stream"></param>
         /// <param name="filePosition">The file position where the game informations start</param>
         /// <returns></returns>
         private static async Task<PGN> LoadGamePrimitive(Stream stream, long filePosition = 0)
@@ -334,8 +334,7 @@ namespace ChessLib
             stream.Seek(filePosition, SeekOrigin.Begin);
 
             bool movesStarted = false;
-            string line = null;
-            long lastPos = filePosition;
+            string line;
             StringBuilder sb = new StringBuilder();
             Regex propsRegEx = new Regex("\\[(.*) \"(.*)\"\\]");
             while ((line = await ReadLineFromStream(stream)) != null) {
@@ -417,16 +416,15 @@ namespace ChessLib
                     movesStarted = true;
 
                     // Rest of line comment
-                    int idx = line.IndexOf(";");
+                    int idx = line.IndexOf(";", StringComparison.InvariantCultureIgnoreCase);
                     if (idx >= 0) {
                         line = line.Remove(idx, 1);
-                        line.Insert(idx, "{");
-                        line.Insert(line.Length - 1, "}");
+                        line = line.Insert(idx, "{");
+                        line = line.Insert(line.Length - 1, "}");
                     }
                     sb.Append(line);
                     sb.Append(" ");
                 }
-                lastPos = stream.Position;
             }
 
             // Moves
@@ -434,10 +432,10 @@ namespace ChessLib
             moves = moves.Trim();
 
             // Remove variations
-            int varIdx = moves.IndexOf("(");
+            int varIdx = moves.IndexOf("(", StringComparison.InvariantCultureIgnoreCase);
             while (varIdx >= 0) {
                 moves = Regex.Replace(moves, "\\([^(^)]*\\)", " ");
-                varIdx = moves.IndexOf("(");
+                varIdx = moves.IndexOf("(", StringComparison.InvariantCultureIgnoreCase);
             }
 
             // Remove various stuff
@@ -509,17 +507,17 @@ namespace ChessLib
             moves = moves.RemoveDoubleSpaces();
 
             // Remove spaces from comment beginnings
-            int cbsIdx = moves.IndexOf("{ ");
+            int cbsIdx = moves.IndexOf("{ ", StringComparison.InvariantCultureIgnoreCase);
             while (cbsIdx >= 0) {
                 moves = moves.Replace("{ ", "{");
-                cbsIdx = moves.IndexOf("{ ");
+                cbsIdx = moves.IndexOf("{ ", StringComparison.InvariantCultureIgnoreCase);
             }
 
             // Remove spaces from comment endings
-            int cesIdx = moves.IndexOf(" }");
+            int cesIdx = moves.IndexOf(" }", StringComparison.InvariantCultureIgnoreCase);
             while (cesIdx >= 0) {
                 moves = moves.Replace(" }", "}");
-                cesIdx = moves.IndexOf(" }");
+                cesIdx = moves.IndexOf(" }", StringComparison.InvariantCultureIgnoreCase);
             }
 
             if (moves.EndsWith(" 1-0") || moves.EndsWith(" 0-1"))
