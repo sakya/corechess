@@ -558,19 +558,6 @@ namespace CoreChess.Controls
             double top = BorderWidth;
             double left = BorderWidth;
 
-            // Background to mask
-            // https://github.com/AvaloniaUI/Avalonia/issues/4984
-            Rectangle bkg = new Rectangle()
-            {
-                Width = squareWidth * 8.0,
-                Height = squareHeight * 8.0,
-                Fill = new SolidColorBrush(SquareWhiteColor),
-                ZIndex = 0,
-            };
-            Canvas.SetLeft(bkg, left);
-            Canvas.SetTop(bkg, top);
-            canvas.Children.Add(bkg);
-
             List<Color> colors = new List<Color>() { SquareWhiteColor, SquareBlackColor };
             int colorIndex = 0;
 
@@ -578,18 +565,30 @@ namespace CoreChess.Controls
             int rank = Flipped ? 7 : 0;
             for (int i = 0; i < 64; i++) {
                 var square = m_Game.Board.GetSquare($"{m_Game.Board.Files[file]}{8 - rank}");
-
-                Rectangle rect = new Rectangle()
+                var radius = i switch
                 {
-                    Name = $"Rect_{square.Notation}",
-                    Width = squareWidth,
-                    Height = squareHeight,
-                    Fill = new SolidColorBrush(colors[colorIndex]),
-                    ZIndex = 0,
+                    0 => new CornerRadius(3, 0, 0, 0),
+                    7 => new CornerRadius(0, 3, 0, 0),
+                    56 => new CornerRadius(0, 0, 0, 3),
+                    63 => new CornerRadius(0, 0, 3, 0),
+                    _ => new CornerRadius(0)
                 };
-                Canvas.SetLeft(rect, left);
-                Canvas.SetTop(rect, top);
-                canvas.Children.Add(rect);
+                var bkg = new Border()
+                {
+                    CornerRadius = radius,
+                    ClipToBounds = true,
+                    Child = new Rectangle()
+                    {
+                        Name = $"Rect_{square.Notation}",
+                        Width = squareWidth,
+                        Height = squareHeight,
+                        Fill = new SolidColorBrush(colors[colorIndex]),
+                        ZIndex = 0,
+                    }
+                };
+                Canvas.SetLeft(bkg, left);
+                Canvas.SetTop(bkg, top);
+                canvas.Children.Add(bkg);
 
                 if (ShowFileRankNotation != Settings.FileRankNotations.None) {
                     if ((!Flipped && rank == 7) || (Flipped && rank == 0)) {
