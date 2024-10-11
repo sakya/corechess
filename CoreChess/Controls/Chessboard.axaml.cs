@@ -218,8 +218,7 @@ namespace CoreChess.Controls
 
                         if (clickedSquare.Piece?.Color == m_Game.ToMove) {
                             // Select the square
-                            var rect = m_Canvas.Children
-                                .FirstOrDefault(c => c.Name == $"Rect_{clickedSquare.Notation}") as Rectangle;
+                            var rect = GetRectangle(clickedSquare.Notation);
                             if (rect != null)
                                 rect.Fill = new SolidColorBrush(clickedSquare.Color == Game.Colors.White ? SquareWhiteSelectedColor : SquareBlackSelectedColor);
                             m_SelectedSquare = clickedSquare;
@@ -507,8 +506,7 @@ namespace CoreChess.Controls
         private void DeselectSquare()
         {
             if (m_SelectedSquare != null) {
-                var rect = m_Canvas.Children
-                    .FirstOrDefault(c => c.Name == $"Rect_{m_SelectedSquare.Notation}") as Rectangle;
+                var rect = GetRectangle(m_SelectedSquare.Notation);
                 if (rect != null) {
                     rect.Fill = new SolidColorBrush(m_SelectedSquare.Color == Game.Colors.White ? SquareWhiteColor : SquareBlackColor);
                     rect.Stroke = null;
@@ -575,15 +573,16 @@ namespace CoreChess.Controls
                 };
                 var bkg = new Border()
                 {
+                    Name = $"Border_{square.Notation}",
                     CornerRadius = radius,
                     ClipToBounds = true,
+                    ZIndex = 0,
                     Child = new Rectangle()
                     {
                         Name = $"Rect_{square.Notation}",
                         Width = squareWidth,
                         Height = squareHeight,
                         Fill = new SolidColorBrush(colors[colorIndex]),
-                        ZIndex = 0,
                     }
                 };
                 Canvas.SetLeft(bkg, left);
@@ -712,15 +711,13 @@ namespace CoreChess.Controls
         {
             Rectangle rect = null;
             if (m_DragInfo.PreviousSquare != null) {
-                rect = m_Canvas.Children
-                    .FirstOrDefault(c => c.Name == $"Rect_{m_DragInfo.PreviousSquare.Notation}") as Rectangle;
+                rect = GetRectangle(m_DragInfo.PreviousSquare.Notation);
                 if (rect != null)
                     rect.Fill = m_DragInfo.PreviousSquareFill;
             }
 
             if (square != null) {
-                rect = m_Canvas.Children
-                    .FirstOrDefault(c => c.Name == $"Rect_{square.Notation}") as Rectangle;
+                rect = GetRectangle(square.Notation);
                 if (rect != null) {
                     m_DragInfo.PreviousSquare = square;
                     m_DragInfo.PreviousSquareFill = rect.Fill;
@@ -743,8 +740,7 @@ namespace CoreChess.Controls
                 };
 
                 foreach (var square in squares) {
-                    var rect = m_Canvas.Children
-                        .FirstOrDefault(c => c.Name == $"Rect_{square.Notation}") as Rectangle;
+                    var rect = GetRectangle(square.Notation);
                     if (rect != null)
                         rect.Fill = new SolidColorBrush(square.Color == Game.Colors.White ? SquareWhiteColor : SquareBlackColor);
                 }
@@ -760,8 +756,7 @@ namespace CoreChess.Controls
                 };
 
                 foreach (var square in squares) {
-                    var rect = m_Canvas.Children
-                        .FirstOrDefault(c => c.Name == $"Rect_{square.Notation}") as Rectangle;
+                    var rect = GetRectangle(square.Notation);
                     if (rect != null)
                         rect.Fill = new SolidColorBrush(square.Color == Game.Colors.White ? SquareWhiteSelectedColor : SquareBlackSelectedColor);
                 }
@@ -779,22 +774,20 @@ namespace CoreChess.Controls
                 squares = m_Game.GetAvailableSquares(square);
 
             if (EnableDragAndDrop) {
-                var rect = m_Canvas.Children
-                    .FirstOrDefault(c => c.Name == $"Rect_{square.Notation}") as Rectangle;
+                var rect = GetRectangle(square.Notation);
                 if (rect != null)
                     rect.Fill = new SolidColorBrush(square.Color == Game.Colors.White ? SquareWhiteSelectedColor : SquareBlackSelectedColor);
             }
 
-            HashSet<string> created = new HashSet<string>();
+            var created = new HashSet<string>();
             foreach (var s in squares) {
                 // Avoid adding the same circle multiple times (this happens in Chess960 for castling)
                 if (created.Contains(s.Notation))
                     continue;
 
-                var fRect = m_Canvas.Children
-                    .FirstOrDefault(c => c.Name == $"Rect_{s.Notation}") as Rectangle;
+                var fRect = GetRectangle(s.Notation);
                 if (fRect != null) {
-                    double size = fRect.Width / 4;
+                    var size = fRect.Width / 4;
                     if (s.Piece != null && s != square)
                         size = fRect.Width;
                     var circle = new Ellipse()
@@ -805,8 +798,8 @@ namespace CoreChess.Controls
                         Fill = new SolidColorBrush(Color.FromArgb(70, 0, 0, 0)),
                         ZIndex = 0
                     };
-                    Canvas.SetLeft(circle, Canvas.GetLeft(fRect) + (fRect.Width / 2) - (size / 2));
-                    Canvas.SetTop(circle, Canvas.GetTop(fRect) + (fRect.Height / 2) - (size / 2));
+                    Canvas.SetLeft(circle, Canvas.GetLeft(fRect.Parent!) + (fRect.Width / 2) - (size / 2));
+                    Canvas.SetTop(circle, Canvas.GetTop(fRect.Parent) + (fRect.Height / 2) - (size / 2));
                     m_Canvas.Children.Add(circle);
 
                     created.Add(s.Notation);
@@ -822,8 +815,7 @@ namespace CoreChess.Controls
         private void RemoveAvailableSquares(Board.Square square = null)
         {
             if (square != null) {
-                var rect = m_Canvas.Children
-                    .FirstOrDefault(c => c.Name == $"Rect_{square.Notation}") as Rectangle;
+                var rect = GetRectangle(square.Notation);
                 if (rect != null)
                     rect.Fill = new SolidColorBrush(square.Color == Game.Colors.White ? SquareWhiteColor : SquareBlackColor);
             }
@@ -936,6 +928,14 @@ namespace CoreChess.Controls
             else
                 this.Cursor = new Avalonia.Input.Cursor(Avalonia.Input.StandardCursorType.Arrow);
         } // SetMouseCursor
+
+        private Rectangle GetRectangle(string notation)
+        {
+            if (m_Canvas.Children.FirstOrDefault(c => c.Name == $"Border_{notation}") is Border border) {
+                return border.Child as Rectangle;
+            }
+            return null;
+        }
         #endregion
     }
 }
