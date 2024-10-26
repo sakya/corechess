@@ -1,8 +1,5 @@
 using System;
-using Avalonia;
-using Avalonia.Controls;
 using Avalonia.Interactivity;
-using Avalonia.Markup.Xaml;
 using Octokit;
 using System.Net.Http;
 using System.IO;
@@ -10,12 +7,16 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Collections.Generic;
+using System.Runtime.InteropServices;
 using CoreChess.Abstracts;
 
 namespace CoreChess.Dialogs
 {
     public partial class UpdateDialog : BaseDialog
     {
+        [DllImport("shell32", CharSet = CharSet.Unicode, ExactSpelling = true, PreserveSig = false)]
+        private static extern string SHGetKnownFolderPath([MarshalAs(UnmanagedType.LPStruct)] Guid rfid, uint dwFlags, nint hToken = 0);
+
         private Release m_Release = null;
         private string m_Changelog = string.Empty;
         private CancellationTokenSource m_Cts;
@@ -103,6 +104,12 @@ namespace CoreChess.Dialogs
 
         private string GetDownloadFolder()
         {
+            if (OperatingSystem.IsWindows()) {
+                var downloadsPath = SHGetKnownFolderPath(new("374DE290-123F-4565-9164-39C4925E467B"), 0);
+                if (!string.IsNullOrEmpty(downloadsPath))
+                    return downloadsPath;
+            }
+
             var home = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
             var folders = new List<string>()
             {
