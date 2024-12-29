@@ -21,12 +21,12 @@ namespace CoreChess.Controls
 {
     public partial class Chessboard : UserControl
     {
-        private Game m_Game = null;
+        private Game m_Game;
         private readonly double m_BorderWidth = 18.0;
-        private Board.Square m_SelectedSquare = null;
-        private DragInfo m_DragInfo = null;
+        private Board.Square m_SelectedSquare;
+        private DragInfo m_DragInfo;
         private string m_HighlightedMove = string.Empty;
-        private bool m_GameEndedInvoked = false;
+        private bool m_GameEndedInvoked;
         private readonly Mutex m_GameEndedMutex = new();
 
         class DragInfo
@@ -87,7 +87,7 @@ namespace CoreChess.Controls
 
         public Chessboard()
         {
-            this.InitializeComponent();
+            InitializeComponent();
 
             // Subscribe to bounds changed
             var bounds = m_Canvas.GetObservable(Canvas.BoundsProperty);
@@ -159,10 +159,10 @@ namespace CoreChess.Controls
         private void OnMouseMoved(object sender, Avalonia.Input.PointerEventArgs args)
         {
             if (!EnableDragAndDrop) {
-                this.Cursor = new Avalonia.Input.Cursor(Avalonia.Input.StandardCursorType.Arrow);
+                Cursor = new Avalonia.Input.Cursor(Avalonia.Input.StandardCursorType.Arrow);
                 if (!m_Game.Ended && m_Game.ToMovePlayer is HumanPlayer) {
                     if (m_SelectedSquare != null) {
-                        this.Cursor = new Avalonia.Input.Cursor(Avalonia.Input.StandardCursorType.Hand);
+                        Cursor = new Avalonia.Input.Cursor(Avalonia.Input.StandardCursorType.Hand);
                     } else {
                         SetMouseCursor(args.GetPosition(m_Canvas));
                     }
@@ -195,7 +195,7 @@ namespace CoreChess.Controls
                     if (!m_Game.Ended && m_Game.ToMovePlayer is HumanPlayer) {
                         SetMouseCursor(relPos);
                     } else
-                        this.Cursor = new Avalonia.Input.Cursor(Avalonia.Input.StandardCursorType.Arrow);
+                        Cursor = new Avalonia.Input.Cursor(Avalonia.Input.StandardCursorType.Arrow);
                 }
             }
         } // OnMouseMoved
@@ -256,7 +256,7 @@ namespace CoreChess.Controls
                 var dragInfo = m_DragInfo;
                 HighlightDragAndDropSquare(null);
                 m_DragInfo = null;
-                this.Cursor = new Avalonia.Input.Cursor(Avalonia.Input.StandardCursorType.Arrow);
+                Cursor = new Avalonia.Input.Cursor(Avalonia.Input.StandardCursorType.Arrow);
 
                 if (ShowAvailableMoves)
                     RemoveAvailableSquares(dragInfo.StartSquare);
@@ -287,7 +287,7 @@ namespace CoreChess.Controls
 
         public async Task<bool> SetGame(Game game)
         {
-            this.IsHitTestVisible = false;
+            IsHitTestVisible = false;
 
             m_Game = game;
             m_Game.WhiteTimer += OnGameWhiteTimer;
@@ -307,7 +307,7 @@ namespace CoreChess.Controls
 
         public void StartGame()
         {
-            this.IsHitTestVisible = true;
+            IsHitTestVisible = true;
             if (!m_Game.Ended && m_Game.ToMovePlayer is EnginePlayer player && player.Engine != null) {
                 // Don't wait this move
                 _ = DoEngineMove();
@@ -374,7 +374,7 @@ namespace CoreChess.Controls
                 var dragInfo = m_DragInfo;
                 HighlightDragAndDropSquare(null);
                 m_DragInfo = null;
-                this.Cursor = new Avalonia.Input.Cursor(Avalonia.Input.StandardCursorType.Arrow);
+                Cursor = new Avalonia.Input.Cursor(Avalonia.Input.StandardCursorType.Arrow);
 
                 // Reposition the piece
                 await AnimatePiece(dragInfo.Piece, dragInfo.StartPosition, 250, false);
@@ -385,12 +385,12 @@ namespace CoreChess.Controls
         private async Task<Piece.Pieces> OnPlayerPromotion(object sender, Game.PromotionArgs args)
         {
             var dlg = new PromotionDialog(PiecesFolder, args.Player.Color);
-            return await dlg.Show<Piece.Pieces>((Window)this.VisualRoot);
+            return await dlg.Show<Piece.Pieces>((Window)VisualRoot);
         } // OnPromotion
 
         private async Task<bool> OnCastlingConfirm(object sender, EventArgs args)
         {
-            return await MessageDialog.ShowConfirmMessage((Window)this.VisualRoot, Localizer.Localizer.Instance["Confirm"], Localizer.Localizer.Instance["ConfirmCastling"]);
+            return await MessageDialog.ShowConfirmMessage((Window)VisualRoot, Localizer.Localizer.Instance["Confirm"], Localizer.Localizer.Instance["ConfirmCastling"]);
         } // OnCastlingConfirm
 
         private bool OnPromoted(object sender, Game.PromotionArgs args)
@@ -465,11 +465,11 @@ namespace CoreChess.Controls
 
         private async Task<bool> DoEngineMove()
         {
-            this.IsHitTestVisible = false;
+            IsHitTestVisible = false;
 
             List<Game.Move> movedPieces = await m_Game.DoEnginePlayerMove((engine, output) => { EngineThinking?.Invoke(this, new EngineThinkingEventArgs(engine, output)); });
             if (movedPieces == null) {
-                this.IsHitTestVisible = true;
+                IsHitTestVisible = true;
                 return false;
             }
 
@@ -491,7 +491,7 @@ namespace CoreChess.Controls
                     piece.Background = GetBrush(GetPieceImagePath(movedPieces[0].Piece));
                 }
             }
-            this.IsHitTestVisible = true;
+            IsHitTestVisible = true;
 
             MoveMade?.Invoke(this, EventArgs.Empty);
             if (m_Game.Result != null)
@@ -709,7 +709,7 @@ namespace CoreChess.Controls
 
         private void HighlightDragAndDropSquare(Board.Square square)
         {
-            Rectangle rect = null;
+            Rectangle rect;
             if (m_DragInfo.PreviousSquare != null) {
                 rect = GetRectangle(m_DragInfo.PreviousSquare.Notation);
                 if (rect != null)
@@ -731,7 +731,7 @@ namespace CoreChess.Controls
             if (move == null && m_Game.Moves.Count == 0)
                 return;
 
-            List<Board.Square> squares = null;
+            List<Board.Square> squares;
             if (!string.IsNullOrEmpty(m_HighlightedMove)) {
                 squares = new List<Board.Square>()
                 {
@@ -924,9 +924,9 @@ namespace CoreChess.Controls
         {
             var overSquare = GetSquareFromPoint(point);
             if (overSquare?.Piece != null && overSquare.Piece.Color == m_Game.ToMovePlayer.Color)
-                this.Cursor = new Avalonia.Input.Cursor(Avalonia.Input.StandardCursorType.Hand);
+                Cursor = new Avalonia.Input.Cursor(Avalonia.Input.StandardCursorType.Hand);
             else
-                this.Cursor = new Avalonia.Input.Cursor(Avalonia.Input.StandardCursorType.Arrow);
+                Cursor = new Avalonia.Input.Cursor(Avalonia.Input.StandardCursorType.Arrow);
         } // SetMouseCursor
 
         private Rectangle GetRectangle(string notation)
