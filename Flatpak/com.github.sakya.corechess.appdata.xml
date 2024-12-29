@@ -44,11 +44,11 @@
       </screenshot>
     </screenshots>
     <releases>
-      <release version="0.18.4.0" date="2024-10-11">
+      <release version="0.18.4.0" date="2024-12-29">
         <description>
           <ul>
             <li>Upgraded runtime to Freedesktop 24.08</li>
-            <li>Upgraded Avalonia to v11.1.4</li>
+            <li>Upgraded Avalonia to v11.2.3</li>
           </ul>
         </description>
       </release>
