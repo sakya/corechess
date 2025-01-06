@@ -1,5 +1,4 @@
 ﻿using Avalonia.Controls;
-using Avalonia.Markup.Xaml;
 using System.Threading.Tasks;
 using CoreChess.Abstracts;
 
@@ -9,14 +8,14 @@ namespace CoreChess.Dialogs
     {
         public WaitDialog()
         {
-            this.InitializeComponent();
+            InitializeComponent();
             Animated = false;
             CloseOnBackdropClick = false;
         }
 
         public WaitDialog(string message)
         {
-            this.InitializeComponent();
+            InitializeComponent();
 
             Animated = false;
             CloseOnBackdropClick = false;

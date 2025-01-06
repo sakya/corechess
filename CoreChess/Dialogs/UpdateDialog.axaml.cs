@@ -17,7 +17,7 @@ namespace CoreChess.Dialogs
         [DllImport("shell32", CharSet = CharSet.Unicode, ExactSpelling = true, PreserveSig = false)]
         private static extern string SHGetKnownFolderPath([MarshalAs(UnmanagedType.LPStruct)] Guid rfid, uint dwFlags, nint hToken = 0);
 
-        private Release m_Release = null;
+        private Release m_Release;
         private string m_Changelog = string.Empty;
         private CancellationTokenSource m_Cts;
 
@@ -85,7 +85,7 @@ namespace CoreChess.Dialogs
                             await fs.WriteAsync(buffer, 0, chunk);
 
                             done += chunk;
-                            var perc = done / (double)asset.Size * 100.0;
+                            var perc = done / asset.Size * 100.0;
                             m_Progress.Value = perc;
                             m_ProgressMessage.Text = $"{perc.ToString("0", App.Settings.Culture)}%";
                         }
