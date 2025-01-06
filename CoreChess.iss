@@ -2,7 +2,7 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 #define MyAppName "CoreChess"
-#define MyAppVersion "0.18.4.0"
+#define MyAppVersion "0.18.5.0"
 #define MyAppPublisher "Paolo Iommarini"
 #define MyAppPublisherURL "https://github.com/sakya/corechess"
 #define MyAppExeName "CoreChess.exe"

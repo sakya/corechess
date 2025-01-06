@@ -169,7 +169,7 @@ namespace CoreChess.Pages
             #endregion
 
             private bool m_IsResignEnabled;
-            private bool m_isEngineSettingsEnabled;
+            private bool m_IsEngineSettingsEnabled;
             private bool m_CanPause;
             private bool m_IsPaused;
             private bool m_IsWindows;
@@ -234,8 +234,8 @@ namespace CoreChess.Pages
 
             public bool IsEngineSettingsEnabled
             {
-                get { return m_isEngineSettingsEnabled; }
-                set { SetIfChanged(ref m_isEngineSettingsEnabled, value); }
+                get { return m_IsEngineSettingsEnabled; }
+                set { SetIfChanged(ref m_IsEngineSettingsEnabled, value); }
             }
 
             public Settings.Notations? MoveNotation
@@ -1198,11 +1198,11 @@ namespace CoreChess.Pages
             if (m_Game == null)
                 return;
 
-            var capturedPieces = m_Game.GetCapturedPieces(m_CurrentMoveIndex.HasValue ? m_CurrentMoveIndex.Value : m_Game.Moves.Count - 1);
+            var capturedPieces = m_Game.GetCapturedPieces(m_CurrentMoveIndex ?? m_Game.Moves.Count - 1);
             var wPieces = capturedPieces.Where(p => p.Color == Game.Colors.White).OrderByDescending(p => p.Value).ThenBy(p => p.Acronym).ToList();
             var bPieces = capturedPieces.Where(p => p.Color == Game.Colors.Black).OrderByDescending(p => p.Value).ThenBy(p => p.Acronym).ToList();
-            int wValue = m_Game.Board.GetPieces(Game.Colors.White).Where(p => p.Type != Piece.Pieces.King).Sum(p => p.Value);
-            int bValue = m_Game.Board.GetPieces(Game.Colors.Black).Where(p => p.Type != Piece.Pieces.King).Sum(p => p.Value);
+            var wValue = m_Game.Board.GetPieces(Game.Colors.White).Where(p => p.Type != Piece.Pieces.King).Sum(p => p.Value);
+            var bValue = m_Game.Board.GetPieces(Game.Colors.Black).Where(p => p.Type != Piece.Pieces.King).Sum(p => p.Value);
 
             var updateNeeded = !m_LastWhiteCapturedPieces.SequenceEqual(wPieces.Select(p => p.Type)) || !m_LastBlackCapturedPieces.SequenceEqual(bPieces.Select(p => p.Type));
             if (!updateNeeded)
@@ -1244,10 +1244,10 @@ namespace CoreChess.Pages
             m_WhiteCapturedPieces.Children.Clear();
             Piece lastPiece = null;
             foreach (var cp in bPieces) {
-                string fileName = $"{m_Chessboard.PiecesFolder}{Path.DirectorySeparatorChar}b{cp.Type.ToString()}.png";
+                var fileName = $"{m_Chessboard.PiecesFolder}{Path.DirectorySeparatorChar}b{cp.Type.ToString()}.png";
                 var bitmap = new Bitmap(fileName);
 
-                Thickness margin = new Thickness(0);
+                var margin = new Thickness(0);
                 if (lastPiece?.Type == cp.Type)
                     margin = new Thickness(-10, 0, 0, 0);
                 m_WhiteCapturedPieces.Children.Add(new Image() { Source = bitmap, Height = 35, Margin = margin });
@@ -1257,10 +1257,10 @@ namespace CoreChess.Pages
             m_BlackCapturedPieces.Children.Clear();
             lastPiece = null;
             foreach (var cp in wPieces) {
-                string fileName = $"{m_Chessboard.PiecesFolder}{Path.DirectorySeparatorChar}w{cp.Type.ToString()}.png";
+                var fileName = $"{m_Chessboard.PiecesFolder}{Path.DirectorySeparatorChar}w{cp.Type.ToString()}.png";
                 var bitmap = new Bitmap(fileName);
 
-                Thickness margin = new Thickness(0);
+                var margin = new Thickness(0);
                 if (lastPiece?.Type == cp.Type)
                     margin = new Thickness(-10, 0, 0, 0);
                 m_BlackCapturedPieces.Children.Add(new Image() { Source = bitmap, Height = 35, Margin = margin });
