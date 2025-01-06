@@ -1159,8 +1159,8 @@ namespace ChessLib
             using (Stream sw = new FileStream(file, FileMode.Create, FileAccess.Write)) {
                 Version = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString();
 
-                string content = JsonConvert.SerializeObject(this, m_SerializerSettings);
-                byte[] data = Zip(content);
+                var content = JsonConvert.SerializeObject(this, m_SerializerSettings);
+                var data = Zip(content);
                 await sw.WriteAsync(data, 0, data.Length);
             }
             FileName = file;
@@ -1175,9 +1175,9 @@ namespace ChessLib
         public static async Task<Game> Load(string file)
         {
             using (Stream sr = new FileStream(file, FileMode.Open, FileAccess.Read)) {
-                byte[] data = new byte[sr.Length];
+                var data = new byte[sr.Length];
                 await sr.ReadAsync(data, 0, data.Length);
-                string str = UnZip(data);
+                var str = UnZip(data);
                 var res = JsonConvert.DeserializeObject<Game>(str, m_SerializerSettings);
                 if (res == null)
                     throw new Exception("Failed to load file");
@@ -1194,7 +1194,7 @@ namespace ChessLib
         /// <returns></returns>
         public async Task<bool> SaveToPgn(string file)
         {
-            PGN pgn = new PGN()
+            var pgn = new PGN()
             {
                 Event = Settings.Event,
                 Site = "?",
@@ -1214,8 +1214,8 @@ namespace ChessLib
             pgn.WhiteElo = GetPlayer(Colors.White)?.Elo;
             pgn.BlackElo = GetPlayer(Colors.Black)?.Elo;
 
-            string result = "*";
-            string termination = string.Empty;
+            var result = "*";
+            var termination = string.Empty;
             if (Ended) {
                 termination = "normal";
                 if (Result == Results.Draw) {
@@ -1272,12 +1272,12 @@ namespace ChessLib
         /// <returns></returns>
         public static async Task<Game> LoadFromPgn(PGN pgn, bool starAsAborted = true)
         {
-            Game res = new Game()
+            var res = new Game()
             {
                 ECO = pgn.ECO
             };
 
-            GameSettings settings = new GameSettings()
+            var settings = new GameSettings()
             {
                 Event = pgn.Event,
                 Date = pgn.GetDate(),
@@ -1286,8 +1286,7 @@ namespace ChessLib
 
             if (!string.IsNullOrEmpty(pgn.TimeControl) && pgn.TimeControl != "?") {
                 var parts = pgn.TimeControl.Split(new char[] { ':' }, StringSplitOptions.RemoveEmptyEntries);
-                int time;
-                if (parts.Length >= 1 && int.TryParse(parts[0], out time))
+                if (parts.Length >= 1 && int.TryParse(parts[0], out var time))
                     settings.MaximumTime = TimeSpan.FromSeconds(time);
 
                 if (parts.Length >= 2 && int.TryParse(parts[1], out time))
@@ -1316,9 +1315,7 @@ namespace ChessLib
             res.BlackTimeLeftMilliSecs = pgn.BlackTimeLeftMilliSecs;
 
             foreach (var m in pgn.Moves) {
-                char promotion;
-                string annotation;
-                string an = res.GetCoordinateNotation(res.ToMove, m.Notation, out promotion, out annotation);
+                var an = res.GetCoordinateNotation(res.ToMove, m.Notation, out var promotion, out var annotation);
 
                 var movedPieces = await res.DoMove(an, false, true);
                 if (promotion != '\0')
@@ -1360,13 +1357,13 @@ namespace ChessLib
             promotion = '\0';
             annotation = string.Empty;
 
-            string toSquareNotation = string.Empty;
-            List<Piece> allPieces = Board.GetPieces(color);
+            var toSquareNotation = string.Empty;
+            var allPieces = Board.GetPieces(color);
             List<Piece> movePieces = null;
 
             // Annotation
-            int qIdx = shortAlgebraicNotation.IndexOf("?", StringComparison.Ordinal);
-            int eIdx = shortAlgebraicNotation.IndexOf("!", StringComparison.Ordinal);
+            var qIdx = shortAlgebraicNotation.IndexOf("?", StringComparison.Ordinal);
+            var eIdx = shortAlgebraicNotation.IndexOf("!", StringComparison.Ordinal);
             if (qIdx >= 0 || eIdx >= 0) {
                 int idx = qIdx >= 0 && eIdx >= 0 ? Math.Min(qIdx, eIdx) : qIdx >= 0 ? qIdx : eIdx;
                 annotation = shortAlgebraicNotation.Substring(idx);
@@ -1383,7 +1380,7 @@ namespace ChessLib
             }
 
             // Remove the "x"
-            int xIdx = shortAlgebraicNotation.IndexOf("x", StringComparison.Ordinal);
+            var xIdx = shortAlgebraicNotation.IndexOf("x", StringComparison.Ordinal);
             if (xIdx >= 0)
                 shortAlgebraicNotation = shortAlgebraicNotation.Remove(xIdx, 1);
             // Remove the "+"
@@ -1476,8 +1473,8 @@ namespace ChessLib
                 await engine.ApplyOptions(true);
                 await engine.EnterAnalyzeMode();
 
-                int idx = 0;
-                List<MoveNotation> moves = new List<MoveNotation>(Moves);
+                var idx = 0;
+                var moves = new List<MoveNotation>(Moves);
                 if (Result == Results.Checkmate || Result == Results.Stalemate)
                     moves.RemoveAt(moves.Count - 1);
 

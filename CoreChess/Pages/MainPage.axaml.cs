@@ -508,7 +508,7 @@ namespace CoreChess.Pages
                     var move = m_Game.Moves.Last();
                     var stack = m_Moves.Children.FirstOrDefault(s => s.Name == $"move_{move.Index}") as StackPanel;
 
-                    Control toRemove = stack?.Children.Last();
+                    var toRemove = stack?.Children.Last();
                     if (toRemove != null) {
                         stack.Children.Remove(toRemove);
                         AddMove(m_Chessboard, move);
