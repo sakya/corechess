@@ -6,7 +6,6 @@ using Avalonia.Media;
 using Avalonia.Media.Imaging;
 using Avalonia.Threading;
 using ChessLib;
-using ChessLib.Engines;
 using CoreChess.Controls;
 using System;
 using System.Collections.Generic;
@@ -729,11 +728,15 @@ namespace CoreChess.Pages
         private async void OnGamesDatabaseClick(object sender, RoutedEventArgs e)
         {
             var wDlg = new WaitDialog(Localizer.Localizer.Instance["LoadingGames"]);
-            var wTask = wDlg.Show(App.MainWindow);
-            List<Game> games = new List<Game>();
+            _ = wDlg.Show(App.MainWindow);
+            var games = new List<Game>();
             foreach (var f in Directory.GetFiles(App.GamesDatabasePath, "*.ccsf")) {
-                var tempGame = await Game.Load(f);
-                games.Add(tempGame);
+                try {
+                    var tempGame = await Game.Load(f);
+                    games.Add(tempGame);
+                } catch {
+                    // ignored
+                }
             }
             wDlg.Close();
             var gDlg = new GamesDatabaseWindow(games);
@@ -1123,7 +1126,7 @@ namespace CoreChess.Pages
         {
             if (Path.GetExtension(filePath) == ".pgn") {
                 var wDlg = new WaitDialog(Localizer.Localizer.Instance["LoadingPGN"]);
-                var wTask = wDlg.Show(App.MainWindow);
+                _ = wDlg.Show(App.MainWindow);
                 List<PGN> games = null;
                 try {
                     games = await PGN.LoadFile(filePath);
@@ -1215,7 +1218,7 @@ namespace CoreChess.Pages
                 var tempWhite = new List<Piece>();
                 var tempBlack = new List<Piece>();
 
-                for (int i = 0; i < wPieces.Count; i++) {
+                for (var i = 0; i < wPieces.Count; i++) {
                     var wp = wPieces[i];
                     var bp = bPieces.FirstOrDefault(p => p.Type == wp.Type);
                     if (bp == null)
@@ -1226,7 +1229,7 @@ namespace CoreChess.Pages
                     }
                 }
 
-                for (int i = 0; i < bPieces.Count; i++) {
+                for (var i = 0; i < bPieces.Count; i++) {
                     var bp = bPieces[i];
                     var wp = wPieces.FirstOrDefault(p => p.Type == bp.Type);
                     if (wp == null)

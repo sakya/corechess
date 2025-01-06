@@ -55,12 +55,12 @@ namespace CoreChess
 
             if (string.IsNullOrEmpty(fontFamily))
                 fontFamily = Settings.DefaultFontFamily;
-            Application.Current.Resources["DefaultFontFamily"] = new Avalonia.Media.FontFamily(fontFamily);
+            Application.Current.Resources["DefaultFontFamily"] = new FontFamily(fontFamily);
 
             if (!string.IsNullOrEmpty(accentColor))
-                Application.Current.Resources["SystemAccentColor"] = Utils.ColorConverter.ParseHexColor(accentColor);
+                Application.Current.Resources["SystemAccentColor"] = ColorConverter.ParseHexColor(accentColor);
             if (!string.IsNullOrEmpty(highlightColor))
-                Application.Current.Resources["HighlightColor"] = Utils.ColorConverter.ParseHexColor(highlightColor);
+                Application.Current.Resources["HighlightColor"] = ColorConverter.ParseHexColor(highlightColor);
 
             CurrentStyle = style;
         } // SetStyle
