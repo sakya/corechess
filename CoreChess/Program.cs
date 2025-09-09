@@ -195,10 +195,24 @@ namespace CoreChess
                 // Check nnue
                 var sf = engines.FirstOrDefault(e => e.WorkingDir == Path.Combine(App.BinaryPath, @"Engines\stockfish"));
                 if (sf != null) {
+                    var dirInfo = new DirectoryInfo(@"Engines\stockfish\");
+                    var evalFiles = dirInfo.GetFiles("*.nnue").OrderBy(f => f.Length).ToList();
+
                     var efo = sf.GetOption("EvalFile");
                     if (efo != null) {
                         if (string.IsNullOrEmpty(efo.Value) || !File.Exists($"{Path.Combine(App.BinaryPath, @"Engines\stockfish\")}{efo.Value}")) {
-                            var evalFile = Directory.GetFiles(Path.Combine(App.BinaryPath, @"Engines\stockfish"), "*.nnue").FirstOrDefault();
+                            var evalFile = evalFiles.LastOrDefault()?.Name;
+                            if (!string.IsNullOrEmpty(evalFile))
+                                efo.Value = Path.GetFileName(evalFile);
+                            else
+                                efo.Value = string.Empty;
+                        }
+                    }
+
+                    efo = sf.GetOption("EvalFileSmall");
+                    if (efo != null) {
+                        if (string.IsNullOrEmpty(efo.Value) || !File.Exists($"{Path.Combine(App.BinaryPath, @"Engines\stockfish\")}{efo.Value}")) {
+                            var evalFile = evalFiles.Count > 1 ? evalFiles.FirstOrDefault()?.Name : null;
                             if (!string.IsNullOrEmpty(evalFile))
                                 efo.Value = Path.GetFileName(evalFile);
                             else
