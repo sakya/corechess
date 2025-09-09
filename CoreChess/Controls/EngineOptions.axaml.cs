@@ -195,6 +195,7 @@ namespace CoreChess.Controls
                 Minimum = int.Parse(opt.Min),
                 Maximum = int.Parse(opt.Max),
                 Value = int.Parse(opt.Value),
+                FormatString = "0"
             };
             grid.Children.Add(ctrl);
 
