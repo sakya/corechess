@@ -210,4 +210,9 @@
         </description>
       </release>
     </releases>
+    <keywords>
+        <keyword>chess software</keyword>
+        <keyword>chess engine</keyword>
+        <keyword>open source game</keyword>
+    </keywords>
 </component>
