@@ -1500,6 +1500,9 @@ namespace ChessLib
 
         public Player GetPlayer(Colors color)
         {
+            if (Settings?.Players == null)
+                return null;
+            
             return (Settings?.Players)
                 .FirstOrDefault(p => p.Color == color);
         } // GetPlayer

@@ -317,7 +317,7 @@ namespace CoreChess.Controls
         public async Task<bool> UndoMove()
         {
             await m_Game.UndoLastHumanPlayerMove();
-            Redraw(m_Game.Moves.Count() > 0 ? m_Game.Moves.Last() : null);
+            Redraw(m_Game.Moves.Any() ? m_Game.Moves.Last() : null);
             return true;
         } // UndoMove
 
