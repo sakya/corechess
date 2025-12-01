@@ -422,7 +422,7 @@ namespace ChessLib.Books
                 resMoves.Add(entry.Move);
                 while (true) {
                     var next = ReadEntry(fs);
-                    if (entry == null || next.Key != key)
+                    if (next.Key != key)
                         break;
 
                     if (!resMoves.Contains(next.Move)) {
