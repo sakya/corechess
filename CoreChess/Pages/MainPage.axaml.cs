@@ -1547,6 +1547,8 @@ namespace CoreChess.Pages
             m_Chessboard.EnableAudio = App.Settings.EnableAudio;
             m_Chessboard.ShowAvailableMoves = App.Settings.ShowValidMoves;
             m_Chessboard.ShowFileRankNotation = App.Settings.ShowFileRankNotation;
+            m_Chessboard.ShowSquareAttackIndicators = App.Settings.ShowSquareAttackIndicators;
+            m_Chessboard.AttackColorMode = App.Settings.AttackColorMode;
 
             m_Chessboard.PiecesFolder = App.GetPiecesPath(App.Settings.PiecesSet);
             m_Chessboard.BorderColor = (Color)this.FindResource("SectionBackgroundColor");

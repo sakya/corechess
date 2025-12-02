@@ -1085,6 +1085,59 @@ namespace ChessLib
         } // IsAttacked
 
         /// <summary>
+        /// Get count of pieces attacking a square, grouped by color
+        /// </summary>
+        /// <param name="square">The square to check</param>
+        /// <returns>Dictionary with attack counts per color</returns>
+        public Dictionary<Colors, int> GetSquareAttackCount(Board.Square square)
+        {
+            var result = new Dictionary<Colors, int>
+            {
+                { Colors.White, 0 },
+                { Colors.Black, 0 }
+            };
+
+            foreach (var sq in Board.Squares)
+            {
+                if (sq.Piece != null)
+                {
+                    var availableMoves = GetAvailableSquaresPrimitive(sq, true);
+                    if (availableMoves.Contains(square))
+                    {
+                        result[sq.Piece.Color]++;
+                    }
+                }
+            }
+
+            return result;
+        } // GetSquareAttackCount
+
+        /// <summary>
+        /// Get all pieces attacking a square for a specific color
+        /// </summary>
+        /// <param name="square">The square to check</param>
+        /// <param name="attackerColor">The color of attacking pieces</param>
+        /// <returns>List of pieces that can attack this square</returns>
+        public List<Piece> GetAttackingPieces(Board.Square square, Colors attackerColor)
+        {
+            var result = new List<Piece>();
+
+            foreach (var sq in Board.Squares)
+            {
+                if (sq.Piece != null && sq.Piece.Color == attackerColor)
+                {
+                    var availableMoves = GetAvailableSquaresPrimitive(sq, true);
+                    if (availableMoves.Contains(square))
+                    {
+                        result.Add(sq.Piece);
+                    }
+                }
+            }
+
+            return result;
+        } // GetAttackingPieces
+
+        /// <summary>
         /// Check if the given color is in checkmate
         /// </summary>
         /// <param name="color"></param>

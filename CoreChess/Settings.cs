@@ -66,6 +66,14 @@ namespace CoreChess
             Outside
         }
 
+        public enum SquareAttackColorMode
+        {
+            None,
+            SimpleHighlight,
+            GradientByCount,
+            AdvantageColored
+        }
+
         public Settings()
         {
             ShowEngineOutput = true;
@@ -89,6 +97,9 @@ namespace CoreChess
             BlackSelectedColor = "#ffbbcb44";
 
             DefaultOpeningBook = InternalOpeningBook;
+            
+            ShowSquareAttackIndicators = false;
+            AttackColorMode = SquareAttackColorMode.AdvantageColored;
         }
 
         public string Version { get; set; }
@@ -112,6 +123,8 @@ namespace CoreChess
         public bool EnableDragAndDrop { get; set; }
         public bool ShowValidMoves { get; set; }
         public FileRankNotations ShowFileRankNotation { get; set; }
+        public bool ShowSquareAttackIndicators { get; set; }
+        public SquareAttackColorMode AttackColorMode { get; set; }
         public bool AutoSaveGameOnExit { get; set; }
         public bool AutoPauseWhenMinimized { get; set; }
         public int MaxEngineThinkingTimeSecs { get; set; }
