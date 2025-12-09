@@ -596,10 +596,9 @@ namespace CoreChess.Pages
 
         private async void OnSaveGameClick(object sender, RoutedEventArgs e)
         {
-            var files = await MainWindow.StorageProvider.OpenFilePickerAsync(new FilePickerOpenOptions()
+            var file = await MainWindow.StorageProvider.SaveFilePickerAsync(new FilePickerSaveOptions()
             {
-                AllowMultiple = false,
-                FileTypeFilter = new []
+                FileTypeChoices = new []
                 {
                     new FilePickerFileType("CoreChess save file (*.ccsf)")
                     {
@@ -612,13 +611,13 @@ namespace CoreChess.Pages
                 }
             });
 
-            if (files.Count > 0) {
-                var file = HttpUtility.UrlDecode(files[0].Path.AbsolutePath);
+            if (file != null) {
+                var filePath = HttpUtility.UrlDecode(file.Path.AbsolutePath);
                 try {
-                    if (Path.GetExtension(file) == ".pgn")
-                        await m_Game.SaveToPgn(file);
+                    if (Path.GetExtension(filePath) == ".pgn")
+                        await m_Game.SaveToPgn(filePath);
                     else
-                        await m_Game.Save(file);
+                        await m_Game.Save(filePath);
                 } catch (Exception ex) {
                     await MessageDialog.ShowMessage(App.MainWindow, Localizer.Localizer.Instance["Error"],
                             string.Format(Localizer.Localizer.Instance["SaveGameError"], ex.Message), MessageDialog.Icons.Error);
@@ -692,10 +691,9 @@ namespace CoreChess.Pages
 
         private async void OnSaveToPngClick(object sender, RoutedEventArgs e)
         {
-            var files = await MainWindow.StorageProvider.OpenFilePickerAsync(new FilePickerOpenOptions()
+            var file = await MainWindow.StorageProvider.SaveFilePickerAsync(new FilePickerSaveOptions()
             {
-                AllowMultiple = false,
-                FileTypeFilter = new []
+                FileTypeChoices = new []
                 {
                     new FilePickerFileType("PNG image")
                     {
@@ -704,8 +702,8 @@ namespace CoreChess.Pages
                 }
             });
 
-            if (files.Count > 0) {
-                m_Chessboard.SaveToPng(HttpUtility.UrlDecode(files[0].Path.AbsolutePath));
+            if (file != null) {
+                m_Chessboard.SaveToPng(HttpUtility.UrlDecode(file.Path.AbsolutePath));
             }
         } // OnSaveToPngClick
 
