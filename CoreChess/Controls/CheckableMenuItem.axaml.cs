@@ -1,11 +1,7 @@
 using System;
 using Avalonia;
 using Avalonia.Controls;
-using Avalonia.Markup.Xaml;
-using Avalonia.Controls.Primitives;
-using Avalonia.Styling;
 using Avalonia.Interactivity;
-using System.Collections;
 namespace CoreChess.Controls
 {
     public partial class CheckableMenuItem : MenuItem
