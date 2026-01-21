@@ -824,8 +824,11 @@ namespace CoreChess.Controls
                     Foreground = foreground,
                     TextAlignment = TextAlignment.Right
                 };
-                Canvas.SetLeft(text, left + squareWidth - fontSize * 1.5);
-                Canvas.SetTop(text, top + squareHeight - fontSize * 1.5);
+                text.Measure(new Size(double.PositiveInfinity, double.PositiveInfinity));
+                var size = text.DesiredSize;
+
+                Canvas.SetLeft(text, left + squareWidth - size.Width - 2);
+                Canvas.SetTop(text, top + squareHeight - size.Height - 2);
                 canvas.Children.Add(text);
             }
 
@@ -839,7 +842,10 @@ namespace CoreChess.Controls
                     Foreground = difference > 0 ? new SolidColorBrush(Color.FromArgb(200, 0, 120, 0)) : new SolidColorBrush(Color.FromArgb(200, 180, 0, 0)),
                     TextAlignment = TextAlignment.Right
                 };
-                Canvas.SetLeft(text, left + squareWidth - fontSize * 2);
+                text.Measure(new Size(double.PositiveInfinity, double.PositiveInfinity));
+                var size = text.DesiredSize;
+
+                Canvas.SetLeft(text, left + squareWidth - size.Width - 2);
                 Canvas.SetTop(text, top + 2);
                 canvas.Children.Add(text);
             }
