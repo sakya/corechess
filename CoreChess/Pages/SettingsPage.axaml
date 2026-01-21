@@ -136,6 +136,7 @@
               <RowDefinition Height="Auto"/>
               <RowDefinition Height="Auto"/>
               <RowDefinition Height="Auto"/>
+              <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
               <ColumnDefinition Width="Auto"/>
@@ -154,8 +155,9 @@
             </ComboBox>
 
             <TextBlock Grid.Row="3" Text="{i18n:Localize ShowAttackIndicators}" VerticalAlignment="Center" />
-            <ToggleSwitch Grid.Row="3" Grid.Column="1" Name="m_ShowSquareAttackIndicators" HorizontalAlignment="Right" />
-            
+            <ToggleSwitch Grid.Row="3" Grid.Column="1" Name="m_ShowSquareAttackIndicators" HorizontalAlignment="Right"
+                          IsCheckedChanged="ShowSquareAttackIndicatorsIsCheckedChanged"/>
+
             <TextBlock Grid.Row="4" Text="{i18n:Localize AttackColorMode}" VerticalAlignment="Center" />
             <ComboBox Name="m_AttackColorMode" Grid.Row="4" Grid.Column="1">
               <ComboBoxItem Content="{i18n:Localize AttackColorNone}" />

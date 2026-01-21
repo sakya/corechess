@@ -132,6 +132,7 @@ namespace CoreChess.Pages
             m_ShowFileRankNotation.SelectedIndex = (int)App.Settings.ShowFileRankNotation;
             m_ShowSquareAttackIndicators.IsChecked = App.Settings.ShowSquareAttackIndicators;
             m_AttackColorMode.SelectedIndex = (int)App.Settings.AttackColorMode;
+            m_AttackColorMode.IsEnabled = m_ShowSquareAttackIndicators.IsChecked == true;
 
             m_Topmost.IsChecked = App.Settings.Topmost;
             m_EnableAudio.IsChecked = App.Settings.EnableAudio;
@@ -299,5 +300,11 @@ namespace CoreChess.Pages
             Result = false;
             await NavigateBack();
         } // OnCancelClick
-   }
+
+        private void ShowSquareAttackIndicatorsIsCheckedChanged(object sender, RoutedEventArgs e)
+        {
+            var toggle = sender as ToggleSwitch;
+            m_AttackColorMode.IsEnabled = toggle?.IsChecked == true;
+        }
+    }
 }

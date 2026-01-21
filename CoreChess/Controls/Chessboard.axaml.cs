@@ -777,35 +777,31 @@ namespace CoreChess.Controls
                 return;
 
             var attacks = m_Game.GetSquareAttackCount(square);
-            int whiteAttacks = attacks[Game.Colors.White];
-            int blackAttacks = attacks[Game.Colors.Black];
+            var whiteAttacks = attacks[Game.Colors.White];
+            var blackAttacks = attacks[Game.Colors.Black];
 
             // Determine opponent and current player based on whose turn it is
-            int opponentAttacks = m_Game.ToMove == Game.Colors.White ? blackAttacks : whiteAttacks;
-            int currentAttacks = m_Game.ToMove == Game.Colors.White ? whiteAttacks : blackAttacks;
-            int difference = currentAttacks - opponentAttacks;
+            var opponentAttacks = m_Game.ToMove == Game.Colors.White ? blackAttacks : whiteAttacks;
+            var currentAttacks = m_Game.ToMove == Game.Colors.White ? whiteAttacks : blackAttacks;
+            var difference = currentAttacks - opponentAttacks;
 
             // Apply color overlay if enabled
-            if (AttackColorMode != Settings.SquareAttackColorMode.None && (opponentAttacks > 0 || currentAttacks > 0))
-            {
+            if (AttackColorMode != Settings.SquareAttackColorMode.None && (opponentAttacks > 0 || currentAttacks > 0)) {
                 var rect = GetRectangle(square.Notation);
-                if (rect != null)
-                {
+                if (rect != null) {
                     var overlayColor = GetSquareAttackOverlayColor(opponentAttacks, currentAttacks, difference);
-                    if (overlayColor.HasValue)
-                    {
+                    if (overlayColor.HasValue) {
                         var baseColor = square.Color == Game.Colors.White ? SquareWhiteColor : SquareBlackColor;
                         rect.Fill = new SolidColorBrush(BlendColors(baseColor, overlayColor.Value));
                     }
                 }
             }
 
-            double fontSize = Math.Max(8, squareWidth / 8);
+            var fontSize = Math.Max(8, squareWidth / 8);
             var foreground = new SolidColorBrush(Color.FromArgb(200, 50, 50, 50));
 
             // Top-left: Opponent attacks
-            if (opponentAttacks > 0)
-            {
+            if (opponentAttacks > 0) {
                 var text = new TextBlock()
                 {
                     Text = opponentAttacks.ToString(),
@@ -819,8 +815,7 @@ namespace CoreChess.Controls
             }
 
             // Bottom-right: Current player attacks
-            if (currentAttacks > 0)
-            {
+            if (currentAttacks > 0) {
                 var text = new TextBlock()
                 {
                     Text = currentAttacks.ToString(),
@@ -835,11 +830,10 @@ namespace CoreChess.Controls
             }
 
             // Top-right: Difference
-            if (difference != 0)
-            {
+            if (difference != 0) {
                 var text = new TextBlock()
                 {
-                    Text = (difference > 0 ? "+" : "") + difference.ToString(),
+                    Text = $"{(difference > 0 ? "+" : "")}{difference}",
                     FontSize = fontSize * 0.9,
                     FontWeight = FontWeight.SemiBold,
                     Foreground = difference > 0 ? new SolidColorBrush(Color.FromArgb(200, 0, 120, 0)) : new SolidColorBrush(Color.FromArgb(200, 180, 0, 0)),
@@ -856,37 +850,34 @@ namespace CoreChess.Controls
         /// </summary>
         private Color? GetSquareAttackOverlayColor(int opponentAttacks, int currentAttacks, int difference)
         {
-            switch (AttackColorMode)
-            {
+            switch (AttackColorMode) {
                 case Settings.SquareAttackColorMode.SimpleHighlight:
                     if (opponentAttacks > 0 || currentAttacks > 0)
                         return Color.FromArgb(30, 255, 255, 0); // Yellow tint
                     break;
 
                 case Settings.SquareAttackColorMode.GradientByCount:
-                    int totalAttacks = opponentAttacks + currentAttacks;
-                    if (totalAttacks > 0)
-                    {
-                        byte alpha = (byte)Math.Min(60, 15 + totalAttacks * 8);
+                    var totalAttacks = opponentAttacks + currentAttacks;
+                    if (totalAttacks > 0) {
+                        var alpha = (byte)Math.Min(60, 15 + totalAttacks * 8);
                         return Color.FromArgb(alpha, 255, 200, 0); // Orange tint
                     }
                     break;
 
                 case Settings.SquareAttackColorMode.AdvantageColored:
-                    if (difference > 0)
-                    {
+                    if (difference > 0) {
                         // Current player advantage - green tint
-                        byte alpha = (byte)Math.Min(60, 20 + Math.Abs(difference) * 10);
+                        var alpha = (byte)Math.Min(60, 20 + Math.Abs(difference) * 10);
                         return Color.FromArgb(alpha, 0, 200, 50);
                     }
-                    else if (difference < 0)
-                    {
+
+                    if (difference < 0) {
                         // Opponent advantage - red tint
-                        byte alpha = (byte)Math.Min(60, 20 + Math.Abs(difference) * 10);
+                        var alpha = (byte)Math.Min(60, 20 + Math.Abs(difference) * 10);
                         return Color.FromArgb(alpha, 200, 0, 0);
                     }
-                    else if (opponentAttacks > 0 && currentAttacks > 0)
-                    {
+
+                    if (opponentAttacks > 0 && currentAttacks > 0) {
                         // Equal - yellow tint
                         return Color.FromArgb(30, 255, 200, 0);
                     }
@@ -901,7 +892,7 @@ namespace CoreChess.Controls
         /// </summary>
         private Color BlendColors(Color baseColor, Color overlayColor)
         {
-            double alpha = overlayColor.A / 255.0;
+            var alpha = overlayColor.A / 255.0;
             return Color.FromArgb(
                 255,
                 (byte)(overlayColor.R * alpha + baseColor.R * (1 - alpha)),
