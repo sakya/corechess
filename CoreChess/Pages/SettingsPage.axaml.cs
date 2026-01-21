@@ -130,6 +130,9 @@ namespace CoreChess.Pages
             m_EnableDragAndDrop.IsChecked = App.Settings.EnableDragAndDrop;
             m_ShowValidMoves.IsChecked = App.Settings.ShowValidMoves;
             m_ShowFileRankNotation.SelectedIndex = (int)App.Settings.ShowFileRankNotation;
+            m_ShowSquareAttackIndicators.IsChecked = App.Settings.ShowSquareAttackIndicators;
+            m_AttackColorMode.SelectedIndex = (int)App.Settings.AttackColorMode;
+            m_AttackColorMode.IsEnabled = m_ShowSquareAttackIndicators.IsChecked == true;
 
             m_Topmost.IsChecked = App.Settings.Topmost;
             m_EnableAudio.IsChecked = App.Settings.EnableAudio;
@@ -252,6 +255,8 @@ namespace CoreChess.Pages
             App.Settings.ShowValidMoves = m_ShowValidMoves.IsChecked ?? true;
 
             App.Settings.ShowFileRankNotation = (Settings.FileRankNotations)m_ShowFileRankNotation.SelectedIndex;
+            App.Settings.ShowSquareAttackIndicators = m_ShowSquareAttackIndicators.IsChecked ?? false;
+            App.Settings.AttackColorMode = (Settings.SquareAttackColorMode)m_AttackColorMode.SelectedIndex;
 
             App.Settings.Topmost = m_Topmost.IsChecked ?? false;
             App.Settings.EnableAudio = m_EnableAudio.IsChecked ?? true;
@@ -295,5 +300,11 @@ namespace CoreChess.Pages
             Result = false;
             await NavigateBack();
         } // OnCancelClick
-   }
+
+        private void ShowSquareAttackIndicatorsIsCheckedChanged(object sender, RoutedEventArgs e)
+        {
+            var toggle = sender as ToggleSwitch;
+            m_AttackColorMode.IsEnabled = toggle?.IsChecked == true;
+        }
+    }
 }

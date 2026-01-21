@@ -136,6 +136,7 @@
               <RowDefinition Height="Auto"/>
               <RowDefinition Height="Auto"/>
               <RowDefinition Height="Auto"/>
+              <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
               <ColumnDefinition Width="Auto"/>
@@ -153,8 +154,20 @@
               <ComboBoxItem Content="{i18n:Localize Outside}" />
             </ComboBox>
 
-            <TextBlock Grid.Row="3" Text="{i18n:Localize PiecesSet}" VerticalAlignment="Center" />
-            <ComboBox Name="m_PiecesSet" Grid.Row="3" Grid.Column="1">
+            <TextBlock Grid.Row="3" Text="{i18n:Localize ShowAttackIndicators}" VerticalAlignment="Center" />
+            <ToggleSwitch Grid.Row="3" Grid.Column="1" Name="m_ShowSquareAttackIndicators" HorizontalAlignment="Right"
+                          IsCheckedChanged="ShowSquareAttackIndicatorsIsCheckedChanged"/>
+
+            <TextBlock Grid.Row="4" Text="{i18n:Localize AttackColorMode}" VerticalAlignment="Center" />
+            <ComboBox Name="m_AttackColorMode" Grid.Row="4" Grid.Column="1">
+              <ComboBoxItem Content="{i18n:Localize AttackColorNone}" />
+              <ComboBoxItem Content="{i18n:Localize AttackColorSimple}" />
+              <ComboBoxItem Content="{i18n:Localize AttackColorGradient}" />
+              <ComboBoxItem Content="{i18n:Localize AttackColorAdvantage}" />
+            </ComboBox>
+
+            <TextBlock Grid.Row="5" Text="{i18n:Localize PiecesSet}" VerticalAlignment="Center" />
+            <ComboBox Name="m_PiecesSet" Grid.Row="5" Grid.Column="1">
               <ComboBox.ItemTemplate>
                 <DataTemplate>
                   <StackPanel Orientation="Horizontal">
@@ -165,8 +178,8 @@
               </ComboBox.ItemTemplate>
             </ComboBox>
 
-            <TextBlock Grid.Row="4" Text="{i18n:Localize ColorTheme}" VerticalAlignment="Center" />
-            <ComboBox Name="m_ColorTheme" Grid.Row="4" Grid.Column="1" SelectionChanged="OnColorThemeChanged" >
+            <TextBlock Grid.Row="6" Text="{i18n:Localize ColorTheme}" VerticalAlignment="Center" />
+            <ComboBox Name="m_ColorTheme" Grid.Row="6" Grid.Column="1" SelectionChanged="OnColorThemeChanged" >
               <ComboBox.ItemTemplate>
                 <DataTemplate>
                   <Grid Height="30">
@@ -191,17 +204,17 @@
               </ComboBox.ItemTemplate>
             </ComboBox>
 
-            <TextBlock Grid.Row="5" Text="{i18n:Localize WhiteFilesColor}" VerticalAlignment="Center" />
-            <ColorPicker Grid.Column="1" Grid.Row="5" Name="m_WhiteButton" HorizontalAlignment="Right" />
+            <TextBlock Grid.Row="7" Text="{i18n:Localize WhiteFilesColor}" VerticalAlignment="Center" />
+            <ColorPicker Grid.Column="1" Grid.Row="7" Name="m_WhiteButton" HorizontalAlignment="Right" />
 
-            <TextBlock Grid.Row="6" Text="{i18n:Localize WhiteFilesSelectedColor}" VerticalAlignment="Center" />
-            <ColorPicker Grid.Column="1" Grid.Row="6" Name="m_WhiteSelectedButton" HorizontalAlignment="Right" />
+            <TextBlock Grid.Row="8" Text="{i18n:Localize WhiteFilesSelectedColor}" VerticalAlignment="Center" />
+            <ColorPicker Grid.Column="1" Grid.Row="8" Name="m_WhiteSelectedButton" HorizontalAlignment="Right" />
 
-            <TextBlock Grid.Row="7" Text="{i18n:Localize BlackFilesColor}" VerticalAlignment="Center" />
-            <ColorPicker Grid.Column="1" Grid.Row="7" Name="m_BlackButton" HorizontalAlignment="Right" />
+            <TextBlock Grid.Row="9" Text="{i18n:Localize BlackFilesColor}" VerticalAlignment="Center" />
+            <ColorPicker Grid.Column="1" Grid.Row="9" Name="m_BlackButton" HorizontalAlignment="Right" />
 
-            <TextBlock Grid.Row="8" Text="{i18n:Localize BlackFilesSelectedColor}" VerticalAlignment="Center" />
-            <ColorPicker Grid.Column="1" Grid.Row="8" Name="m_BlackSelectedButton" HorizontalAlignment="Right" />
+            <TextBlock Grid.Row="10" Text="{i18n:Localize BlackFilesSelectedColor}" VerticalAlignment="Center" />
+            <ColorPicker Grid.Column="1" Grid.Row="10" Name="m_BlackSelectedButton" HorizontalAlignment="Right" />
           </Grid>
         </ScrollViewer>
       </TabItem>
