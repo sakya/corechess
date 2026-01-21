@@ -33,14 +33,14 @@ namespace CoreChess.Utils
             var release = releases?.Count > 0 ? releases[0] : null;
             if (release != null && release.Assets?.Count > 0) {
                 Version releaseVersion;
-                if (Version.TryParse(release.TagName, out releaseVersion)) {
+                if (Version.TryParse(GetVersionFromTag(release.TagName), out releaseVersion)) {
                     var currentVersion = new Version(App.Version);
                     if (releaseVersion > currentVersion) {
                         // Merge changelogs
                         StringBuilder sb = new StringBuilder();
                         sb.AppendLine(release.Body);
                         foreach (var r in releases) {
-                            if (r != release && Version.TryParse(r.TagName, out releaseVersion)) {
+                            if (r != release && Version.TryParse(GetVersionFromTag(r.TagName), out releaseVersion)) {
                                 if (releaseVersion > currentVersion) {
                                     sb.AppendLine(r.Body);
                                 } else {
@@ -64,5 +64,12 @@ namespace CoreChess.Utils
             }
             return false;
         } // CheckForUpdate
+
+        private string GetVersionFromTag(string tag)
+        {
+            if (tag.StartsWith('v'))
+                tag = tag[1..];
+            return tag;
+        }
     }
 }
