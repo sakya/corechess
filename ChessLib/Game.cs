@@ -1555,8 +1555,8 @@ namespace ChessLib
         {
             if (Settings?.Players == null)
                 return null;
-            
-            return (Settings?.Players)
+
+            return (Settings?.Players)?
                 .FirstOrDefault(p => p.Color == color);
         } // GetPlayer
 
