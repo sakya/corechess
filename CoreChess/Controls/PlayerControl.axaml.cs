@@ -211,6 +211,7 @@ public partial class PlayerControl : UserControl
         // TheKing personalities
         if (engine is TheKing) {
             m_TheKingPersonalityStack.IsVisible = true;
+            m_OpeningBookStack.IsVisible = false;
             var opt = engine.GetOption(TheKing.PersonalitiesFolderOptionName);
             if (opt != null && !string.IsNullOrEmpty(opt.Value)) {
                 m_TheKingPersonality.ItemsSource = TheKing.Personality.GetFromFolder(opt.Value).OrderByDescending(p => p.Elo);
