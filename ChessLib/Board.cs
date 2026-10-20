@@ -72,8 +72,8 @@ namespace ChessLib
             if (notation.Length != 2)
                 throw new ArgumentException("Must be 2 characters long", nameof(notation));
 
-            char file = char.ToUpper(notation[0]);
-            int rank = int.Parse(notation[1].ToString()) - 1;
+            var file = char.ToUpper(notation[0]);
+            var rank = int.Parse(notation[1].ToString()) - 1;
 
             return Squares[rank * 8 + m_Files.IndexOf(file)];
         } // GetSquare
@@ -110,7 +110,7 @@ namespace ChessLib
             Squares.Clear();
             InitEmpty();
 
-            List<Piece.Pieces> order = null;
+            List<Piece.Pieces> order;
             if (chess960) {
                 order = CreateRandomPosition();
             } else {
@@ -176,8 +176,7 @@ namespace ChessLib
         /// <summary>
         /// Initialize the board from a FEN string
         /// </summary>
-        /// <param name="FenString">The FEN string</param>
-        /// <param name="initialPosition">True if this is the board initial position (eg: Chess960)</param>
+        /// <param name="fenString">The FEN string</param>
         public void InitFromFenString(string fenString)
         {
             fenString = fenString.Trim();
@@ -186,12 +185,11 @@ namespace ChessLib
                 Squares.Add(new Square(i / 8 + 1, m_Files[i % 8]));
             }
 
-            int endIdx = fenString.IndexOf(" ");
-            int rank = 8;
-            int file = 0;
-            for (int i = 0; i < endIdx; i++) {
-                char c = fenString[i];
-                Piece piece = null;
+            var endIdx = fenString.IndexOf(" ", StringComparison.Ordinal);
+            var rank = 8;
+            var file = 0;
+            for (var i = 0; i < endIdx; i++) {
+                var c = fenString[i];
 
                 if (char.IsDigit(c)) {
                     // Empty spaces
@@ -201,9 +199,8 @@ namespace ChessLib
                     rank--;
                     file = 0;
                 } else if (char.IsLetter(c)) {
-                    Game.Colors color = char.IsUpper(c) ? Game.Colors.White : Game.Colors.Black;
-                    piece = new Piece(color, Piece.GetTypeFromAcronym(c));
-                    GetSquare($"{Files[file]}{rank}").Piece = piece;
+                    var color = char.IsUpper(c) ? Game.Colors.White : Game.Colors.Black;
+                    GetSquare($"{Files[file]}{rank}").Piece = new Piece(color, Piece.GetTypeFromAcronym(c));
                     file++;
                 }
             }
