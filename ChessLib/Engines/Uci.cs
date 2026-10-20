@@ -45,7 +45,7 @@ namespace ChessLib.Engines
             m_ProcessOutputSema = new Semaphore(1, 1);
             m_ProcessInputSema = new Semaphore(1, 1);
 
-            ProcessStartInfo si = new ProcessStartInfo();
+            var si = new ProcessStartInfo();
             si.FileName = GetExePath(Command);
             si.Arguments = Arguments;
             si.WorkingDirectory = string.IsNullOrEmpty(WorkingDir) ? Path.GetDirectoryName(si.FileName) : WorkingDir;

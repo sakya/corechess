@@ -1,10 +1,7 @@
 ﻿using Newtonsoft.Json;
 using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Drawing;
 using System.Linq;
-using System.Runtime.CompilerServices;
 using System.Text;
 
 namespace ChessLib
@@ -250,13 +247,13 @@ namespace ChessLib
         /// <returns></returns>
         public string GetAscii()
         {
-            StringBuilder sb = new StringBuilder();
+            var sb = new StringBuilder();
             sb.AppendLine($"Id: {Id}");
-            for (int row = 8; row > 0; row--) {
+            for (var row = 8; row > 0; row--) {
                 sb.Append($"{row} ");
                 foreach (var file in Files) {
                     var square = GetSquare($"{file}{row}");
-                    char c = square.Piece?.Acronym ?? ' ';
+                    var c = square.Piece?.Acronym ?? ' ';
                     if (square.Piece?.Color == Game.Colors.Black)
                         c = char.ToLower(c);
                     sb.Append($" {c}");
@@ -304,8 +301,8 @@ namespace ChessLib
         /// <returns></returns>
         public List<Piece> GetPieces(Game.Colors color)
         {
-            List<Piece> res = new List<Piece>();
-            foreach (Square f in Squares) {
+            var res = new List<Piece>();
+            foreach (var f in Squares) {
                 if (f.Piece?.Color == color)
                     res.Add(f.Piece);
             }
@@ -320,16 +317,16 @@ namespace ChessLib
         private List<Piece.Pieces> CreateRandomPosition()
         {
             var order = new Piece.Pieces[8];
-            List<int> freePos = new List<int>() {0, 1, 2, 3, 4, 5, 6, 7};
+            var freePos = new List<int>() {0, 1, 2, 3, 4, 5, 6, 7};
             Random rnd = new Random();
 
             // King
-            int kIdx = rnd.Next(1, 7);
+            var kIdx = rnd.Next(1, 7);
             order[kIdx] = Piece.Pieces.King;
             freePos.Remove(kIdx);
 
             // Rooks
-            int idx = rnd.Next(0, kIdx);
+            var idx = rnd.Next(0, kIdx);
             order[idx] = Piece.Pieces.Rook;
             freePos.Remove(idx);
             idx = rnd.Next(kIdx + 1, 7);
