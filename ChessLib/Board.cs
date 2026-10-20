@@ -269,7 +269,7 @@ namespace ChessLib
 
         public char? GetPreviousFile(char file)
         {
-            int idx = Files.IndexOf(file);
+            var idx = Files.IndexOf(file);
             if (idx > 0)
                 return Files[idx - 1];
             return null;
@@ -277,7 +277,7 @@ namespace ChessLib
 
         public char? GetNextFile(char file)
         {
-            int idx = Files.IndexOf(file);
+            var idx = Files.IndexOf(file);
             if (idx >= 0 && idx < Files.Count - 1)
                 return Files[idx + 1];
             return null;
